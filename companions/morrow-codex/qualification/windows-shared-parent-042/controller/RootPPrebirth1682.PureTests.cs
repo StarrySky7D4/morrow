@@ -4,6 +4,33 @@
 using System;
 using System.Collections.Generic;
 namespace C28.RootP1682 {
+ public static class StartupPathPureTests754 {
+  static void Assert(bool ok){if(!ok)throw new InvalidOperationException("STARTUP_PATH_PURE_ASSERTION");}
+  public static void actual_uppercase_windows_root_and_all_ascii_case_variants_are_the_same_fixed_root(){
+   const string root=@"C:\Windows";int[] letters={0,3,4,5,6,7,8,9};
+   for(int variant=0;variant<256;variant++){
+    char[] value=root.ToCharArray();
+    for(int bit=0;bit<letters.Length;bit++)value[letters[bit]]=(variant&(1<<bit))==0?Char.ToLowerInvariant(value[letters[bit]]):Char.ToUpperInvariant(value[letters[bit]]);
+    Assert(Rules.FixedWindowsRoot(10,new string(value)));
+   }
+  }
+  public static void windows_root_does_not_accept_other_drives_aliases_separators_or_trailing_components(){
+   foreach(string path in new string[]{@"D:\Windows",@"C:\Windows.old",@"C:\Windows\",@"C:\Windows\.",@"C:\.\Windows",
+    @"C:/Windows",@"\\?\C:\Windows",@"\\localhost\C$\Windows",@"C:\\Windows",@"C:\Windows ",@"C:\Windows.",
+    "C:\\Windows\0",@"C:\Wındows",@"C:\WINDOWS\System32"}){
+    Assert(!Rules.FixedWindowsRoot((uint)path.Length,path));
+   }
+  }
+  public static void windows_root_requires_complete_native_length_and_ordinal_comparison(){
+   Assert(!Rules.FixedWindowsRoot(0,@"C:\Windows")&&!Rules.FixedWindowsRoot(9,@"C:\Windows")
+    &&!Rules.FixedWindowsRoot(11,@"C:\Windows")&&!Rules.FixedWindowsRoot(260,@"C:\Windows")
+    &&!Rules.FixedWindowsRoot(uint.MaxValue,@"C:\Windows")&&!Rules.FixedWindowsRoot(10,null));
+   var previous=System.Threading.Thread.CurrentThread.CurrentCulture;
+   try{System.Threading.Thread.CurrentThread.CurrentCulture=new System.Globalization.CultureInfo("tr-TR");
+    Assert(Rules.FixedWindowsRoot(10,@"C:\WINDOWS")&&Rules.FixedWindowsRoot(10,@"c:\windows"));
+   }finally{System.Threading.Thread.CurrentThread.CurrentCulture=previous;}
+  }
+ }
  public static class PureTests1682 {
   static void Assert(bool p){if(!p)throw new InvalidOperationException("PURE_ASSERTION_FAILED");}
   static void Reject(Action a){bool failed=false;try{a();}catch(InvalidOperationException){failed=true;}Assert(failed);}

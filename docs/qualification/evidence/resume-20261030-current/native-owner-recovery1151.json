@@ -1,0 +1,37 @@
+{
+  "status": "PASS_SCOPED_CURRENT_NATIVE_OWNER_RECOVERY_AND_REFUSAL",
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "source_unchanged": true,
+  "scenarios": 4,
+  "receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-owner-recovery-1151\\stores\\live-owner-refused.json",
+      "bytes": 3082,
+      "sha256": "66490ef2f9111f60c18d9abf1f3e9603e7b716bf72d20b263c8d550cc0372db3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-owner-recovery-1151\\stores\\host-crash-explicit-recovery.json",
+      "bytes": 4406,
+      "sha256": "ea14559ccdad1bcf7928136718ad5d8d7f93f6ef1429db9a5c69fda93f410e61"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-owner-recovery-1151\\stores\\supervisor-crash-unprovable.json",
+      "bytes": 3070,
+      "sha256": "f3d774d7a91d2002866e3591209dfc65e8a9035a09cfb8331eadf243e1402891"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-owner-recovery-1151\\stores\\concurrent-managers.json",
+      "bytes": 5566,
+      "sha256": "d060d75ffc649b5f6ea8175850f449e510c4d8dfdb2d668dc63d5457372b1ebe"
+    }
+  ],
+  "all_original_test_processes_returned": true,
+  "automatic_failure_teardown": false,
+  "explicit_owned_faults": 3,
+  "supervisor_status_IPC_CapnProto": true,
+  "durable_supervision_Protobuf_LZ4": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -5110,6 +5110,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-blob-upload-history-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-blob-upload-proposal-v1"
 version = "0.1.0"
 dependencies = [
@@ -5286,6 +5295,7 @@ dependencies = [
  "capnpc",
  "getrandom 0.4.3",
  "js-sys",
+ "lz4_flex",
  "morrow-agent-catalog-admin-v1",
  "morrow-agent-catalog-owner-v1",
  "morrow-agent-process-control-v1",
@@ -5293,6 +5303,7 @@ dependencies = [
  "morrow-agent-session-process-v1-host",
  "morrow-audit",
  "morrow-blob-transfer-v1",
+ "morrow-blob-upload-history-v1",
  "morrow-blob-upload-proposal-v1",
  "morrow-blob-upload-request-v1",
  "morrow-codex-session-exec-windows-v1",

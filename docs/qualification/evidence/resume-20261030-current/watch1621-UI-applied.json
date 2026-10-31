@@ -1,0 +1,305 @@
+{
+  "status": "WATCH_UI_AND_CAPNP_APPLIED_NATIVE_COMPILATION_AND_FORMAL_UI_NOT_RUN",
+  "old_source_digest": "8700b50ce311b2265c72a5831f5de2028532089b6cf27fb6a6252da69feb7bd3",
+  "new_source_digest": "d9a7e525534c9d09157097b38a3cbb57cba6f28192752f463fb898f1ebdd447b",
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-application-1621\\plan.json",
+    "bytes": 31619,
+    "sha256": "67090e5d8a29acc461a9797ddfef5903939a95f8e83cdc872b2aedaafe4467da"
+  },
+  "changed_files": {
+    "l10n/parts/plugins.de.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.de.arb",
+      "bytes": 57696,
+      "sha256": "83c2e49e95a06b145d265e39d1fdb6913044b7691dbf8ff6414818d75aadfc37"
+    },
+    "l10n/parts/plugins.en.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.en.arb",
+      "bytes": 52242,
+      "sha256": "e4c11fa6722cac17952c752e63ae85ccc4ad2a0a5172f649e9095974f315a0f4"
+    },
+    "l10n/parts/plugins.es.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.es.arb",
+      "bytes": 56202,
+      "sha256": "3f6e3a71e2379f4c5e4475f5a2b7003640109c4ff194f6ea4a6018b7d7aedbdf"
+    },
+    "l10n/parts/plugins.fr.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.fr.arb",
+      "bytes": 58887,
+      "sha256": "9196cb9c849752944e452e86b0b797a6e4b9663d39d6c6c5f22dec37abe0df6a"
+    },
+    "l10n/parts/plugins.ja.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.ja.arb",
+      "bytes": 62681,
+      "sha256": "d708363308581ca7786b7ad696e642b6e0258bec6c96cac04eafccf7d62ccbc2"
+    },
+    "l10n/parts/plugins.ko.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.ko.arb",
+      "bytes": 57634,
+      "sha256": "f3492b680f0bdf26e377137aacab1d24216a8f28f1345ed5473cfec993c081ec"
+    },
+    "l10n/parts/plugins.pt.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.pt.arb",
+      "bytes": 55506,
+      "sha256": "2d968c08fa3d21d73d5cca1cf925821081f9f814de0fb52eda80047bc022e8bb"
+    },
+    "l10n/parts/plugins.ru.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.ru.arb",
+      "bytes": 77363,
+      "sha256": "c0232001d0403ece6916c9e04a339816266d991cdfbeccf12344bd50371f3fbc"
+    },
+    "l10n/parts/plugins.zh.arb": {
+      "path": "C:\\ms1020\\l10n\\parts\\plugins.zh.arb",
+      "bytes": 49100,
+      "sha256": "0cdd9f60e9fe2ac1703cf8c5ab3a5e248adf3dc7b7686b2d92b1e023e9144c87"
+    },
+    "lib/plugins/fs_watch_manager.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\fs_watch_manager.dart",
+      "bytes": 13664,
+      "sha256": "50ef48747fd76d6c9f0cf44c7d93c181616be18ce45de0a0df3a499ee2d0ff78"
+    },
+    "lib/plugins/fs_watch_models.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\fs_watch_models.dart",
+      "bytes": 5371,
+      "sha256": "755d6b8c0336460be46a5b118e6108a2c2122a4b579a6c3501e93747ac148665"
+    },
+    "lib/plugins/fs_watch_native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\fs_watch_native.dart",
+      "bytes": 8630,
+      "sha256": "b7817080305744bc1d766abdc57e3c6d7564410353e7a663862873e3150e275f"
+    },
+    "lib/plugins/fs_watch_session.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\fs_watch_session.dart",
+      "bytes": 8587,
+      "sha256": "8edf92429e24c2accb874982d44b07ad3b4fdcde49f2e6d8af563a8bd4878a6a"
+    },
+    "lib/plugins/generated/host.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.dart",
+      "bytes": 186,
+      "sha256": "751edb01d258f2f185463d5cd1081f1c34024edda180d4ecc54a409fb75758e6"
+    },
+    "lib/plugins/generated/host.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.ids.dart",
+      "bytes": 3991,
+      "sha256": "2e35ac4b5e63934baac0cf14dc8f4d0ea3a6be29f4530be1342d063de96ea735"
+    },
+    "lib/plugins/generated/host.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.native.dart",
+      "bytes": 434314,
+      "sha256": "94f1d9e300e30a817676f652822ec62f6c2348896d087b2b320f27cdb7bbde0c"
+    },
+    "lib/plugins/generated/host.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.web.dart",
+      "bytes": 261887,
+      "sha256": "5f76dd0d13b1e7b67884f042622c4cd275b75476c2c7e7580825a2eaa0f37955"
+    },
+    "lib/plugins/http_task_manager.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\http_task_manager.dart",
+      "bytes": 43598,
+      "sha256": "3eb4eb2695e52ecdada91eafc5f18aa402f039b489514c1f14df48369793f48e"
+    },
+    "lib/plugins/plugin_library.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\plugin_library.dart",
+      "bytes": 74158,
+      "sha256": "c9d798368e39b803f2664d9249d3da209aaf75f03cee17ed2ca13c3186e76b25"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_native.dart",
+      "bytes": 144818,
+      "sha256": "3215b4d1cb6d6ee79fd6ac08dfadc3039fa088ab7b16453190cb0582121237d3"
+    },
+    "packages/morrow_i18n/assets/languages/de.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\de.mlang",
+      "bytes": 110074,
+      "sha256": "5be8b09dc976e812bc2747b6d13c0629062d94ba5837332d684b882e8a173b04"
+    },
+    "packages/morrow_i18n/assets/languages/en.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\en.mlang",
+      "bytes": 100168,
+      "sha256": "a40f67a8ae8b1df5eaa97eb28c967df9567f6cc2ab2e0d1cc4fb0a780b2b5038"
+    },
+    "packages/morrow_i18n/assets/languages/es.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\es.mlang",
+      "bytes": 106888,
+      "sha256": "7d044b78592e5f3bfaa2d126251dacd9251d2c332e85496adddd935fc8c89f35"
+    },
+    "packages/morrow_i18n/assets/languages/fr.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\fr.mlang",
+      "bytes": 111623,
+      "sha256": "371a84f90e531fde695c973c6522547ebb7a4c81d8dd263885231064cc4d5a77"
+    },
+    "packages/morrow_i18n/assets/languages/ja.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\ja.mlang",
+      "bytes": 120358,
+      "sha256": "101984c3affb5256a1d2a85e5d8c648cd0039c36e7d7d30240ab948a1ea6c86a"
+    },
+    "packages/morrow_i18n/assets/languages/ko.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\ko.mlang",
+      "bytes": 111911,
+      "sha256": "2c087fd50c9b48d22f7584349892a610be9c2d8cd8aa9d678f443c5cdfefb8c2"
+    },
+    "packages/morrow_i18n/assets/languages/pt.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\pt.mlang",
+      "bytes": 106177,
+      "sha256": "2ad1a1f0baa428ea2e18e88764e88f53e7b65e921d37b3e4fcf8cbc8bbaf5c7d"
+    },
+    "packages/morrow_i18n/assets/languages/ru.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\ru.mlang",
+      "bytes": 147895,
+      "sha256": "0d1ac6a1bba3c723e4d236bc583b643c9d0fcb587e94214ce0f4aaa20ed5f934"
+    },
+    "packages/morrow_i18n/assets/languages/zh.mlang": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\assets\\languages\\zh.mlang",
+      "bytes": 94454,
+      "sha256": "28d9ef42f098078d993c5c8bb9228f794534b4ec1b453ca9f595c96c50b38995"
+    },
+    "packages/morrow_i18n/lib/l10n/app_de.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_de.arb",
+      "bytes": 120314,
+      "sha256": "35dd201298010550cf806b59820859d37ea1e25d9b8c6f63dcff07278c73daa1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_en.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_en.arb",
+      "bytes": 110653,
+      "sha256": "8d0965e7453ffa2a02040a7c1b878fa2129b1aae8d3544d2dc2c10143576a17d"
+    },
+    "packages/morrow_i18n/lib/l10n/app_es.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_es.arb",
+      "bytes": 117190,
+      "sha256": "578ef9b9efae0c62e6ed6d29f9609693d2d917dbe6341603d4585c33b6509963"
+    },
+    "packages/morrow_i18n/lib/l10n/app_fr.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_fr.arb",
+      "bytes": 121862,
+      "sha256": "bf7252791e0f3f9fd797d005bdf440377296db93243acfa716a7bbd04a8b96b1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ja.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_ja.arb",
+      "bytes": 130447,
+      "sha256": "b4c9bb71bd7e8ff0c1fe2f079a65f2dc541908631d38b51434c08883696ec519"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ko.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_ko.arb",
+      "bytes": 122090,
+      "sha256": "ba038cde4a5fcb1f954342828833a236f02ed42954fd736de88af53e791c89a1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_pt.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_pt.arb",
+      "bytes": 116484,
+      "sha256": "88951fd779470a93307fa58c0ef2cbb96754b7f6dc8c9348a1011b97c618ea80"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ru.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_ru.arb",
+      "bytes": 157683,
+      "sha256": "b1fe2017de73a6b16d3761f4d7473e133b8fb37ee09cd61a9c672ce0b92a23de"
+    },
+    "packages/morrow_i18n/lib/l10n/app_zh.arb": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\l10n\\app_zh.arb",
+      "bytes": 104931,
+      "sha256": "229ee3070e9833fd06c66cc888da786a8d664591c506ebde6334b2fa42c095d5"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations.dart",
+      "bytes": 245083,
+      "sha256": "bacbe078d403114ef38fcf7cdd30ae5e616ec9b79538fc2fe0b7090f845baabb"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_de.dart",
+      "bytes": 132765,
+      "sha256": "eece4a931d9ab09cd11516ba874582a9035e110ae786937d20e415d225962aee"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_en.dart",
+      "bytes": 122695,
+      "sha256": "f5c70d9c6dfd2dfb2c295fb6f05f18112e70ab19399debf58b45edd760ebd931"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_es.dart",
+      "bytes": 129900,
+      "sha256": "e826d828c9d2413e300fa600265e462f0127f4b0782132a9955ba7efd2882bec"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_fr.dart",
+      "bytes": 134591,
+      "sha256": "e11a92446e27c8906bcd6278e7c030d47df03168a4e581887d2359b6af17081f"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ja.dart",
+      "bytes": 141054,
+      "sha256": "3a7ce4fefacb407b1f3e2b34581f2b46f61939bcbe79f5c09c0b1f4f95042419"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ko.dart",
+      "bytes": 132881,
+      "sha256": "658489d32050a04bd00147c5f9b107c3a292ba7fee098ab392b8a8f8443d9f47"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_pt.dart",
+      "bytes": 129073,
+      "sha256": "084dad151538c4cc235cea8cafe89380b253d1e38346b148f5d9a27a5624bf8d"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ru.dart",
+      "bytes": 170229,
+      "sha256": "5b6cac43b01ac7da4de2bdc08debe25d3688d12e1d81f9971a70e4c5f229d6c2"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_zh.dart",
+      "bytes": 114705,
+      "sha256": "f3c5713b68beea96fb78734194edcff93604efeb5421741cdd38912b01f2dda9"
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pins.dart": {
+      "path": "C:\\ms1020\\packages\\morrow_i18n\\lib\\src\\generated\\language_pins.dart",
+      "bytes": 1743,
+      "sha256": "79c4554dbab0db0ae962c82f7383ccfb3841bc37260d050be1f1cf212c0ca682"
+    },
+    "test/fs_watch_manager_test.dart": {
+      "path": "C:\\ms1020\\test\\fs_watch_manager_test.dart",
+      "bytes": 9848,
+      "sha256": "1c7d6d2e4c5eba453aa1b4d23b261ed67b62b7300d075bcb854d6d31d59cad5b"
+    },
+    "test/fs_watch_session_checks.dart": {
+      "path": "C:\\ms1020\\test\\fs_watch_session_checks.dart",
+      "bytes": 9106,
+      "sha256": "f62e149d87d374bd6102c153456c764084bd9b712488843a7b1756b40f0a2df4"
+    },
+    "test/fs_watch_wire_checks.dart": {
+      "path": "C:\\ms1020\\test\\fs_watch_wire_checks.dart",
+      "bytes": 9670,
+      "sha256": "13721a42aed3fd8c582a93400fcbe1b35899e3cee113a4b68c8493028c26ee35"
+    },
+    "workbench_host/schemas/host.capnp": {
+      "path": "C:\\ms1020\\workbench_host\\schemas\\host.capnp",
+      "bytes": 34704,
+      "sha256": "2e2999d16a9221e88c45c9e57cf6151ec674f4ba23323a09af7e215fd78f14ab"
+    },
+    "workbench_host/src/fs_watch_protocol.rs": {
+      "path": "C:\\ms1020\\workbench_host\\src\\fs_watch_protocol.rs",
+      "bytes": 5905,
+      "sha256": "c81ab1fa88c469c4ea50e6b4c000c51f325b132d3d959728c7367393dbc6bcd1"
+    },
+    "workbench_host/src/protocol.rs": {
+      "path": "C:\\ms1020\\workbench_host\\src\\protocol.rs",
+      "bytes": 96332,
+      "sha256": "95bac0db9b6853d461d7129874271a36487978f508cce0143bc9558901341ab3"
+    }
+  },
+  "unrelated_source_bytes_unchanged": true,
+  "widget_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\result.json",
+    "bytes": 3822,
+    "sha256": "e1799b2bc67b5d90420aea861bd654e6c7c6d3e7aee16e6b5e42fa5092fd932f"
+  },
+  "prior_compile_failure_preserved": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1593\\failure.json",
+    "bytes": 1451,
+    "sha256": "0e135a9f77ab9692acb664aa86fc20400907006c0866d5c534e0c2aaacba92cc"
+  },
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

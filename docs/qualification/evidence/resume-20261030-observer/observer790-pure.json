@@ -1,0 +1,210 @@
+{
+  "status": "INTEGRATED_OBSERVERS_PURE_SCOPED_PASS",
+  "source_digest": "9eadbd6fadba05cd731272819967552daa854cf30cdad1f9e35674ef9e5a4075",
+  "canonical_files": {
+    "ParentSession042.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSession042.cs",
+      "bytes": 5608,
+      "sha256": "3b859cdaa097a88cc08a48a6da50fef066f09ab40e97aad08c4ba4b7b14927f9"
+    },
+    "ParentSessionPure042.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSessionPure042.cs",
+      "bytes": 16354,
+      "sha256": "4b4ca68b7389b827ddb6d8d1c8dc83f1f3647c5539c9728daaefd8614d87b5b4"
+    },
+    "Root47-QA1855.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47-QA1855.cs",
+      "bytes": 2757,
+      "sha256": "6e45c5789b29ee11d8926b3a97ed7174504b1c3db19f143a1f3f8cc85977c2f0"
+    },
+    "Root47Controller1725.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.cs",
+      "bytes": 51137,
+      "sha256": "a54439dc267e8d56f1e99089fe56d9d6ecf4d0774bddf30580a4cb4ccd029b22"
+    },
+    "Root47Controller1725.IO.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.IO.cs",
+      "bytes": 18457,
+      "sha256": "3e9a3e8cbe388781255e7bb1e93913683319ea7aacf60cb458211da888bb52c6"
+    },
+    "Root47Controller1725.Privileges.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.Privileges.cs",
+      "bytes": 5905,
+      "sha256": "382bb416b90fca44c5f3e7ee161c197805d846c7ad43243f273d27224223d908"
+    },
+    "Root47Controller1725.Pure.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.Pure.cs",
+      "bytes": 16673,
+      "sha256": "cf35a6b63509f9b8d05cd3c213386c45c3df1c90bbcdea84ea937721a478c552"
+    },
+    "Root47Controller1725.PureTests.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.PureTests.cs",
+      "bytes": 21040,
+      "sha256": "fd3ca72d314266dfcb13db7afdaab394cfef890942e769ce35f443706500be3c"
+    },
+    "Root47FirstPrompt2169.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47FirstPrompt2169.cs",
+      "bytes": 3147,
+      "sha256": "4b6c7f7fd51aed61896e115bd224bd515fe651f7c3f01d0ef8a4f1130ffac3cb"
+    },
+    "Root47FirstPrompt2169.PureEntry.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47FirstPrompt2169.PureEntry.cs",
+      "bytes": 2386,
+      "sha256": "c9b15243ad91feaea1e87d18ab0f8f43d96fc7bd817c30f18772cd6db9e40d91"
+    },
+    "Root47FirstPrompt2169.PureTests.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47FirstPrompt2169.PureTests.cs",
+      "bytes": 6173,
+      "sha256": "2b5a4005d36051c279fb9f987fb37174990cdc551b6df1d035fccd34584aed5a"
+    },
+    "RootP2SourcePolicy039.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootP2SourcePolicy039.cs",
+      "bytes": 8077,
+      "sha256": "2f08b79c0f69cd3ccb2bd50349e3f601dbb298abfd3444c511682c0fa3348d3d"
+    },
+    "RootPPrebirth1682.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1682.cs",
+      "bytes": 37846,
+      "sha256": "ff36eb7da94931bc19ad076b1b51e1308b8f3ed60e29f04026b369046e72e92f"
+    },
+    "RootPPrebirth1682.Pure.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1682.Pure.cs",
+      "bytes": 14106,
+      "sha256": "0104ad0237e70e60cb513d5ce57e7a8b1da6e62153a7973bfb4fa9a645944746"
+    },
+    "RootPPrebirth1682.PureTests.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1682.PureTests.cs",
+      "bytes": 15596,
+      "sha256": "da0663436b4bde14de2da892eb12edea75465d38a795e34493b7bf5625e2f5e9"
+    },
+    "RootPPrebirth1701.Input.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Input.cs",
+      "bytes": 17910,
+      "sha256": "285e9190a88bf59e3bc0b707cf56a12fcb9079659358b8007435875fee6bec55"
+    },
+    "RootPPrebirth1701.InputPureTests.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.InputPureTests.cs",
+      "bytes": 9396,
+      "sha256": "f4995733af8c9ebe5881eff616b63d2e726d30acb3a1731b250f533435a72d4d"
+    },
+    "RootPPrebirth1701.Protocol.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Protocol.cs",
+      "bytes": 9318,
+      "sha256": "7283a096e15eee281e39685f043ba92dfc6097aaa5cf32bf2d614d05bf381d4b"
+    },
+    "RootPPrebirth1718.Metadata.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1718.Metadata.cs",
+      "bytes": 2798,
+      "sha256": "b6bc62d5999844b369b80554d6472b73ccd16972c71d4e95091518abaa8e4ebd"
+    },
+    "RootPPrebirth1718.MetadataPureTests.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1718.MetadataPureTests.cs",
+      "bytes": 9796,
+      "sha256": "15a2216bffaba40481755a41507057601d17452f9cd0210e2376eff40aecc57b"
+    },
+    "RoundPrompt042.cs": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RoundPrompt042.cs",
+      "bytes": 3046,
+      "sha256": "4a29018f1c119effcad10db2994de4c31f771ff8068dd4206cca1fd8dac69e77"
+    }
+  },
+  "tests": [
+    {
+      "label": "begin_shared4",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 4,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\begin_shared4.exe",
+        "bytes": 209408,
+        "sha256": "b7f57b35aee179252bf73354d9dd141f19c4cccad5fc708ffc363ff47dbb8ef1"
+      }
+    },
+    {
+      "label": "normal85",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 85,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\normal85.exe",
+        "bytes": 177664,
+        "sha256": "a1a156c6fd74e8a032acb72d0fd56d98d186a1a0849c2a67eddc6da8c7c046fa"
+      }
+    },
+    {
+      "label": "normal95",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 95,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\normal95.exe",
+        "bytes": 177152,
+        "sha256": "c08312b8a62922ba77c1d6a69eb3a4a9416b4abb6b8e6ec5ea7b00d94b353887"
+      }
+    },
+    {
+      "label": "shared17",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 17,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\shared17.exe",
+        "bytes": 208896,
+        "sha256": "a91fdba8fe5928bc741786f77d7e55ec95e3661a8dae59578712dedf362d210e"
+      }
+    },
+    {
+      "label": "progress7",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 7,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\progress7.exe",
+        "bytes": 208896,
+        "sha256": "580adbac4932d23fcf266207dc0e69c6524d4276977c982b905647b4a7f85475"
+      }
+    },
+    {
+      "label": "base22",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 22,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\base22.exe",
+        "bytes": 208896,
+        "sha256": "52c3ff50b805c3e4d6c54e80c5ee82b5c123bf2982bb6a297c360507ab134584"
+      }
+    },
+    {
+      "label": "runtime56",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 56,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\runtime56.exe",
+        "bytes": 208896,
+        "sha256": "d2ee52d72931ca3769974eca286ce78340404d7ed1bcac91d9c8e94fca72387d"
+      }
+    },
+    {
+      "label": "single70",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "expected_passes": 70,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\single70.exe",
+        "bytes": 185856,
+        "sha256": "c6d42d2695fac503225b3d7b30d479f912c95ef0010f34edb8386e76ca681642"
+      }
+    }
+  ],
+  "normal_suites_overlap_not_summed": true,
+  "shared_begin_tests_repeat_normal_cases": true,
+  "source_unchanged": true,
+  "VM_calls": 0,
+  "native_calls": 0,
+  "original_owner_contacts": 0,
+  "product_starts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

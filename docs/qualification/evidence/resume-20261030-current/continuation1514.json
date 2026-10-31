@@ -1,0 +1,145 @@
+{
+  "status": "RUNNING_ACTUAL_WATCH_GAP_AND_CLOSE_REFUSAL_PROVEN_PRODUCT_BOUNDARIES_OPEN",
+  "utc": "2026-10-31T19:24:36.578521+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "caaf6916ad013ed6a2e25a0b430c56c3a497899198c5621024fa3f34cd273e9a",
+  "previous_checkpoint": "continuation1499.json",
+  "managed_watch": {
+    "review": 1513,
+    "methods": 56,
+    "managed_integration_methods": 14,
+    "unit_only_real_close_refusal_methods": 1,
+    "regression_methods": 41,
+    "original_processes_returned": 66,
+    "original_managed_threads_joined": 14,
+    "actual_watch_and_ancestor_handles_closed": 72,
+    "actual_handles_retained_without_native_close_proof": 6,
+    "actual_task_frames_reference_decoded": 10,
+    "actual_SDK_languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "actual_frames_per_SDK_language": 2,
+    "cumulative_fuel_and_raw_task_imports": true,
+    "known_original_owners_returned": 10,
+    "isolated_unknown_negative_cases": 4,
+    "negative_test_processes_closed": true,
+    "whole_owner_retained_on_unknown": true,
+    "first_native_close_failure_stops_other_closes": true,
+    "real_gap_delivered_as_terminal_without_rearm": true,
+    "native_closure_join_disconnect_maintenance_separate": true,
+    "counts": {
+      "ancestor_handles": 52,
+      "ancestor_closes": 48,
+      "native_handles": 26,
+      "native_close_calls": 25,
+      "native_confirmed": 24,
+      "reads": 20,
+      "completions": 20,
+      "observed_frames": 15,
+      "delivered_frames": 12
+    },
+    "cold_compiler_outputs": true,
+    "selected_integration_lint_diagnostics": 0,
+    "unit_refusal_rustc_warnings_denied": true,
+    "unit_refusal_clippy_not_run": true,
+    "protected_picker_selection": false,
+    "production_UI": false,
+    "full_snapshot_or_recovery": false,
+    "volume_root_supported": false
+  },
+  "low_level_native_review": {
+    "review": 1506,
+    "source_digest": "f76a8d020f5937a659b5ce8fbc6caee55dacac24bb626ac4f28ccd7df13e1c05",
+    "original_scenarios": 8,
+    "positive_native_closes": 12,
+    "close_refusal_unproved_native_handles": 2,
+    "counts_not_added_to_managed_checks": true
+  },
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "original_frozen_inputs_unchanged": 57,
+  "correction": {
+    "failed1502": "Actual first CloseDirectory error6 was latched but old code still attempted and confirmed the event close; raw original stdout preserved.",
+    "corrected1503": "Return immediately after the first native close failure; no subsequent native close.",
+    "failed1508": "Compile-only E0433 in unit fixture; no runtime started.",
+    "corrected1510": "Use unit-only explicit Kernel32 ABI; production dependencies unchanged.",
+    "failed_driver1502_facts": "Expected values were recorded in the failed driver facts; original raw stdout is authoritative. Corrected cases parse measured counters.",
+    "original_failures_preserved": true
+  },
+  "cleanup": {
+    "source_and_executable_removals": 0,
+    "status": "PASS_CLOSED_WATCH_RUNTIME1486_ORIGINAL_LIBRARY_RECLAIMED",
+    "free_before": 2913439744,
+    "source_accepted": false,
+    "removed_files": 300,
+    "preserved_files": 1940,
+    "old_owner_contacts": 0,
+    "plan_sha256": "5607924f05006dcdb6c382031e9fb12c9c56fe778f80bfb04a0a583be23c127b",
+    "observed_free_delta": 397357056,
+    "concurrent_space_changes_not_attributed": true,
+    "free_after": 3310796800,
+    "protected_artifacts_equal": true,
+    "release_eligible": false,
+    "VM_calls": 0,
+    "logical_bytes_removed": 396703568
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "VM_actions_this_stage": 0,
+  "old_owner_contacts": 0,
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57283051520,
+    "D": 2598342656
+  },
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Implement and qualify protected picker and production approval/recovery, then remaining Windows P2/P3 and SDK matrix; preserve historical source bindings."
+}

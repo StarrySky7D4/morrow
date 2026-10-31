@@ -1,0 +1,17 @@
+{
+  "status": "PASS_SCOPED_CLOSED_LIBRARY_ORIGINAL_HISTORY_UNCHANGED",
+  "original_host_process_returned": true,
+  "host_exit_code": 0,
+  "history_records": 1,
+  "original_unknown": true,
+  "original_revision": 2,
+  "original_acknowledged": false,
+  "original_upload_calls": 0,
+  "actions": [
+    "blobUploadHistoryList",
+    "blobUploadHistoryInspect",
+    "blobUploadHistoryList"
+  ],
+  "delivery_actions": 0,
+  "old_owner_contacts": 0
+}

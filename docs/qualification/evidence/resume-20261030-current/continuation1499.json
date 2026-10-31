@@ -1,0 +1,195 @@
+{
+  "status": "RUNNING_MANAGED_WATCH_AND_THREE_SDK_GUESTS_PROVEN_PRODUCT_BOUNDARIES_OPEN",
+  "utc": "2026-10-31T17:32:23.843114+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "6bdd867f3d507030a7020243521af535a1d7994dee324f4c65054b03e14ca75b",
+  "previous_checkpoint": "continuation1489.json",
+  "managed_watch": {
+    "review": 1498,
+    "methods": 54,
+    "new_managed_worker_methods": 13,
+    "regression_methods": 41,
+    "original_managed_threads_joined": 12,
+    "foreign_owner_rejected_before_clock_and_thread": true,
+    "actual_watch_and_ancestor_handles_closed": 66,
+    "actual_task_frames_reference_decoded": 8,
+    "actual_SDK_languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "actual_frames_per_SDK_language": 2,
+    "cumulative_fuel_and_raw_task_imports": true,
+    "default_task_accounting_unchanged": true,
+    "known_original_owners_returned": 9,
+    "isolated_unknown_negative_cases": 3,
+    "negative_test_processes_closed": true,
+    "whole_owner_retained_on_unknown": true,
+    "native_closure_join_disconnect_maintenance_separate": true,
+    "counts": {
+      "ancestor_handles": 44,
+      "native_handles": 22,
+      "reads": 17,
+      "completions": 17,
+      "observed_frames": 13,
+      "delivered_frames": 10
+    },
+    "cold_compiler_outputs": true,
+    "lint_diagnostics": 0,
+    "protected_picker_selection": false,
+    "production_UI": false,
+    "actual_native_overflow": false,
+    "actual_native_close_failure": false,
+    "volume_root_supported": false
+  },
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "previous_watch_authority": {
+    "review": 1473,
+    "source_digest": "c3f125ede13291ca271e954d9f6a0d86107c1237912bb6df3b1e92407847aed2",
+    "prior_core_methods": 70,
+    "selected_methods": 54,
+    "overlapping_methods_not_added": true,
+    "independent_persistent_approval": true,
+    "exact_live_window": true,
+    "one_window_per_original_IO_context": true,
+    "formal_product_UI": false
+  },
+  "previous_native_watch": {
+    "review": 1487,
+    "methods": 33,
+    "native_integration_methods": 13,
+    "live_approval_regressions": 11,
+    "original_IO_regressions": 9,
+    "all_compiler_outputs_cold": true,
+    "lint_diagnostics": 0,
+    "original_native_test_threads_joined": 13,
+    "counts": {
+      "ancestor_objects": 46,
+      "ancestor_close_calls": 46,
+      "ancestor_confirmed": 46,
+      "native_handles": 15,
+      "native_close_calls": 15,
+      "native_confirmed": 15,
+      "reads": 10,
+      "completions": 10,
+      "frames": 5,
+      "cancels": 5,
+      "relative_leaf_opens": 10
+    },
+    "actual_original_watch_and_ancestor_handles_closed": 61,
+    "actual_native_payloads": 5,
+    "reference_decoder_verified_exact_UTF16": true,
+    "original_shared_IO_budget": true,
+    "host_nominated_relative_capture": true,
+    "managed_watch_worker": false,
+    "actual_guest_dispatch": false,
+    "protected_picker_selection": false,
+    "formal_UI": false,
+    "volume_root_supported": false,
+    "actual_native_overflow": false,
+    "actual_native_close_failure": false,
+    "business_rename": false
+  },
+  "original_frozen_inputs_unchanged": 57,
+  "correction": {
+    "failed1493": "fuel fixture supplied enough for two frames; original six native handles and worker known closed",
+    "corrected1495": "4000 cumulative fuel with no runtime implementation change",
+    "original_failures_preserved": true
+  },
+  "cleanup": {
+    "reclaimed1491": {
+      "free_after": 3976130560,
+      "VM_calls": 0,
+      "source_accepted": false,
+      "removed_files": 167,
+      "observed_free_delta": 297066496,
+      "preserved_files": 2389,
+      "concurrent_space_changes_not_attributed": true,
+      "old_owner_contacts": 0,
+      "status": "PASS_CLOSED_WATCH_RUNTIME1472_ORIGINAL_RLIB_RECLAIMED",
+      "protected_artifacts_equal": true,
+      "logical_bytes_removed": 296706834,
+      "plan_sha256": "76967a816c7d5c5a398503c8b7e9ef51006e8e664e37eb22bfb7dbe133f7ec0c",
+      "source_and_executable_removals": 0,
+      "release_eligible": false,
+      "free_before": 3679064064
+    },
+    "reclaimed1496": {
+      "plan_sha256": "c2c5ae9c2ffeac105aca004bea599101d43e78a3f3d5f80fc380e1198280ea25",
+      "old_owner_contacts": 0,
+      "status": "PASS_CLOSED_PARENT062_ORIGINAL_COMPILER_LIBRARIES_RECLAIMED",
+      "preserved_files": 6246,
+      "free_after": 4594495488,
+      "removed_files": 1449,
+      "release_eligible": false,
+      "logical_bytes_removed": 2662814540,
+      "concurrent_space_changes_not_attributed": true,
+      "protected_artifacts_equal": true,
+      "source_accepted": false,
+      "observed_free_delta": 1302671360,
+      "VM_calls": 0,
+      "free_before": 3291824128,
+      "source_and_executable_removals": 0
+    },
+    "marker_preflight1490_deleted_files": 0,
+    "prior_parent_cache_identified_by_original_compiler_output_proof": true
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "VM_actions_this_stage": 0,
+  "old_owner_contacts": 0,
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57345769472,
+    "D": 3754549248
+  },
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Qualify protected picker and product approval, terminal gap/overflow/native-close-failure handling and remaining Windows P2/SDK matrix; historical components retain original source bindings."
+}

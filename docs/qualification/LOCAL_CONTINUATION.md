@@ -1,7 +1,7 @@
 # Local continuation, 2026-10-21
 
-Status: **paused by direct user instruction on 2026-10-30; case736 Unknown retained; SDK738 scoped 13 passed; VM047 Saved; four VMs registered; source and release are not accepted**.
-See [the current pause and publication handoff](PAUSED_WINDOWS_20261030.md). Historical results below retain their original source and VM-state boundaries.
+Status: **paused by explicit user instruction on 2026-11-01; checkpoint1624 preserves protected watch results, staged UI checks and uncompiled current changes. Complete Windows P2/P3, SDK and release gates remain open. No development or VM work until the user resumes**.
+See [the current continuation](RESUMED_WINDOWS_20261030.md) and [pause/checkpoint1624](PAUSED_WINDOWS_20261101.md). The [2026-10-30 pause](PAUSED_WINDOWS_20261030.md) and historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
 `116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
 `morrow` checkout and its unrelated work were not used as the implementation tree.

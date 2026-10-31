@@ -1,4 +1,4 @@
-// SOURCE ONLY. Real Dart channel/controller with an ordinary Python protocol
+// SOURCE ONLY. Real Dart channel/controller with an ordinary Dart binary protocol
 // fixture. No real supervisor, Job, protected library, native host or authority.
 import 'dart:async';
 import 'dart:convert';
@@ -83,30 +83,35 @@ final class _SupervisorFixture {
   final releaseLocale = Completer<void>(), releasePrivate = Completer<void>();
 
   static Future<_SupervisorFixture> open(
-    String python,
+    String dart,
     Directory parent,
     SessionPipeScript script, {
     bool connect = true,
   }) async {
-    if (!File(python).isAbsolute || !await File(python).exists()) {
-      throw ArgumentError('ROOT must supply a fixed absolute ordinary Python');
+    if (!File(dart).isAbsolute || !await File(dart).exists()) {
+      throw ArgumentError('ROOT must supply a fixed absolute ordinary Dart');
     }
     if (!parent.isAbsolute || !await parent.exists()) {
       throw ArgumentError('ROOT must supply an independent retained evidence directory');
     }
     final dir = await parent.createTemp('supervised-session-synthetic-');
-    final source = await File('test/supervised_session_fake.py').readAsBytes();
-    await File('${dir.path}/fake_supervisor.py').writeAsBytes(
+    final source = await File('test/supervised_session_fake.dart').readAsBytes();
+    await File('${dir.path}/fake_supervisor.dart').writeAsBytes(
       source, mode: FileMode.writeOnly, flush: true,
     );
+    await Directory('${dir.path}/support').create();
+    await File('test/support/workbench_supervision_fixture.dart').copy(
+      '${dir.path}/support/workbench_supervision_fixture.dart',
+    );
+    final packages = File('.dart_tool/package_config.json').absolute.path;
     final process = await Process.start(
-      python, ['-I', '-S', '-B', '${dir.path}/fake_supervisor.py'],
+      dart, ['--packages=$packages', '${dir.path}/fake_supervisor.dart'],
       workingDirectory: dir.path,
       includeParentEnvironment: false,
       environment: {
         for (final k in ['SYSTEMROOT', 'WINDIR'])
           if (Platform.environment[k] != null) k: Platform.environment[k]!,
-        for (final k in ['TEMP', 'TMP', 'HOME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA'])
+        for (final k in ['TEMP', 'TMP', 'APPDATA', 'LOCALAPPDATA', 'DART_DATA_DIR'])
           k: dir.path,
       },
     );
@@ -248,8 +253,8 @@ final class _SupervisorFixture {
       'close_error_detail': detail(closeError),
       'server_error_type': _serverError?.runtimeType.toString(),
       'server_error_detail': detail(_serverError),
-      'python_child_error': '${directory.path}/child-error',
-      'python_reader_error': '${directory.path}/reader-error',
+      'dart_child_error': '${directory.path}/child-error',
+      'dart_reader_error': '${directory.path}/reader-error',
       'retained': true,
     }), mode: FileMode.writeOnly, flush: true);
     expect(
@@ -274,12 +279,12 @@ final class _SupervisorFixture {
 }
 
 void main() {
-  final python = Platform.environment['MORROW_TEST_PYTHON'];
+  final dart = Platform.environment['MORROW_TEST_DART'];
   final evidence = Platform.environment['MORROW_SUPERVISED_SESSION_EVIDENCE'];
-  final skip = python == null || evidence == null
-      ? 'ROOT supplies fixed ordinary Python and retained synthetic evidence root' : false;
+  final skip = dart == null || evidence == null
+      ? 'ROOT supplies fixed ordinary Dart and retained synthetic evidence root' : false;
   Future<_SupervisorFixture> start(SessionPipeScript script, {bool connect = true}) =>
-      _SupervisorFixture.open(python!, Directory(evidence!), script, connect: connect);
+      _SupervisorFixture.open(dart!, Directory(evidence!), script, connect: connect);
   final discoverySkip = skip != false ? skip :
       Platform.environment['MORROW_AGENT_DISCOVERY_FIXTURES'] == null
           ? 'ROOT supplies actual Rust discovery fixture directory' : false;
@@ -493,7 +498,7 @@ void main() {
       await omit.writeAsString('ordinary synthetic omission only', flush: true);
       await f.channel.closeInput();
       await _SupervisorFixture.until(() => f.channel.supervision.value?.phase == 'Closing');
-      // The Python peer is held after its actual Closing observation. This
+      // The Dart peer is held after its actual Closing observation. This
       // public-only forgery must never become original validated owner proof.
       f.channel.supervision.value = WorkbenchSupervisionState({
         ...f.channel.supervision.value!.record,

@@ -1,0 +1,2032 @@
+{
+  "lib\\animated_slider_style.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\animated_slider_style.dart",
+    "bytes": 14308,
+    "sha256": "11883654271d29202b885ba078b89cdce782d45f0c2daee8e340adb81cd52969"
+  },
+  "lib\\appearance.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\appearance.dart",
+    "bytes": 29791,
+    "sha256": "8d0b6cc4898368f0988588339adf87c090c409e6df8157d8487d8b1b10e0341e"
+  },
+  "lib\\card_order_preferences.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\card_order_preferences.dart",
+    "bytes": 4729,
+    "sha256": "4cc4dd36edd34bfe899dd66fa9c6b941f155f196c621d8b9e642d581f9fd0096"
+  },
+  "lib\\card_tips_editor.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\card_tips_editor.dart",
+    "bytes": 3143,
+    "sha256": "5dffdc4dfd6f45c17e7145721815e6070976e1e687cbeedba572dbf17c8c4c0d"
+  },
+  "lib\\collapsible_panel.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\collapsible_panel.dart",
+    "bytes": 2948,
+    "sha256": "ce80dce0a04dfcd4f5206f2e43d6bf1629e247b38fefadb99602f0be4a2d4d99"
+  },
+  "lib\\color_compass.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\color_compass.dart",
+    "bytes": 9329,
+    "sha256": "e92ac51d27b60db64b257f9d4a5751401ccd4053c628bdc5fb1222a018ae79c0"
+  },
+  "lib\\component_context_menu.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\component_context_menu.dart",
+    "bytes": 3018,
+    "sha256": "9de2d33330a9676bed8170fdb49a3344a2b324df639a895d7463a5155b44e2ac"
+  },
+  "lib\\component_material_page.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\component_material_page.dart",
+    "bytes": 32683,
+    "sha256": "a1971ef7b3bbd33835b53e2a964c753653de78d8cff1a3c840707991da46a9cd"
+  },
+  "lib\\desktop_frame.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\desktop_frame.dart",
+    "bytes": 7543,
+    "sha256": "9ac25bb144b285583d4084253779000c874b53335b33c464f4bf90a61ab73ec4"
+  },
+  "lib\\editor_draft_handoff_recovery_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\editor_draft_handoff_recovery_dialog.dart",
+    "bytes": 11856,
+    "sha256": "2d7e92cbcc52d67ddb423c286189265298795de2fabc5403de4941a5269262ad"
+  },
+  "lib\\editor_draft_history_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\editor_draft_history_dialog.dart",
+    "bytes": 14786,
+    "sha256": "2d65ca61123ab9d3770efda3f4e3947f19df762887ec37cefbed6e9763dcc668"
+  },
+  "lib\\editor_draft_import_recovery_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\editor_draft_import_recovery_dialog.dart",
+    "bytes": 8550,
+    "sha256": "e5fd98511090935dc5edd60247c335d7e63d691b3f5bdc209cd8f130f356bba6"
+  },
+  "lib\\editor_draft_recovery_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\editor_draft_recovery_dialog.dart",
+    "bytes": 5595,
+    "sha256": "4c86d479d51f24f987146dbfd1c1347de4f8c32d1b3c503058e95746afcbe1c0"
+  },
+  "lib\\editor_recovery_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\editor_recovery_dialog.dart",
+    "bytes": 8079,
+    "sha256": "642b94066d3c42c4f1e6fed357663665a81552c83feb311acefa664ffc5e0d4a"
+  },
+  "lib\\experimental_controls.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\experimental_controls.dart",
+    "bytes": 20033,
+    "sha256": "15ed5fc306956c559a6c41c1e11bcdb52db9937d4cdf64e5cabd77bc4e2c0ccb"
+  },
+  "lib\\hold_reorder.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\hold_reorder.dart",
+    "bytes": 7415,
+    "sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007"
+  },
+  "lib\\liquid_glass.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\liquid_glass.dart",
+    "bytes": 13247,
+    "sha256": "65f0fca6c8fb3809f06f734174c777f6015991f5632d69ca10e966b9be2743ad"
+  },
+  "lib\\little_tips.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\little_tips.dart",
+    "bytes": 6314,
+    "sha256": "ce95ca428852b773d63bdf15d772d0f2bdb677647792d641f82f9c4f802b9c8c"
+  },
+  "lib\\main.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\main.dart",
+    "bytes": 243243,
+    "sha256": "d00a9c22a6a04331a03612767e2efcec3eef2bc785a325b26f4669920857221b"
+  },
+  "lib\\main_rust.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\main_rust.dart",
+    "bytes": 19263,
+    "sha256": "84d4a541ebd108caaa70251f5c8f750c2023ca3271e4de473cccb90f16069269"
+  },
+  "lib\\main_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\main_web.dart",
+    "bytes": 7553,
+    "sha256": "935f7c43d38b42cbade581e8169447a134746165fefe8ff5306840dc809f7fa5"
+  },
+  "lib\\neumorphic_controls.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\neumorphic_controls.dart",
+    "bytes": 46032,
+    "sha256": "a80141815bb7f79fc30ebf77803aa61e7e5b354c51589a51f14cc0fc10d2df0d"
+  },
+  "lib\\pending_ui_writes.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\pending_ui_writes.dart",
+    "bytes": 675,
+    "sha256": "5f981c5b98366f60a8e6764f0235b441a5223027f6cf3cc4db01582b9dd40185"
+  },
+  "lib\\render_stable_masonry_grid.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\render_stable_masonry_grid.dart",
+    "bytes": 25095,
+    "sha256": "c92c1c266933792c7e1823f95cd088de7790f54da3079cd4dcf0b4a6aa1be6e0"
+  },
+  "lib\\save_recovery.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\save_recovery.dart",
+    "bytes": 581,
+    "sha256": "50f879ca42b2108540041d0c6aef95095f4137048e4690cf0a30c7f6f4a4b60f"
+  },
+  "lib\\save_recovery_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\save_recovery_dialog.dart",
+    "bytes": 4111,
+    "sha256": "9b91ae9862a35cd57319fc05014656e7029d69e22d090d78af07a67e9ca337ab"
+  },
+  "lib\\settings_page_transition.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\settings_page_transition.dart",
+    "bytes": 4394,
+    "sha256": "5202d328638b9e569c22407acae84efc2d961a68ab1756f5c8883c90dac00b9d"
+  },
+  "lib\\settings_surface.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\settings_surface.dart",
+    "bytes": 7805,
+    "sha256": "663664a9e0560af7c8218709a8af14da9d7cf87a3b8b757465f4c6e2eff234f6"
+  },
+  "lib\\stable_masonry_grid.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\stable_masonry_grid.dart",
+    "bytes": 1754,
+    "sha256": "935bcb5562b1ed3153dd7c36d2a8dca600c5654c335351a060e5aecb12cae0cd"
+  },
+  "lib\\storage.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\storage.dart",
+    "bytes": 1531,
+    "sha256": "c1726effe2bf4355b724a7156ebc271264e13bd8aec7dc3c5cf3de40ee2f3aa2"
+  },
+  "lib\\storage_migration.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\storage_migration.dart",
+    "bytes": 95,
+    "sha256": "6bdb140d64d0d7be425c3ec1b9bc8f1431402077b2e4da08a445fc2b6d872e1c"
+  },
+  "lib\\storage_migration_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\storage_migration_native.dart",
+    "bytes": 1359,
+    "sha256": "ca2e26ad5c1bb351728d04bca5c87083c59aadc4070d547606342176212e92d8"
+  },
+  "lib\\storage_migration_stub.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\storage_migration_stub.dart",
+    "bytes": 45,
+    "sha256": "18326d4c9c74802f6d631aa91f9778fdf235cf56d258bd16f881d333c47efbc7"
+  },
+  "lib\\styled_checkbox.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\styled_checkbox.dart",
+    "bytes": 14979,
+    "sha256": "b9b14da6df8476a6dcdeb08edf424a1c918573ba1cadcda9c6d0c5cae10e2bbd"
+  },
+  "lib\\style_depth_slider.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\style_depth_slider.dart",
+    "bytes": 1854,
+    "sha256": "0f085110a6f8492e17ebc605d8e6e88068acb35a7a10bf8b471f70d13cfa3fdf"
+  },
+  "lib\\style_input_border.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\style_input_border.dart",
+    "bytes": 5405,
+    "sha256": "76d34d589c784f7a25709fc88371d2872551b0f110e35546d057641a8a96037e"
+  },
+  "lib\\surface_motion.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\surface_motion.dart",
+    "bytes": 5240,
+    "sha256": "1db606a87ccc6dd703fb365ed651f44934919d95199be387b495b1d35fadceb1"
+  },
+  "lib\\surface_paint_boundary.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\surface_paint_boundary.dart",
+    "bytes": 845,
+    "sha256": "6276d5aa2f6d08860cf18eb5de9b1a6b00cd38ebe8e2f875e6715635f6476cfc"
+  },
+  "lib\\switch_icon_transition.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\switch_icon_transition.dart",
+    "bytes": 4291,
+    "sha256": "7003650d58da5ab436560f422843a6ce1c13955c284ab14adf61abe06dfc489a"
+  },
+  "lib\\tip_list_editor.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\tip_list_editor.dart",
+    "bytes": 14941,
+    "sha256": "fefdce765a39cd0ac78adf786a91f9267211ed7a844d298d5051874fe75104ea"
+  },
+  "lib\\tip_preferences.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\tip_preferences.dart",
+    "bytes": 7541,
+    "sha256": "82563338a1f706d64653dde84b4b4c07bb0966872e9e73c81d6117033b5f30ee"
+  },
+  "lib\\versioned_task_panel.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\versioned_task_panel.dart",
+    "bytes": 21175,
+    "sha256": "f97ec18ec42b4f6f33963eb0eb5da15a137f2588f6e4915c7db99f7e6d40c9a3"
+  },
+  "lib\\visual_style_picker.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\visual_style_picker.dart",
+    "bytes": 14219,
+    "sha256": "f3f6c249069ff187689d35581fb014842ae40b62b95342f4986bf6072aa46b52"
+  },
+  "lib\\windows_editor_shortcuts.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\windows_editor_shortcuts.dart",
+    "bytes": 1409,
+    "sha256": "35fac0276bb3eb65003715a512e36d0f086dd78808bd1a75953db05ffc95a57a"
+  },
+  "lib\\window_effects.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\window_effects.dart",
+    "bytes": 1768,
+    "sha256": "e96a296d07cafaa4e21bf9d864916059cdad7ba2cdbd71ab96d97295cf97d3bd"
+  },
+  "lib\\workspace_viewport.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\workspace_viewport.dart",
+    "bytes": 6205,
+    "sha256": "9dddd881aa4e71d354e6049f6db815fe98ab09246cad0d3071de70adc594f85c"
+  },
+  "test\\fs_watch_manager_test.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\test\\fs_watch_manager_test.dart",
+    "bytes": 9848,
+    "sha256": "1c7d6d2e4c5eba453aa1b4d23b261ed67b62b7300d075bcb854d6d31d59cad5b"
+  },
+  "test\\fs_watch_session_checks.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\test\\fs_watch_session_checks.dart",
+    "bytes": 9106,
+    "sha256": "f62e149d87d374bd6102c153456c764084bd9b712488843a7b1756b40f0a2df4"
+  },
+  "test\\fs_watch_wire_checks.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\test\\fs_watch_wire_checks.dart",
+    "bytes": 9670,
+    "sha256": "13721a42aed3fd8c582a93400fcbe1b35899e3cee113a4b68c8493028c26ee35"
+  },
+  "l10n\\parts\\imports.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.de.arb",
+    "bytes": 2771,
+    "sha256": "4be16d3ec33573485eb77148503b4eaa58ffd7113404112a774276be095245b6"
+  },
+  "l10n\\parts\\imports.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.en.arb",
+    "bytes": 2662,
+    "sha256": "4617275733e7ffdf9a7ec348b6f736cbc68bca8b5a98dfddb1129f13c30ef780"
+  },
+  "l10n\\parts\\imports.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.es.arb",
+    "bytes": 2669,
+    "sha256": "de9a346dc16fd2583d57c9ec52d51797d0cd0da7080f092f76c9906cc6b96466"
+  },
+  "l10n\\parts\\imports.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.fr.arb",
+    "bytes": 2790,
+    "sha256": "3920f10ae0a40e381ed0c1ae27c31641b6d572c2950c369028695afd593aa835"
+  },
+  "l10n\\parts\\imports.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.ja.arb",
+    "bytes": 3404,
+    "sha256": "a069170d76e5df8696313409f35c448627624ffabc62087de5454238c8325708"
+  },
+  "l10n\\parts\\imports.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.ko.arb",
+    "bytes": 2953,
+    "sha256": "fc0c3d0990584d3c111eab2e0c6c618c585e07d081c166a71f23115e8f4e5032"
+  },
+  "l10n\\parts\\imports.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.pt.arb",
+    "bytes": 2719,
+    "sha256": "fb74e510b060a6b334e8b81fe386154f3b113cc4a0a8fbbd22091d9feabdf85b"
+  },
+  "l10n\\parts\\imports.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.ru.arb",
+    "bytes": 3996,
+    "sha256": "6cebd62e58924af48c8fc699dde135107e8c75160da36b5e310089d9bda36c0c"
+  },
+  "l10n\\parts\\imports.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\imports.zh.arb",
+    "bytes": 2284,
+    "sha256": "a7079c39825e3966179fc24fec66cbc454389c5bdc41728253589c2ac4f78e3a"
+  },
+  "l10n\\parts\\main.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.de.arb",
+    "bytes": 32450,
+    "sha256": "9e0dff3b46370ffd5c434735c2573646576622328cfdd14578a196baf66ba1df"
+  },
+  "l10n\\parts\\main.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.en.arb",
+    "bytes": 29840,
+    "sha256": "174a64a079635cffeacd49e46a9ad0fa5b7105665d5e0baded3ab8c1b1911ea3"
+  },
+  "l10n\\parts\\main.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.es.arb",
+    "bytes": 31623,
+    "sha256": "0b82c8c75cc3348de1ae0b9461bdf7f3630902e9570a6b1392bb53954dc018ca"
+  },
+  "l10n\\parts\\main.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.fr.arb",
+    "bytes": 32760,
+    "sha256": "b31e128f02b16e2dd93f07007d83e9feabb5e4ace8dc8719f780a2e712cc2389"
+  },
+  "l10n\\parts\\main.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.ja.arb",
+    "bytes": 34763,
+    "sha256": "858ab5cae3689d2dfeaf4ccfb330091f46e4e95659b95db0682572aa6bbaa1b6"
+  },
+  "l10n\\parts\\main.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.ko.arb",
+    "bytes": 33109,
+    "sha256": "2b5b4e1e9d82e923dd0f456dbe6cb402858730c6e4e855fc1034fb80d388e4b3"
+  },
+  "l10n\\parts\\main.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.pt.arb",
+    "bytes": 31565,
+    "sha256": "14248eef15890dfdd2cc3d35b41d311d9405a29657b6062f6cd6a099ff473320"
+  },
+  "l10n\\parts\\main.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.ru.arb",
+    "bytes": 42494,
+    "sha256": "16811d5bbbdd7f2c40900b18f3f7cd9ca3bf5f50958a9c94840855c5104720c2"
+  },
+  "l10n\\parts\\main.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\main.zh.arb",
+    "bytes": 28645,
+    "sha256": "73c5ba21d3155f324acd71ca83fad8a83683d2b73f492c2b582fd586a87ef412"
+  },
+  "l10n\\parts\\plugins.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.de.arb",
+    "bytes": 57696,
+    "sha256": "83c2e49e95a06b145d265e39d1fdb6913044b7691dbf8ff6414818d75aadfc37"
+  },
+  "l10n\\parts\\plugins.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.en.arb",
+    "bytes": 52242,
+    "sha256": "e4c11fa6722cac17952c752e63ae85ccc4ad2a0a5172f649e9095974f315a0f4"
+  },
+  "l10n\\parts\\plugins.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.es.arb",
+    "bytes": 56202,
+    "sha256": "3f6e3a71e2379f4c5e4475f5a2b7003640109c4ff194f6ea4a6018b7d7aedbdf"
+  },
+  "l10n\\parts\\plugins.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.fr.arb",
+    "bytes": 58887,
+    "sha256": "9196cb9c849752944e452e86b0b797a6e4b9663d39d6c6c5f22dec37abe0df6a"
+  },
+  "l10n\\parts\\plugins.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.ja.arb",
+    "bytes": 62681,
+    "sha256": "d708363308581ca7786b7ad696e642b6e0258bec6c96cac04eafccf7d62ccbc2"
+  },
+  "l10n\\parts\\plugins.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.ko.arb",
+    "bytes": 57634,
+    "sha256": "f3492b680f0bdf26e377137aacab1d24216a8f28f1345ed5473cfec993c081ec"
+  },
+  "l10n\\parts\\plugins.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.pt.arb",
+    "bytes": 55506,
+    "sha256": "2d968c08fa3d21d73d5cca1cf925821081f9f814de0fb52eda80047bc022e8bb"
+  },
+  "l10n\\parts\\plugins.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.ru.arb",
+    "bytes": 77363,
+    "sha256": "c0232001d0403ece6916c9e04a339816266d991cdfbeccf12344bd50371f3fbc"
+  },
+  "l10n\\parts\\plugins.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\plugins.zh.arb",
+    "bytes": 49100,
+    "sha256": "0cdd9f60e9fe2ac1703cf8c5ab3a5e248adf3dc7b7686b2d92b1e023e9144c87"
+  },
+  "l10n\\parts\\recovery.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.de.arb",
+    "bytes": 5105,
+    "sha256": "935d5dd4b09fc62369c82bf05c4b724613fc85a001cc8b0057d23da1f7a27ba3"
+  },
+  "l10n\\parts\\recovery.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.en.arb",
+    "bytes": 4561,
+    "sha256": "b35c2d2ace605f15d7e9116019dc099c7a30e341f8ac701860dbf0af7085e472"
+  },
+  "l10n\\parts\\recovery.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.es.arb",
+    "bytes": 4630,
+    "sha256": "f65fd963ce5762ccf152954c062f89d951c24f2187c66288e41deac3b4a6952a"
+  },
+  "l10n\\parts\\recovery.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.fr.arb",
+    "bytes": 5000,
+    "sha256": "dcebbde60665c52fc4add5acef20d4d1f1c029b7a8baa8cafb0d333831af3436"
+  },
+  "l10n\\parts\\recovery.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.ja.arb",
+    "bytes": 5770,
+    "sha256": "d72e15349ee1554a8af71a0e48de1ad79429d4afb2a5386c6b889679c908b65a"
+  },
+  "l10n\\parts\\recovery.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.ko.arb",
+    "bytes": 5341,
+    "sha256": "76f79ff8a45aba107a95acd97039768f7a416339e4da2a721dafef14945fe07d"
+  },
+  "l10n\\parts\\recovery.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.pt.arb",
+    "bytes": 4679,
+    "sha256": "33286b6b9a505af1cd2fbd68116a1c05a23a6fd710f663d0ef89a95419ea3ebb"
+  },
+  "l10n\\parts\\recovery.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.ru.arb",
+    "bytes": 7361,
+    "sha256": "28ba15a0722b2619976c17c5a7271dd85ead8aa3ea7951b294128a5760d00158"
+  },
+  "l10n\\parts\\recovery.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\recovery.zh.arb",
+    "bytes": 4093,
+    "sha256": "4616a880a3703e700de0dfe8a8c5f29e39b5d4b9ed94bac7fceaa544c4e19fb4"
+  },
+  "l10n\\parts\\shutdown.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.de.arb",
+    "bytes": 641,
+    "sha256": "3bcef2c4bebaccf6c8831c80baddc92c93de4de9f8ec3a65135898f4e9c8e95b"
+  },
+  "l10n\\parts\\shutdown.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.en.arb",
+    "bytes": 584,
+    "sha256": "a11bb096b46fbc3b521d63dbaf14493ddba644ca7bba617cf4e97d52e56d1010"
+  },
+  "l10n\\parts\\shutdown.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.es.arb",
+    "bytes": 652,
+    "sha256": "5f95f682b09167237813fd8217789f80b2b3041a662f2f59ff80bc71a5e584a5"
+  },
+  "l10n\\parts\\shutdown.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.fr.arb",
+    "bytes": 670,
+    "sha256": "b0ee506cab50d1a34d0024142fef4f4ab18496f36a53a5c53de075727995c0b3"
+  },
+  "l10n\\parts\\shutdown.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.ja.arb",
+    "bytes": 788,
+    "sha256": "d950e63aaabbfcb333f4658b213d9cd115f520743ddca2b9a5b6783c85a3803c"
+  },
+  "l10n\\parts\\shutdown.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.ko.arb",
+    "bytes": 720,
+    "sha256": "a9a43c2f85153206a2b558687a1c8c52279511d0ca64762a010fd0c2f78757c5"
+  },
+  "l10n\\parts\\shutdown.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.pt.arb",
+    "bytes": 658,
+    "sha256": "1caafd5901ea7f24325d7758e9bbf9f72c76b82214724d6c7b09edea1acf828b"
+  },
+  "l10n\\parts\\shutdown.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.ru.arb",
+    "bytes": 925,
+    "sha256": "edb8ac458212781320242b0a5914d70be136c9b51c4ff382d163a21166a1a29d"
+  },
+  "l10n\\parts\\shutdown.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\shutdown.zh.arb",
+    "bytes": 545,
+    "sha256": "2020dc8681ccb468d4eae8936ddb089ddfaf29af49cc4ed31b0fe6972dc407af"
+  },
+  "l10n\\parts\\visual.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.de.arb",
+    "bytes": 22801,
+    "sha256": "413b8e4112a2743e075d52d311ee102f2da7ba302df0dfb7107a41a5af88cb98"
+  },
+  "l10n\\parts\\visual.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.en.arb",
+    "bytes": 21946,
+    "sha256": "718f5f2d28fdba96a4a7aa0701071a7d95bfbc13af1f6fccaf07db770a2ab880"
+  },
+  "l10n\\parts\\visual.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.es.arb",
+    "bytes": 22567,
+    "sha256": "3276b1b816e8a31627d1cd3283176df3ba6210681e565a17736befb993a21f75"
+  },
+  "l10n\\parts\\visual.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.fr.arb",
+    "bytes": 22902,
+    "sha256": "79acb06dae451564f0d049b3da09f488ddf2145bafebee08e8fc1c2cef1e8468"
+  },
+  "l10n\\parts\\visual.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.ja.arb",
+    "bytes": 24198,
+    "sha256": "e8cc4557a5720ba57f91895bdbceb9458a08e6ed209b6dfa8fbffc9567acee9e"
+  },
+  "l10n\\parts\\visual.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.ko.arb",
+    "bytes": 23496,
+    "sha256": "d4c70317bee04a1f3039ffc4dab0e2874989edf8cb693c207766d12d9e1aa835"
+  },
+  "l10n\\parts\\visual.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.pt.arb",
+    "bytes": 22520,
+    "sha256": "de4b7652984aee13b32e8b025571bb1eac8f2685f9bc3b247f86e8dc899c0409"
+  },
+  "l10n\\parts\\visual.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.ru.arb",
+    "bytes": 26585,
+    "sha256": "970859bc0dd2410b13ad9dd8fcc50ef3eab69398e5d96bc088e58935f92fd0df"
+  },
+  "l10n\\parts\\visual.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\l10n\\parts\\visual.zh.arb",
+    "bytes": 21486,
+    "sha256": "8890b7b327aafdd68f9730cc5cc3d48f85ba33714b4592990c552b752495a157"
+  },
+  "lib\\attachments\\attachment.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\attachment.dart",
+    "bytes": 4244,
+    "sha256": "017c891b9f6c75ce98ca33011d06523f3f9338ce38e696738b9557feb48d6d0c"
+  },
+  "lib\\attachments\\attachment_view.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\attachment_view.dart",
+    "bytes": 6969,
+    "sha256": "53697858d11ab8d0f76c5ed10afa64871753cb28b63819478bb108ff4cdd827f"
+  },
+  "lib\\attachments\\clipboard_import.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\clipboard_import.dart",
+    "bytes": 11472,
+    "sha256": "0f5b1b59ce162498633d3308d51af3700fad2ecb468e87051123cf350a9f10cb"
+  },
+  "lib\\attachments\\file_access_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\file_access_native.dart",
+    "bytes": 1714,
+    "sha256": "b2d99c3e27cb696b0022337f68fbb5180e8f37f11cc7801cb555d0fa2756b389"
+  },
+  "lib\\attachments\\file_access_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\file_access_web.dart",
+    "bytes": 892,
+    "sha256": "59cc4096d8e5e9386cb11534b00bf630714b91d4bfa43f6ace57e55779d589f8"
+  },
+  "lib\\attachments\\import_notices.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\import_notices.dart",
+    "bytes": 3035,
+    "sha256": "bdbc80656c0f6747d3a5d0bdf923f03704595882b38b8b28a6d3494a85192e72"
+  },
+  "lib\\attachments\\office_clipboard.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\attachments\\office_clipboard.dart",
+    "bytes": 813,
+    "sha256": "d37517402d3ce41268d5058bc33d10a8f4c4092a516a1ffbf85cf5a9baf80cf8"
+  },
+  "lib\\content\\editor_attachment_rebase.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\content\\editor_attachment_rebase.dart",
+    "bytes": 5424,
+    "sha256": "cd91a597094148a0dd465c0747f0e60597dfff6d8a3b1aaaf15c9681a851c072"
+  },
+  "lib\\content\\idea_markdown.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\content\\idea_markdown.dart",
+    "bytes": 5916,
+    "sha256": "c69752524954066ec8a2103818ca837ade031f3698b6c6719818d157ea49104d"
+  },
+  "lib\\content\\rich_content.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\content\\rich_content.dart",
+    "bytes": 12347,
+    "sha256": "bd808f93343ea0a1fe1b6ac74191c7ce50fb37b2b7815a69f44b66b0503e4c23"
+  },
+  "lib\\fonts\\font_choice.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\fonts\\font_choice.dart",
+    "bytes": 1716,
+    "sha256": "eaaba733e9df91939a767c14319a4bafe8590e754ffc63e6013080fcb7d6231d"
+  },
+  "lib\\fonts\\font_repository.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\fonts\\font_repository.dart",
+    "bytes": 3061,
+    "sha256": "3dca5fc1fbd1ee9a7e6a2ab2bab372d5ea918efc369e29fdef795a739abee15d"
+  },
+  "lib\\fonts\\font_settings.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\fonts\\font_settings.dart",
+    "bytes": 5362,
+    "sha256": "723bb164fd3364dcd0e67713d65be28a16d64ef390dca6df109eab039734e98b"
+  },
+  "lib\\fonts\\font_storage_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\fonts\\font_storage_native.dart",
+    "bytes": 1190,
+    "sha256": "5aef727e5861fe7b9286941f574586d46238d1e6ecdc3c63325e9934005c4114"
+  },
+  "lib\\fonts\\font_storage_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\fonts\\font_storage_web.dart",
+    "bytes": 910,
+    "sha256": "3b0bd37e5c50c438dde19912993be52a99f898c1329018622274f15ffb6d9fc1"
+  },
+  "lib\\media\\local_source_uri_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\local_source_uri_native.dart",
+    "bytes": 160,
+    "sha256": "80cb9a9d37d58a4271d27c2ab2e3b2a149be7a91240e3ce86e6a90c9500d5d19"
+  },
+  "lib\\media\\local_source_uri_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\local_source_uri_web.dart",
+    "bytes": 1052,
+    "sha256": "b1e4e69ad51e94b884405fff44b9696384154e22f881f002dcaf9bfaf0b5048c"
+  },
+  "lib\\media\\texture_backdrop.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_backdrop.dart",
+    "bytes": 5345,
+    "sha256": "605f698940cda7cd9e3c8c4d86c96b6ed70cae1c3940eeb5084ac667ce50847d"
+  },
+  "lib\\media\\texture_link_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_link_dialog.dart",
+    "bytes": 3560,
+    "sha256": "5beda9b845084c2d9608c8f3b741f521604dfc17803df095536e11504f00dfc8"
+  },
+  "lib\\media\\texture_repository.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_repository.dart",
+    "bytes": 1449,
+    "sha256": "13ef42cf82972f82c0bc7eba86f9575b96a347b0f325084ab3a061c2a2952a4d"
+  },
+  "lib\\media\\texture_source.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_source.dart",
+    "bytes": 1517,
+    "sha256": "2f1b76911f33acb94cb182376418ec08a61a7c19381cab62a6c905824d0816f1"
+  },
+  "lib\\media\\texture_storage_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_storage_native.dart",
+    "bytes": 1609,
+    "sha256": "3eb9155bb4fbc80a6c765ff0b72f3708a9537898998fa248df155a10740aefaa"
+  },
+  "lib\\media\\texture_storage_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\media\\texture_storage_web.dart",
+    "bytes": 3805,
+    "sha256": "88def2b919d07fa50891876feb09bf8e43dbd63ca213810dd10746c6e27a15e2"
+  },
+  "lib\\music\\audio_formats.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\audio_formats.dart",
+    "bytes": 1745,
+    "sha256": "add17052d0b2fe299c26340dd609a2feeab8221e70be104a1047ede06feba9d9"
+  },
+  "lib\\music\\audio_import.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\audio_import.dart",
+    "bytes": 1000,
+    "sha256": "6b762004558612435c573f3397030c7b528b298ce43cccc167ad36e69558a3a3"
+  },
+  "lib\\music\\audio_import_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\audio_import_native.dart",
+    "bytes": 2792,
+    "sha256": "6d5cdf92c99dc93b0f82ef00cf872f41bb7b2a5860070f43c1c87630a39b4548"
+  },
+  "lib\\music\\audio_import_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\audio_import_web.dart",
+    "bytes": 2479,
+    "sha256": "3b10322f543047d44af2a26aa9a72d9fd4af3c5c6815f5fc9fc86360bb37bb0b"
+  },
+  "lib\\music\\embedded_tags.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\embedded_tags.dart",
+    "bytes": 6283,
+    "sha256": "2c2a06ba607a771e3c1f6554b1384b98305d1efb2ff41b4eec0547dc5a608869"
+  },
+  "lib\\music\\kugou_database.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\kugou_database.dart",
+    "bytes": 2999,
+    "sha256": "a934594b2c1163e291b1f3f89afaa2738ee83391188b73bd4d618eba74a2d690"
+  },
+  "lib\\music\\kugou_key_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\kugou_key_native.dart",
+    "bytes": 6435,
+    "sha256": "ff32fefe8b34d9f4b835ce9eb570df1872c4d16f76b42f4ceca9db2d53993dc6"
+  },
+  "lib\\music\\lyrics_dialog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\lyrics_dialog.dart",
+    "bytes": 3734,
+    "sha256": "270801a764278ffd289fff312c518ecef184344b6e61a802a44f44cf87fc0bce"
+  },
+  "lib\\music\\lyrics_service.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\lyrics_service.dart",
+    "bytes": 2740,
+    "sha256": "6ec99920d76595466999b85129024e247b3682f2a40bb88965dd4ec8341b26b1"
+  },
+  "lib\\music\\music_context_menu.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\music_context_menu.dart",
+    "bytes": 3218,
+    "sha256": "f0463fa1f4630d81b74ebab059b9f0415b88a2bb43365f2161d8b4945a1d690a"
+  },
+  "lib\\music\\music_controller.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\music_controller.dart",
+    "bytes": 19569,
+    "sha256": "d5390e8c0435fb9b0f5d677b30b4f338971f459bb8187aa1aece7d2f2cf13df2"
+  },
+  "lib\\music\\music_panel.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\music_panel.dart",
+    "bytes": 31013,
+    "sha256": "6df33c27cde8054d3f70b5d5ebac00831d78e212d515574cad764d64e72d694d"
+  },
+  "lib\\music\\prepared_audio.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\prepared_audio.dart",
+    "bytes": 239,
+    "sha256": "33b991268af0e72d4ab69f9c368305aa7a56396efb2a7841104d976a38f3a889"
+  },
+  "lib\\music\\track_metadata.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\track_metadata.dart",
+    "bytes": 259,
+    "sha256": "e6d22ef1376dce8178cb9cca05293d53f1deed675ee8acaa55365855a8966cbb"
+  },
+  "lib\\music\\track_metadata_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\track_metadata_native.dart",
+    "bytes": 2063,
+    "sha256": "9d69f1cd8baaffe42a35e7e567b1c229b2a9133f667aa401ab48fbe379ef0ff1"
+  },
+  "lib\\music\\track_metadata_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\music\\track_metadata_web.dart",
+    "bytes": 224,
+    "sha256": "035bda0487666363049f1b7ec22b20faa43a39c15a5a19cc6723353aa34064a0"
+  },
+  "lib\\pages\\card_order.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\pages\\card_order.dart",
+    "bytes": 4549,
+    "sha256": "10ed921cb52b7ecdde1c3aa78624fcdf1a3deb1cd2e982ef2f3be329de505d9e"
+  },
+  "lib\\pages\\component_menus.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\pages\\component_menus.dart",
+    "bytes": 5278,
+    "sha256": "98b3d7b90ba8446b1f9fb548fb9924686f02d400be774bdedc61d805eabbe430"
+  },
+  "lib\\pages\\workspace_pages.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\pages\\workspace_pages.dart",
+    "bytes": 19136,
+    "sha256": "ac6c202e2c8ca0a63a6cb30a7d4a9ea55fed5ee0ecf5d87b1cbceac5f06a1fe0"
+  },
+  "lib\\plugins\\agent_session_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_codec_native.dart",
+    "bytes": 21392,
+    "sha256": "2c0638c0418689fa5b49d8ee5adbe784de0f5349e09b6bc61e03f919d5493e40"
+  },
+  "lib\\plugins\\agent_session_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_control.dart",
+    "bytes": 2828,
+    "sha256": "c450d3700f9affe2b4f0ff245e3627da71f329f41856f824444f76086fa0ecac"
+  },
+  "lib\\plugins\\agent_session_controller.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_controller.dart",
+    "bytes": 18749,
+    "sha256": "d942521dcd36b0863a24a0dd8f01be0300cafb22e3971b10e3701fb537e4ad2e"
+  },
+  "lib\\plugins\\agent_session_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_manager.dart",
+    "bytes": 12197,
+    "sha256": "06e078bb27ed7981ccb2eb71873f4411bb57922bf8973eeef03645845a7161c3"
+  },
+  "lib\\plugins\\agent_session_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_models.dart",
+    "bytes": 10570,
+    "sha256": "5638a0692831e43eb754a8222563cf7f1932e8fdd96a21640b7f413a3c075abf"
+  },
+  "lib\\plugins\\agent_session_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_native.dart",
+    "bytes": 12601,
+    "sha256": "81d718178355f75c3ff3abef914c1a7fb96e55499fe562f77abbf399f1558df7"
+  },
+  "lib\\plugins\\agent_session_text.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_text.dart",
+    "bytes": 3186,
+    "sha256": "d7af76d2a8f8c0b73a7f7ee265e9d99408fe6ae0c62082545e8ca73521f80e25"
+  },
+  "lib\\plugins\\agent_session_workspace.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_session_workspace.dart",
+    "bytes": 14000,
+    "sha256": "2125c8c804a3d00042365e0f2c1adda555b3bf314aa65bd5be1a9f3d805b73a5"
+  },
+  "lib\\plugins\\agent_task_discovery.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_task_discovery.dart",
+    "bytes": 7160,
+    "sha256": "01f6a91c108154d612e25a251a37e0921e0beeb72197ed529d3707c0a3492c7c"
+  },
+  "lib\\plugins\\agent_wrapper_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_wrapper_codec_native.dart",
+    "bytes": 16017,
+    "sha256": "4690d62129b3f43c1ae896b3a1ddd04dcaa88c6075012de7a323ba7af5c9334a"
+  },
+  "lib\\plugins\\agent_wrapper_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_wrapper_control.dart",
+    "bytes": 1704,
+    "sha256": "07fa9e17236539d3f441b063bf46b2605d2ae0a316d6773e268f73ab6d232981"
+  },
+  "lib\\plugins\\agent_wrapper_library.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_wrapper_library.dart",
+    "bytes": 24905,
+    "sha256": "adcf0e2d784bcdf98c3381c5d518879a62b45a4911d1df5620d723f3a841ba47"
+  },
+  "lib\\plugins\\agent_wrapper_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_wrapper_models.dart",
+    "bytes": 5938,
+    "sha256": "727b65112f5d3c26b2c9254c9adcea95f6274bfdb9f8319a038017b8f75e4437"
+  },
+  "lib\\plugins\\agent_wrapper_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\agent_wrapper_native.dart",
+    "bytes": 6786,
+    "sha256": "691c930606aebe79c736b1c379535a82b76d4e25189785bd9d5e805a5065afe1"
+  },
+  "lib\\plugins\\application_shutdown.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\application_shutdown.dart",
+    "bytes": 4651,
+    "sha256": "91702af20caf7fb96d2e39cb58cd45d5cea41cc941b14cff3febb10af8cdbc86"
+  },
+  "lib\\plugins\\blob_history_delivery_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_history_delivery_manager.dart",
+    "bytes": 18908,
+    "sha256": "de5200fbfbe66759761a8a503a8e5d8524d65d6d42ada8b356ec7c64fc59c7c0"
+  },
+  "lib\\plugins\\blob_history_delivery_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_history_delivery_models.dart",
+    "bytes": 4682,
+    "sha256": "3c817239526d45108f97ae7c69bebc50416ccdda092806f944aefacbd1080359"
+  },
+  "lib\\plugins\\blob_history_delivery_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_history_delivery_native.dart",
+    "bytes": 17607,
+    "sha256": "3759180cabd962e90e553453e0663a71d1f7652428e7fafc526ab3be7683de92"
+  },
+  "lib\\plugins\\blob_history_delivery_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_history_delivery_session.dart",
+    "bytes": 7806,
+    "sha256": "017740cc76a2854ccd72143495ddb4e9e478ef98a2366daaee9078d62951d7d8"
+  },
+  "lib\\plugins\\blob_plan_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_plan_manager.dart",
+    "bytes": 29863,
+    "sha256": "f8ad79742f671f6d05d3edc0e51ad193096dc69f500d66b9b69f3a0feb871fe0"
+  },
+  "lib\\plugins\\blob_plan_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_plan_models.dart",
+    "bytes": 5989,
+    "sha256": "fc9df2f5b41d368d24d341c456c93c1d10edc3980b0af796a8a6f7ca936252e3"
+  },
+  "lib\\plugins\\blob_plan_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_plan_native.dart",
+    "bytes": 9415,
+    "sha256": "0cbe2e295e8ba30afa3f5a6fdff046cb52b8f25d591d15cb395ee120f320f28c"
+  },
+  "lib\\plugins\\blob_plan_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_plan_session.dart",
+    "bytes": 9356,
+    "sha256": "374932a8b629bec1568f0e28eec75dcae4da56a6891f99aecd1b1e13867e9d93"
+  },
+  "lib\\plugins\\blob_upload_history_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_history_manager.dart",
+    "bytes": 13922,
+    "sha256": "4d60e2fb9fa7ad25bb35707c7bb2460b110c940ed9ab5dba197ec010e924bdc9"
+  },
+  "lib\\plugins\\blob_upload_history_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_history_models.dart",
+    "bytes": 2450,
+    "sha256": "98ca1f11fdbe66ae9f0fadecbfd68cffd5776c52b8ea0de8ef2a35b974cec24d"
+  },
+  "lib\\plugins\\blob_upload_history_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_history_native.dart",
+    "bytes": 7829,
+    "sha256": "a73beb4fa0f2b7dee916277a7f6d005a0e621965095acc7af1be290b14c1ae46"
+  },
+  "lib\\plugins\\blob_upload_history_packet.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_history_packet.dart",
+    "bytes": 9297,
+    "sha256": "7f5671b480992627d767a7713d619aa912a6c106306d8a2e1c0934bd1fea218d"
+  },
+  "lib\\plugins\\blob_upload_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_models.dart",
+    "bytes": 6246,
+    "sha256": "e5eb37786717d8943c1bafc6ba89bb61359ebd0959a8108e74822d025fe5191d"
+  },
+  "lib\\plugins\\blob_upload_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_native.dart",
+    "bytes": 10124,
+    "sha256": "20afde6bc6e7874721cbfb6de44dd90649d1e66c6761909f3b2ac5a4aa9c2da3"
+  },
+  "lib\\plugins\\blob_upload_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\blob_upload_session.dart",
+    "bytes": 12146,
+    "sha256": "a0d445372cfd514fe11b64513a1963b93b6a5f1eb14d764bec16c715fd3a3724"
+  },
+  "lib\\plugins\\bootstrap_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\bootstrap_native.dart",
+    "bytes": 221,
+    "sha256": "79f1fda76df8232166e74f62a1ed75282d8a45c1762ed9a8f5c71db8417a20d5"
+  },
+  "lib\\plugins\\bootstrap_stub.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\bootstrap_stub.dart",
+    "bytes": 72,
+    "sha256": "8af91651cad2a81ebc435c73dfbc9ce5610a60fb850113b65075fe1e1f2e903f"
+  },
+  "lib\\plugins\\bootstrap_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\bootstrap_web.dart",
+    "bytes": 229,
+    "sha256": "7299916cdd9e6439f9dad17c31931200167ebbe1a19e0b207f85fe13035234cd"
+  },
+  "lib\\plugins\\canvas_self_check.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\canvas_self_check.dart",
+    "bytes": 7147,
+    "sha256": "95aca993d99db356cf37fdb3187c4aea763ff6ed4548895274b94b80b741ac98"
+  },
+  "lib\\plugins\\capture_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\capture_models.dart",
+    "bytes": 903,
+    "sha256": "94807d6764c179f00b11672bfdbdf4b9bab03400564e1b46cd4d1106e3bd5015"
+  },
+  "lib\\plugins\\capture_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\capture_native.dart",
+    "bytes": 5459,
+    "sha256": "7e7497dbdf561fa9e10728f33887bbc2e38ba2a63f6202f3bcbca2c5bfa8edcf"
+  },
+  "lib\\plugins\\channel_task_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\channel_task_codec_native.dart",
+    "bytes": 8843,
+    "sha256": "8e7337b7ac84e8a439c8b698399dd4e11cb3093e844e2b71497df30306ee3a77"
+  },
+  "lib\\plugins\\channel_task_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\channel_task_manager.dart",
+    "bytes": 12325,
+    "sha256": "c2c4b3b27779665b8437e3f10dbe55011caa9f1a60084cc6609ba6de7bce7656"
+  },
+  "lib\\plugins\\channel_task_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\channel_task_models.dart",
+    "bytes": 8392,
+    "sha256": "b912550d5202f5662a7833e9df1c06a0e577d458be8d7d1883bae7c817ba2081"
+  },
+  "lib\\plugins\\channel_task_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\channel_task_native.dart",
+    "bytes": 7188,
+    "sha256": "dcd03552eec2caade09ed73f813d93e9604e19920f5cc9ad23e68d59883e7e32"
+  },
+  "lib\\plugins\\channel_task_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\channel_task_session.dart",
+    "bytes": 10498,
+    "sha256": "d7a84edb01f833b66954d6f5a9c13c26d33281157145c60421dfe573b7fdfafd"
+  },
+  "lib\\plugins\\credential_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\credential_manager.dart",
+    "bytes": 16390,
+    "sha256": "2540421af301dfe66ed6e91279f9ec4953057df2f927cf8c4bad6b0cb2b44f2c"
+  },
+  "lib\\plugins\\device_library_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\device_library_web.dart",
+    "bytes": 1756,
+    "sha256": "171001c0ca0d4ef5c39cea77e938e836a0a2255b0772e2925142f756580825eb"
+  },
+  "lib\\plugins\\directory_task_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\directory_task_manager.dart",
+    "bytes": 14270,
+    "sha256": "fac00a72a81cc59c882ecdd6c914542b09be1e56895e25568c0ab4e17e29045a"
+  },
+  "lib\\plugins\\directory_task_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\directory_task_models.dart",
+    "bytes": 4105,
+    "sha256": "fd75cd976df3ab9a659e0c3fa72f83435dfd58390ec91b4e7dde44ed2791713e"
+  },
+  "lib\\plugins\\directory_task_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\directory_task_native.dart",
+    "bytes": 5135,
+    "sha256": "7797ef4a71576b168d765331ee7bf5f5b41a814f6e28dd46a0f216638efcd010"
+  },
+  "lib\\plugins\\directory_task_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\directory_task_session.dart",
+    "bytes": 14378,
+    "sha256": "c34c29114463acf0fe524f0009d0981268fca02b6b8f6c24218b2b4d858bfae2"
+  },
+  "lib\\plugins\\editor_commit_proof.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_commit_proof.dart",
+    "bytes": 1850,
+    "sha256": "0b3999f2a58d49d6b47e1a0ac66c92bdea2cf26521c3eb5f09ae94e03dd35b3b"
+  },
+  "lib\\plugins\\editor_commit_proof_codec.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_commit_proof_codec.dart",
+    "bytes": 1564,
+    "sha256": "3357cc2c2133684b1f5c2ca2c13299439243fe23782fd1f2cdff8f07e755995a"
+  },
+  "lib\\plugins\\editor_draft.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft.dart",
+    "bytes": 21806,
+    "sha256": "fb735056155195c4495eb61f2a88b218e80b3d28bd002902e01c6bffaf42ddb6"
+  },
+  "lib\\plugins\\editor_draft_assets.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_assets.dart",
+    "bytes": 26197,
+    "sha256": "a7206c724098f589f314bc64f0cdebae2eeb0bcea9f74e0f4df1b7676ecbf9ff"
+  },
+  "lib\\plugins\\editor_draft_binding.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_binding.dart",
+    "bytes": 11146,
+    "sha256": "cfb7fbdfd99fbdf3f323d617e89180f13f28bc9f8aa511698216bcccd4f4e9d0"
+  },
+  "lib\\plugins\\editor_draft_codec.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_codec.dart",
+    "bytes": 61185,
+    "sha256": "a465cb3027729144b6720d7c9d0d885845ed5b8dc1e309e3064e6de1daf13e5d"
+  },
+  "lib\\plugins\\editor_draft_commit.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_commit.dart",
+    "bytes": 23671,
+    "sha256": "4f367728ca1a11ac46ed70856cbd3709d6e2a439c8fc5b4463024f0ce1211e5a"
+  },
+  "lib\\plugins\\editor_draft_handoff_coordinator.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_handoff_coordinator.dart",
+    "bytes": 11201,
+    "sha256": "95fb312d3588d7d3349d0ce204275ebdd4b8ac1b8b8a893d5f21dc681f453b4f"
+  },
+  "lib\\plugins\\editor_draft_handoff_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_handoff_native.dart",
+    "bytes": 7624,
+    "sha256": "21309daf50f81c8989fe1f717ad4088170316dade50df5dcfe815e687ab98476"
+  },
+  "lib\\plugins\\editor_draft_handoff_proposal_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_handoff_proposal_native.dart",
+    "bytes": 10039,
+    "sha256": "0aa99e78701924b40a870da811daf671474c44bde6629deefc587a9e8c50b816"
+  },
+  "lib\\plugins\\editor_draft_import.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_import.dart",
+    "bytes": 8104,
+    "sha256": "3f1576f7ac334a03a5b9ba1a5cd0672aa1dd121a1fdd91b20b3f8e5e1e027ce2"
+  },
+  "lib\\plugins\\editor_draft_import_codec.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_import_codec.dart",
+    "bytes": 19771,
+    "sha256": "528ca441a682acac653c2cb415990c0871ec804078ef3c4917ef0de96a6aa8d4"
+  },
+  "lib\\plugins\\editor_draft_import_decision_coordinator.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_import_decision_coordinator.dart",
+    "bytes": 4101,
+    "sha256": "387dc1af46b55897e34f1477b4445b9ca1aa1c95bcb155dce783c783c46cf1d9"
+  },
+  "lib\\plugins\\editor_draft_import_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_import_native.dart",
+    "bytes": 20376,
+    "sha256": "a8115ad8e453d1b406ae8f3f183ec107532aab30a43b21ef6df159d5cdabf717"
+  },
+  "lib\\plugins\\editor_draft_import_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_import_session.dart",
+    "bytes": 16129,
+    "sha256": "2943c70c62180f7a695d987965394a902adfa971c09d5e0549ea19307adaca42"
+  },
+  "lib\\plugins\\editor_draft_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_native.dart",
+    "bytes": 20078,
+    "sha256": "7aa2cd86d44afe45155696502e1064c5af057b50c9a4bb94ad8ac4614ba6af1a"
+  },
+  "lib\\plugins\\editor_draft_owner.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_owner.dart",
+    "bytes": 21177,
+    "sha256": "34abdd66c7178e9d4e9547dc0d8663e3818573ac41f2ca00a71ad7a0d4d82547"
+  },
+  "lib\\plugins\\editor_draft_owner_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_owner_native.dart",
+    "bytes": 7192,
+    "sha256": "30c17280162461ef0bed4573ee1cf9ee909dd03e7b592c803719433b505fca20"
+  },
+  "lib\\plugins\\editor_draft_resume.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_resume.dart",
+    "bytes": 360,
+    "sha256": "20f7e278b3bc7eb935994d4ad27d4434b1f1899b63284625112e68d4ba909af2"
+  },
+  "lib\\plugins\\editor_draft_resume_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_resume_native.dart",
+    "bytes": 16377,
+    "sha256": "765acbc13958d051734af5322b36f3fd4e7c1953798560539fd0c6dc6f508046"
+  },
+  "lib\\plugins\\editor_draft_retirement.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_retirement.dart",
+    "bytes": 5492,
+    "sha256": "9f8418dfc9d57fa7cc3d230db8becbe1e7631bafc9e755eaf33ea3ee4398ae07"
+  },
+  "lib\\plugins\\editor_draft_review.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_review.dart",
+    "bytes": 1163,
+    "sha256": "bed4340c128d8323d7e96c81d7c3e99624ad8cfbc74fa44426c5e9bc4fca7787"
+  },
+  "lib\\plugins\\editor_draft_review_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_review_native.dart",
+    "bytes": 9197,
+    "sha256": "9f95ebe2ea83a860ab6763f9ce3694eb4d88ebc4d0e4f714843927edb20a0145"
+  },
+  "lib\\plugins\\editor_draft_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_session.dart",
+    "bytes": 28275,
+    "sha256": "c83c9c96cf44e557937398c75bcc7059423252fbf82552fff396ea843b727cb0"
+  },
+  "lib\\plugins\\editor_draft_submission.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_submission.dart",
+    "bytes": 390,
+    "sha256": "1777064299832e3071a141fab642e58efa10dcf70d38bad56ea0df1087078d79"
+  },
+  "lib\\plugins\\editor_draft_submission_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_submission_native.dart",
+    "bytes": 3228,
+    "sha256": "f86e2836a579191fe39f57b7f68968c9b76a0ba10ad45c0dd12d3eb05ee5e83c"
+  },
+  "lib\\plugins\\editor_draft_workspace.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_draft_workspace.dart",
+    "bytes": 14342,
+    "sha256": "1368bc499eaa7d464fc2f57c1f1d82cd6f016064094306c745e9bf12b05f1cec"
+  },
+  "lib\\plugins\\editor_recovery.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_recovery.dart",
+    "bytes": 2550,
+    "sha256": "dc145bafafd0adb7bab270f07280ef8b9eaf819205393c36c054024ba09c96de"
+  },
+  "lib\\plugins\\editor_recovery_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_recovery_native.dart",
+    "bytes": 3545,
+    "sha256": "c1ba3362b4224997223d2530b09a60577f7c6ad88c9aa5f15694bcc17ca1eb70"
+  },
+  "lib\\plugins\\editor_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\editor_session.dart",
+    "bytes": 1836,
+    "sha256": "9b2294b1d272a37eb742cb44ec3fd483b3fefa09d2001551a4ac6866e7855ee2"
+  },
+  "lib\\plugins\\endpoint_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\endpoint_control.dart",
+    "bytes": 1899,
+    "sha256": "13ae29be840b14ecee9c0669fbea16ad3ca49a949ca3a7c4c855b682e449ff6a"
+  },
+  "lib\\plugins\\endpoint_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\endpoint_manager.dart",
+    "bytes": 34016,
+    "sha256": "0bb2f3e64caedd3515cf8b901a42bb4e3aabc8e270f897939c21e2a75d0fd54c"
+  },
+  "lib\\plugins\\file_task_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\file_task_codec_native.dart",
+    "bytes": 2197,
+    "sha256": "2b3de91a9a982ec60995b847151774b2e3d118b6b202cf1f2d7c58f6bca53276"
+  },
+  "lib\\plugins\\file_task_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\file_task_manager.dart",
+    "bytes": 13427,
+    "sha256": "14b19d5cf1a16854fcea77512878e5d45b406581c7b934f3a95ba5e37a94ecf8"
+  },
+  "lib\\plugins\\file_task_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\file_task_models.dart",
+    "bytes": 3086,
+    "sha256": "1807053a23aeb22640d280ed8e2a5a462c0a0e56a7c84cbf01827612afa18126"
+  },
+  "lib\\plugins\\file_task_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\file_task_native.dart",
+    "bytes": 2896,
+    "sha256": "c2a56ed12116163c7cffc58370bb3554a1e0e4919c992f3d0811ac5d5034cb00"
+  },
+  "lib\\plugins\\file_task_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\file_task_session.dart",
+    "bytes": 15018,
+    "sha256": "c94d2227bc49df27bff4b8dad34b5e0d3e46b76d146041b786d6231651dd7cd6"
+  },
+  "lib\\plugins\\fs_watch_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\fs_watch_manager.dart",
+    "bytes": 13664,
+    "sha256": "50ef48747fd76d6c9f0cf44c7d93c181616be18ce45de0a0df3a499ee2d0ff78"
+  },
+  "lib\\plugins\\fs_watch_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\fs_watch_models.dart",
+    "bytes": 5371,
+    "sha256": "755d6b8c0336460be46a5b118e6108a2c2122a4b579a6c3501e93747ac148665"
+  },
+  "lib\\plugins\\fs_watch_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\fs_watch_native.dart",
+    "bytes": 8630,
+    "sha256": "b7817080305744bc1d766abdc57e3c6d7564410353e7a663862873e3150e275f"
+  },
+  "lib\\plugins\\fs_watch_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\fs_watch_session.dart",
+    "bytes": 8587,
+    "sha256": "8edf92429e24c2accb874982d44b07ad3b4fdcde49f2e6d8af563a8bd4878a6a"
+  },
+  "lib\\plugins\\guest_mutation_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\guest_mutation_codec_native.dart",
+    "bytes": 13122,
+    "sha256": "57292d2087264e5ae08e7451e207a41076ef5291db86dc8b0c59dd2927cdeb48"
+  },
+  "lib\\plugins\\guest_mutation_execution_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\guest_mutation_execution_manager.dart",
+    "bytes": 42258,
+    "sha256": "d2a3d9456c2a8daa14e8bfb2ef40ef2b561f3f37fef6a2473768d360e0c00f42"
+  },
+  "lib\\plugins\\guest_mutation_execution_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\guest_mutation_execution_session.dart",
+    "bytes": 38538,
+    "sha256": "2b0bece349a3b3ec66d980e0f276b908a6b0c34e429d015c095cd1918e7855f8"
+  },
+  "lib\\plugins\\guest_mutation_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\guest_mutation_models.dart",
+    "bytes": 21234,
+    "sha256": "9bd523fedae111522e2537d8f9fdfd6ecbcdf4274f9d4f5d897f90671041440a"
+  },
+  "lib\\plugins\\guest_mutation_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\guest_mutation_native.dart",
+    "bytes": 5115,
+    "sha256": "6d27fda8cf0fffba8484add28f25290b1a293c8ed5821ecdd347a1a2ce9246f0"
+  },
+  "lib\\plugins\\host_notices.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\host_notices.dart",
+    "bytes": 3263,
+    "sha256": "bd368719e2d14fff221f7d2dddb5786a8b703dc5130b96a7da2a8f57b4459ec9"
+  },
+  "lib\\plugins\\host_request.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\host_request.dart",
+    "bytes": 2696,
+    "sha256": "4af88c572f843913bfaf5292481da6a376e241b5f9bda75119810e1c51745df9"
+  },
+  "lib\\plugins\\http_task_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\http_task_manager.dart",
+    "bytes": 43598,
+    "sha256": "3eb4eb2695e52ecdada91eafc5f18aa402f039b489514c1f14df48369793f48e"
+  },
+  "lib\\plugins\\io_settings_page.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\io_settings_page.dart",
+    "bytes": 1034,
+    "sha256": "4a83ba3663d2fb9fd4af7062fd4f1a1a203bebb170acacd12f496b8e8cf9940b"
+  },
+  "lib\\plugins\\io_task_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\io_task_codec_native.dart",
+    "bytes": 5172,
+    "sha256": "2b24895eb2e47d08f1464f776c3731877ca8a6a005418775d56dcacca0510332"
+  },
+  "lib\\plugins\\io_task_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\io_task_control.dart",
+    "bytes": 30,
+    "sha256": "eddf06f9a0d667196de2a211b15e85bb4bbe44e7735f7c303147f3ac89e9b6cd"
+  },
+  "lib\\plugins\\io_task_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\io_task_models.dart",
+    "bytes": 7023,
+    "sha256": "ff8d0040b02f416481bdbc0e08c6d4fe462940a1cc7b7a1cf2c185c58ee64bfd"
+  },
+  "lib\\plugins\\mutation_execution_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_execution_manager.dart",
+    "bytes": 29049,
+    "sha256": "2830cadc03e5fd7838ddf1f11949395a71d2fa7ca6a64d3a5ee50a546f0d9edf"
+  },
+  "lib\\plugins\\mutation_execution_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_execution_session.dart",
+    "bytes": 28406,
+    "sha256": "d1fd83b9fcaa527206dc030fd56a71b916c65f09c59e8116aad45392c6e9f99e"
+  },
+  "lib\\plugins\\mutation_recovery_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_recovery_manager.dart",
+    "bytes": 20291,
+    "sha256": "5065b24fdeb0209abc21b70317af5b01227c79dd45dd6d68953d156bc6c505f1"
+  },
+  "lib\\plugins\\mutation_recovery_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_recovery_session.dart",
+    "bytes": 24410,
+    "sha256": "f597a6d81be2389b83bfd798c681112b448668dfa02eb2313d4800efdec747f0"
+  },
+  "lib\\plugins\\mutation_recovery_view_state.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_recovery_view_state.dart",
+    "bytes": 3818,
+    "sha256": "d164189b0da648999a4b1eb390ab297ce402482dc573570d21a692612379ed62"
+  },
+  "lib\\plugins\\mutation_task_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_task_codec_native.dart",
+    "bytes": 16839,
+    "sha256": "d8dff40175e1d0f5fafa967b8dd1d00842828c1786130617d32dc76ff5a7f05a"
+  },
+  "lib\\plugins\\mutation_task_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_task_models.dart",
+    "bytes": 14974,
+    "sha256": "856a4b944d7ee0d566900890bb46996157d6cc0c58529e662856c3373114ed59"
+  },
+  "lib\\plugins\\mutation_task_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_task_native.dart",
+    "bytes": 11184,
+    "sha256": "ff8d0783192b729bbe0639094f7f0d36906625a39773ef100c479a275ee4f298"
+  },
+  "lib\\plugins\\mutation_workflow.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\mutation_workflow.dart",
+    "bytes": 207,
+    "sha256": "2e6c2590f759b278de266d4fea3bb1f9f707ffd887b18723c3faeb0f3b52c11d"
+  },
+  "lib\\plugins\\plugin_library.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\plugin_library.dart",
+    "bytes": 74158,
+    "sha256": "c9d798368e39b803f2664d9249d3da209aaf75f03cee17ed2ca13c3186e76b25"
+  },
+  "lib\\plugins\\plugin_settings_page.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\plugin_settings_page.dart",
+    "bytes": 3386,
+    "sha256": "5c676a56ccf360a7945da72bb3a757fc5cf6c76937023ce7d855f26960b973be"
+  },
+  "lib\\plugins\\plugin_tools.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\plugin_tools.dart",
+    "bytes": 6751,
+    "sha256": "93d2ef85efb6031bc8bb37cfbccfc7c16f39a74ad798774afe4a7c7656fb690d"
+  },
+  "lib\\plugins\\preferences_save_failure.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\preferences_save_failure.dart",
+    "bytes": 519,
+    "sha256": "e9c04a8e7f03cc27b709c298e034c2559a8325eb93e5574d148820dc71331f34"
+  },
+  "lib\\plugins\\protection_backup.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\protection_backup.dart",
+    "bytes": 5517,
+    "sha256": "cb1dec511eb9338ec64e9c5aa953f8427fea30368884abea63f43e26d3d180a8"
+  },
+  "lib\\plugins\\qualification_session_contract.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\qualification_session_contract.dart",
+    "bytes": 12989,
+    "sha256": "be8e7586750fdd35f76ee4b3f5c5173169e0060a5f007ce635d7850bcfce09c5"
+  },
+  "lib\\plugins\\qualification_session_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\qualification_session_native.dart",
+    "bytes": 14421,
+    "sha256": "8c68ab8c2151c328a940893a9b240f932430cdf0144c930e4ae16698228fc5bf"
+  },
+  "lib\\plugins\\query_coordinator.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\query_coordinator.dart",
+    "bytes": 5455,
+    "sha256": "c58ca66697b2bc7232c2daaf0eeeaee9f87e016985a0795a0de2b82b05fce8c0"
+  },
+  "lib\\plugins\\service_business_routing_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_business_routing_native.dart",
+    "bytes": 15280,
+    "sha256": "7c682288817ecdadce1aa935979fd2ab89a9bba587ef86f7caf0d15205ec8980"
+  },
+  "lib\\plugins\\service_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_codec_native.dart",
+    "bytes": 11326,
+    "sha256": "e3f7366956de56eeba3b78ead90e5680feaf66aa3bc42b18ea9f415b6c1fc2b7"
+  },
+  "lib\\plugins\\service_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_control.dart",
+    "bytes": 15833,
+    "sha256": "54e2fef594323f3b291f2f9426266a7c0c4dc9ad64426c776e4ab0044f4ff402"
+  },
+  "lib\\plugins\\service_endpoint_catalog.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_endpoint_catalog.dart",
+    "bytes": 3490,
+    "sha256": "041ecc81295f641a2960b5ed86d1435f41070b8cf01bf3571881367b277f9ada"
+  },
+  "lib\\plugins\\service_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_manager.dart",
+    "bytes": 35979,
+    "sha256": "74f9062397feb308c32a7d09366db94599a697c914d5f15643aaa4bb38510384"
+  },
+  "lib\\plugins\\service_run_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_run_codec_native.dart",
+    "bytes": 8364,
+    "sha256": "8b27e03f9f27954f3c69aebe3b7239042a5a3bee6fee24ffa77dd2cbde42dd55"
+  },
+  "lib\\plugins\\service_run_control.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_run_control.dart",
+    "bytes": 12724,
+    "sha256": "8fa27472e6b3604a496c22a8cccb88b0b851d600f8ede690a0b1ff6eb817b7a5"
+  },
+  "lib\\plugins\\service_run_manager.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_run_manager.dart",
+    "bytes": 33077,
+    "sha256": "353f0925d0c7ffebe19426e2a17e33acb40a5588cba1980d932882e429b7b27f"
+  },
+  "lib\\plugins\\service_run_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_run_session.dart",
+    "bytes": 11707,
+    "sha256": "80dfdab29df462eaa86c72ef7e2663ae5e5ebbf40ad3840ae8df357913b219da"
+  },
+  "lib\\plugins\\service_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_session.dart",
+    "bytes": 15118,
+    "sha256": "7b3eca6294530eac286ba3a84b50eb026d1090bb3b922d7e2fdb0dbe8286dfed"
+  },
+  "lib\\plugins\\service_tls_draft.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_draft.dart",
+    "bytes": 243,
+    "sha256": "8b5e8b673131b7239999afc28a58a65b056be76e08b62af4af751beb7e5f64b5"
+  },
+  "lib\\plugins\\service_tls_identity_codec_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_identity_codec_native.dart",
+    "bytes": 3569,
+    "sha256": "7c463d30bf8ea700f1e17ebb1b26f2085ce15055dab46d7b932df18d12e50241"
+  },
+  "lib\\plugins\\service_tls_identity_models.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_identity_models.dart",
+    "bytes": 1434,
+    "sha256": "96b7c1dffb56786a909b2b58a6658c0708fd24e802ebb2099926def011c2d21a"
+  },
+  "lib\\plugins\\service_tls_identity_panel.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_identity_panel.dart",
+    "bytes": 7575,
+    "sha256": "c591eb8253e0a11c9d58fa94dfdcf6eb445cb9e0eb6182c23fc46d586ec62f3e"
+  },
+  "lib\\plugins\\service_tls_identity_session.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_identity_session.dart",
+    "bytes": 7467,
+    "sha256": "2414822746886acf86b84937a4efff603e7bc98a51f2c1e14584c5ad13fe23fa"
+  },
+  "lib\\plugins\\service_tls_picker.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\service_tls_picker.dart",
+    "bytes": 9245,
+    "sha256": "f7b659aa6ad162e93ca32daf3e3604c8fa46e83193061b282f9b1c38d1f455eb"
+  },
+  "lib\\plugins\\session_coordinator.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\session_coordinator.dart",
+    "bytes": 6673,
+    "sha256": "e6c99bc916722971acb0397cbe220e9b309b62829390c3fec6416c7e74284956"
+  },
+  "lib\\plugins\\session_view_state.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\session_view_state.dart",
+    "bytes": 1336,
+    "sha256": "eeb7dea48e42a8e60199a440f502a03d3ed15f20e6d5a32e3279275f816660bc"
+  },
+  "lib\\plugins\\startup_probe.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\startup_probe.dart",
+    "bytes": 2895,
+    "sha256": "b47d7b5fd92d7cb129488204c3b265eb4a302e4209b8c61e83d73af708b2074f"
+  },
+  "lib\\plugins\\studio_backend.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\studio_backend.dart",
+    "bytes": 1103,
+    "sha256": "67a1bd98bd4f6c28d672fbe69787545e6e968de9c588e97b4dbc44a3ec8e2e8b"
+  },
+  "lib\\plugins\\studio_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\studio_native.dart",
+    "bytes": 4148,
+    "sha256": "d59c3d74d43258df69ab821f3089d076dfdbe4ccafeb389cb09861afa662994a"
+  },
+  "lib\\plugins\\studio_storage.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\studio_storage.dart",
+    "bytes": 12933,
+    "sha256": "efe2251f3df7800c81e3a829e8d99d3e6458df69e0dbbd0bbaf256fd08e0174b"
+  },
+  "lib\\plugins\\theme_package_import.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\theme_package_import.dart",
+    "bytes": 1525,
+    "sha256": "6fef9bf3efd8f25cfadea96d7d6db291f3c4dd9c527c7ed1ff12bf2b8457e71d"
+  },
+  "lib\\plugins\\versioned_content.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_content.dart",
+    "bytes": 8771,
+    "sha256": "fb8174a7429decc0e5cd640e0a2cc6fa946b6ef402038b90c61f7902381b502f"
+  },
+  "lib\\plugins\\versioned_content_codec.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_content_codec.dart",
+    "bytes": 14421,
+    "sha256": "d6dfa05b63eeb71583b428f74b14c5b237f91dc8a10c0b68da38cd981a9e6e3f"
+  },
+  "lib\\plugins\\versioned_content_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_content_native.dart",
+    "bytes": 7830,
+    "sha256": "48e79f11d952b7169da7cc3a9cfbef698600ba73c656cbe162a6451a23bcf4c7"
+  },
+  "lib\\plugins\\versioned_content_scan.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_content_scan.dart",
+    "bytes": 3405,
+    "sha256": "e002501eedf4682cbeae82778cefeafa75388f281a0d9baafc49944464b8965d"
+  },
+  "lib\\plugins\\versioned_editor.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_editor.dart",
+    "bytes": 1075,
+    "sha256": "d9ec2787d99198510dc6385a3dd69178172064b35595cad5f160bd0728adac4e"
+  },
+  "lib\\plugins\\versioned_editor_adapter.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_editor_adapter.dart",
+    "bytes": 20040,
+    "sha256": "d27607354c95f32607ccc25968082ff514e28839ab78b5d8326036d2ee720790"
+  },
+  "lib\\plugins\\versioned_editor_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_editor_native.dart",
+    "bytes": 13942,
+    "sha256": "dacf472a7936664a88c5175714871edf00b282aae1629d2931adb588fdba58c1"
+  },
+  "lib\\plugins\\versioned_idea_view.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_idea_view.dart",
+    "bytes": 5282,
+    "sha256": "b9bf37c9672f7f3f9c1be0d609b71dc5e918b4bb68c9afd288edd80fe5957b87"
+  },
+  "lib\\plugins\\versioned_ui_validation.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_ui_validation.dart",
+    "bytes": 2165,
+    "sha256": "32e9c07ac83b1b35e580429c6c3e77369bc418b8bd80bba978d22bd7fb8b5763"
+  },
+  "lib\\plugins\\versioned_workspace_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\versioned_workspace_native.dart",
+    "bytes": 12497,
+    "sha256": "15511a65f08352cbfb925c1e7f170ff217a1f1a57971107aa237362e28f274a1"
+  },
+  "lib\\plugins\\workbench_backend.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_backend.dart",
+    "bytes": 3214,
+    "sha256": "15e1e937d9afc8b1dd3acaa31de6821b46a0965d03e75168e430a5a2de97d8e1"
+  },
+  "lib\\plugins\\workbench_channel.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_channel.dart",
+    "bytes": 465,
+    "sha256": "57106e40f8f5c74afca7bf0ec0e8cc4147ad21edeb964c854e58df24a4c8bf45"
+  },
+  "lib\\plugins\\workbench_channel_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_channel_native.dart",
+    "bytes": 717,
+    "sha256": "c258e656cbdfa690c5adade155c32776f314de15220afd2d20699a8e2d0f78d8"
+  },
+  "lib\\plugins\\workbench_channel_supervised.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_channel_supervised.dart",
+    "bytes": 15460,
+    "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+  },
+  "lib\\plugins\\workbench_channel_web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_channel_web.dart",
+    "bytes": 9855,
+    "sha256": "bf8a16a7c43699b35e9df24b0fe7f9c405c2255f0d7c838de26589b007fe474c"
+  },
+  "lib\\plugins\\workbench_device_files.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_device_files.dart",
+    "bytes": 798,
+    "sha256": "eb7178afcd75fa2e247d600f84f5f17004eed519f70d84e5106185a359131356"
+  },
+  "lib\\plugins\\workbench_ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_ids.dart",
+    "bytes": 4811,
+    "sha256": "394c7836ea68763e1c8c431cdf1f86b8a789c5207b930ce08470967a4e7753e9"
+  },
+  "lib\\plugins\\workbench_labels.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_labels.dart",
+    "bytes": 3021,
+    "sha256": "e77c846b074888be15666859ccff9a649409351db1af1aa461937daf38184e5b"
+  },
+  "lib\\plugins\\workbench_loading.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_loading.dart",
+    "bytes": 3332,
+    "sha256": "dbf816b4a088b5ead45729badca214c206b6826f0b93fa08cf0824408e8c87b2"
+  },
+  "lib\\plugins\\workbench_native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_native.dart",
+    "bytes": 144818,
+    "sha256": "3215b4d1cb6d6ee79fd6ac08dfadc3039fa088ab7b16453190cb0582121237d3"
+  },
+  "lib\\plugins\\workbench_owner_management.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_owner_management.dart",
+    "bytes": 9889,
+    "sha256": "007d63973191ed50bb8160de2587012b19b1fd15a2393a562b0a0d76036a9068"
+  },
+  "lib\\plugins\\workbench_recovery.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_recovery.dart",
+    "bytes": 21093,
+    "sha256": "23aabbb1e85272578bc1a7dfd1c47eca484ee09db9b07df4651811303664581d"
+  },
+  "lib\\plugins\\workbench_self_check.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_self_check.dart",
+    "bytes": 6938,
+    "sha256": "e6a0d4c009fb58eef926862fda0c99bef9bf98a8456f1619c1024161fab276e5"
+  },
+  "lib\\plugins\\workbench_shutdown.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_shutdown.dart",
+    "bytes": 6045,
+    "sha256": "0272586c4a5143b6124949408978cb810caa47cccabc877b05b6e5846f7f6784"
+  },
+  "lib\\plugins\\workbench_startup.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_startup.dart",
+    "bytes": 3722,
+    "sha256": "be27e309fb7aa713f20e4e00eb6cd8ad58d4521ce03c42fdb8b5ab5aae669372"
+  },
+  "lib\\plugins\\workbench_supervision.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_supervision.dart",
+    "bytes": 14845,
+    "sha256": "7f055f82077af0d33d495232a7cfbb268e43cb1da54d94f21daa02c6abfbeba1"
+  },
+  "lib\\plugins\\workbench_supervision_wire.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_supervision_wire.dart",
+    "bytes": 14618,
+    "sha256": "a94cba1a3ab8728bbf9c954355012f44506c13fa69324bee19e488f145e77df5"
+  },
+  "lib\\plugins\\workbench_tool_labels.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\workbench_tool_labels.dart",
+    "bytes": 2392,
+    "sha256": "f929289f5d6fd4a42016965291e0d709448052999a83d098af0823400926e828"
+  },
+  "lib\\theme_plugins\\theme_artwork.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\theme_plugins\\theme_artwork.dart",
+    "bytes": 1677,
+    "sha256": "331510062f0badb0023f01f26858c061228ef192224cfcac0f97f40cbec2de9e"
+  },
+  "lib\\theme_plugins\\theme_plugin_controller.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\theme_plugins\\theme_plugin_controller.dart",
+    "bytes": 11283,
+    "sha256": "eda76c09b67f499a6c8ee55ce3ef54256e2899afd88545dcb228daa1ca9aab74"
+  },
+  "lib\\theme_plugins\\theme_plugin_tile.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\theme_plugins\\theme_plugin_tile.dart",
+    "bytes": 4080,
+    "sha256": "70a5f1e7e88647fa3f37c9267ee23369a239f8543f5ccb1c28791cff2d3bd46d"
+  },
+  "lib\\theme_plugins\\ui_theme_tokens.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\theme_plugins\\ui_theme_tokens.dart",
+    "bytes": 1313,
+    "sha256": "fc03d5d3a87380037089839607eda96c9f2bb1b7e58d9133eb6b6580ae247851"
+  },
+  "lib\\plugins\\generated\\blob_upload_history.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\blob_upload_history.capnp.dart",
+    "bytes": 234,
+    "sha256": "8bb79d40d060144766d490320e1e07fa50441158a6f84a0f69e71ff83278adf6"
+  },
+  "lib\\plugins\\generated\\blob_upload_history.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\blob_upload_history.capnp.ids.dart",
+    "bytes": 414,
+    "sha256": "7f6d9a5797cfa4e4295dac7d9f2036b10935996f1740ad845d15e218774edb15"
+  },
+  "lib\\plugins\\generated\\blob_upload_history.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\blob_upload_history.capnp.native.dart",
+    "bytes": 15487,
+    "sha256": "d5da0c0c1c519f982c9398ea59b2591e8b03cd180d5dc0e4e10532266f8fec19"
+  },
+  "lib\\plugins\\generated\\blob_upload_history.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\blob_upload_history.capnp.web.dart",
+    "bytes": 10295,
+    "sha256": "56aa624bf0d25762feebf25b40041cd89ebd1894c2c63301431f2b0a448b379c"
+  },
+  "lib\\plugins\\generated\\blob_upload_history_identity.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\blob_upload_history_identity.dart",
+    "bytes": 346,
+    "sha256": "e2ef77a7b07cb0f058e083bf1de9dba3b62877569679c57dbfa4af4f6419f902"
+  },
+  "lib\\plugins\\generated\\capture.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\capture.capnp.dart",
+    "bytes": 191,
+    "sha256": "4b12f05e6ea39203d615cf9d243f9fc8f43dc623eb23a1845e6a1bc52a6fd1a8"
+  },
+  "lib\\plugins\\generated\\capture.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\capture.capnp.ids.dart",
+    "bytes": 362,
+    "sha256": "4825150be2cd1d3b7c9a189e7e697316c96eae99d7c5c10c524cfb4e88855a45"
+  },
+  "lib\\plugins\\generated\\capture.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\capture.capnp.native.dart",
+    "bytes": 9295,
+    "sha256": "3602148c539c1979b8d7b01c6b7155885717e0726b091abfd74b705b33481edd"
+  },
+  "lib\\plugins\\generated\\capture.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\capture.capnp.web.dart",
+    "bytes": 5030,
+    "sha256": "b5b5bd9fda5c81e200d0a4c36ce040f1376b3a6fbe99a96e0c23aa926bff3bb7"
+  },
+  "lib\\plugins\\generated\\channel.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\channel.capnp.dart",
+    "bytes": 195,
+    "sha256": "75b69323329155bc627059f9b31d7927cf9be89c5596c91330b2eda6f5264cd2"
+  },
+  "lib\\plugins\\generated\\channel.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\channel.capnp.ids.dart",
+    "bytes": 682,
+    "sha256": "cf4088597ab62e40b3ddb6e8970a0ab6636362aab7019d79214f6d74f6a0a82c"
+  },
+  "lib\\plugins\\generated\\channel.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\channel.capnp.native.dart",
+    "bytes": 32409,
+    "sha256": "3d857b4ee41ab362aada4d737ca2685c638182793417147751934ed67277b5db"
+  },
+  "lib\\plugins\\generated\\channel.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\channel.capnp.web.dart",
+    "bytes": 21468,
+    "sha256": "ad7d0fe6b0c38a95660d932785aac7aa1b41b06cb65ee4a6ebdbd143cc9626e9"
+  },
+  "lib\\plugins\\generated\\content_api.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\content_api.capnp.dart",
+    "bytes": 203,
+    "sha256": "2339fce3de88162c2a6c292a9e17c7c9deb8754f4559c0ddf231110fe1cb55b4"
+  },
+  "lib\\plugins\\generated\\content_api.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\content_api.capnp.ids.dart",
+    "bytes": 760,
+    "sha256": "8d636d81b731ed859ca4692fea08ecf2eb9304f5207d2bd6d890a56fc1653733"
+  },
+  "lib\\plugins\\generated\\content_api.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\content_api.capnp.native.dart",
+    "bytes": 40809,
+    "sha256": "1d26e8f226797caf7f09a114427340a29676fd345d16588a4c5bc12cf9f3ac2e"
+  },
+  "lib\\plugins\\generated\\content_api.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\content_api.capnp.web.dart",
+    "bytes": 22889,
+    "sha256": "fd84e14df67d4ab7db9195449d126a45fdea632cb08333989139ba6eadb565b6"
+  },
+  "lib\\plugins\\generated\\editor_draft_api.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_api.capnp.dart",
+    "bytes": 218,
+    "sha256": "4877bdb9c73e7595710c2d72de211058aa1a9cf18cfec7e2db611d59e8b52d19"
+  },
+  "lib\\plugins\\generated\\editor_draft_api.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_api.capnp.ids.dart",
+    "bytes": 1285,
+    "sha256": "6491f2fb30e18177506c6d89d6b9fbd502fb5fdad9bf8b689dcf1ae255af6458"
+  },
+  "lib\\plugins\\generated\\editor_draft_api.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_api.capnp.native.dart",
+    "bytes": 96937,
+    "sha256": "7cb41db5eee4c49b403b0ee7ed0c40f3aaa600e41eac04c79c5847fd0c1c9ca3"
+  },
+  "lib\\plugins\\generated\\editor_draft_api.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_api.capnp.web.dart",
+    "bytes": 61934,
+    "sha256": "820bc3c7a452d327b0946f2c71caa22cdafe21251afff0f98277566d8a3b9b77"
+  },
+  "lib\\plugins\\generated\\editor_draft_staging_api.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.dart",
+    "bytes": 242,
+    "sha256": "fbd93b0728d2aba30d067bfe1cfa608e4dec1f3f7f77e8798ca8b3bd97d71c8c"
+  },
+  "lib\\plugins\\generated\\editor_draft_staging_api.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.ids.dart",
+    "bytes": 572,
+    "sha256": "0e811980d3fa10c4a6522bcad59791b15df1d91d3b1bd3fba832e1354b8a3de5"
+  },
+  "lib\\plugins\\generated\\editor_draft_staging_api.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.native.dart",
+    "bytes": 30769,
+    "sha256": "2c97f752edad60401cabc0ae2bee5cb7277bc5e629d8f891731a6037c8bae33a"
+  },
+  "lib\\plugins\\generated\\editor_draft_staging_api.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.web.dart",
+    "bytes": 21048,
+    "sha256": "998e9cd0e7ef1a8136f51f8802a722afbe73c98d0fc9ef51257f557471174843"
+  },
+  "lib\\plugins\\generated\\host.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\host.capnp.dart",
+    "bytes": 186,
+    "sha256": "751edb01d258f2f185463d5cd1081f1c34024edda180d4ecc54a409fb75758e6"
+  },
+  "lib\\plugins\\generated\\host.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\host.capnp.ids.dart",
+    "bytes": 3991,
+    "sha256": "2e35ac4b5e63934baac0cf14dc8f4d0ea3a6be29f4530be1342d063de96ea735"
+  },
+  "lib\\plugins\\generated\\host.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\host.capnp.native.dart",
+    "bytes": 434314,
+    "sha256": "94f1d9e300e30a817676f652822ec62f6c2348896d087b2b320f27cdb7bbde0c"
+  },
+  "lib\\plugins\\generated\\host.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\host.capnp.web.dart",
+    "bytes": 261887,
+    "sha256": "5f76dd0d13b1e7b67884f042622c4cd275b75476c2c7e7580825a2eaa0f37955"
+  },
+  "lib\\plugins\\generated\\identity.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\identity.dart",
+    "bytes": 2845,
+    "sha256": "03601de369508dbd7c58e5186f419a74d1dce3f350fdefe82303a08b2b0447b8"
+  },
+  "lib\\plugins\\generated\\mutation.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\mutation.capnp.dart",
+    "bytes": 194,
+    "sha256": "cfff088b3cb2ddb25e6721c6cde1031df44ff1da23133e2a2dbdb10b23526db6"
+  },
+  "lib\\plugins\\generated\\mutation.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\mutation.capnp.ids.dart",
+    "bytes": 550,
+    "sha256": "e94fd1f9568f3dd81bbfb7fff8e8d6ae328b76ed0af5b6c9e6821bab918222a4"
+  },
+  "lib\\plugins\\generated\\mutation.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\mutation.capnp.native.dart",
+    "bytes": 20379,
+    "sha256": "a2fd912357b2686d1395d024942b5fa1455f361dc568cb8ccba72a04093710d1"
+  },
+  "lib\\plugins\\generated\\mutation.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\mutation.capnp.web.dart",
+    "bytes": 11816,
+    "sha256": "f35db545dc8e6ef06c72b0704a693a70056c5f490baa19a9b4af23e9fdeba547"
+  },
+  "lib\\plugins\\generated\\studio.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\studio.capnp.dart",
+    "bytes": 188,
+    "sha256": "a3ac9f8e7f011097f8c7659aa94137b3a8987a5e921fa106ef26327886ee57ae"
+  },
+  "lib\\plugins\\generated\\studio.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\studio.capnp.ids.dart",
+    "bytes": 764,
+    "sha256": "6c7d7c9315b027df577359e2799a86792b9756ee325f79acd8f170480ca583b3"
+  },
+  "lib\\plugins\\generated\\studio.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\studio.capnp.native.dart",
+    "bytes": 48340,
+    "sha256": "b6835f9bf98d1347cf95c998eadb4d5259fcf8136fc7d1316f1e0dda1a17ae26"
+  },
+  "lib\\plugins\\generated\\studio.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\studio.capnp.web.dart",
+    "bytes": 27264,
+    "sha256": "94fb05aad68c6ee34aaa42666e6bfa589dd28aa20e2a4688739e90614b6cf7c0"
+  },
+  "lib\\plugins\\generated\\tasks.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\tasks.capnp.dart",
+    "bytes": 185,
+    "sha256": "8097fdeae2fb8a7962da0ff44ad27e485b0aca74575a6c3a1445dd1891cfa964"
+  },
+  "lib\\plugins\\generated\\tasks.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\tasks.capnp.ids.dart",
+    "bytes": 400,
+    "sha256": "bfcb273792ea96dc887d861890d48a30f5cadb83e752ab49b7afddf2ea378008"
+  },
+  "lib\\plugins\\generated\\tasks.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\tasks.capnp.native.dart",
+    "bytes": 12567,
+    "sha256": "3699d90d9d49ef7731cfce25ad8a806b8fc2e1a2ba8d52a64846a921e010467e"
+  },
+  "lib\\plugins\\generated\\tasks.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\tasks.capnp.web.dart",
+    "bytes": 7331,
+    "sha256": "ce4436c699b50834e420455d1b00c27d082266785491854f68d186ab97903992"
+  },
+  "lib\\plugins\\generated\\workbench.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench.capnp.dart",
+    "bytes": 197,
+    "sha256": "c2d505c2b865076827d8efb75a2145ef271aa6051f12d75a755eeabbec3bee35"
+  },
+  "lib\\plugins\\generated\\workbench.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench.capnp.ids.dart",
+    "bytes": 437,
+    "sha256": "449388aa049411e39c1b4d495d0d93afa1a5fbd28bfca4d7fd5017cf9ec69f49"
+  },
+  "lib\\plugins\\generated\\workbench.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench.capnp.native.dart",
+    "bytes": 17803,
+    "sha256": "8634ecfbc4363a737b67561aa9bfdb913afb8bbb4f594f9e9fea2377cbe45398"
+  },
+  "lib\\plugins\\generated\\workbench.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench.capnp.web.dart",
+    "bytes": 10417,
+    "sha256": "4242397b09595afd5f36300b27966d365e8b856ae436282626d4ba66e727e3e2"
+  },
+  "lib\\plugins\\generated\\workbench_supervision.capnp.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench_supervision.capnp.dart",
+    "bytes": 249,
+    "sha256": "06da6d887feb83cfaa21ef1579186351af3f5f8fd5d0bbad1dbb7d75c0ab44a3"
+  },
+  "lib\\plugins\\generated\\workbench_supervision.capnp.ids.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench_supervision.capnp.ids.dart",
+    "bytes": 1090,
+    "sha256": "2332d5d378657e13683ea71bf09113b2dc356332e35fddaaff843f2b8cda8577"
+  },
+  "lib\\plugins\\generated\\workbench_supervision.capnp.native.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench_supervision.capnp.native.dart",
+    "bytes": 53123,
+    "sha256": "c6922c7d2b7cc7382f72e7b02ee475853d2dace6b4ddb1ac4dbb68e34fe27c9b"
+  },
+  "lib\\plugins\\generated\\workbench_supervision.capnp.web.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench_supervision.capnp.web.dart",
+    "bytes": 29984,
+    "sha256": "702d63c6dcf4da7c5837eb05fdaf192dc68e478c4b3f6404ade4243c30f571ff"
+  },
+  "lib\\plugins\\generated\\workbench_supervision_identity.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\lib\\plugins\\generated\\workbench_supervision_identity.dart",
+    "bytes": 167,
+    "sha256": "d9ab9e93593d6abf10d533033deb7508fe14648cff97ae1740bed94f05fd2896"
+  },
+  "packages\\morrow_i18n\\lib\\locale_codes.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\locale_codes.dart",
+    "bytes": 465,
+    "sha256": "a91d5ebc47b0c8ed7277922eafd0a3ce2510da1581612484c6703578843c81f0"
+  },
+  "packages\\morrow_i18n\\lib\\morrow_i18n.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\morrow_i18n.dart",
+    "bytes": 136,
+    "sha256": "d8e1153e3feacd2011ef8f9890800131325db2dcea3c071c7fd4a80cabba9dca"
+  },
+  "packages\\morrow_i18n\\test\\l10n_test.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\test\\l10n_test.dart",
+    "bytes": 4573,
+    "sha256": "d670f2cc9ac010a72daebcd37107036e86af71258e333c0b948234759910f5bd"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.de.arb",
+    "bytes": 497,
+    "sha256": "64f422b8d69020a2064534e59bb593c9316cb01ed6a7b0e30a45a1c2f9be82fd"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.en.arb",
+    "bytes": 474,
+    "sha256": "ac155ed0e0b85089285996665427eff020ba28dde08f49cef671473852952e9f"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.es.arb",
+    "bytes": 494,
+    "sha256": "68f7c66db0991d69803307b37e3d4d758d3e3f920cdf9a0d0373324edcc3f6a8"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.fr.arb",
+    "bytes": 500,
+    "sha256": "a61f6b902da9031bdf2409ca8bacd8a410d084e7acf430f4493911a2b8721454"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.ja.arb",
+    "bytes": 490,
+    "sha256": "062ec4a3ecce68b3d3460f550ee438d3e555d5aff55c6660fa465c340847156a"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.ko.arb",
+    "bytes": 484,
+    "sha256": "f995ed4a1863a394d021157c6df0155947421c5fce9ecc28665a7bc8b546a000"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.pt.arb",
+    "bytes": 484,
+    "sha256": "8d853c141e5a7b1e4bd2827780c0ca6ee0260b48e6670f9c028b3fee799baeeb"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.ru.arb",
+    "bytes": 606,
+    "sha256": "2514ecbbef9d08a5a9208741372acdd62edfcf88121cb93be69f4aa8197ea948"
+  },
+  "packages\\morrow_i18n\\l10n\\parts\\common.zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\l10n\\parts\\common.zh.arb",
+    "bytes": 425,
+    "sha256": "37ff2c9fb2b727cea28543310727bd476b7ea1cf37b7ff3f6d03612c0c33eb5d"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_de.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_de.arb",
+    "bytes": 120314,
+    "sha256": "35dd201298010550cf806b59820859d37ea1e25d9b8c6f63dcff07278c73daa1"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_en.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_en.arb",
+    "bytes": 110653,
+    "sha256": "8d0965e7453ffa2a02040a7c1b878fa2129b1aae8d3544d2dc2c10143576a17d"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_es.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_es.arb",
+    "bytes": 117190,
+    "sha256": "578ef9b9efae0c62e6ed6d29f9609693d2d917dbe6341603d4585c33b6509963"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_fr.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_fr.arb",
+    "bytes": 121862,
+    "sha256": "bf7252791e0f3f9fd797d005bdf440377296db93243acfa716a7bbd04a8b96b1"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_ja.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_ja.arb",
+    "bytes": 130447,
+    "sha256": "b4c9bb71bd7e8ff0c1fe2f079a65f2dc541908631d38b51434c08883696ec519"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_ko.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_ko.arb",
+    "bytes": 122090,
+    "sha256": "ba038cde4a5fcb1f954342828833a236f02ed42954fd736de88af53e791c89a1"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_pt.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_pt.arb",
+    "bytes": 116484,
+    "sha256": "88951fd779470a93307fa58c0ef2cbb96754b7f6dc8c9348a1011b97c618ea80"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_ru.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_ru.arb",
+    "bytes": 157683,
+    "sha256": "b1fe2017de73a6b16d3761f4d7473e133b8fb37ee09cd61a9c672ce0b92a23de"
+  },
+  "packages\\morrow_i18n\\lib\\l10n\\app_zh.arb": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\l10n\\app_zh.arb",
+    "bytes": 104931,
+    "sha256": "229ee3070e9833fd06c66cc888da786a8d664591c506ebde6334b2fa42c095d5"
+  },
+  "packages\\morrow_i18n\\lib\\src\\l10n.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\l10n.dart",
+    "bytes": 1683,
+    "sha256": "f2e034ee10e37ef23d1c7b9dab7b6d8bbf8cbf4e6e5263081daf8f127be5b330"
+  },
+  "packages\\morrow_i18n\\lib\\src\\language_pack.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\language_pack.dart",
+    "bytes": 4530,
+    "sha256": "f21603aab8afd4a1932b8ed22ccb1d25f9cd5785212fd51b82652f9ba4c20699"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations.dart",
+    "bytes": 245083,
+    "sha256": "bacbe078d403114ef38fcf7cdd30ae5e616ec9b79538fc2fe0b7090f845baabb"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_de.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_de.dart",
+    "bytes": 132765,
+    "sha256": "eece4a931d9ab09cd11516ba874582a9035e110ae786937d20e415d225962aee"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_en.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_en.dart",
+    "bytes": 122695,
+    "sha256": "f5c70d9c6dfd2dfb2c295fb6f05f18112e70ab19399debf58b45edd760ebd931"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_es.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_es.dart",
+    "bytes": 129900,
+    "sha256": "e826d828c9d2413e300fa600265e462f0127f4b0782132a9955ba7efd2882bec"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_fr.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_fr.dart",
+    "bytes": 134591,
+    "sha256": "e11a92446e27c8906bcd6278e7c030d47df03168a4e581887d2359b6af17081f"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ja.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ja.dart",
+    "bytes": 141054,
+    "sha256": "3a7ce4fefacb407b1f3e2b34581f2b46f61939bcbe79f5c09c0b1f4f95042419"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ko.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ko.dart",
+    "bytes": 132881,
+    "sha256": "658489d32050a04bd00147c5f9b107c3a292ba7fee098ab392b8a8f8443d9f47"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_pt.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_pt.dart",
+    "bytes": 129073,
+    "sha256": "084dad151538c4cc235cea8cafe89380b253d1e38346b148f5d9a27a5624bf8d"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ru.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_ru.dart",
+    "bytes": 170229,
+    "sha256": "5b6cac43b01ac7da4de2bdc08debe25d3688d12e1d81f9971a70e4c5f229d6c2"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_zh.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\app_localizations_zh.dart",
+    "bytes": 114705,
+    "sha256": "f3c5713b68beea96fb78734194edcff93604efeb5421741cdd38912b01f2dda9"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pb.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pb.dart",
+    "bytes": 6756,
+    "sha256": "770d3b7f58ec0f51da2b3889c35d3287963bed7ede6f1f58435c73687d0e5884"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pbenum.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pbenum.dart",
+    "bytes": 438,
+    "sha256": "d2160d6bc0b10589d56d86fc05997c1c84743d21f0b10e3df25d5a468ccdae35"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pbjson.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\language_pack.pbjson.dart",
+    "bytes": 2063,
+    "sha256": "0a9324993ce33cae7859b1665941bbe25f9240c0654918c6ab97b7fa16389012"
+  },
+  "packages\\morrow_i18n\\lib\\src\\generated\\language_pins.dart": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\packages\\morrow_i18n\\lib\\src\\generated\\language_pins.dart",
+    "bytes": 1743,
+    "sha256": "79c4554dbab0db0ae962c82f7383ccfb3841bc37260d050be1f1cf212c0ca682"
+  },
+  "workbench_host\\schemas\\host.capnp": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-stage-1565\\candidate\\workbench_host\\schemas\\host.capnp",
+    "bytes": 34704,
+    "sha256": "2e2999d16a9221e88c45c9e57cf6151ec674f4ba23323a09af7e215fd78f14ab"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "status": "PASS_SCOPED_PROTECTED_HISTORY_ONE_SHOT_DELIVERY",
+  "source_digest": "0474129a87cbca7fd19e31c522124c3c5c30677266028ef8db718ec055ae2afb",
+  "original_production_cold_source_digest": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+  "source_unchanged": true,
+  "production_source_unchanged_since_cold_build": true,
+  "guest_source_unchanged_since_build": true,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 8.016,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\build.stdout",
+        "bytes": 1020899,
+        "sha256": "17cc23f5dcc4ac4fbd326b5c5738b8626e4ecc7423ae55118538035e1bf7b260"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\build.stderr",
+        "bytes": 385,
+        "sha256": "338abde0b38f919dc3aaf06dec8a0a1f5ebd787e588413255241ee48076c9541"
+      }
+    },
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\discovery.stdout",
+        "bytes": 626,
+        "sha256": "c767af9936db42c1f26ea71e82a85119abae65271cabeaf8a496b94e4afa120a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "runtime",
+      "exit_code": 0,
+      "seconds": 1.219,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\runtime.stdout",
+        "bytes": 847,
+        "sha256": "03ccb91749228771be5a686132bf55e49d31d2836566baacd371ecc48c0ae7db"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "close-refusal",
+      "exit_code": 0,
+      "seconds": 0.266,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\close-refusal.stdout",
+        "bytes": 190,
+        "sha256": "ec2a0bd2831a7ca0d080697d1f7ceee8b8df1a0fa056fad19539494b1ac9b53a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\programs\\blob_history_delivery-7c3825fe74b404b2.exe",
+    "bytes": 20550656,
+    "sha256": "5b1a959544d9af2ac0afc4f35786a859d75b234afe9ca7dc38eae8b67c6bb2b8"
+  },
+  "error": null,
+  "ordinary_methods": 8,
+  "explicit_close_refusal_methods": 1,
+  "explicit_close_refusal_scenarios": 2,
+  "protected_store": true,
+  "product_private_route": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

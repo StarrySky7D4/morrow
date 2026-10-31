@@ -1,0 +1,114 @@
+{
+  "status": "PASS_ONE_LINE_LOCK_EDGE_FIX_ACTUAL_P_C_R_S_GRAPHS",
+  "utc": "2026-10-31T04:43:56.992661+00:00",
+  "source_digest": "2900f789e1b932e39ba0903a5fb22dc367d2289d1c74fd8c8b7fbd11abf1b531",
+  "previous_source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "changed_files": [
+    "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock"
+  ],
+  "dependency_edge_added": "morrow-workbench-host -> lz4_flex",
+  "package_versions_changed": 0,
+  "packages_added": 0,
+  "packages_removed": 0,
+  "all_other_frozen_source_hashes_unchanged": true,
+  "SDK_implementation_files_unchanged": true,
+  "canonical_lock": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+    "bytes": 234900,
+    "sha256": "75d08fbe59dd1c76506edb7d02928a87cc690c4b46be287d53d4698a93158592"
+  },
+  "diagnosis": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\result.json",
+    "bytes": 7445,
+    "sha256": "0a58a791fad3bb5b98e6f2c2dc141ce36a0bc3bda1d37c7bf399bd2662b458a2"
+  },
+  "closed_first_preflight": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\failure.json",
+    "bytes": 2022,
+    "sha256": "78a9f6fbdbd2f46b016990ac99d8537c0d9dc04266b2337605a8a49bad7c6208"
+  },
+  "harness_C_and_R_locked_graph": {
+    "name": "harness",
+    "exit_code": 0,
+    "original_process_returned": true,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\harness.json",
+      "bytes": 3945425,
+      "sha256": "9dd92883f9e4794f3050ce682f4078caaa8bd0b6bf2461c7ac80850a65f73858"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\harness.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "session_exec_locked_graph": {
+    "name": "session-exec",
+    "exit_code": 0,
+    "original_process_returned": true,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\session-exec.json",
+      "bytes": 3844666,
+      "sha256": "661a69395d6ef705b80d300fca0b8b71d39c0766181e2b8e4c6d236729675ce8"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\session-exec.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "processes": [
+    {
+      "name": "P-host-locked",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\P-host-locked.json",
+        "bytes": 3961749,
+        "sha256": "0a111bea4d400899747c53363a557b698dcb6710f689e054b257f2461086f282"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\P-host-locked.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "S-isolated-resolution",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\S-isolated-resolution.json",
+        "bytes": 2656553,
+        "sha256": "7855512ca0fd6dd76d5500f7b47422535d01d99090f6524c5d9387f607369e5c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\S-isolated-resolution.stderr",
+        "bytes": 497,
+        "sha256": "9b784dcd55816925c40482b8414419d71f72baeb606390a2d75f95abfe480bb4"
+      }
+    },
+    {
+      "name": "S-isolated-locked",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\S-isolated-locked.json",
+        "bytes": 2656553,
+        "sha256": "7855512ca0fd6dd76d5500f7b47422535d01d99090f6524c5d9387f607369e5c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\selected-role-lock-fix-1178\\S-isolated-locked.stderr",
+        "bytes": 497,
+        "sha256": "9b784dcd55816925c40482b8414419d71f72baeb606390a2d75f95abfe480bb4"
+      }
+    }
+  ],
+  "S_original_dependency_versions_and_checksums_preserved": true,
+  "overbroad_original_workspace_missing_unrelated_dev_crate_retained": true,
+  "compiler_invocations": 0,
+  "product_starts": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

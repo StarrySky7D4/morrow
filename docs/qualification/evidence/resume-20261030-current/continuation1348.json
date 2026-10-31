@@ -1,0 +1,148 @@
+{
+  "status": "RUNNING_WINDOWS_STANDALONE_SDK_SCOPED_PASS_NEW_VM055_INSTALLATION_PENDING_P2",
+  "utc": "2026-10-31T11:52:13.818998+00:00",
+  "source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "previous_checkpoint": "continuation1325.json",
+  "SDK": {
+    "review": 1347,
+    "admission": 1330,
+    "guest_build": 1331,
+    "current_native_tools": 1336,
+    "runtime": 1337,
+    "IO": 1344,
+    "languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "independent_projects": 27,
+    "actual_Wasm_modules": 27,
+    "prepared_original_archives": 27,
+    "executed_original_archives": 12,
+    "original_archive_kinds_executed": [
+      "content",
+      "transform",
+      "ui",
+      "dependency"
+    ],
+    "remaining_original_archives": "15_PREPARED_ONLY_NOT_EXECUTED",
+    "additional_IO_modules": 3,
+    "IO_methods": 5,
+    "IO_harness_uses_qualification_manifests": true,
+    "IO_not_counted_as_original_archive_execution": true,
+    "selected_native_tools_freshly_compiled": true,
+    "IO_same_source_warm_dependencies": true,
+    "all_original_processes_returned": true,
+    "frozen_inputs": 57,
+    "frozen_inputs_unchanged": true,
+    "UI_scope": "protocol session only; no new Flutter visual acceptance",
+    "HTTP_IO_scope": "response codec only; no new actual network claim",
+    "counts_not_added_to_SDK26": true,
+    "prior_observer1329": "closed assertion failure retained; corrected independent SDK-only admission1330"
+  },
+  "storage": [
+    {
+      "status": "PASS_COMPLETE_VM053_ZIP_RELOCATED_BYTE_IDENTICAL_TO_D",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm053-archive-relocation-1333\\result.json",
+        "bytes": 1005,
+        "sha256": "02166de75577629e07f412d55b09e68cab0cef1b9a83bd27632d66d56923647e"
+      }
+    },
+    {
+      "status": "PASS_CLOSED_ROLES061_COMPILER_LIBRARIES_RECLAIMED",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-roles061-library-reclaim-1334\\result.json",
+        "bytes": 584,
+        "sha256": "35787e785f326410bfce5846380406dee2650db698e8137f3da5403866ea548d"
+      }
+    },
+    {
+      "status": "PASS_INDEPENDENT_VM054_RETAINED_BYTES_AFTER_STORAGE_INTERRUPTION",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm054-independent-byte-review-1335\\result.json",
+        "bytes": 1890,
+        "sha256": "e8e5ae0908f78ad9665fc5389f2538a819009fed91ef4d3012358944e38c36fa"
+      }
+    },
+    {
+      "status": "PASS_DETACHED_VM053_ORIGINAL_DISK_LOSSLESS_COMPRESSION",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm053-detached-disk-compression-1340\\result.json",
+        "bytes": 777,
+        "sha256": "c6d06488f7ad7a87966e1c3acdf7e09e9fafac03e07e0965a752bc2ac713dfe4"
+      }
+    },
+    {
+      "status": "PASS_THIRTEEN_C28_BUILD_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_D_ARCHIVE",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\non-git-c28-source-reclaim-1343\\result.json",
+        "bytes": 1107,
+        "sha256": "8b1f64f6918076d22e7f27a68536c46c6110b4a74d15cedc367970229f067d5b"
+      }
+    },
+    {
+      "status": "PASS_AUTHORIZED_RETIRED_VM031_LEFTOVER_DIAGNOSTIC_RECLAIMED",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-vm031-diagnostic-reclaim-1346\\result.json",
+        "bytes": 861,
+        "sha256": "08e01e6d12b66451df339504beff4e1aa3516eacd89a6bab4223132f47aa0348"
+      }
+    }
+  ],
+  "VM053_archive_current_path": "D:\\build_cache\\retained-unknown-archives\\vm053\\vm053-complete-saved-state-1237.zip",
+  "VM054_compression1327": "Original post-compression verification failed; independent byte review1335 passed; historical failure retained",
+  "VM031_retired_diagnostic": "One 34,827,403,264-byte leftover disk copy removed under existing explicit authorization; old Unknown result unchanged; small logs kept",
+  "new_VM_disk_preserved": true,
+  "C28_source_bytes_preserved": true,
+  "C28_git_worktrees_preserved": true,
+  "VM055": {
+    "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+    "status": "NEW_OFFLINE_INSTALLATION_STARTED_NOT_P2_ACCEPTED",
+    "creation": 1352,
+    "start": 1353,
+    "driver": 1354,
+    "starts": 1,
+    "license_activation_not_verified": true
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Running"
+    }
+  ],
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 72672194560,
+    "D": 9199722496
+  },
+  "free_space_deltas_not_added_or_attributed": true,
+  "formal_UI": "PRIOR_SCOPED1166_REOPEN1174_RETAINED_LATE_FEEDBACK1215_UNBOUND",
+  "CURRENT_SOURCE_FULL47": "OPEN",
+  "P2": "OPEN",
+  "formal_current_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Verify new VM055 installation, bind its observed identity, cold-build four normal roles, then run original47/nine gates once. Continue remaining SDK service/channel/directory and product qualification."
+}

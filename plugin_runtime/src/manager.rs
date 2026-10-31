@@ -140,7 +140,19 @@ pub struct ManagedInstance {
     connection: Connection,
     control: Arc<Control>,
 }
+/// A one-way stop signal for the original instance. It neither owns the
+/// connection nor proves closure; an expired weak reference is not a receipt.
+#[derive(Clone)]
+pub struct InstanceStopHandle(Weak<Control>);
+impl InstanceStopHandle {
+    pub fn request_stop(&self) {
+        if let Some(control) = self.0.upgrade() { control.signal_stop(); }
+    }
+}
 impl ManagedInstance {
+    pub fn stop_handle(&self) -> InstanceStopHandle {
+        InstanceStopHandle(Arc::downgrade(&self.control))
+    }
     pub(crate) fn io_control(&self) -> &Arc<Control> {
         &self.control
     }
@@ -605,6 +617,22 @@ impl Manager {
         self.registry.approve_blob_upload(id, digest, approved, revision)?;
         Ok(())
     }
+    /// Independent exact-package watch ceiling; no live path or observation is restored.
+    pub fn approve_fs_watch(
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
+    ) -> Result<()> {
+        self.registry.validate_fs_watch_approval(id, digest, approved, revision)?;
+        if self.selection(id).is_some_and(|s| s.approved_fs_watch == approved) {
+            return Ok(());
+        }
+        self.revoke_required_tree(id);
+        self.registry.approve_fs_watch(id, digest, approved, revision)?;
+        Ok(())
+    }
     /// Bind a previously approved ceiling to this exact live host/instance. This does
     /// not grant an origin, filesystem path, credential or listener address.
     #[allow(clippy::too_many_arguments)]
@@ -991,6 +1019,16 @@ impl Manager {
     /// Validate current enabled state and package bytes, then bind the stored approved ceiling.
     pub fn connect(&mut self, id: &str, host: &mut HostRuntime) -> Result<ManagedInstance> {
         self.connect_profile(id, host, None)
+    }
+    /// Pure preparation check using this Manager's actual policy. No HostRuntime
+    /// or connection factory is supplied, so a refusal has not allocated a host
+    /// instance. Success reserves nothing: connect must independently revalidate.
+    pub fn validate_preparation(&self, id: &str, digest: [u8; 32], revision: u64) -> Result<()> {
+        self.check_revision(revision)?;
+        let (package, selection) = self.registry.resolve_enabled(id)?;
+        if selection.digest != digest { return Err(Error::RevisionConflict.into()); }
+        PreparedPackage::new(package, self.limits)?;
+        Ok(())
     }
     /// Explicit trusted-host budget for the independent upload profile only.
     /// This does not approve the package or nominate an object. Ordinary connect

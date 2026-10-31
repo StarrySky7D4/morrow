@@ -1,0 +1,308 @@
+{
+    "original17":  {
+                       "fresh_readiness_all_pass":  true,
+                       "guest_mutation":  false,
+                       "native_acceptance":  "NOT_PROVEN_BY_PREFLIGHT",
+                       "query_errors":  0,
+                       "pristine_for_original_lifecycle":  true,
+                       "failed_checks":  0,
+                       "global_WFP_emptiness_not_proven":  true,
+                       "schema":  "ROOT_STAGE571_GUEST_SAFE_EXEC_PREFLIGHT_V1",
+                       "checks":  [
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "account_matches":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "IDENTITY",
+                                          "code":  "ACCOUNT",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "administrator":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "ADMIN",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "computer_matches":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "COMPUTER",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "process64":  true,
+                                                        "pass":  true,
+                                                        "os64":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "ARCH64",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "observed_firmware_uuid":  "3ea5d09e-d966-46c8-a345-f7edc08d38ca",
+                                                        "pass":  true,
+                                                        "operator_expected_uuid_not_invented":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "CIM_QUERY",
+                                          "code":  "FIRMWARE_UUID",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "manufacturer_matches":  true,
+                                                        "model_matches":  true,
+                                                        "pass":  true,
+                                                        "hypervisor_present":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "HYPERV_MACHINE",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "users":  [
+
+                                                                  ],
+                                                        "count":  0
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "INVENTORY",
+                                          "code":  "SANDBOX_USERS",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "groups":  [
+
+                                                                   ],
+                                                        "pass":  true,
+                                                        "count":  0
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "INVENTORY",
+                                          "code":  "SANDBOX_GROUP",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "registration_exists":  false,
+                                                        "pass":  true,
+                                                        "registry_values_read":  false
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "REGISTRATION",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "configuration_read":  false,
+                                                        "count":  0,
+                                                        "names":  [
+
+                                                                  ]
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "SERVICES",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "pass":  true,
+                                                        "full_WFP_filter_inventory":  false,
+                                                        "count":  0,
+                                                        "names":  [
+
+                                                                  ]
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "FIREWALL_NAMES",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "rows":  [
+
+                                                                 ],
+                                                        "fields_readable":  true,
+                                                        "no_process_control":  true,
+                                                        "pass":  true,
+                                                        "count":  0
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "CIM_QUERY",
+                                          "code":  "ACTORS",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "absence_hresult":  -2147024894,
+                                                        "absence_type":  "FileNotFoundException",
+                                                        "pass":  true,
+                                                        "exists":  false,
+                                                        "absence_confirmed":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "FRESH_CAMPAIGN",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "absence_hresult":  -2147024894,
+                                                        "absence_type":  "FileNotFoundException",
+                                                        "pass":  true,
+                                                        "exists":  false,
+                                                        "absence_confirmed":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "FRESH_INCOMING",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "absence_hresult":  -2147024894,
+                                                        "absence_type":  "FileNotFoundException",
+                                                        "pass":  true,
+                                                        "exists":  false,
+                                                        "absence_confirmed":  true
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "ENTERED",
+                                          "code":  "FRESH_RESERVATION",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "metadata_stable":  true,
+                                                        "attributes":  32,
+                                                        "image_executed":  false,
+                                                        "role":  "inventory_shell",
+                                                        "pass":  true,
+                                                        "current_source_whoami_binding_matches":  true,
+                                                        "sha256":  "d3b4b97c2bf97d70e5655ff4c4ca1d8cef9ded51685cfd764247cfda98ee68df",
+                                                        "AMD64":  true,
+                                                        "bytes":  454656,
+                                                        "plain_ancestor_count":  5,
+                                                        "creation_utc_ticks":  638475529510130066,
+                                                        "last_write_utc_ticks":  638475529510130066
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "FILE_FINAL_METADATA",
+                                          "code":  "SYSTEM_SHELL",
+                                          "status":  "PASS"
+                                      },
+                                      {
+                                          "hresult":  null,
+                                          "exception_type":  null,
+                                          "inner_hresult":  null,
+                                          "facts":  {
+                                                        "metadata_stable":  true,
+                                                        "attributes":  32,
+                                                        "image_executed":  false,
+                                                        "role":  "whoami",
+                                                        "pass":  true,
+                                                        "current_source_whoami_binding_matches":  true,
+                                                        "sha256":  "23240ef9f8b0a9a324110b1c2331de31dc1b0e08f5359cb707e51a939af56cd3",
+                                                        "AMD64":  true,
+                                                        "bytes":  98304,
+                                                        "plain_ancestor_count":  3,
+                                                        "creation_utc_ticks":  638636846263141307,
+                                                        "last_write_utc_ticks":  638636846263297562
+                                                    },
+                                          "inner_type":  null,
+                                          "substage":  "FILE_FINAL_METADATA",
+                                          "code":  "SYSTEM_WHOAMI",
+                                          "status":  "PASS"
+                                      }
+                                  ],
+                       "raw_exception_body_returned":  false,
+                       "commandline_returned":  false,
+                       "policy_changed":  false,
+                       "prior558":  "UNKNOWN_NOT_UPGRADED",
+                       "check_count":  17,
+                       "fresh_readiness_gate_count":  17
+                   },
+    "current_parent_count":  0,
+    "schema":  "ROOT_READINESS1737_V1",
+    "extra_com":  {
+                      "guest_mutation":  false,
+                      "pass":  true,
+                      "schema":  "C28_STAGE1412_EXTRA_COM_NAME_PRISTINE_V1",
+                      "count":  0,
+                      "names":  [
+
+                                ]
+                  },
+    "PSComputerName":  "Morrow Windows Acceptance 20261031 051",
+    "RunspaceId":  "ce57ae66-8562-4d26-8a53-4b487eb9d100",
+    "PSShowComputerName":  true
+}

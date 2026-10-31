@@ -1,0 +1,23 @@
+{
+  "roots": [
+    "D:\\build_cache\\qualification-targets\\roles059-P-488f5003368e111e",
+    "D:\\build_cache\\qualification-targets\\roles059-C-4e96980d228a4f8a",
+    "D:\\build_cache\\qualification-targets\\roles059-R-ee727c72c4872463",
+    "D:\\build_cache\\qualification-targets\\roles059-S-47fa7f6b2af3488e"
+  ],
+  "original_programs_preserved": true,
+  "removed_files": 4950,
+  "concurrent_space_changes_not_attributed": true,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "exe_dll_pdb_source_receipt_archive_removals": 0,
+  "old_owner_contacts": 0,
+  "logical_bytes_removed": 8706440068,
+  "preserved_files": 21308,
+  "free_after": 12367425536,
+  "free_before": 8428916736,
+  "release_eligible": false,
+  "all_preserved_hashes_equal": true,
+  "observed_free_delta": 3938508800,
+  "status": "PASS_CLOSED_ROLES059_GENERATED_LIBRARY_CACHE_RECLAIMED"
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "language": "rust",
+    "local_packages": [
+      {
+        "name": "morrow-blob-upload-history-v1",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\extensions\\blob-upload-history-v1\\Cargo.toml"
+      },
+      {
+        "name": "morrow-history-fixture-guest",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\extensions\\blob-upload-history-v1\\guests\\rust\\Cargo.toml"
+      },
+      {
+        "name": "morrow-plugin-sdk",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\sdk\\rust\\Cargo.toml"
+      }
+    ],
+    "no_Core_Store_runtime_dependencies": true
+  },
+  {
+    "language": "ffi-support",
+    "local_packages": [
+      {
+        "name": "morrow-blob-upload-history-v1",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\extensions\\blob-upload-history-v1\\Cargo.toml"
+      },
+      {
+        "name": "morrow-history-fixture-codecs",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\extensions\\blob-upload-history-v1\\guests\\ffi-support\\Cargo.toml"
+      },
+      {
+        "name": "morrow-plugin-sdk",
+        "manifest": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\extracted\\history-wasm-source\\sdk\\rust\\Cargo.toml"
+      }
+    ],
+    "no_Core_Store_runtime_dependencies": true
+  }
+]

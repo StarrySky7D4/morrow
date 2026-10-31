@@ -1,0 +1,280 @@
+{
+  "status": "PASS_SCOPED_C_ABI_AND_FOUR_NATIVE_CONSUMERS_COMPILED_NOT_RUN",
+  "candidate_source_digest": "26e7c985864c8eb74ff190e3dbc3deb616f548c0318aea8edec99cb0a7be1158",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "candidate_files": {
+    "Cargo.lock": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\Cargo.lock",
+      "bytes": 3167,
+      "sha256": "548737022b1f6013449aadee8b006af46cc470d2d849dcd9b74c0481d0dae231"
+    },
+    "Cargo.toml": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\Cargo.toml",
+      "bytes": 271,
+      "sha256": "2f364bfd724316d93d2d992df2de4176828886f2c86bfa880786de39d4cedc58"
+    },
+    "include/morrow_fs_watch_v1.h": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\include\\morrow_fs_watch_v1.h",
+      "bytes": 4516,
+      "sha256": "f3ed0454387757eb99cd282553357b12bf43850505085237b1e6f498570007fb"
+    },
+    "include/morrow_fs_watch_v1.hpp": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\include\\morrow_fs_watch_v1.hpp",
+      "bytes": 4755,
+      "sha256": "3599500a8f451e2a4ac881a11d6df183601ec259543de278d047bf31aab944c8"
+    },
+    "include/morrow_fs_watch_v1_status.hpp": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\include\\morrow_fs_watch_v1_status.hpp",
+      "bytes": 4444,
+      "sha256": "0e1d8c591f33430dc46e96a4186f985e9e8453fd818a950c156878a37a3b7084"
+    },
+    "README.md": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\README.md",
+      "bytes": 1245,
+      "sha256": "3e0b56a29c236885acacf9bae9490ca4325cd60ddb054acfb03d18bf9145cf21"
+    },
+    "src/bin/synthetic_vectors.rs": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\src\\bin\\synthetic_vectors.rs",
+      "bytes": 1591,
+      "sha256": "cd9f17efd6aa4f6d15b0ae96be5979e0768369bdb257309cce8e85ef6453ca06"
+    },
+    "src/lib.rs": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\src\\lib.rs",
+      "bytes": 13541,
+      "sha256": "6c34806d2adb918fc857644023b8e79197ec2129789be670db919a96f9441c3f"
+    },
+    "tests/consumer.c": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\tests\\consumer.c",
+      "bytes": 17674,
+      "sha256": "da42aa99240b507655bbaec50a060b3522192ee4c43bd91689dbe37ff05dbc5f"
+    },
+    "tests/consumer.cpp": {
+      "path": "C:\\ms1020\\extensions\\fs-watch-ffi-v1\\tests\\consumer.cpp",
+      "bytes": 11449,
+      "sha256": "47ff2b38bfc2a3aa445367d2f230ea2110b6acb8b6963faaa89bfd8422447ec9"
+    }
+  },
+  "static_library": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\morrow_fs_watch_ffi_v1.lib",
+    "bytes": 15355986,
+    "sha256": "989d5cbac69733bed7a660160dff6d4d249911c34515208eba100c0a2d3c0651"
+  },
+  "vector_generator": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\synthetic_vectors.exe",
+    "bytes": 262656,
+    "sha256": "e732159aaa2a58faa9734e4b310c607f6fbdca8e422dca33c620dbea9f5c12e7"
+  },
+  "consumers": [
+    {
+      "compiler": "msvc",
+      "language": "c",
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-c.exe",
+        "bytes": 357888,
+        "sha256": "83ecabf52dca3630cdf280d4ec3991110d71313ac8c6e3bf639db7a20a404000"
+      }
+    },
+    {
+      "compiler": "msvc",
+      "language": "cpp",
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-cpp.exe",
+        "bytes": 406016,
+        "sha256": "eb7ece70ff91d2c159f96ec76ae70d3c0721ab7b34853cbe8e224c6ef9826200"
+      }
+    },
+    {
+      "compiler": "clang",
+      "language": "c",
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-c.exe",
+        "bytes": 351744,
+        "sha256": "65066f7ddf78b6213f0ab65613e0dcaa4b63a598e65f0280116ea245334bc23a"
+      }
+    },
+    {
+      "compiler": "clang",
+      "language": "cpp",
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-cpp.exe",
+        "bytes": 398848,
+        "sha256": "b088ceb2769489af7f2a2312a714778fb7a014994ff1c4e172c8ee32c532cd81"
+      }
+    }
+  ],
+  "phases": [
+    {
+      "phase": "rust-format",
+      "pid": 24212,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\rust-format.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\rust-format.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "c-format",
+      "pid": 1400,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\c-format.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\c-format.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "static-library",
+      "pid": 24516,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\static-library.stdout",
+        "bytes": 24456,
+        "sha256": "202b7c51226744fdf7131e0701bea929ad8343669cfbc9f01c7498ea374fb9dd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\static-library.stderr",
+        "bytes": 551,
+        "sha256": "531ec6c8072433be5f76c21be890add2d32833a08b15a490233a547b6b25033d"
+      }
+    },
+    {
+      "phase": "vector-build",
+      "pid": 18872,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\vector-build.stdout",
+        "bytes": 23833,
+        "sha256": "45e451d18e88ad665e889816c5aaee47ed3d42cbb151eb3120241bea7a475c6d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\vector-build.stderr",
+        "bytes": 142,
+        "sha256": "ba20b565b2eb1bf44c134bc21d18317fecd9223608b27665f5ee459c2c335ccd"
+      }
+    },
+    {
+      "phase": "clippy",
+      "pid": 20276,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clippy.stderr",
+        "bytes": 489,
+        "sha256": "b68b14a300fc12f00e00478ae07503b53a3fc205133638e6663381cb5b29d0c4"
+      }
+    },
+    {
+      "phase": "msvc-environment",
+      "pid": 11276,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-environment.stdout",
+        "bytes": 5384,
+        "sha256": "89c84f7c418db1e864866d9e2a84ade54c71ce4fd3e7b0ac99fb8d4453dbba1f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-environment.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "msvc-c-compile",
+      "pid": 20244,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-c-compile.stdout",
+        "bytes": 12,
+        "sha256": "7520398d02e6f84e2808e44b63cd6a5a24df41aa784e575d7e12bb203bee5dc0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-c-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "msvc-cpp-compile",
+      "pid": 20048,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-cpp-compile.stdout",
+        "bytes": 14,
+        "sha256": "fa31bfe2d8d51d9f236af56324aae2af72fc9b8f76d37386ea34261ce98fb32f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-cpp-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "clang-c-compile",
+      "pid": 15816,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-c-compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-c-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "clang-cpp-compile",
+      "pid": 21092,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-cpp-compile.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-cpp-compile.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_compiler_processes_returned": true,
+  "all_static_library_dependencies_cold": true,
+  "strict_lint": true,
+  "canonical_integrated": true,
+  "Windows_runtime": false,
+  "Wasm": false,
+  "formal_UI": false,
+  "VM_calls": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

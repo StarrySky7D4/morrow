@@ -1,0 +1,18 @@
+{
+  "concurrent_changes_not_attributed": true,
+  "free_after": 2391236608,
+  "observed_free_delta": 1264758784,
+  "free_before": 1126477824,
+  "status": "PASS_CLOSED_COMPILER_LIBRARIES_LOSSLESSLY_COMPRESSED",
+  "protected_files_verified": 119,
+  "deletions": 0,
+  "old_owner_contacts": 0,
+  "files_verified": 9324,
+  "roots": [
+    "D:\\build_cache\\qualification-targets\\protectedwatch1577-HOST-d6dd669caa251133",
+    "D:\\build_cache\\qualification-targets\\watchstop1592-RUNTIME-8700b50ce311b226"
+  ],
+  "relocations": 0,
+  "VM_calls": 0,
+  "all_file_contents_unchanged": true
+}

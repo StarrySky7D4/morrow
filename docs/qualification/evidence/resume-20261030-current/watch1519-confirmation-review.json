@@ -1,0 +1,398 @@
+{
+  "status": "PASS_SCOPED_MANAGED_WATCH_AND_RESTRICTED_ORIGINAL_PICKER_CALLBACK_REVIEW",
+  "source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "build_and_runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\result.json",
+    "bytes": 62264,
+    "sha256": "ddae4ab2d150932a7e5a6cc430c0ca33ded901bcc59dad0e3e3cc5202d113869"
+  },
+  "source_binding": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\source-binding.json",
+    "bytes": 15527,
+    "sha256": "2cd29fa334784affbdfbbe4701b1d0bc01d881adf0ff429b9ee6a0caa1cbddc0"
+  },
+  "source_copies": {
+    "plugin_runtime/src/directory_io/watch/picker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\directory_io\\watch\\picker.rs",
+      "bytes": 4742,
+      "sha256": "5ce914c810071dd195a6b311c443d74092da7c4e270f68832a3aafad8f31d222"
+    },
+    "plugin_runtime/src/directory_io/watch/picker_tests.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\directory_io\\watch\\picker_tests.rs",
+      "bytes": 12253,
+      "sha256": "4ea0b4a45995cddff27fd828c7d5242a52f7ada5986e056af7648c93c1603ec1"
+    },
+    "plugin_runtime/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\lib.rs",
+      "bytes": 41489,
+      "sha256": "f821dbdd922375deda90d280507a938f91dec259135bcd525d66cd74c52daa93"
+    },
+    "plugin_runtime/src/continuation.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\continuation.rs",
+      "bytes": 11865,
+      "sha256": "2df7605c66eaa9fd6b01047d2753f2c60040317d5e718441f9099308ab987644"
+    },
+    "plugin_runtime/src/package.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\package.rs",
+      "bytes": 15779,
+      "sha256": "9353eae0c0f19d082364514e5c220954b0bf4183b6be1b77f8152e7598ee89d2"
+    },
+    "plugin_runtime/src/fs_watch_worker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\fs_watch_worker.rs",
+      "bytes": 18364,
+      "sha256": "c418fc6cdbf34255de580f67976ee4c753f1f811b031078179db7c8f26cfc012"
+    },
+    "plugin_runtime/src/fs_watch_worker/close_refusal_tests.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\fs_watch_worker\\close_refusal_tests.rs",
+      "bytes": 8063,
+      "sha256": "70b7ddd5d40ee93afac6f05b67565d9ddc8e76c73ce79512b666f6e325db40b1"
+    },
+    "plugin_runtime/src/fs_watch_binding.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 7570,
+      "sha256": "6427cc41f1d27c53e489aa0e839d93c5a2ad767808cd0b967acb1502aec5ffe7"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 21967,
+      "sha256": "5aef9d05c66691dd1157bc57067f128ecb7540562dfe1804bb4353aab8370722"
+    },
+    "plugin_runtime/src/directory_io/watch/native.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\src\\directory_io\\watch\\native.rs",
+      "bytes": 6485,
+      "sha256": "eaf083f4f2d27d95e6c34cd1bc79d47bb915576214e3598f6c57302caf64b3ab"
+    },
+    "plugin_runtime/tests/fs_watch_worker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\tests\\fs_watch_worker.rs",
+      "bytes": 20741,
+      "sha256": "ee0aa4ab9a13fde1038312d94beb6343f98ef3277861ef434fd35c7262b4a325"
+    },
+    "plugin_runtime/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\Cargo.lock",
+      "bytes": 36808,
+      "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+    },
+    "plugin_runtime/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\plugin_runtime\\Cargo.toml",
+      "bytes": 4514,
+      "sha256": "60618d81718f9e232a4452da9faf52be589cdf2dc21dbab18af2e6a1bc2f2e90"
+    },
+    "extensions/fs-watch-native-v1/src/windows.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\extensions\\fs-watch-native-v1\\src\\windows.rs",
+      "bytes": 25075,
+      "sha256": "ad3c4c96bc436a3914828d7e03712d1f3e27546eebb25a9f8f846785ac09638a"
+    },
+    "extensions/fs-watch-native-v1/src/bin/native_watch_probe.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\source\\extensions\\fs-watch-native-v1\\src\\bin\\native_watch_probe.rs",
+      "bytes": 20344,
+      "sha256": "8f8204a1345f232720f60044ead2519276f3dbfd39fcd1e2907ff98e74da60b5"
+    }
+  },
+  "methods": 62,
+  "selected_confirmation_unit_methods": 6,
+  "confirmation_cases": [
+    {
+      "case": "cancel-after-selection",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\cancel-after-selection.txt",
+        "bytes": 948,
+        "sha256": "a0fe079c5821dd706bb39a268559dc4e6959d60a16e873e960d7109d11a9d4a1"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": true,
+      "original_whole_fixture_retained": false
+    },
+    {
+      "case": "exact-selection-and-duplicate",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\exact-selection-and-duplicate.txt",
+        "bytes": 939,
+        "sha256": "d679c02b7370372f2686c62e07a97c2a9ba6ae61dccb09a7be1d27ed29476299"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": true,
+      "original_whole_fixture_retained": false
+    },
+    {
+      "case": "mismatched-selection",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\mismatched-selection.txt",
+        "bytes": 511,
+        "sha256": "d8628bb3cabfd97b94867a37f30e9d44f6866400f124ea852464eea0779ca881"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": true,
+      "original_whole_fixture_retained": false
+    },
+    {
+      "case": "native-preflight-cancel",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\native-preflight-cancel.txt",
+        "bytes": 511,
+        "sha256": "b2be258600f580d570c13f2c41cc9994f925cf2b9fa56343af7b44aee5acc723"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": true,
+      "original_whole_fixture_retained": false
+    },
+    {
+      "case": "panic-retains-original",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\panic-retains-original.txt",
+        "bytes": 500,
+        "sha256": "f696a94d675138a03fb6eeeb22e6a82113591c565ac2713cbfa363147b61a5f5"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": false,
+      "original_whole_fixture_retained": true
+    },
+    {
+      "case": "revoked-before-selection",
+      "original_receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\picker-evidence\\revoked-before-selection.txt",
+        "bytes": 510,
+        "sha256": "36ca4880b9f86c60b6d549eea691a21be163c27dd3482207346977851eebca2c"
+      },
+      "actual_shown_dialog": false,
+      "normal_native_closure": true,
+      "original_whole_fixture_retained": false
+    }
+  ],
+  "callback_actual_handles_confirmed_closed": 12,
+  "shown_native_picker": false,
+  "confirmation_unit_clippy_not_run": true,
+  "managed_integration_methods": 14,
+  "unit_only_real_close_refusal_methods": 1,
+  "regression_methods": 41,
+  "original_managed_threads_joined": 14,
+  "known_native_closed_owners_returned": 10,
+  "isolated_unknown_managed_negative_processes_closed": 4,
+  "isolated_unknown_confirmation_processes_closed": 1,
+  "total_isolated_unknown_negative_processes_closed": 5,
+  "runtime_isolated_negative_count_scope": "managed watch cases only; callback panic separately recorded here",
+  "counts": {
+    "ancestor_handles": 52,
+    "ancestor_closes": 48,
+    "native_handles": 26,
+    "native_close_calls": 25,
+    "native_confirmed": 24,
+    "reads": 20,
+    "completions": 20,
+    "observed_frames": 15,
+    "delivered_frames": 12
+  },
+  "actual_native_handles_confirmed_closed": 72,
+  "actual_native_handles_retained_without_native_close_proof": 6,
+  "native_close_failure_attempts": 1,
+  "original_close_error": 6,
+  "first_native_failure_stops_other_native_closes": true,
+  "real_gap_delivered_as_terminal_without_rearm": true,
+  "all_original_processes_returned": true,
+  "reference_decodes": [
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\c-frame1.capnp",
+        "bytes": 168,
+        "sha256": "c10dee394260303c99d34e5ed7afc79d92130d8c93dd8150a80cfdffd5db24d1"
+      },
+      "sequence": 1,
+      "end": 0,
+      "fuel_spent": 336397,
+      "fuel_remaining": 19663603,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\c-frame1.decoded",
+        "bytes": 384,
+        "sha256": "98ba1c3299f06e8441b508b0ff9953178da48c284c5add64eddcf2a578dbff0f"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\c-frame2.capnp",
+        "bytes": 160,
+        "sha256": "0fabcaa5444710435be10511db0cba9648b634bb50a7e68d7cb62deffc491cc7"
+      },
+      "sequence": 2,
+      "end": 0,
+      "fuel_spent": 22254,
+      "fuel_remaining": 19641349,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\c-frame2.decoded",
+        "bytes": 367,
+        "sha256": "0f198423e979ef21542ab44eda42478770b1199f612196d12a9fdd0217a81e34"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\cpp-frame1.capnp",
+        "bytes": 168,
+        "sha256": "0c5808d93fef64df0dcbafcfbdeb7964da9766372f807c92317af8c0ed0f9b56"
+      },
+      "sequence": 1,
+      "end": 0,
+      "fuel_spent": 348201,
+      "fuel_remaining": 19651799,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\cpp-frame1.decoded",
+        "bytes": 398,
+        "sha256": "8faf8f1e4ec18a609fa3aa7141c441bd3d092a15ede45e88b344c4bb0d5c3c88"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\cpp-frame2.capnp",
+        "bytes": 160,
+        "sha256": "5afbbe305eae0ab8a1389575361ac42ee8c48f983081e1f2d131fb6a449347c2"
+      },
+      "sequence": 2,
+      "end": 0,
+      "fuel_spent": 25656,
+      "fuel_remaining": 19626143,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\cpp-frame2.decoded",
+        "bytes": 381,
+        "sha256": "153a444f01b0bf073d240293986fbde689aa800999743cc8771b627a286dd52b"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\echo-frame1.capnp",
+        "bytes": 168,
+        "sha256": "792018e4abc33e5e38ab66e646f1238e3f6b83a656ba7b0ef5d3aae276e7cad6"
+      },
+      "sequence": 1,
+      "end": 0,
+      "fuel_spent": 144,
+      "fuel_remaining": 19999856,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\echo-frame1.decoded",
+        "bytes": 402,
+        "sha256": "7db2649ffd9ab6ea0aeb1a92ee9082d600aafeeaa384fb5286fe4b21d7d4bf6b"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\echo-frame2.capnp",
+        "bytes": 160,
+        "sha256": "fc5a17d7b38a2b94a249a36ac81b42aa48bd92ebd6795433873977bef5134182"
+      },
+      "sequence": 2,
+      "end": 0,
+      "fuel_spent": 4,
+      "fuel_remaining": 19999852,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\echo-frame2.decoded",
+        "bytes": 385,
+        "sha256": "503898f41d40c08971c78de380850c710a0e205187712d63749edf91e8bc1de3"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\gap-frame1.capnp",
+        "bytes": 240,
+        "sha256": "6b2b221f85710976dd92911df4f1bf5c5de2612ddd7ac885a6d0493849f03d77"
+      },
+      "sequence": 1,
+      "end": 0,
+      "fuel_spent": null,
+      "fuel_remaining": null,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\gap-frame1.decoded",
+        "bytes": 575,
+        "sha256": "aca6738f9fc11df667ccf72ee046dedccbcf5e43b332a26c4cf7f5b4edd6191a"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\gap-frame2.capnp",
+        "bytes": 128,
+        "sha256": "a8d9c27d6f2dac83ad6f54bbce78cdcf30006ff88b67d82fc6023515776dd933"
+      },
+      "sequence": 2,
+      "end": 2,
+      "fuel_spent": null,
+      "fuel_remaining": null,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\gap-frame2.decoded",
+        "bytes": 293,
+        "sha256": "4cef63fda32d9f2c81290503aea6679a8297dc5e3145f6d2ade3baece803ef5f"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\rust-frame1.capnp",
+        "bytes": 168,
+        "sha256": "3267feb3d54933c90ff7357e00d8501bff2b709046f683e9cb4b8e83036c7da9"
+      },
+      "sequence": 1,
+      "end": 0,
+      "fuel_spent": 307055,
+      "fuel_remaining": 19692945,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\rust-frame1.decoded",
+        "bytes": 396,
+        "sha256": "ff030775dc7eefb322d2c313a29bcf51ac4c70b4e8461ac23a83512c64db4bb0"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1518\\worker-evidence\\rust-frame2.capnp",
+        "bytes": 160,
+        "sha256": "7f923b27577932a5038db14d9bd5f5051e24fca93f5bc5455fd9ead1dcd9478c"
+      },
+      "sequence": 2,
+      "end": 0,
+      "fuel_spent": 19992,
+      "fuel_remaining": 19672953,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\rust-frame2.decoded",
+        "bytes": 379,
+        "sha256": "eb46e036999ee31993021eae1087f61efc94c79fccdf0652593ef64d6207a58b"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    }
+  ],
+  "reference_decoder": {
+    "path": "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "bytes": 3926542,
+    "sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34"
+  },
+  "actual_SDK_languages": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "no_per_frame_fuel_or_task_import_refill": true,
+  "original_frozen_inputs_unchanged": 57,
+  "unit_test_hook_absent_from_production": true,
+  "unit_refusal_rustc_warnings_denied": true,
+  "unit_refusal_clippy_not_run": true,
+  "protected_picker_selection": false,
+  "production_UI": false,
+  "full_snapshot_or_recovery": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

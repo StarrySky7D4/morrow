@@ -1,0 +1,10 @@
+{
+  "source_accepted": false,
+  "manual_request_superseded_by_normal_close": true,
+  "no_pending_operation": true,
+  "release_eligible": false,
+  "status": "UI_CONTROL_FAILED_NO_DELIVERY_ACCEPTANCE",
+  "delivery_accepted": false,
+  "observed": "History list only; original result Unknown and original acknowledgement absent; no approved delivery result observed.",
+  "normal_UI_close_requested": true
+}

@@ -1,0 +1,17 @@
+{
+  "status": "PASS_CLOSED_ROLES061_COMPILER_LIBRARIES_RECLAIMED",
+  "plan_sha256": "58971fbc6f28ea0928f298b92b47ef8315e13ae106def0d73112698869a1d43e",
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_and_executable_removals": 0,
+  "protected_artifacts_equal": true,
+  "free_after": 14173466624,
+  "source_accepted": false,
+  "removed_files": 4374,
+  "logical_bytes_removed": 7634915865,
+  "preserved_files": 21884,
+  "free_before": 10530119680,
+  "observed_free_delta": 3643346944,
+  "concurrent_space_changes_not_attributed": true,
+  "release_eligible": false
+}

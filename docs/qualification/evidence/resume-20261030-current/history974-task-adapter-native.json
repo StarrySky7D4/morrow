@@ -1,0 +1,214 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_TASK_HISTORY_ADAPTER_RUST_C_CPP_NATIVE",
+  "source_digest": "eb67d1b57488375ee699ee51a6b583b13155fef083af9062cf9538b94e94e5aa",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "commands": [
+    {
+      "name": "static-library",
+      "exit_code": 0,
+      "seconds": 18.156,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\static-library.stdout",
+        "bytes": 27755,
+        "sha256": "afec61c917e6f87d5d2b83ea939adb072505227f7160542fe5a855c7e825c463"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\static-library.stderr",
+        "bytes": 675,
+        "sha256": "214a4f5fb6ba99002acd0ccc9f66dd19707f6db99533da631ce16a399b6153e6"
+      }
+    },
+    {
+      "name": "strict-clippy",
+      "exit_code": 0,
+      "seconds": 3.703,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\strict-clippy.stdout",
+        "bytes": 23738,
+        "sha256": "2bee847f59142fb2f63e790eebd6457f7c2e0848b670c3bb7449f6e5b673e96a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\strict-clippy.stderr",
+        "bytes": 612,
+        "sha256": "8f3cad9947959595f3462ac6529836ba50d386369486e265ea3a877fd66a2fa0"
+      }
+    },
+    {
+      "name": "test-build",
+      "exit_code": 0,
+      "seconds": 1.0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\test-build.stdout",
+        "bytes": 26171,
+        "sha256": "848b02a2a5d331df904a3b386576032a1df7dfe699948ef645572dd2ad2da671"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\test-build.stderr",
+        "bytes": 176,
+        "sha256": "ce4cf7bedae517751cdd338af65f74253c8f275f06234c6d21fb276fe9d7da4f"
+      }
+    },
+    {
+      "name": "rust-tests",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\rust-tests.stdout",
+        "bytes": 666,
+        "sha256": "04e9d60296b063b4d3c6c2ca58051515f5e138aceb9a3faea9d0ba1edc0f8a94"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\rust-tests.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "vector-producer",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\vector-producer.stdout",
+        "bytes": 158,
+        "sha256": "47d38e800e2715de1f4407e32351630e3d0ef45b3480dc3075c599dda82d24ed"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\vector-producer.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "vs-setup",
+      "exit_code": 0,
+      "seconds": 1.063,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\vs-setup.stdout",
+        "bytes": 5417,
+        "sha256": "9f958a9185046058b335a3979a75d3dd964c73c3d5200bcf1f97cf753bcdc86d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\vs-setup.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-build",
+      "exit_code": 0,
+      "seconds": 0.14,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\c-build.stdout",
+        "bytes": 12,
+        "sha256": "7520398d02e6f84e2808e44b63cd6a5a24df41aa784e575d7e12bb203bee5dc0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\c-build.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-run",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\c-run.stdout",
+        "bytes": 30,
+        "sha256": "702b86de2fba2f31740d8f3fc79484dd50b1e76fd1962fe36f870e755f572c7b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\c-run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-build",
+      "exit_code": 0,
+      "seconds": 0.453,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\cpp-build.stdout",
+        "bytes": 14,
+        "sha256": "fa31bfe2d8d51d9f236af56324aae2af72fc9b8f76d37386ea34261ce98fb32f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\cpp-build.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-run",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\cpp-run.stdout",
+        "bytes": 32,
+        "sha256": "b7b5336e77adb5a3ea9b84d6f87b59efbe78c0b238eaac1fb9d98e253b2b8427"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\cpp-run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "artifacts": {
+    "library": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk974-HISTORY-TASK-eb67d1b57488375e\\x86_64-pc-windows-msvc\\release\\morrow_blob_upload_history_task_v1.lib",
+      "bytes": 14816144,
+      "sha256": "b55ddca3c17a49da9cb640991319b8b774005a58f21dbf38e3da1f45c0cd0c92"
+    },
+    "rust_tests": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\history-rust-tests.exe",
+      "bytes": 834048,
+      "sha256": "e7ad2f0cf89b85281d3a51b0f6832b374e759030eaccafccb00df44fa729cb73"
+    },
+    "vectors": {
+      "valid.capnp": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\task-vectors\\valid.capnp",
+        "bytes": 816,
+        "sha256": "4aadfed3913dc503784633462d5418308f11d75025c2b725e45ff2da3de5932b"
+      },
+      "wrong-id.capnp": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\task-vectors\\wrong-id.capnp",
+        "bytes": 816,
+        "sha256": "e9c8919073f413930a49639449d745bc86f18d19eac1ba3dde6d240c229d8097"
+      }
+    },
+    "c": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\history-c.exe",
+      "bytes": 171520,
+      "sha256": "c65fd5e4c60bda2fa513a1c304d304b556f300f68030ee26896a65ebecaaa4a3"
+    },
+    "cpp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-task-native-974\\history-cpp.exe",
+      "bytes": 206336,
+      "sha256": "972d21d80563353a3c4c4367ac7b618acc0fbdf45f6807f012cea678844237ee"
+    }
+  },
+  "error": null,
+  "all_original_processes_returned": true,
+  "meaningful_Rust_methods": 6,
+  "independent_C_CPP_consumers": 2,
+  "vector_producer_not_test_credit": true,
+  "VM_calls": 0,
+  "window_actions": 0,
+  "protected_store_runtime": false,
+  "public_product_delivery": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,35 @@
+{
+  "status": "TERMINAL_FAILURE_PRECEDES_PENDING_NATIVE_OPERATION",
+  "prior_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1482\\failure.json",
+    "bytes": 6381,
+    "sha256": "e50956fbd3c90ce1dbc3780710c192a850e94598db039c4ffe19a9351e5c6e15"
+  },
+  "prior_original_retirement": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1482\\native-evidence\\expiry-tick-retire.txt",
+    "bytes": 1721,
+    "sha256": "447e58797078d8be589443639fb6a4d30bf8cb882179c5ed2c738f248a9e96b8"
+  },
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-terminal-priority-correction-1485\\before.rs",
+    "bytes": 19947,
+    "sha256": "ca1cb28a6a37a5394e54876048a349a3479994e3bc4909eaff2ef90c3ddcce30"
+  },
+  "after": {
+    "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch.rs",
+    "bytes": 19805,
+    "sha256": "bc4390438bf05ed685b54b8d076e38de8c39bad389b7d1e554acb5744a60162a"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "old_source_digest": "6f255ef881d15fd08488e948081228e44566d95bbcc3e56c2d138b96fe80b955",
+  "new_source_digest": "f9fef0ba2b2f7b8ab1367dbffc196f85993c39ac151cad942b1e5c23113eba21",
+  "prior_case_original_handles_confirmed_closed": 6,
+  "prior_case_frame_reads": 1,
+  "prior_case_delivered_frames": 0,
+  "prior_unknown": false,
+  "original_processes_closed": true,
+  "tests_unchanged": true,
+  "first_original_failure_preserved": true,
+  "cleanup_still_allowed_without_a_new_grant": true,
+  "retry_uses_new_target_and_fixture_identity": true
+}

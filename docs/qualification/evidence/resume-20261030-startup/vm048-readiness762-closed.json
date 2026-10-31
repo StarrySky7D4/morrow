@@ -1,0 +1,14 @@
+{
+    "guest_mutations":  0,
+    "vm_id":  "e1d386a2-7695-4db8-83e3-09dc019a756c",
+    "original_vm_contacted":  false,
+    "own_transport_closed":  true,
+    "lsa_changes":  0,
+    "firmware_uuid":  "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+    "source_accepted":  false,
+    "strict_readiness_pass":  true,
+    "tag":  "06ad72d1299c46d9883cca188d21341e",
+    "status":  "PROBE_COMPLETE_OWN_TRANSPORT_CLOSED",
+    "release_eligible":  false,
+    "product_processes_created":  0
+}

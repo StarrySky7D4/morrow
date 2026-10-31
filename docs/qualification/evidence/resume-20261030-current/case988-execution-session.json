@@ -1,0 +1,21 @@
+{
+  "status": "ORIGINAL_UNKNOWN_CASE_OWNER_RETAINED_NOT_POLLED",
+  "exec_session_id": 33031,
+  "original_host_pid": 22472,
+  "tag": "4df741da9099496889c1abfe1f7dd6af",
+  "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+  "case_summary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case988-summary.json",
+    "bytes": 3480,
+    "sha256": "d61d6fcffa564738020db5a1332abbad768902a12d4593895b4dbcd31e257ae5"
+  },
+  "original_exec_not_polled_after_unknown": true,
+  "original_exec_not_terminated": true,
+  "independent_diagnostic_transport_closed": true,
+  "diagnostic": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-988\\result.json",
+    "bytes": 202,
+    "sha256": "fd8506cad228fc6b7ac5fba9e7ec7efa7992c67602b7c02c43af969b0507f2a3"
+  },
+  "utc": "2026-10-30T22:57:56.688673+00:00"
+}

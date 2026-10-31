@@ -5116,6 +5116,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-blob-upload-history-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-blob-upload-proposal-v1"
 version = "0.1.0"
 dependencies = [
@@ -5201,6 +5210,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-fs-watch-native-v1"
+version = "0.1.0"
+dependencies = [
+ "morrow-fs-watch-v1",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "morrow-fs-watch-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-native-pipe-win"
 version = "0.1.0"
 dependencies = [
@@ -5241,6 +5267,8 @@ dependencies = [
  "morrow-core",
  "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",
+ "morrow-fs-watch-native-v1",
+ "morrow-fs-watch-v1",
  "prost",
  "sha2 0.10.9",
  "wasm-bindgen",
@@ -5274,6 +5302,7 @@ dependencies = [
  "codex-utils-path-uri",
  "getrandom 0.4.3",
  "js-sys",
+ "lz4_flex",
  "morrow-agent-catalog-admin-v1",
  "morrow-agent-catalog-owner-v1",
  "morrow-agent-process-control-v1",
@@ -5281,6 +5310,7 @@ dependencies = [
  "morrow-agent-session-process-v1-host",
  "morrow-audit",
  "morrow-blob-transfer-v1",
+ "morrow-blob-upload-history-v1",
  "morrow-blob-upload-proposal-v1",
  "morrow-blob-upload-request-v1",
  "morrow-blob-upload-sample",

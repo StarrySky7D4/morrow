@@ -87,6 +87,7 @@ impl Setup {
         let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
         let app = Workbench {
             upload_plans: Default::default(),
+            history_deliveries: Default::default(),
             #[cfg(windows)]
             product_session_wire: Default::default(),
             channel_tasks: Default::default(),

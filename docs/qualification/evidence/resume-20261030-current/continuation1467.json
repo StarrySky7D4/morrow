@@ -1,0 +1,106 @@
+{
+  "status": "RUNNING_CANONICAL_WATCH_SCOPED_CHECKS_CLOSED_PRODUCT_ROUTE_OPEN",
+  "utc": "2026-10-31T15:38:40.080736+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "previous_checkpoint": "continuation1412.json",
+  "watch": {
+    "review": 1466,
+    "new_repository_files": 36,
+    "codec_methods": 18,
+    "native_parser_methods": 8,
+    "actual_native_fixtures": 6,
+    "actual_original_handles_closed": 10,
+    "actual_native_payloads": 6,
+    "native_C_scenarios": 12,
+    "native_CPP_scenarios": 7,
+    "native_compilers": [
+      "MSVC",
+      "Clang"
+    ],
+    "Wasm_languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "Wasm_scenarios_per_language": 32,
+    "raw_default_runner": true,
+    "all_original_processes_returned": true,
+    "product_route": false,
+    "explicit_product_approval": false,
+    "protected_selection": false,
+    "shared_host_budget": false,
+    "managed_worker_join": false,
+    "actual_native_overflow": false,
+    "actual_native_close_failure": false,
+    "business_rename": false,
+    "formal_UI": false
+  },
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "cleanup": {
+    "review": 1447,
+    "removed_compiler_library_files": 1930,
+    "logical_removed_bytes": 3698032371,
+    "retained_files_verified": 8230,
+    "all_three_selected_P2_executables_preserved": true,
+    "free_space_delta_not_attributed": true
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57320341504,
+    "D": 7525298176
+  },
+  "VM_actions_this_stage": 0,
+  "old_owner_contacts": 0,
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Integrate explicit filesystem watch authority, protected original selection, shared host accounting and original worker retirement; continue current-source P2 and SDK matrix."
+}

@@ -1,0 +1,19 @@
+{
+  "status": "ONLY_CHECKOUT_LINE_ENDING_RULES_ADDED_AFTER_RUNTIME",
+  "original": {
+    "path": "C:\\ms1020\\.gitattributes",
+    "bytes": 71850,
+    "sha256": "3ddf10072d1b7d44dadd15a0c4ecce6182724562c1a650a02f58e7b0dad1b66a"
+  },
+  "updated": {
+    "path": "C:\\ms1020\\.gitattributes",
+    "bytes": 72032,
+    "sha256": "e58629637ea30d8ce7a6bedf4775ab68fe6747e8a38a1e87a36e893825bdea5c"
+  },
+  "rules": [
+    "/workbench_host/src/blob_upload_history.rs text eol=lf",
+    "/workbench_host/tests/blob_upload_protected.rs text eol=lf"
+  ],
+  "qualified_code_files_unchanged": true,
+  "new_runtime_claim": false
+}

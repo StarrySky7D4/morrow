@@ -1,0 +1,23 @@
+{
+  "status": "ORIGINAL_PREFILLED_NATIVE_PICKER_OBSERVED_AND_CONFIRMED",
+  "case": "1591",
+  "source_digest": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
+  "tool": "computer-use @oai/sky via node_repl",
+  "window_id": 130616026,
+  "executable": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1577\\fs-watch-protected-1577.exe",
+  "nomination": "D:\\build_cache\\pw1591\\visible-cpp-complete\\observed",
+  "observed_utc": "2026-10-31T21:44:03.139Z",
+  "observed_prefilled_edit": 54,
+  "observed_select_button": 55,
+  "input_actions": 1,
+  "path_input_actions": 0,
+  "click_entered_utc": "2026-10-31T21:44:08.262Z",
+  "click_returned": true,
+  "click_returned_utc": "2026-10-31T21:44:08.411Z",
+  "post_click_refresh": "window is not a usable app window",
+  "actual_closure_evidence": "result.json and original owner receipts",
+  "no_retry": true,
+  "product_UI": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

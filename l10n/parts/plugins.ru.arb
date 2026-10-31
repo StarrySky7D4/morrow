@@ -837,5 +837,53 @@
     }
   },
   "pluginsDirectoryNativePickerStart": "Выбрать папку и запустить плагин",
-  "pluginsDirectoryNativePickerIntro": "Выбор папки запускает плагин. Лимит времени включает выбор; выход из этого представления отменяет незавершённую задачу."
+  "pluginsDirectoryNativePickerIntro": "Выбор папки запускает плагин. Лимит времени включает выбор; выход из этого представления отменяет незавершённую задачу.",
+  "pluginsWatchTitle": "Изменения каталога",
+  "pluginsWatchIntro": "Наблюдение касается только папки, подтверждённой для этого запуска. Оно прекращается при достижении лимита времени, записей или данных. При запуске Windows запросит подтверждение папки.",
+  "pluginsWatchAllow": "Разрешить плагину наблюдать за изменениями каталога",
+  "pluginsWatchAllowNotice": "Также разрешите просмотр списка файлов и подтверждайте папку для каждого запуска.",
+  "pluginsWatchNoPlugins": "Нет включённых плагинов с разрешениями на наблюдение за каталогом и просмотр списка файлов.",
+  "pluginsWatchPath": "Наблюдаемая папка (полный путь)",
+  "pluginsWatchFrames": "Максимум передаваемых записей",
+  "pluginsWatchBytes": "Лимит передаваемых данных (байты)",
+  "pluginsWatchStart": "Подтвердить папку и начать наблюдение",
+  "pluginsWatchBounds": "Лимиты плагина: {frames} записей, {bytes} байт, {ms} миллисекунд.",
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchNew": "Подготовить новое наблюдение",
+  "pluginsWatchIdle": "Наблюдение за каталогом ещё не начато.",
+  "pluginsWatchRunning": "Наблюдение выполняется. Обновите состояние или запросите отмену.",
+  "pluginsWatchReady": "Наблюдение завершено. Результат можно прочитать один раз.",
+  "pluginsWatchReviewed": "Результат прочитан. Проверьте его и подтвердите завершение.",
+  "pluginsWatchAcknowledged": "Завершение наблюдения подтверждено.",
+  "pluginsWatchUnknown": "Результат операции не подтверждён. Запись сохранена. Автоматического повтора или запуска новой задачи не будет.",
+  "pluginsWatchCancelled": "Наблюдение отменено.",
+  "pluginsWatchExpired": "Наблюдение остановлено по истечении времени.",
+  "pluginsWatchClosed": "Каталог освобождён, очистка завершена.",
+  "pluginsWatchRecords": "Плагин получил записей: {frames}; учтено данных: {bytes} байт.",
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchFormError": "Проверьте полный путь к папке. Все лимиты должны быть положительными и не превышать лимиты плагина.",
+  "pluginsWatchOtherPanel": "Завершение наблюдения за каталогом ещё не подтверждено. Проверьте исходную задачу на панели изменений каталога."
 }

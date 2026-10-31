@@ -1,0 +1,24 @@
+{
+  "status": "ALL_FOUR_ROLES055_COLD_COMPILED_NOT_RUNTIME_ACCEPTED",
+  "completed": [
+    {
+      "phase": "P",
+      "exit_code": 0,
+      "original_process_returned": true
+    },
+    {
+      "phase": "CRS",
+      "exit_code": 0,
+      "original_process_returned": true
+    }
+  ],
+  "roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-055\\result.json",
+    "bytes": 2175,
+    "sha256": "eb1851369ad7a0109eacd0ab0e798b261dd3410f5a338f903264346f9455722a"
+  },
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

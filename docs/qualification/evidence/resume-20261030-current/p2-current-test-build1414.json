@@ -1,0 +1,65 @@
+{
+  "status": "THREE_CURRENT_P2_TEST_PROGRAMS_COMPILED_NOT_RUNTIME",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "binaries": {
+    "codex_windows_sandbox": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\codex_windows_sandbox.exe",
+      "bytes": 39321088,
+      "sha256": "01bccc55d44299f4b7da2e192843b362e3fe88be71417f54150df2943cbe4728"
+    },
+    "codex-command-runner": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\codex-command-runner.exe",
+      "bytes": 26113536,
+      "sha256": "cc7e7710770432bd1ca2bf3e7b22dff341303c0e31bafe4fc4807d5ff0254525"
+    },
+    "morrow_codex_session_exec_windows_v1": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\morrow_codex_session_exec_windows_v1.exe",
+      "bytes": 69024256,
+      "sha256": "2f93928d582e269f643398c8db1b7c979bcd32e8fae922087307ab93ae018759"
+    }
+  },
+  "commands": [
+    {
+      "label": "native",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\native.jsonl",
+        "bytes": 849698,
+        "sha256": "7c1837a79dfa9a338698fe7f71ff89b90cd182f72e51d474daf4b79f5da6af42"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\native.stderr",
+        "bytes": 19902,
+        "sha256": "1820da14121deebfe7de42f15d793f18a6103eacbf16a80d681a8753aeb7779c"
+      }
+    },
+    {
+      "label": "session",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\session.jsonl",
+        "bytes": 984709,
+        "sha256": "9bed0c193b397290e6e4a8140ffb33608728acc48e77316e876d91d1adbef084"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\session.stderr",
+        "bytes": 22012,
+        "sha256": "89c734968172b8d6c804cc376a87386d0ad616d4e0e463c17b61759d98cf2367"
+      }
+    }
+  ],
+  "all_original_compiler_processes_returned": true,
+  "selected_test_programs_fresh": true,
+  "native_stage_all_artifacts_cold": true,
+  "historical_target_reused": false,
+  "dependencies_shared_only_within_this_same_source_build": true,
+  "whole_build_cold_claim": false,
+  "normal_PCRS_preserved": true,
+  "VM_calls": 0,
+  "tests_dispatched": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

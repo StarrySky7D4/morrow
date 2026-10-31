@@ -477,6 +477,31 @@
       }
     }
   },
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      }
+    }
+  },
   "@recoverySwitchUnconfirmed": {
     "placeholders": {
       "path": {
@@ -1997,6 +2022,29 @@
   "pluginsUseText": "Stattdessen Text verwenden",
   "pluginsUseTransform": "Transformation verwenden",
   "pluginsViewFailed": "Die Plugin-Ansicht konnte nicht geöffnet werden",
+  "pluginsWatchAcknowledged": "Der Abschluss dieser Beobachtung wurde bestätigt.",
+  "pluginsWatchAllow": "Diesem Plugin das Beobachten von Verzeichnisänderungen erlauben",
+  "pluginsWatchAllowNotice": "Erlauben Sie außerdem das Auflisten von Dateien und bestätigen Sie den Ordner für jeden Lauf.",
+  "pluginsWatchBounds": "Plugin-Limits: {frames} Datensätze, {bytes} Bytes, {ms} Millisekunden.",
+  "pluginsWatchBytes": "Datenlimit der Übermittlung (Bytes)",
+  "pluginsWatchCancelled": "Diese Beobachtung wurde abgebrochen.",
+  "pluginsWatchClosed": "Das Verzeichnis wurde freigegeben und die Bereinigung ist abgeschlossen.",
+  "pluginsWatchExpired": "Diese Beobachtung hat ihr Zeitlimit erreicht.",
+  "pluginsWatchFormError": "Prüfen Sie den vollständigen Ordnerpfad. Alle Limits müssen positiv sein und innerhalb der Plugin-Limits liegen.",
+  "pluginsWatchFrames": "Maximal übermittelte Datensätze",
+  "pluginsWatchIdle": "Es wurde noch keine Verzeichnisbeobachtung gestartet.",
+  "pluginsWatchIntro": "Nur der für diesen Lauf bestätigte Ordner wird beobachtet. Beim Zeit-, Datensatz- oder Datenlimit endet die Beobachtung. Windows bittet beim Start um Bestätigung des Ordners.",
+  "pluginsWatchNew": "Neue Beobachtung vorbereiten",
+  "pluginsWatchNoPlugins": "Kein aktiviertes Plugin darf sowohl Verzeichnisse beobachten als auch Dateien auflisten.",
+  "pluginsWatchOtherPanel": "Der Abschluss der Verzeichnisbeobachtung ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Task im Bereich Verzeichnisänderungen.",
+  "pluginsWatchPath": "Zu beobachtender Ordner (vollständiger Pfad)",
+  "pluginsWatchReady": "Beobachtung beendet. Lesen Sie das Ergebnis einmal.",
+  "pluginsWatchRecords": "Vom Plugin empfangene Datensätze: {frames}; angerechnete Daten: {bytes} Bytes.",
+  "pluginsWatchReviewed": "Ergebnis gelesen. Prüfen Sie es, bevor Sie den Abschluss bestätigen.",
+  "pluginsWatchRunning": "Die Beobachtung läuft. Aktualisieren Sie den Status oder fordern Sie den Abbruch an.",
+  "pluginsWatchStart": "Ordner bestätigen und Beobachtung starten",
+  "pluginsWatchTitle": "Verzeichnisänderungen",
+  "pluginsWatchUnknown": "Dieser Vorgang konnte nicht bestätigt werden. Sein Datensatz bleibt erhalten. Es erfolgt kein automatischer Wiederholungsversuch oder neuer Task.",
   "pluginsWorkbench": "Arbeitsbereich-Plugin",
   "pluginsWorkbenchReadOnly": "Das Plugin ist zugelassen, aber der Arbeitsbereich ist schreibgeschützt. Beheben Sie das Bibliotheks- oder Plugin-Problem und aktualisieren Sie den Status.",
   "recoveryAllFiles": "Alle Dateien",

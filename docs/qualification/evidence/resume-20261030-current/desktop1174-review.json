@@ -1,0 +1,116 @@
+{
+  "status": "PASS_SCOPED_CURRENT_DESKTOP_HISTORY_DELIVERY_ACK_AND_NORMAL_CLOSE",
+  "utc": "2026-10-31T04:38:44.200985+00:00",
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "source_unchanged": true,
+  "components": {
+    "current_UI_source": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+    "native_default_source": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+    "builtin_source": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36"
+  },
+  "product_program_pins": {
+    "executable": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow_history_1166.exe",
+      "bytes": 2398720,
+      "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+    },
+    "kernel": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\data\\flutter_assets\\kernel_blob.bin",
+      "bytes": 113709976,
+      "sha256": "67335ac01d82fce7f32073211adb11a7e7197a6ba7d8b7d6e68c9cc3048b1f72"
+    },
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-host.exe",
+      "bytes": 31499776,
+      "sha256": "8a43b15ff72fe4f4b14804d5cac5d10602fce5d4b65d211d5855bcb766ada7da"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-supervisor.exe",
+      "bytes": 13956608,
+      "sha256": "af7644b39c399be06db328e6f3f03ef7ea10a5268915fe229607b70a5a23ed5c"
+    },
+    "builtin": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\plugins\\workbench.morrowplugin",
+      "bytes": 920363,
+      "sha256": "17d442107f1c656e036dadceca63ee1cc6de526644ffb6bb0dce58a81d0350a4"
+    }
+  },
+  "evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\preparation.json",
+      "bytes": 3296,
+      "sha256": "0c510ab76b5b90a15778d20f07b47a459535ec755f10d8d82ef1aa0e33ea1664"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\observer-preparation-1166.json",
+      "bytes": 1299,
+      "sha256": "b6c8c7ad775e793e1d19867205c6da92afc53ca3cfce163131ea192c01224905"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\unique-image-packaging.json",
+      "bytes": 26402,
+      "sha256": "d97dfeaabf85717244a55784c5c1011a7d1b65d25a737e61b9fd01b36dad0788"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\process-result.json",
+      "bytes": 4120,
+      "sha256": "6c724055343f0339b7a1ecab59bbbd0570b1e5987e6cb927da09fc6b874b300f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\run-visible-observations.json",
+      "bytes": 411,
+      "sha256": "6c86e3c4f7101ba92ec68d4ee64d0cb0f21b86f34e778f6239811b1466f37068"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\reopen-delivery-visible-before-ack.json",
+      "bytes": 1594,
+      "sha256": "4a849f314b444a2b84fe53e67794c508e8e5cac87996f6b22128b4941c5a0a8a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\reopen-visible-observations.json",
+      "bytes": 2099,
+      "sha256": "86d268b3ebf0e070fa6620a5acc81de09eb23c04f298fd0d142b4c271e5d832b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\run-closed-history\\result.json",
+      "bytes": 440,
+      "sha256": "ec2bb741b0ac30c68a2ff34f989ffb1d8873da1600f78b453e323d0cd50ce621"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\reopen-closed-history\\result.json",
+      "bytes": 440,
+      "sha256": "ec2bb741b0ac30c68a2ff34f989ffb1d8873da1600f78b453e323d0cd50ce621"
+    }
+  ],
+  "normal_production_main": true,
+  "unique_launcher_basename_only": true,
+  "native_launcher_rebuilt": false,
+  "current_host_and_supervisor_rebuilt": true,
+  "synthetic_history_fixture": true,
+  "actual_original_upload_performed": false,
+  "approval_seeded": false,
+  "visible_delivery_phase": "reopen",
+  "run_phase_control_failure_preserved": true,
+  "one_approval_one_delivery_one_acknowledgement": true,
+  "preview_and_return_bytes_bound": true,
+  "original_history_still_unknown": true,
+  "original_revision": 2,
+  "original_upload_calls": 0,
+  "original_acknowledgement_absent": true,
+  "original_UI_supervisor_host_trees_closed": 2,
+  "independent_closed_library_reads": 2,
+  "all_observed_original_processes_returned": true,
+  "GUI_reopened_before_delivery": true,
+  "GUI_reopened_after_delivery": false,
+  "cancel_UI_path": "NOT_RUN",
+  "keyboard_IME": "NOT_RUN_IN_THIS_CASE",
+  "old_unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "P2": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

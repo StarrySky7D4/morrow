@@ -1,0 +1,81 @@
+{
+  "status": "PASS_SCOPED_RETAINED_HISTORY_UI_WIDGETS",
+  "source_digest": "54b7ea62e5fb29e63150263ba67a7e21e2b123dbe7bcd390d9a79ea38d7ef27a",
+  "source_unchanged": true,
+  "checks": [
+    {
+      "name": "analyze",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 1.391,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\analyze.stdout",
+        "bytes": 197,
+        "sha256": "869eaaec702e165f46503a3daeaf66e3335dadef597b142d201d42138f5450ff"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "sessions",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 5.875,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\sessions.stdout",
+        "bytes": 873,
+        "sha256": "c6f5ec52450b3e280cc6439c6d44d82f3454e8d3daa793454cf024326c954291"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\sessions.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "widgets",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 4.406,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\widgets.stdout",
+        "bytes": 1492,
+        "sha256": "74a449d65c7482d03beaed8a8cff101c1be707274be94e8204851ab35f7831c7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\widgets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "whitespace",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.172,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\whitespace.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\whitespace.stderr",
+        "bytes": 137,
+        "sha256": "1a2a37762dc71e09edd14e2d2292767376c0dded88842bb81baf75d780e9cb04"
+      }
+    }
+  ],
+  "all_original_check_processes_returned": true,
+  "retained_session_tests": 10,
+  "native_UI": false,
+  "supervised_host": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

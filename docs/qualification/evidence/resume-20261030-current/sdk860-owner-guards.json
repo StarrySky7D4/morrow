@@ -1,0 +1,119 @@
+{
+  "status": "PASS_SCOPED_LOCK_CORRECTED_SDK_REFUSAL_AND_FACTORY_OWNERSHIP",
+  "canonical_source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "candidate_source_digest": "fc097a680f7804c70f4d938c0217f86703733696c260af9cacac34d0da8660e4",
+  "candidate_source_unchanged": true,
+  "canonical_source_unchanged": true,
+  "methods": [
+    {
+      "method": "native_completion::identity_tests::acknowledged_refusal_lane_cannot_receive_a_normal_native_completion",
+      "label": "00",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true
+    },
+    {
+      "method": "native_completion::identity_tests::consumed_failed_and_unbound_identity_states_cannot_receive_a_new_native_capability",
+      "label": "01",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true
+    },
+    {
+      "method": "native_completion::identity_tests::native_capability_lane_requires_full_original_operation_generation_and_issuer",
+      "label": "02",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true
+    },
+    {
+      "method": "native_factory::tests::owner_finish_accepts_only_its_staged_live_runtime_without_minting_shutdown",
+      "label": "03",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "original_process_returned": true
+    },
+    {
+      "method": "native_factory::tests::unstarted_or_failed_factory_attempt_cannot_mint_shutdown_from_absent_weak_values",
+      "label": "04",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::dropping_external_owners_keeps_unknown_occupancy_and_resource",
+      "label": "05",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_keepalive_lock_is_poisoned",
+      "label": "06",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_process_lock_is_poisoned",
+      "label": "07",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::normal_terminal_and_unstarted_metadata_cannot_satisfy_native_refusal_retirement",
+      "label": "08",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::shared_registry_bounds_pending_and_unknown_work",
+      "label": "09",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::terminal_evidence_does_not_release_live_provider_or_pending_job",
+      "label": "10",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true
+    },
+    {
+      "method": "registry::tests::unknown_refusal_metadata_cannot_release_original_registry_or_keepalive",
+      "label": "11",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "original_process_returned": true
+    },
+    {
+      "method": "windows_runner::tests::completed_native_factory_owner_finish_requires_same_original_thread_close_capability",
+      "label": "12",
+      "exit_code": 0,
+      "seconds": 6.125,
+      "original_process_returned": true
+    },
+    {
+      "method": "windows_runner::tests::explicit_v8_production_factory_constructs_same_pin_environment_and_retires_original_scheduler",
+      "label": "13",
+      "exit_code": 0,
+      "seconds": 2.875,
+      "original_process_returned": true
+    }
+  ],
+  "methods_passed": 14,
+  "failure": null,
+  "all_original_processes_returned": true,
+  "actual_original_scheduler_shutdown_methods": 2,
+  "VM_calls": 0,
+  "native_A1_starts": 0,
+  "sandbox_provisioning_calls": 0,
+  "canonical_edits": 0,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

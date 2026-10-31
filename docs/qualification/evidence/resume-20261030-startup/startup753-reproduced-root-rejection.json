@@ -1,0 +1,13 @@
+{
+    "P2_dispatched":  false,
+    "vm_id":  "e1d386a2-7695-4db8-83e3-09dc019a756c",
+    "original_probe_closed0":  true,
+    "LSA_changes":  0,
+    "firmware_uuid":  "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+    "source_accepted":  false,
+    "first_original_guard":  "FIXED_GUEST_WINDOWS_ROOT",
+    "own_transport_closed":  true,
+    "status":  "READONLY_STARTUP_PREFIX_OBSERVATION_COMPLETE_OWN_TRANSPORT_CLOSED",
+    "release_eligible":  false,
+    "old_owner_calls":  0
+}

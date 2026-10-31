@@ -1,0 +1,36 @@
+{
+  "status": "PASS_THIRTEEN_C28_BUILD_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_D_ARCHIVE",
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "free_before": 29539397632,
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\non-git-c28-source-copies-1342\\retired-c-build-source-copies.zip",
+    "bytes": 174493035,
+    "sha256": "598931672dc88a83d6ac6ed184d2b9fe3d9d9e88d56b28be2839fef9fe94496d"
+  },
+  "source_data_discarded": 0,
+  "observed_free_delta": -4250705920.0,
+  "free_delta_nonisolated": true,
+  "historical_replay_authorized": false,
+  "VM_files_removed": 0,
+  "free_after": 25288691712,
+  "files_removed": 42753,
+  "retired_roots": [
+    "C:\\c28g047",
+    "C:\\c28s2672p",
+    "C:\\c28s2672u",
+    "C:\\c28s2678cr",
+    "C:\\c28s2678p",
+    "C:\\c28s2678s",
+    "C:\\c28s2679",
+    "C:\\c28s2746p",
+    "C:\\c28s2746u",
+    "C:\\c28s2757cr",
+    "C:\\c28s2757p",
+    "C:\\c28s2757s",
+    "C:\\c28s2775"
+  ],
+  "old_owner_contacts": 0,
+  "build_cache_root": "D:\\build_cache",
+  "logical_bytes_preserved": 609381627
+}

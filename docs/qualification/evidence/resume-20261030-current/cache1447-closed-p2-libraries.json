@@ -1,0 +1,17 @@
+{
+  "observed_free_delta": 5588062208,
+  "plan_sha256": "117f9d128aa09eb4576c9bbf13d0857ef1e0c7f8f2faf60567b14a6dc394e8b0",
+  "removed_files": 1930,
+  "source_accepted": false,
+  "status": "PASS_CLOSED_P2_1414_COMPILER_LIBRARIES_RECLAIMED",
+  "source_and_executable_removals": 0,
+  "release_eligible": false,
+  "protected_artifacts_equal": true,
+  "preserved_files": 8230,
+  "logical_bytes_removed": 3698032371,
+  "old_owner_contacts": 0,
+  "free_before": 2719961088,
+  "VM_calls": 0,
+  "free_after": 8308023296,
+  "concurrent_space_changes_not_attributed": true
+}

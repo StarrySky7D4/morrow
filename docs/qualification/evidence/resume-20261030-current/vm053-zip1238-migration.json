@@ -1,0 +1,31 @@
+{
+    "all_memory_configuration_disk_bytes_preserved":  true,
+    "observed_free_delta":  14535045120,
+    "source_disk_retained":  "C:\\MorrowQA\\windows-acceptance-20261031-053\\acceptance.vhdx",
+    "removed_loose_copies":  [
+                                 "C:\\MorrowQA\\retained-unknown-archives\\vm053\\disk\\acceptance-original.vhdx",
+                                 "C:\\MorrowQA\\retained-unknown-archives\\vm053\\state\\98EDD953-DDAA-45F3-BA72-2BC90497ACB4.vmcx",
+                                 "C:\\MorrowQA\\retained-unknown-archives\\vm053\\state\\98EDD953-DDAA-45F3-BA72-2BC90497ACB4.vmgs",
+                                 "C:\\MorrowQA\\retained-unknown-archives\\vm053\\state\\98EDD953-DDAA-45F3-BA72-2BC90497ACB4.VMRS"
+                             ],
+    "restore_note":  "Extract all four members into an uncompressed location and restore saved metadata from embedded manifest before separate offline compatibility review. Do not resume or replay Unknown.",
+    "free_delta_nonisolated":  true,
+    "owner_contacts":  0,
+    "source_disks_deleted":  0,
+    "free_before":  24452239360,
+    "VM_actions":  0,
+    "free_after":  38987284480,
+    "restore_or_replay":  false,
+    "unique_content_deleted":  0,
+    "archive":  {
+                    "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm053\\vm053-complete-saved-state-1237.zip",
+                    "bytes":  13547442049,
+                    "modified_ns":  1793432282866878000,
+                    "sha256":  "483747ca05cfab2745fddb8934f01ae82656341ebebabde8d5b78d81733ce648"
+                },
+    "Unknown_outcome_unchanged":  true,
+    "registered_vms":  3,
+    "status":  "PASS_COMPLETE_BACKUP_MIGRATED_TO_VERIFIED_ZIP64",
+    "VM_states_unchanged":  true,
+    "vm_id":  "98edd953-ddaa-45f3-ba72-2bc90497acb4"
+}

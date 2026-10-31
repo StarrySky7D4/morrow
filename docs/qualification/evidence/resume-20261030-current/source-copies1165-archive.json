@@ -1,0 +1,33 @@
+{
+  "status": "PASS_FULL_RETIRED_COMPILER_SOURCE_COPIES_ARCHIVED_BYTE_IDENTICAL_NOT_DELETED",
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1165\\retired-compiler-source-copies.zip",
+    "bytes": 999499320,
+    "sha256": "a084fb169ce3dc57a89bb2b7b5c22287739523032cdb5c0399feaa19eb12e116"
+  },
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1165\\plan.json",
+    "bytes": 155966116,
+    "sha256": "1a118a52f1afde9cc610c459f9bce55dd91a8a59b7f0d5607a8cc2e0a4bdedc9"
+  },
+  "roots": [
+    "D:\\build_cache\\m114s",
+    "D:\\build_cache\\m146s",
+    "D:\\build_cache\\m154s",
+    "D:\\build_cache\\m176s",
+    "D:\\build_cache\\m200s"
+  ],
+  "files": 265243,
+  "logical_bytes": 3974151713,
+  "every_original_and_archive_member_hash_verified": true,
+  "all_original_compilers_closed": true,
+  "VM_state_not_contacted": true,
+  "original_disks_and_memory_untouched": true,
+  "old_owner_contacts": 0,
+  "VM_calls": 0,
+  "canonical_source_edits": 0,
+  "files_deleted": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "restore_note": "Extract each top-level m114s, m146s, m154s, m176s, m200s directory to D:/build_cache only when absent; verify every archived file against plan.json. Exact original metadata is retained in that manifest. Do not replay any old qualification case."
+}

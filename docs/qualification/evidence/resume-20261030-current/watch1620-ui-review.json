@@ -1,0 +1,93 @@
+{
+  "status": "PASS_SCOPED_STAGED_WATCH_WIDGETS_AND_SESSION",
+  "commands": [
+    {
+      "name": "manager-analysis",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\manager-analysis.stdout",
+        "bytes": 224,
+        "sha256": "81ed98ce3a9db622d0580740d8a9387746a192d1dbb64ca485dc5639eaf09c8a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\manager-analysis.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "test-analysis",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\test-analysis.stdout",
+        "bytes": 57,
+        "sha256": "c5272f89379a563017aa506816266ef719a3d8fb26675ae2fb2708c6cf01ec2c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\test-analysis.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "widgets",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\widgets.stdout",
+        "bytes": 695,
+        "sha256": "3101ec25d1fa4608a876a58f03ed500f226c17c309c2330470fd02c85a6b1261"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\widgets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "wire",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\wire.stdout",
+        "bytes": 65,
+        "sha256": "7df1354f4cd469dfd2c6d30df2315da1f275327a4d00c37412a4b24cc7861018"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\wire.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "session",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\session.stdout",
+        "bytes": 68,
+        "sha256": "4322228755f156bc8ff59768071d83552b32175e4314bb7392354165646e85de"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\session.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "widget_tests": 7,
+  "locales": 9,
+  "staged_inputs": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-ui-widget-checks-1620\\staged-inputs.json",
+    "bytes": 126253,
+    "sha256": "69266ac3a3e5c178a32312d37db4267bba6cef05e3820e18fde3f480b928567f"
+  },
+  "staged_inputs_unchanged": true,
+  "actual_native_runtime": false,
+  "formal_product_UI": false,
+  "source_checkout_mutations": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

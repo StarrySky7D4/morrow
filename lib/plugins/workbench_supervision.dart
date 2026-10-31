@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'workbench_supervision_wire.dart';
 
 final class WorkbenchSupervisionState {
   WorkbenchSupervisionState(this.record);
@@ -22,9 +23,8 @@ final class WorkbenchSupervisionState {
       ].every((k) => record[k] == true);
   bool get uncertain => phase == 'ClosingUnconfirmed';
   static WorkbenchSupervisionState decode(List<int> bytes) {
-    final value = jsonDecode(utf8.decode(bytes));
-    if (value is! Map<String, dynamic> ||
-        ![1, 2].contains(value['version']) ||
+    final value = decodeWorkbenchSupervisionStatus(bytes);
+    if (value['version'] != 2 ||
         ![
           'Running',
           'Closing',
@@ -79,13 +79,23 @@ final class WorkbenchSupervisionState {
 // These functions validate wire data only. They cannot establish process exit
 // or issue a receipt; the original channel keeps the validated copy privately.
 const workbenchQuarantineIdentityFields = <String>[
-  'profile', 'generation', 'incarnation', 'host_sha256', 'package_sha256',
-  'supervisor_sha256', 'supervisor_pid', 'supervisor_creation_filetime',
-  'child_pid', 'child_creation_filetime', 'recovery_history_head',
+  'profile',
+  'generation',
+  'incarnation',
+  'host_sha256',
+  'package_sha256',
+  'supervisor_sha256',
+  'supervisor_pid',
+  'supervisor_creation_filetime',
+  'child_pid',
+  'child_creation_filetime',
+  'recovery_history_head',
 ];
 
 void validateWorkbenchQuarantineIdentity(
-    Map<String, dynamic> state, Map<String, dynamic> initial) {
+  Map<String, dynamic> state,
+  Map<String, dynamic> initial,
+) {
   for (final key in workbenchQuarantineIdentityFields) {
     if (state[key] != initial[key]) {
       throw const FormatException('Quarantine session identity changed');
@@ -99,38 +109,66 @@ void validateWorkbenchQuarantineIdentity(
 }
 
 Map<String, Object?> validateWorkbenchQuarantinePrepared(
-    Map<String, dynamic> state, Map<String, dynamic> initial) {
+  Map<String, dynamic> state,
+  Map<String, dynamic> initial,
+) {
   validateWorkbenchQuarantineIdentity(state, initial);
   final p = state['abnormal_resource_closure_prepared'];
   const trueFields = <String>[
-    'resource_reclaimed', 'gate_closed', 'business_gate_revoked', 'tree_empty',
-    'child_exit', 'stdout_eof', 'stderr_eof', 'control_reaped',
+    'resource_reclaimed',
+    'gate_closed',
+    'business_gate_revoked',
+    'tree_empty',
+    'child_exit',
+    'stdout_eof',
+    'stderr_eof',
+    'control_reaped',
   ];
   const keys = <String>{
-    'version', 'kind', 'identity', 'committed_record_sha256', 'child_exit_code',
-    ...trueFields, 'reader_joins', 'durable_abnormal_record_confirmed',
-    'normal_shutdown', 'owner_phase', 'business_outcome', 'protocol_ack',
-    'accepted', 'supervisor_exit_confirmed',
+    'version',
+    'kind',
+    'identity',
+    'committed_record_sha256',
+    'child_exit_code',
+    ...trueFields,
+    'reader_joins',
+    'durable_abnormal_record_confirmed',
+    'normal_shutdown',
+    'owner_phase',
+    'business_outcome',
+    'protocol_ack',
+    'accepted',
+    'supervisor_exit_confirmed',
   };
-  if (state['version'] is! int || state['version'] != 2 ||
+  if (state['version'] is! int ||
+      state['version'] != 2 ||
       state['phase'] != 'ClosingUnconfirmed' ||
       state['abnormal_resource_closure_protocol'] is! int ||
       state['abnormal_resource_closure_protocol'] != 1 ||
       initial['abnormal_resource_closure_protocol'] is! int ||
       initial['abnormal_resource_closure_protocol'] != 1 ||
-      state['owner_phase'] != 'Retained' || state['normal_shutdown'] != false ||
-      state['durable_proof'] != true || state['business_outcome'] != 'Unknown' ||
+      state['owner_phase'] != 'Retained' ||
+      state['normal_shutdown'] != false ||
+      state['durable_proof'] != true ||
+      state['business_outcome'] != 'Unknown' ||
       state['protocol_ack'] != 'not_applicable' ||
       state['child_exit_code'] is! int ||
       !trueFields.every((k) => state[k] == true) ||
-      p is! Map<String, dynamic> || p.length != keys.length ||
-      !keys.every(p.containsKey) || p['version'] is! int || p['version'] != 1 ||
+      p is! Map<String, dynamic> ||
+      p.length != keys.length ||
+      !keys.every(p.containsKey) ||
+      p['version'] is! int ||
+      p['version'] != 1 ||
       p['kind'] != 'AbnormalResourceClosurePreparedV1' ||
       p['durable_abnormal_record_confirmed'] != true ||
-      p['normal_shutdown'] != false || p['owner_phase'] != 'Retained' ||
-      p['business_outcome'] != 'Unknown' || p['protocol_ack'] != 'not_applicable' ||
-      p['accepted'] != false || p['supervisor_exit_confirmed'] != false ||
-      p['child_exit_code'] is! int || p['child_exit_code'] != state['child_exit_code'] ||
+      p['normal_shutdown'] != false ||
+      p['owner_phase'] != 'Retained' ||
+      p['business_outcome'] != 'Unknown' ||
+      p['protocol_ack'] != 'not_applicable' ||
+      p['accepted'] != false ||
+      p['supervisor_exit_confirmed'] != false ||
+      p['child_exit_code'] is! int ||
+      p['child_exit_code'] != state['child_exit_code'] ||
       !trueFields.every((k) => p[k] == true)) {
     throw const FormatException('Invalid abnormal resource closure extension');
   }
@@ -139,32 +177,44 @@ Map<String, Object?> validateWorkbenchQuarantinePrepared(
   final joins = p['reader_joins'];
   final outerJoins = state['abnormal_resource_closure_proof'];
   const joinFields = <String>[
-    'stdout_reader_joined', 'stderr_reader_joined', 'controller_reader_joined',
+    'stdout_reader_joined',
+    'stderr_reader_joined',
+    'controller_reader_joined',
   ];
-  if (digest is! String || !RegExp(r'^[a-f0-9]{64}$').hasMatch(digest) ||
+  if (digest is! String ||
+      !RegExp(r'^[a-f0-9]{64}$').hasMatch(digest) ||
       identity is! Map<String, dynamic> ||
       identity.length != workbenchQuarantineIdentityFields.length ||
-      !workbenchQuarantineIdentityFields.every((k) =>
-        identity.containsKey(k) && identity[k] == initial[k]) ||
-      joins is! Map<String, dynamic> || joins.length != 4 ||
-      joins['version'] is! int || joins['version'] != 1 ||
+      !workbenchQuarantineIdentityFields.every(
+        (k) => identity.containsKey(k) && identity[k] == initial[k],
+      ) ||
+      joins is! Map<String, dynamic> ||
+      joins.length != 4 ||
+      joins['version'] is! int ||
+      joins['version'] != 1 ||
       !joinFields.every((k) => joins[k] == true) ||
-      outerJoins is! Map<String, dynamic> || outerJoins.length != 4 ||
-      outerJoins['version'] is! int || outerJoins['version'] != 1 ||
+      outerJoins is! Map<String, dynamic> ||
+      outerJoins.length != 4 ||
+      outerJoins['version'] is! int ||
+      outerJoins['version'] != 1 ||
       !joinFields.every((k) => outerJoins[k] == true)) {
-    throw const FormatException('Invalid quarantine identity/digest/reader joins');
+    throw const FormatException(
+      'Invalid quarantine identity/digest/reader joins',
+    );
   }
   // Copy only the exact validated shape. Public notifier consumers cannot mutate
   // either nested proof used later by the original channel's _finish().
   return Map<String, Object?>.unmodifiable({
     for (final k in keys)
       k: k == 'identity'
-        ? Map<String, Object?>.unmodifiable({
-            for (final key in workbenchQuarantineIdentityFields) key: identity[key],
-          })
-        : k == 'reader_joins'
           ? Map<String, Object?>.unmodifiable({
-              'version': 1, for (final key in joinFields) key: true,
+              for (final key in workbenchQuarantineIdentityFields)
+                key: identity[key],
+            })
+          : k == 'reader_joins'
+          ? Map<String, Object?>.unmodifiable({
+              'version': 1,
+              for (final key in joinFields) key: true,
             })
           : p[k],
   });
@@ -198,9 +248,11 @@ final class WorkbenchStartupObservation {
        diagnosticBytes = List<int>.unmodifiable(diagnosticBytes),
        primaryFailure = _boundedFailure(primaryFailure),
        secondaryCloseFailure = secondaryCloseFailure == null
-           ? null : _boundedFailure(secondaryCloseFailure),
+           ? null
+           : _boundedFailure(secondaryCloseFailure),
        observerFailure = observerFailure == null
-           ? null : _boundedFailure(observerFailure) {
+           ? null
+           : _boundedFailure(observerFailure) {
     if (!['before_original_close', 'after_original_close'].contains(stage) ||
         diagnosticBytes.length > diagnosticByteLimit ||
         diagnosticBytesObserved < diagnosticBytes.length ||
@@ -229,16 +281,36 @@ final class WorkbenchStartupObservation {
     }
     final result = <String, Object?>{};
     for (final key in const [
-      'version', 'phase', 'owner_phase', 'profile', 'generation', 'incarnation',
-      'child_pid', 'supervisor_pid', 'supervisor_creation_filetime',
-      'child_creation_filetime', 'supervisor_sha256', 'host_sha256',
-      'package_sha256', 'normal_shutdown', 'durable_proof', 'child_exit_code',
-      'resource_reclaimed', 'tree_empty', 'child_exit', 'stdout_eof',
-      'stderr_eof', 'control_reaped', 'gate_closed', 'protocol_ack',
+      'version',
+      'phase',
+      'owner_phase',
+      'profile',
+      'generation',
+      'incarnation',
+      'child_pid',
+      'supervisor_pid',
+      'supervisor_creation_filetime',
+      'child_creation_filetime',
+      'supervisor_sha256',
+      'host_sha256',
+      'package_sha256',
+      'normal_shutdown',
+      'durable_proof',
+      'child_exit_code',
+      'resource_reclaimed',
+      'tree_empty',
+      'child_exit',
+      'stdout_eof',
+      'stderr_eof',
+      'control_reaped',
+      'gate_closed',
+      'protocol_ack',
       'business_outcome',
     ]) {
       final value = state.record[key];
-      if (value == null || value is int || value is bool ||
+      if (value == null ||
+          value is int ||
+          value is bool ||
           (value is String && value.length <= 128)) {
         result[key] = value;
       }
@@ -280,7 +352,8 @@ final class WorkbenchStartupObservation {
     'diagnostic_bytes': diagnosticBytes,
     'diagnostic_bytes_observed': diagnosticBytesObserved,
     'diagnostic_bytes_stored': diagnosticBytes.length,
-    'diagnostic_bytes_truncated': diagnosticBytesObserved > diagnosticBytes.length,
+    'diagnostic_bytes_truncated':
+        diagnosticBytesObserved > diagnosticBytes.length,
     'diagnostic_byte_limit': diagnosticByteLimit,
     'actual_exit_known': actualExitCode != null,
     'actual_exit_code': actualExitCode,
@@ -296,18 +369,19 @@ final class WorkbenchStartupObservation {
   });
 }
 
-typedef WorkbenchStartupObservationCapture = WorkbenchStartupObservation Function({
-  required String stage,
-  required Object primaryFailure,
-  Object? secondaryCloseFailure,
-  Object? observerFailure,
-});
+typedef WorkbenchStartupObservationCapture =
+    WorkbenchStartupObservation Function({
+      required String stage,
+      required Object primaryFailure,
+      Object? secondaryCloseFailure,
+      Object? observerFailure,
+    });
 
 /// Callback failures are evidence failures, never cleanup permission. If the
 /// original close stays pending, the first callback has already been attempted.
 /// Its own failure remains local; persistence is not guaranteed by this helper.
 Future<({bool beforeObserverFailed, bool afterObserverFailed})>
-    observeWorkbenchStartupFailure({
+observeWorkbenchStartupFailure({
   required Object primaryFailure,
   required WorkbenchStartupObservationCapture capture,
   required void Function(WorkbenchStartupObservation) observe,
@@ -315,9 +389,9 @@ Future<({bool beforeObserverFailed, bool afterObserverFailed})>
 }) async {
   Object? beforeObserverFailure;
   try {
-    observe(capture(
-      stage: 'before_original_close', primaryFailure: primaryFailure,
-    ));
+    observe(
+      capture(stage: 'before_original_close', primaryFailure: primaryFailure),
+    );
   } catch (error) {
     beforeObserverFailure = error;
   }
@@ -329,11 +403,14 @@ Future<({bool beforeObserverFailed, bool afterObserverFailed})>
   }
   var afterObserverFailed = false;
   try {
-    observe(capture(
-      stage: 'after_original_close', primaryFailure: primaryFailure,
-      secondaryCloseFailure: closeFailure,
-      observerFailure: beforeObserverFailure,
-    ));
+    observe(
+      capture(
+        stage: 'after_original_close',
+        primaryFailure: primaryFailure,
+        secondaryCloseFailure: closeFailure,
+        observerFailure: beforeObserverFailure,
+      ),
+    );
   } catch (_) {
     afterObserverFailed = true;
   }

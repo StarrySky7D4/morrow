@@ -1,0 +1,72 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "bindings-check",
+      "exit_code": 0,
+      "seconds": 2.453,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\bindings-check.stdout",
+        "bytes": 29,
+        "sha256": "73053600804a903908d390418d2d78e7cbc11740d157ec1fbb6fbf0d413dceab"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\bindings-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "guest-build",
+      "exit_code": 0,
+      "seconds": 59.406,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\guest-build.stdout",
+        "bytes": 335,
+        "sha256": "ea3a7ab677592a8e1c89cfd7fb654d18084e0e7c1ce0d90ba42e85e90607fd40"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\guest-build.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "build",
+      "exit_code": 101,
+      "seconds": 1942.797,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\build.stdout",
+        "bytes": 1008460,
+        "sha256": "9dedb9977901732f22e307200f1843b48d4ce237215ae544337d27bc9257439b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-969\\build.stderr",
+        "bytes": 29945,
+        "sha256": "41cab3a1bf678ea0c6b63fdd37f0cf2ed6c3abd716ef848709785197a0658ed6"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": null,
+  "error": "RuntimeError: build failed; original evidence retained",
+  "ordinary_methods": 0,
+  "explicit_close_refusal_methods": 0,
+  "explicit_close_refusal_scenarios": 0,
+  "same_owner_sequential_deliveries": 0,
+  "protected_store": true,
+  "private_capnp_route": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

@@ -1,0 +1,508 @@
+{
+  "status": "PASS_SCOPED_APPROVED_ORIGINAL_WATCH_NATIVE_CAPTURE_BUDGET_AND_CLOSURE_REVIEW",
+  "source_digest": "f9fef0ba2b2f7b8ab1367dbffc196f85993c39ac151cad942b1e5c23113eba21",
+  "original_build_and_runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\result.json",
+    "bytes": 30378,
+    "sha256": "5cd3b4b107aac77b272969cc797f706d71b1c2947fc73934128cf84d6a261a62"
+  },
+  "original_source_binding": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\source-binding.json",
+    "bytes": 12279,
+    "sha256": "53a7195551fb1b4ce0034fcfbd2e5124290b7175ba644b2d735e24b818065e50"
+  },
+  "counts": {
+    "ancestor_objects": 46,
+    "ancestor_close_calls": 46,
+    "ancestor_confirmed": 46,
+    "native_handles": 15,
+    "native_close_calls": 15,
+    "native_confirmed": 15,
+    "reads": 10,
+    "completions": 10,
+    "frames": 5,
+    "cancels": 5,
+    "relative_leaf_opens": 10
+  },
+  "original_close_total": 61,
+  "cases": [
+    {
+      "case": "events",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\events-retire.txt",
+        "bytes": 1685,
+        "sha256": "3ba4d29c88f6f46495bfffc7e8596e23c445177abefd4427f49e99727de75420"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 4,
+        "completions": 4,
+        "observed_frames": 4
+      },
+      "original_bytes_held_after": 981766
+    },
+    {
+      "case": "expiry-real",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\expiry-real-retire.txt",
+        "bytes": 1728,
+        "sha256": "ca377fc95e5226ed2c4c42b2fdce0a76aa560f8b65e981ffaad67c74a083daed"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 314630
+    },
+    {
+      "case": "expiry-tick",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\expiry-tick-retire.txt",
+        "bytes": 1721,
+        "sha256": "447e58797078d8be589443639fb6a4d30bf8cb882179c5ed2c738f248a9e96b8"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 314630
+    },
+    {
+      "case": "file",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\file-retire.txt",
+        "bytes": 884,
+        "sha256": "82066af655ae93c35a8d6a793f3b6ed6d80f5a43b4015f8542f3be2a1c7e3e0f"
+      },
+      "ancestor_objects": 4,
+      "native": null,
+      "original_bytes_held_after": 92432
+    },
+    {
+      "case": "foreign",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\foreign-retire.txt",
+        "bytes": 1685,
+        "sha256": "15e10d701f3cdbf66e36658d7e8143298f6374adff858250b56d7080b41fd519"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 1
+      },
+      "original_bytes_held_after": 314758
+    },
+    {
+      "case": "junction-leaf",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\junction-leaf-retire.txt",
+        "bytes": 1743,
+        "sha256": "8942007cca20c26cad34e28573eb5b72f6b4631e3f4724d22361747f7898dc62"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 1,
+        "close_calls": 1,
+        "confirmed_closed": 1,
+        "read_calls": 0,
+        "completions": 0,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 92422
+    },
+    {
+      "case": "junction-parent",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\junction-parent-retire.txt",
+        "bytes": 880,
+        "sha256": "cc5b909368af4453a9714d4e21d2e5b8093413ac67c151ef43527c7249baa159"
+      },
+      "ancestor_objects": 5,
+      "native": null,
+      "original_bytes_held_after": 93606
+    },
+    {
+      "case": "missing",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\missing-retire.txt",
+        "bytes": 884,
+        "sha256": "e4c4c83cfaf4e2f7ae53c7bd9928367c9375132550a8099d113cb3b74030a77a"
+      },
+      "ancestor_objects": 4,
+      "native": null,
+      "original_bytes_held_after": 92428
+    },
+    {
+      "case": "protected-chain",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\protected-chain-retire.txt",
+        "bytes": 1683,
+        "sha256": "750d5025f42ea2d9da9c5512625b589e221c1f333b4c1cd762dc983e11a62090"
+      },
+      "ancestor_objects": 5,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 315966
+    },
+    {
+      "case": "quiet",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\quiet-retire.txt",
+        "bytes": 1683,
+        "sha256": "36dfe413c57905ef9cb0647e7b4d970de5ea74ea076c3b119454e2977c09d07e"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 314758
+    },
+    {
+      "case": "revoked",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\revoked-retire.txt",
+        "bytes": 1726,
+        "sha256": "a0bcd03afe4e5996052548187fa1f5083caba39721f4cd3d0d482d960ac9fff6"
+      },
+      "ancestor_objects": 4,
+      "native": {
+        "owned_handles": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "read_calls": 1,
+        "completions": 1,
+        "observed_frames": 0
+      },
+      "original_bytes_held_after": 314630
+    },
+    {
+      "case": "shared-capacity",
+      "original_retirement": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\shared-capacity-retire.txt",
+        "bytes": 852,
+        "sha256": "c39f442e8a474bd717323375dacf616e5a596e7c6ef0206298fa423a85b3158d"
+      },
+      "ancestor_objects": 0,
+      "native": null,
+      "original_bytes_held_after": 92423
+    }
+  ],
+  "original_joined_test_threads": 13,
+  "reference_decodes": [
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\events-frame001.capnp",
+        "bytes": 168,
+        "sha256": "944ea76c6f807417b96a96b193f54611644b5539d2fcbfc6a45ff04b573b204b"
+      },
+      "sequence": 1,
+      "observed_kinds": [
+        1
+      ],
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\events-frame001.decoded",
+        "bytes": 400,
+        "sha256": "5ac5773b0e55ade4527d7d0924102b934405954c7028e7635320aa2959a0ef99"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\events-frame002.capnp",
+        "bytes": 168,
+        "sha256": "a214f17ea52b2a293ec6c2070739f7a70ad828a5c6c5b0bb89c02baa654522db"
+      },
+      "sequence": 2,
+      "observed_kinds": [
+        3
+      ],
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\events-frame002.decoded",
+        "bytes": 400,
+        "sha256": "16c53cc7c3094138a71c41a42567312fadaad4992c77a94d315dbafd09c16ac3"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\events-frame003.capnp",
+        "bytes": 216,
+        "sha256": "a798b9087fcdf0b9d1b2740091377aba24551aa67ea2f0154ae35a573f22e66b"
+      },
+      "sequence": 3,
+      "observed_kinds": [
+        4,
+        5
+      ],
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\events-frame003.decoded",
+        "bytes": 523,
+        "sha256": "dab7aa4f31b07107c9c633da76fca7f53424b7deb8e059c141933c0afe93257e"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\events-frame004.capnp",
+        "bytes": 176,
+        "sha256": "0e17631fd69f080cc2cf1e98fba4ff38733d5645f7ba6d06dfc7174aa5b243f4"
+      },
+      "sequence": 4,
+      "observed_kinds": [
+        2
+      ],
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\events-frame004.decoded",
+        "bytes": 416,
+        "sha256": "d0638774e76b30437a546cd10a486ab4a8432c14a7e058c672da1dd8d61426f8"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1486\\native-evidence\\foreign-frame001.capnp",
+        "bytes": 168,
+        "sha256": "72089c800900f9c981ebecc8dc00d382e1ed6e7f88dbbf4dbf3c01b011c76746"
+      },
+      "sequence": 1,
+      "observed_kinds": [
+        1
+      ],
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\foreign-frame001.decoded",
+        "bytes": 385,
+        "sha256": "d68360148f7a3d1ef821fb0a2f39e74aadcddef2dc6ee9df1c166c3726e5b819"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    }
+  ],
+  "reference_decoder": {
+    "path": "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "bytes": 3926542,
+    "sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34"
+  },
+  "source_copies": {
+    "plugin_runtime/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\Cargo.toml",
+      "bytes": 4514,
+      "sha256": "60618d81718f9e232a4452da9faf52be589cdf2dc21dbab18af2e6a1bc2f2e90"
+    },
+    "plugin_runtime/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\Cargo.lock",
+      "bytes": 36808,
+      "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+    },
+    "plugin_runtime/src/directory_io.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\src\\directory_io.rs",
+      "bytes": 36912,
+      "sha256": "de56bfeefe5168a0222c1af188829f4f99d5e795fee6d47fd686aba9d9ec2dc7"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 19805,
+      "sha256": "bc4390438bf05ed685b54b8d076e38de8c39bad389b7d1e554acb5744a60162a"
+    },
+    "plugin_runtime/src/directory_io/watch/native.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\src\\directory_io\\watch\\native.rs",
+      "bytes": 4967,
+      "sha256": "f68b44e7acee0ad7499236cc239455e9e31b5d1531d236b45d83fd9706a54858"
+    },
+    "plugin_runtime/src/fs_watch_binding.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 6930,
+      "sha256": "3612536e109efea27da68f6536583d65368c304508ec1c0983760443e18592c4"
+    },
+    "plugin_runtime/src/io_binding.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\src\\io_binding.rs",
+      "bytes": 37801,
+      "sha256": "df874a15be46ddc08c8fb53c74e8a700d246c136905894064841cccc098db9db"
+    },
+    "plugin_runtime/tests/fs_watch_native_owner.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\plugin_runtime\\tests\\fs_watch_native_owner.rs",
+      "bytes": 27181,
+      "sha256": "dca02a5eeca51f0b78204ef2da3501331beda063b04b2bbeb9c882f1a71ec550"
+    },
+    "extensions/fs-watch-v1/build.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\build.rs",
+      "bytes": 804,
+      "sha256": "ee0eb0ba1daf2420af54323455064e166561f1a230642a124d8749f9d9f9a986"
+    },
+    "extensions/fs-watch-v1/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\Cargo.lock",
+      "bytes": 3062,
+      "sha256": "78a961b583cebfee5e1711975e706af8b6499255e622adec5d754678631405c4"
+    },
+    "extensions/fs-watch-v1/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\Cargo.toml",
+      "bytes": 253,
+      "sha256": "c42dbee1f513834a3715f02b3bdb97d78738e8799140b46992e51a7e3936ee3a"
+    },
+    "extensions/fs-watch-v1/README.md": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\README.md",
+      "bytes": 1886,
+      "sha256": "6d1c229324129c58f26b9b7e5c8f350d0a62f80352616da46e5b6007c5cae5ec"
+    },
+    "extensions/fs-watch-v1/contracts/fs_watch.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\contracts\\fs_watch.capnp",
+      "bytes": 539,
+      "sha256": "3312e334f5d298d3c56df9c06ed3ac940bbf8fc9a058d113ac30b0d6854f346f"
+    },
+    "extensions/fs-watch-v1/qualification/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\Cargo.lock",
+      "bytes": 9107,
+      "sha256": "a85bbc3d76cca8580a8b8f6f2ee70a0794a307d5eb5073a3e09030f202e567c7"
+    },
+    "extensions/fs-watch-v1/qualification/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\Cargo.toml",
+      "bytes": 121,
+      "sha256": "7f5674b4e5297a7dc34ad76b60931f2cbaa681118b412a8ea83e51be8ebefe43"
+    },
+    "extensions/fs-watch-v1/qualification/README.md": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\README.md",
+      "bytes": 1135,
+      "sha256": "332d903d0a2573fad6f34bc2867803299c5637656ef45d28fbf3b34423ace7b3"
+    },
+    "extensions/fs-watch-v1/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\src\\lib.rs",
+      "bytes": 11215,
+      "sha256": "a8f5668bed9a78a618c74270554a5e4dc53dd45b4b43893410fa8e5e88f8c51b"
+    },
+    "extensions/fs-watch-v1/src/state.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\src\\state.rs",
+      "bytes": 5042,
+      "sha256": "b60b255946320fafd12cb372cfa64ac7cfdc956d7688351b127cd757c0d5e8b7"
+    },
+    "extensions/fs-watch-v1/src/tests.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\src\\tests.rs",
+      "bytes": 11994,
+      "sha256": "12e3e964dfeafbcaad28e477329a48f6e530a4bf6352b30aa8912dd6d8080ff7"
+    },
+    "extensions/fs-watch-v1/qualification/c/plugin.c": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\c\\plugin.c",
+      "bytes": 3320,
+      "sha256": "6718a8f621e1eaf042e252d4eba8f5b35b5fc79b8260dfe50303527167e3b121"
+    },
+    "extensions/fs-watch-v1/qualification/cpp/plugin.cpp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\cpp\\plugin.cpp",
+      "bytes": 3347,
+      "sha256": "10d517f21b85a0c5ce857d8335b21c16f93e7c43dbe2fd5e809799e36a504574"
+    },
+    "extensions/fs-watch-v1/qualification/ffi-support/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\ffi-support\\Cargo.toml",
+      "bytes": 325,
+      "sha256": "b0f53f8ba9717669c072068cfeabb199877a7d7fd33b7beeaf0f8f37856d6c7a"
+    },
+    "extensions/fs-watch-v1/qualification/host/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\host\\Cargo.toml",
+      "bytes": 257,
+      "sha256": "89f7a568bed99b7bfd9a74da884d5b5c164e9e047d4096f39f61b75525f9f077"
+    },
+    "extensions/fs-watch-v1/qualification/rust-guest/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\rust-guest\\Cargo.toml",
+      "bytes": 227,
+      "sha256": "3ef30a004682cabeded7c76be56e103cd1f43344e6dccb722c89ac823544d1b0"
+    },
+    "extensions/fs-watch-v1/qualification/ffi-support/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\ffi-support\\src\\lib.rs",
+      "bytes": 184,
+      "sha256": "e2fdb91eacfa06ab0a8db8b812a91a9c34671d5492e40e3913b014e6f318c693"
+    },
+    "extensions/fs-watch-v1/qualification/host/src/main.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\host\\src\\main.rs",
+      "bytes": 4624,
+      "sha256": "e10a9466989d19a72f6ca7c4860b86006d6a995c7cb548e44f6e76d59aa8e4eb"
+    },
+    "extensions/fs-watch-v1/qualification/rust-guest/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-v1\\qualification\\rust-guest\\src\\lib.rs",
+      "bytes": 2171,
+      "sha256": "e18c0356259f102d83b51c8018b7fe2cc1c995308ab60dc821ce1f72c22affbb"
+    },
+    "extensions/fs-watch-native-v1/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\Cargo.lock",
+      "bytes": 3614,
+      "sha256": "e0be61e8302d5439e3b083858cc7d0fb186bc1a87b7fc3b57ecb1a626e1382cf"
+    },
+    "extensions/fs-watch-native-v1/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\Cargo.toml",
+      "bytes": 597,
+      "sha256": "5ed8bcd82cfe7ab4ab893faf2a97c6faa575d64cec132f5379a36890e9e1c3ae"
+    },
+    "extensions/fs-watch-native-v1/README.md": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\README.md",
+      "bytes": 1698,
+      "sha256": "492c0a156fd6baffb0968fe6b0dd57652e0da8920d342f0f8a7479b53d7bc74a"
+    },
+    "extensions/fs-watch-native-v1/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\src\\lib.rs",
+      "bytes": 137,
+      "sha256": "e65dc80f8aca454aa198f28ac263c0e3ba3b5d2cfcd15ccd26a3d040a58757fe"
+    },
+    "extensions/fs-watch-native-v1/src/notification.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\src\\notification.rs",
+      "bytes": 6895,
+      "sha256": "a5c25c2abbb820697c4eb26b4e35fb5175488902fc0c3d4575f3133f1dd4ce16"
+    },
+    "extensions/fs-watch-native-v1/src/windows.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\src\\windows.rs",
+      "bytes": 24902,
+      "sha256": "60277ae4588ed2dcbd3bfd07b3e23237aefd557a335cc52cc45c1c5073ae5465"
+    },
+    "extensions/fs-watch-native-v1/src/bin/native_watch_probe.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-review-1487\\source\\extensions\\fs-watch-native-v1\\src\\bin\\native_watch_probe.rs",
+      "bytes": 15666,
+      "sha256": "5caaf39f8582897e183006e2337d9d4d3acaba57071201dc2a5b9b2a229d9120"
+    }
+  },
+  "original_frozen_inputs_unchanged": 57,
+  "all_original_processes_returned": true,
+  "shared_original_IO_context": true,
+  "real_relative_native_capture": true,
+  "host_nominated_path": true,
+  "protected_picker_selection": false,
+  "managed_watch_worker": false,
+  "actual_guest_dispatch": false,
+  "actual_native_overflow": false,
+  "actual_native_close_failure": false,
+  "production_UI": false,
+  "volume_root_supported": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

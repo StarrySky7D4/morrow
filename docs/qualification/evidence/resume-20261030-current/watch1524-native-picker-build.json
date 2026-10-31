@@ -1,0 +1,75 @@
+{
+  "status": "COLD_COMPILED_NATIVE_PICKER_PROBE_RUNTIME_NOT_RUN",
+  "canonical_source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "probe_input_sha256": "1ae39080ca86d57390411ec429e1443452b97ecc21ae3446f88d006c1a64de0a",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\watch-picker-1524.exe",
+    "bytes": 6761472,
+    "sha256": "cd121c53d0de6a7207dc0315f6af61d4ee8524be7bc93f85d882a97f9ceaca70"
+  },
+  "compiler_proof": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\compiler-proof.json",
+    "bytes": 123252,
+    "sha256": "3dd34f81d9a2ace1566dcb3ff2fd10710f4e36ee0b11dd08048fc07d9e2e5eaf"
+  },
+  "guest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-build-1464\\watch-rust.wasm",
+    "bytes": 91643,
+    "sha256": "b47b4db04dfa1a7cc5a32764c6bd1b476ca8cba96fa8b8edb1e971b05801cf28"
+  },
+  "all_original_processes_returned": true,
+  "commands": [
+    {
+      "name": "lock",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\lock.stdout",
+        "bytes": 445459,
+        "sha256": "1ccf68e83f9ea74666cbd7aebf24785573b78a213585c590312ee420a913dcf3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\lock.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\build.stdout",
+        "bytes": 137986,
+        "sha256": "639a044e20adab3b153c66cf1cd54b8b2aee36f53140f337bcf6b13baab178a4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\build.stderr",
+        "bytes": 3993,
+        "sha256": "0ff65ffd6ca14a492503be96297ef5f541276dbba03e86f1fee789e996dd014d"
+      }
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\lint.stdout",
+        "bytes": 128039,
+        "sha256": "b49580f9d27fdd02ca30d06cd6647f02de1dd872457126c1c907dccc33296248"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\lint.stderr",
+        "bytes": 2574,
+        "sha256": "375259c09b7e25cc9c0869bad116a120e6a2c25f177dc28e029b7de13ded2aae"
+      }
+    }
+  ],
+  "lint_diagnostics": 0,
+  "shown_native_picker": false,
+  "production_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,122 @@
+{
+  "status": "CANONICAL_OBSERVER_REPAIRS_INTEGRATED_PURE_VERIFICATION_PENDING",
+  "source_before": "2365a3f491bc10daf75d6db370acd2a0ba43abca22fdda32b7d364de5de6e5a3",
+  "source_after": "9eadbd6fadba05cd731272819967552daa854cf30cdad1f9e35674ef9e5a4075",
+  "files": [
+    {
+      "name": "ParentSession042.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSession042.cs",
+        "bytes": 4557,
+        "sha256": "bdc84306cf569ea6bd386c017ec04cfabdafe62c9657539ecc08eac624d8b2d3"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSession042.cs",
+        "bytes": 5608,
+        "sha256": "3b859cdaa097a88cc08a48a6da50fef066f09ab40e97aad08c4ba4b7b14927f9"
+      }
+    },
+    {
+      "name": "ParentSessionPure042.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSessionPure042.cs",
+        "bytes": 7833,
+        "sha256": "b2c3138cf6ea76f13d03029e8838ee04e2639a3bc772af264153fc793df2ea9d"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\ParentSessionPure042.cs",
+        "bytes": 16354,
+        "sha256": "4b4ca68b7389b827ddb6d8d1c8dc83f1f3647c5539c9728daaefd8614d87b5b4"
+      }
+    },
+    {
+      "name": "Root47Controller1725.IO.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.IO.cs",
+        "bytes": 16531,
+        "sha256": "1916785d974cafb67c227fd3e573c875f16e23f43e25d7cdd8ebb3124c505a97"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.IO.cs",
+        "bytes": 18457,
+        "sha256": "3e9a3e8cbe388781255e7bb1e93913683319ea7aacf60cb458211da888bb52c6"
+      }
+    },
+    {
+      "name": "Root47Controller1725.Pure.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.Pure.cs",
+        "bytes": 16037,
+        "sha256": "84004df9275499c75bf2b8a5434a0d624139d82edd97050faa5a4b36ed35aacb"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.Pure.cs",
+        "bytes": 16673,
+        "sha256": "cf35a6b63509f9b8d05cd3c213386c45c3df1c90bbcdea84ea937721a478c552"
+      }
+    },
+    {
+      "name": "Root47Controller1725.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.cs",
+        "bytes": 50685,
+        "sha256": "61407edd3edef6b1ae0e2d18a4d4939ab89a8a171f36bfca96b2dad8a6ce0ed8"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.cs",
+        "bytes": 51137,
+        "sha256": "a54439dc267e8d56f1e99089fe56d9d6ecf4d0774bddf30580a4cb4ccd029b22"
+      }
+    },
+    {
+      "name": "RootPPrebirth1701.Input.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Input.cs",
+        "bytes": 17738,
+        "sha256": "664c389a38174a4c3aac222d081ab4b6fcaf36f3025d702855d6668afca6274d"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Input.cs",
+        "bytes": 17910,
+        "sha256": "285e9190a88bf59e3bc0b707cf56a12fcb9079659358b8007435875fee6bec55"
+      }
+    },
+    {
+      "name": "RootPPrebirth1701.Protocol.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Protocol.cs",
+        "bytes": 9207,
+        "sha256": "bc2690c206bacb476cc20dc605cc81e5fa9c5097f85e9b091b2f6501b6882fa4"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\RootPPrebirth1701.Protocol.cs",
+        "bytes": 9318,
+        "sha256": "7283a096e15eee281e39685f043ba92dfc6097aaa5cf32bf2d614d05bf381d4b"
+      }
+    },
+    {
+      "name": "Root47Controller1725.PureTests.cs",
+      "before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.PureTests.cs",
+        "bytes": 17307,
+        "sha256": "41b7c91bf81caa66d40f1ee37d1c0902fb198901742ea74a14b22a11139ab0ee"
+      },
+      "after": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\windows-shared-parent-042\\controller\\Root47Controller1725.PureTests.cs",
+        "bytes": 21040,
+        "sha256": "fd3ca72d314266dfcb13db7afdaab394cfef890942e769ce35f443706500be3c"
+      }
+    }
+  ],
+  "shared_profile_after_round_one_verifies_existing_bases": true,
+  "shared_runtime_clock_starts_at_actual_native_start": true,
+  "shared_single_cached_input_snapshot": true,
+  "begin_shell_uses_existing_exact_ordinal_path_predicate": true,
+  "firmware_and_sha_checks_unchanged": true,
+  "cached_journal_guard_export_only": true,
+  "VM_calls": 0,
+  "original_owner_contacts": 0,
+  "product_runtime": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false
+}

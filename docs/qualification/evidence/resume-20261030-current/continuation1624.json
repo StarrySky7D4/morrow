@@ -1,0 +1,112 @@
+{
+  "status": "PAUSED_BY_USER",
+  "utc": "2026-10-31T22:36:06.678692+00:00",
+  "branch": "codex/local-continue-20261020",
+  "parent_commit": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest_before_report": "57230cf6eb2b8d98109ec82c5b04e76e5132fe8379586f570e7f91a1ca62b444",
+  "previous_checkpoint": "continuation1527.json",
+  "protected_watch": {
+    "prior_source": "474842ae7fc13db4061f3eabdca0ddb33fecdc6ff4fd00f9706114d61fca8143",
+    "Rust_case": 1535,
+    "C_case": 1536,
+    "cancel_case": 1538,
+    "Cpp_case": 1591,
+    "Cpp_source": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
+    "original_native_chooser": true,
+    "original_Workbench_owner_and_receipt_acknowledgement": true,
+    "current_candidate_not_requalified": true,
+    "formal_UI": false
+  },
+  "expiry": {
+    "original1577": "KNOWN_CLOSED_BUT_CLASSIFIED_CANCELLED_INSTEAD_OF_EXPIRED",
+    "original_failure_preserved": true,
+    "correction1589_source": "8700b50ce311b2265c72a5831f5de2028532089b6cf27fb6a6252da69feb7bd3",
+    "pure_unit_methods": 12,
+    "pure_unit_scope_only": true,
+    "native1593": "COLD_BUILD_FAILED_DISK_FULL_OS112_BEFORE_RUNTIME",
+    "current_native_expiry": "NOT_RUN"
+  },
+  "watch_UI": {
+    "applied_case": 1621,
+    "applied_source": "d9a7e525534c9d09157097b38a3cbb57cba6f28192752f463fb898f1ebdd447b",
+    "widget_case": 1620,
+    "widget_methods": 7,
+    "locales": 9,
+    "wire_checks": 44,
+    "session_checks": 45,
+    "IPC": "CapnProto",
+    "exact_submission_and_raw_UTF16": true,
+    "unknown_never_replayed": true,
+    "one_read_and_explicit_acknowledgement": true,
+    "current_native_compilation": "NOT_RUN",
+    "formal_UI": "NOT_RUN",
+    "generated_host_digest_matches_schema": false,
+    "uncompiled_wire_regression": 1623
+  },
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "cache_root": "D:\\build_cache",
+  "cache1622": "PREPARE_INTERRUPTED_NO_DELETION",
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM_actions_after_pause": 0,
+  "old_owner_contacts_after_pause": 0,
+  "free_bytes_sample": {
+    "C": 57246695424,
+    "D": 4241539072
+  },
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "publication_authorized": true,
+  "publication_branch": "codex/local-continue-20261020",
+  "remote_publication": "Verify remote head after commit; receipt remains outside committed source to avoid a self-reference.",
+  "next_on_explicit_resume": [
+    "Regenerate and verify Dart host identity against the current CapnProto schema before real UI use.",
+    "Freshly review the paused1622 inventory; no existing plan or deletion may be assumed. Require at least6GB free before the next cold native build.",
+    "Create a new source/case/role target. Include capnp=0.24.1 and the new eighth selected integration method. Never rerun failed1593 or unbound1604 drivers.",
+    "Prove native expiry and actual Dart decoding; then fresh protected Rust/C/Cpp/cancel and formal UI qualification.",
+    "Continue the remaining source-bound Windows P2/P3 and SDK matrix. Historical Unknown owners remain untouched."
+  ]
+}

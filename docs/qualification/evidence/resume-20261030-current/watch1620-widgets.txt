@@ -1,0 +1,9 @@
+00:00 +0: loading D:/build_cache/_audit/windows-restriction-lineage-20261022-019/watch-ui-stage-1565/candidate/test/fs_watch_manager_test.dart
+00:00 +0: all nine languages fit a narrow view without dispatch
+00:00 +1: FileList alone cannot select or start the watch declaration
+00:01 +2: invalid limits cannot dispatch and exact path is retained through one read
+00:01 +3: transport Unknown stays sealed across page and language changes
+00:01 +4: view removal during pending start cancels only the returned original identity
+00:02 +5: catalog revocation withdraws the original watch exactly once
+00:02 +6: generic HTTP controls cannot adopt a running or Unknown watch
+00:02 +7: All tests passed!

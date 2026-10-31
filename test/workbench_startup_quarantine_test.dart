@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'support/workbench_supervision_fixture.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -12,8 +12,11 @@ import 'package:morrow_studio/plugins/workbench_supervision.dart';
 final class _MemoryProcess implements Process {
   _MemoryProcess({_FlushControl? flushControl}) {
     input.stream.listen(written.addAll);
-    _stdin = IOSink(flushControl == null
-        ? input.sink : _GatedConsumer(input.sink, flushControl));
+    _stdin = IOSink(
+      flushControl == null
+          ? input.sink
+          : _GatedConsumer(input.sink, flushControl),
+    );
   }
   final input = StreamController<List<int>>();
   final out = StreamController<List<int>>(sync: true);
@@ -38,58 +41,91 @@ final class _MemoryProcess implements Process {
 
 String get _hash => 'a' * 64;
 Map<String, dynamic> _state({String phase = 'Running'}) => {
-  'version': 2, 'phase': phase, 'owner_phase': 'Retained',
-  'generation': 1, 'child_pid': 100, 'supervisor_pid': 4242,
-  'supervisor_creation_filetime': 1, 'child_creation_filetime': 2,
-  'supervisor_sha256': _hash, 'host_sha256': _hash,
-  'package_sha256': _hash, 'profile': _hash, 'incarnation': _hash,
-  'recovery_history_head': '', 'abnormal_resource_closure_protocol': 1,
-  'protocol_ack': 'not_applicable', 'business_outcome': 'Unknown',
-  'normal_shutdown': false, 'gate_closed': phase != 'Running',
+  'version': 2,
+  'phase': phase,
+  'owner_phase': phase == 'Running' ? 'Active' : 'Retained',
+  'generation': 1,
+  'child_pid': 100,
+  'supervisor_pid': 4242,
+  'supervisor_creation_filetime': 1,
+  'child_creation_filetime': 2,
+  'supervisor_sha256': _hash,
+  'host_sha256': _hash,
+  'package_sha256': _hash,
+  'profile': _hash,
+  'incarnation': _hash,
+  'recovery_history_head': '',
+  'abnormal_resource_closure_protocol': 1,
+  'protocol_ack': 'not_applicable',
+  'business_outcome': 'Unknown',
+  'normal_shutdown': false,
+  'gate_closed': phase != 'Running',
 };
 
 Map<String, dynamic> _terminal() {
   final s = _state(phase: 'ClosingUnconfirmed');
   const flags = [
-    'resource_reclaimed', 'gate_closed', 'business_gate_revoked', 'tree_empty',
-    'child_exit', 'stdout_eof', 'stderr_eof', 'control_reaped',
+    'resource_reclaimed',
+    'gate_closed',
+    'business_gate_revoked',
+    'tree_empty',
+    'child_exit',
+    'stdout_eof',
+    'stderr_eof',
+    'control_reaped',
   ];
-  final joins = <String, dynamic>{'version': 1,
-    'stdout_reader_joined': true, 'stderr_reader_joined': true,
-    'controller_reader_joined': true};
-  s.addAll({'durable_proof': true, 'child_exit_code': 2,
+  final joins = <String, dynamic>{
+    'version': 1,
+    'stdout_reader_joined': true,
+    'stderr_reader_joined': true,
+    'controller_reader_joined': true,
+  };
+  s.addAll({
+    'durable_proof': true,
+    'child_exit_code': 2,
     for (final key in flags) key: true,
-    'abnormal_resource_closure_proof': Map<String, dynamic>.of(joins)});
+    'abnormal_resource_closure_proof': Map<String, dynamic>.of(joins),
+  });
   s['abnormal_resource_closure_prepared'] = <String, dynamic>{
-    'version': 1, 'kind': 'AbnormalResourceClosurePreparedV1',
+    'version': 1,
+    'kind': 'AbnormalResourceClosurePreparedV1',
     'identity': <String, dynamic>{
       for (final key in workbenchQuarantineIdentityFields) key: s[key],
     },
-    'committed_record_sha256': 'b' * 64, 'child_exit_code': 2,
+    'committed_record_sha256': 'b' * 64,
+    'child_exit_code': 2,
     for (final key in flags) key: true,
-    'reader_joins': joins, 'durable_abnormal_record_confirmed': true,
-    'normal_shutdown': false, 'owner_phase': 'Retained',
-    'business_outcome': 'Unknown', 'protocol_ack': 'not_applicable',
-    'accepted': false, 'supervisor_exit_confirmed': false,
+    'reader_joins': joins,
+    'durable_abnormal_record_confirmed': true,
+    'normal_shutdown': false,
+    'owner_phase': 'Retained',
+    'business_outcome': 'Unknown',
+    'protocol_ack': 'not_applicable',
+    'accepted': false,
+    'supervisor_exit_confirmed': false,
   };
   return s;
 }
 
 Uint8List _frame(Map<String, dynamic> state) {
-  final payload = utf8.encode(jsonEncode(state));
+  final payload = encodeSupervisionFixture(state);
   final header = ByteData(4)..setUint32(0, payload.length + 1, Endian.little);
   return Uint8List.fromList([...header.buffer.asUint8List(), 2, ...payload]);
 }
 
 final class _Fixture {
   _Fixture({bool qualification = true, _MemoryProcess? transport})
-      : process = transport ?? _MemoryProcess() {
-    channel = SupervisedWorkbenchChannel(process,
-      hostSha256: _hash, supervisorSha256: _hash,
-      expectedProfile: _hash, packageSha256: _hash,
+    : process = transport ?? _MemoryProcess() {
+    channel = SupervisedWorkbenchChannel(
+      process,
+      hostSha256: _hash,
+      supervisorSha256: _hash,
+      expectedProfile: _hash,
+      packageSha256: _hash,
       qualificationStartupObservationEnabled: qualification,
-      registerQualificationStartupFailure: qualification ?
-          (mark) => markFailed = mark : null,
+      registerQualificationStartupFailure: qualification
+          ? (mark) => markFailed = mark
+          : null,
     );
     channel.output.listen((_) {}, onError: (Object _) {});
     channel.diagnostics.listen((_) {}, onError: (Object _) {});
@@ -98,28 +134,33 @@ final class _Fixture {
   late final SupervisedWorkbenchChannel channel;
   late final void Function() markFailed;
   void emit(Map<String, dynamic> state) => process.out.add(_frame(state));
-  WorkbenchStartupObservation snapshot() => channel.qualificationStartupObservation(
-    stage: 'before_original_close', primaryFailure: StateError('primary startup'),
-  );
+  WorkbenchStartupObservation snapshot() =>
+      channel.qualificationStartupObservation(
+        stage: 'before_original_close',
+        primaryFailure: StateError('primary startup'),
+      );
   List<({int kind, int payloadSize})> get commands {
     final b = process.written;
     final result = <({int kind, int payloadSize})>[];
     var offset = 0;
     while (offset + 4 <= b.length) {
-      final n = ByteData.sublistView(Uint8List.fromList(b.sublist(offset, offset + 4)))
-          .getUint32(0, Endian.little);
+      final n = ByteData.sublistView(
+        Uint8List.fromList(b.sublist(offset, offset + 4)),
+      ).getUint32(0, Endian.little);
       if (offset + 4 + n > b.length) break;
       result.add((kind: b[offset + 4], payloadSize: n - 1));
       offset += 4 + n;
     }
     return result;
   }
+
   Future<void> closing() async {
     emit(_state());
     markFailed();
     emit(_state(phase: 'ClosingUnconfirmed'));
     await _tick();
   }
+
   Future<void> finish({int code = 2}) async {
     if (!process.exited.isCompleted) process.exited.complete(code);
     if (!process.out.isClosed) await process.out.close();
@@ -136,8 +177,15 @@ Future<void> _tick() => Future<void>.delayed(Duration.zero);
 final class _FlushControl {
   final entered = Completer<void>();
   final gate = Completer<void>();
-  void succeed() { if (!gate.isCompleted) gate.complete(); }
-  void fail() { if (!gate.isCompleted) gate.completeError(StateError('controlled flush failure')); }
+  void succeed() {
+    if (!gate.isCompleted) gate.complete();
+  }
+
+  void fail() {
+    if (!gate.isCompleted) {
+      gate.completeError(StateError('controlled flush failure'));
+    }
+  }
 }
 
 final class _GatedConsumer implements StreamConsumer<List<int>> {
@@ -150,8 +198,11 @@ final class _GatedConsumer implements StreamConsumer<List<int>> {
     if (!control.entered.isCompleted) control.entered.complete();
     await control.gate.future;
   }
+
   @override
-  Future<void> close() async { await target.close(); }
+  Future<void> close() async {
+    await target.close();
+  }
 }
 
 Future<void> _actualExitAndEofs(_Fixture f, {int code = 2}) async {
@@ -170,12 +221,17 @@ void main() {
     await _tick();
     expect(f.commands.where((c) => c.kind == 4), isEmpty);
     expect(f.channel.supportsPrivateControl, false);
-    await expectLater(f.channel.send(Uint8List.fromList([1])), throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
+    await expectLater(
+      f.channel.send(Uint8List.fromList([1])),
+      throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+    );
     f.emit(_state(phase: 'ClosingUnconfirmed'));
     f.emit(_state(phase: 'ClosingUnconfirmed'));
     await f.channel.closeInput();
     await _tick();
-    expect(f.commands.where((c) => c.kind == 4).toList(), [(kind: 4, payloadSize: 0)]);
+    expect(f.commands.where((c) => c.kind == 4).toList(), [
+      (kind: 4, payloadSize: 0),
+    ]);
     expect(f.commands.where((c) => c.kind == 3), isEmpty);
     f.emit(_terminal());
     await f.finish();
@@ -184,61 +240,92 @@ void main() {
     expect(receipt['accepted'], false);
     expect(receipt['business_outcome'], 'Unknown');
     expect(receipt['owner_phase'], 'Retained');
-    await expectLater(f.channel.exitCode, throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
+    await expectLater(
+      f.channel.exitCode,
+      throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+    );
   });
 
-  test('public notifier cannot authorize control or manufacture receipt', () async {
-    final f = _Fixture();
-    f.channel.supervision.value = WorkbenchSupervisionState(_terminal());
-    f.markFailed();
-    await _tick();
-    expect(f.commands.where((c) => c.kind == 4), isEmpty);
-    await f.finish();
-    expect(f.snapshot().failedStartupQuarantine, isNull);
-  });
+  test(
+    'public notifier cannot authorize control or manufacture receipt',
+    () async {
+      final f = _Fixture();
+      f.channel.supervision.value = WorkbenchSupervisionState(_terminal());
+      f.markFailed();
+      await _tick();
+      expect(f.commands.where((c) => c.kind == 4), isEmpty);
+      await f.finish();
+      expect(f.snapshot().failedStartupQuarantine, isNull);
+    },
+  );
 
-  test('nested public proof mutations cannot alter private prepared copy', () async {
-    final f = _Fixture();
-    await f.closing();
-    f.emit(_terminal());
-    final exposed = f.channel.supervision.value!.record['abnormal_resource_closure_prepared'] as Map;
-    (exposed['identity'] as Map)['child_pid'] = 999;
-    (exposed['reader_joins'] as Map)['stdout_reader_joined'] = false;
-    f.channel.supervision.value = WorkbenchSupervisionState(_state());
-    await f.finish();
-    final receipt = f.snapshot().failedStartupQuarantine!;
-    final prepared = receipt['prepared'] as Map;
-    expect((prepared['identity'] as Map)['child_pid'], 100);
-    expect((prepared['reader_joins'] as Map)['stdout_reader_joined'], true);
-    expect(() => (prepared['identity'] as Map)['child_pid'] = 999, throwsUnsupportedError);
-  });
-
-  test('every original identity field including history rejects changed prepared identity', () async {
-    for (final key in workbenchQuarantineIdentityFields) {
+  test(
+    'nested public proof mutations cannot alter private prepared copy',
+    () async {
       final f = _Fixture();
       await f.closing();
-      final s = _terminal();
-      final p = s['abnormal_resource_closure_prepared'] as Map;
-      (p['identity'] as Map)[key] = key == 'recovery_history_head' ? 'c' * 64 : null;
-      f.emit(s);
+      f.emit(_terminal());
+      final exposed =
+          f
+                  .channel
+                  .supervision
+                  .value!
+                  .record['abnormal_resource_closure_prepared']
+              as Map;
+      expect(
+        () => (exposed['identity'] as Map)['child_pid'] = 999,
+        throwsUnsupportedError,
+      );
+      expect(
+        () => (exposed['reader_joins'] as Map)['stdout_reader_joined'] = false,
+        throwsUnsupportedError,
+      );
+      f.channel.supervision.value = WorkbenchSupervisionState(_state());
       await f.finish();
-      expect(f.snapshot().failedStartupQuarantine, isNull, reason: key);
-    }
-  });
+      final receipt = f.snapshot().failedStartupQuarantine!;
+      final prepared = receipt['prepared'] as Map;
+      expect((prepared['identity'] as Map)['child_pid'], 100);
+      expect((prepared['reader_joins'] as Map)['stdout_reader_joined'], true);
+      expect(
+        () => (prepared['identity'] as Map)['child_pid'] = 999,
+        throwsUnsupportedError,
+      );
+    },
+  );
+
+  test(
+    'every original identity field including history rejects changed prepared identity',
+    () async {
+      for (final key in workbenchQuarantineIdentityFields) {
+        final f = _Fixture();
+        await f.closing();
+        final s = _terminal();
+        final p = s['abnormal_resource_closure_prepared'] as Map;
+        (p['identity'] as Map)[key] = key == 'recovery_history_head'
+            ? 'c' * 64
+            : null;
+        f.emit(s);
+        await f.finish();
+        expect(f.snapshot().failedStartupQuarantine, isNull, reason: key);
+      }
+    },
+  );
 
   test('wrong history on abnormal status rejects before kind4', () async {
     final f = _Fixture();
     f.emit(_state());
     f.markFailed();
-    f.emit(_state(phase: 'ClosingUnconfirmed')..['recovery_history_head'] = 'c' * 64);
+    f.emit(
+      _state(phase: 'ClosingUnconfirmed')..['recovery_history_head'] = 'c' * 64,
+    );
     await f.finish();
     expect(f.commands.where((c) => c.kind == 4), isEmpty);
     expect(f.snapshot().failedStartupQuarantine, isNull);
   });
 
-  test('floating protocol capability cannot authorize kind4', () async {
+  test('unknown protocol capability cannot authorize kind4', () async {
     final f = _Fixture();
-    f.emit(_state()..['abnormal_resource_closure_protocol'] = 1.0);
+    f.emit(_state()..['abnormal_resource_closure_protocol'] = 65535);
     f.markFailed();
     f.emit(_state(phase: 'ClosingUnconfirmed'));
     await f.finish();
@@ -246,42 +333,65 @@ void main() {
     expect(f.snapshot().failedStartupQuarantine, isNull);
   });
 
-  test('unmarked extension cannot repurpose normal or nonfailure channel', () async {
-    final f = _Fixture();
-    f.emit(_state());
-    f.emit(_terminal());
-    await f.finish();
-    expect(f.commands.where((c) => c.kind == 4), isEmpty);
-    expect(f.snapshot().failedStartupQuarantine, isNull);
-  });
-
-  test('fake extension flags digest reader joins and child code fail closed', () async {
-    final corrupt = <void Function(Map<String, dynamic>)>[
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['version'] = 2,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['version'] = 1.0,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['kind'] = 'Released',
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['accepted'] = true,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['supervisor_exit_confirmed'] = true,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['resource_reclaimed'] = false,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['committed_record_sha256'] = '',
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['child_exit_code'] = '2',
-      (s) => ((s['abnormal_resource_closure_prepared'] as Map)['reader_joins'] as Map)['controller_reader_joined'] = false,
-      (s) => s['durable_proof'] = false,
-      (s) => s['tree_empty'] = false,
-      (s) => s['abnormal_resource_closure_protocol'] = 2,
-      (s) => s['child_exit_code'] = 9,
-      (s) => (s['abnormal_resource_closure_prepared'] as Map)['unexpected'] = true,
-    ];
-    for (final change in corrupt) {
+  test(
+    'unmarked extension cannot repurpose normal or nonfailure channel',
+    () async {
       final f = _Fixture();
-      await f.closing();
-      final s = _terminal();
-      change(s);
-      f.emit(s);
+      f.emit(_state());
+      f.emit(_terminal());
       await f.finish();
+      expect(f.commands.where((c) => c.kind == 4), isEmpty);
       expect(f.snapshot().failedStartupQuarantine, isNull);
-    }
-  });
+    },
+  );
+
+  test(
+    'fake extension flags digest reader joins and child code fail closed',
+    () async {
+      final corrupt = <void Function(Map<String, dynamic>)>[
+        (s) => (s['abnormal_resource_closure_prepared'] as Map)['version'] = 2,
+        (s) => (s['abnormal_resource_closure_prepared'] as Map)['version'] = 0,
+        (s) => (s['abnormal_resource_closure_prepared'] as Map)['kind'] =
+            'Released',
+        (s) =>
+            (s['abnormal_resource_closure_prepared'] as Map)['accepted'] = true,
+        (s) =>
+            (s['abnormal_resource_closure_prepared']
+                    as Map)['supervisor_exit_confirmed'] =
+                true,
+        (s) =>
+            (s['abnormal_resource_closure_prepared']
+                    as Map)['resource_reclaimed'] =
+                false,
+        (s) =>
+            (s['abnormal_resource_closure_prepared']
+                    as Map)['committed_record_sha256'] =
+                '',
+        (s) =>
+            (s['abnormal_resource_closure_prepared']
+                    as Map)['child_exit_code'] =
+                -2,
+        (s) =>
+            ((s['abnormal_resource_closure_prepared'] as Map)['reader_joins']
+                    as Map)['controller_reader_joined'] =
+                false,
+        (s) => s['durable_proof'] = false,
+        (s) => s['tree_empty'] = false,
+        (s) => s['abnormal_resource_closure_protocol'] = 2,
+        (s) => s['child_exit_code'] = 9,
+        (s) => s['wire_version'] = 2,
+      ];
+      for (final change in corrupt) {
+        final f = _Fixture();
+        await f.closing();
+        final s = _terminal();
+        change(s);
+        f.emit(s);
+        await f.finish();
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+      }
+    },
+  );
 
   test('missing actual EOF never creates quarantine receipt', () async {
     final f = _Fixture();
@@ -295,25 +405,31 @@ void main() {
     expect(f.snapshot().failedStartupQuarantine, isNotNull);
   });
 
-  test('wrong actual supervisor exit cannot accept prepared extension', () async {
-    for (final code in [0, 1, 3]) {
+  test(
+    'wrong actual supervisor exit cannot accept prepared extension',
+    () async {
+      for (final code in [0, 1, 3]) {
+        final f = _Fixture();
+        await f.closing();
+        f.emit(_terminal());
+        await f.finish(code: code);
+        expect(f.snapshot().failedStartupQuarantine, isNull, reason: '$code');
+      }
+    },
+  );
+
+  test(
+    'duplicate terminal invalidates quarantine before actual closure',
+    () async {
       final f = _Fixture();
       await f.closing();
       f.emit(_terminal());
-      await f.finish(code: code);
-      expect(f.snapshot().failedStartupQuarantine, isNull, reason: '$code');
-    }
-  });
-
-  test('duplicate terminal invalidates quarantine before actual closure', () async {
-    final f = _Fixture();
-    await f.closing();
-    f.emit(_terminal());
-    f.emit(_terminal());
-    await f.finish();
-    expect(f.snapshot().failedStartupQuarantine, isNull);
-    expect(f.commands.where((c) => c.kind == 4).length, 1);
-  });
+      f.emit(_terminal());
+      await f.finish();
+      expect(f.snapshot().failedStartupQuarantine, isNull);
+      expect(f.commands.where((c) => c.kind == 4).length, 1);
+    },
+  );
 
   test('transport error retains Unknown without quarantine retry', () async {
     final f = _Fixture();
@@ -326,24 +442,27 @@ void main() {
     expect(f.commands.where((c) => c.kind == 4).length, 1);
   });
 
-  test('normal close stays kind3 Released zero without quarantine receipt', () async {
-    final f = _Fixture();
-    f.emit(_state());
-    await f.channel.closeInput();
-    f.markFailed(); // An already requested normal close cannot be repurposed.
-    final s = _terminal()
-      ..remove('abnormal_resource_closure_prepared')
-      ..['phase'] = 'Released'
-      ..['owner_phase'] = 'Released'
-      ..['normal_shutdown'] = true
-      ..['child_exit_code'] = 0;
-    f.emit(s);
-    await f.finish(code: 0);
-    expect(await f.channel.exitCode, 0);
-    expect(f.commands.where((c) => c.kind == 3).length, 1);
-    expect(f.commands.where((c) => c.kind == 4), isEmpty);
-    expect(f.snapshot().failedStartupQuarantine, isNull);
-  });
+  test(
+    'normal close stays kind3 Released zero without quarantine receipt',
+    () async {
+      final f = _Fixture();
+      f.emit(_state());
+      await f.channel.closeInput();
+      f.markFailed(); // An already requested normal close cannot be repurposed.
+      final s = _terminal()
+        ..remove('abnormal_resource_closure_prepared')
+        ..['phase'] = 'Released'
+        ..['owner_phase'] = 'Released'
+        ..['normal_shutdown'] = true
+        ..['child_exit_code'] = 0;
+      f.emit(s);
+      await f.finish(code: 0);
+      expect(await f.channel.exitCode, 0);
+      expect(f.commands.where((c) => c.kind == 3).length, 1);
+      expect(f.commands.where((c) => c.kind == 4), isEmpty);
+      expect(f.snapshot().failedStartupQuarantine, isNull);
+    },
+  );
 
   test('legacy nonqualification normal release remains unchanged', () async {
     final f = _Fixture(qualification: false);
@@ -358,8 +477,15 @@ void main() {
       ..['normal_shutdown'] = true
       ..['durable_proof'] = true
       ..['child_exit_code'] = 0;
-    for (final key in ['resource_reclaimed', 'tree_empty', 'child_exit',
-        'stdout_eof', 'stderr_eof', 'control_reaped', 'gate_closed']) {
+    for (final key in [
+      'resource_reclaimed',
+      'tree_empty',
+      'child_exit',
+      'stdout_eof',
+      'stderr_eof',
+      'control_reaped',
+      'gate_closed',
+    ]) {
       released[key] = true;
     }
     f.emit(released);
@@ -369,169 +495,48 @@ void main() {
     expect(f.commands.where((c) => c.kind == 4), isEmpty);
   });
 
-  test('failure observer keeps primary and actual failed close alongside separate receipt', () async {
-    final f = _Fixture();
-    await f.closing();
-    final primary = StateError('original startup');
-    WorkbenchStartupObservation? after;
-    final observed = observeWorkbenchStartupFailure(
-      primaryFailure: primary,
-      capture: f.channel.qualificationStartupObservation,
-      observe: (snapshot) {
-        if (snapshot.stage == 'before_original_close') throw StateError('observer failed');
-        after = snapshot;
-      },
-      closeOriginal: () async {
-        await f.channel.closeInput();
-        await f.channel.exitCode;
-      },
-    );
-    f.emit(_terminal());
-    await f.finish();
-    final errors = await observed;
-    expect(errors.beforeObserverFailed, true);
-    expect(after!.primaryFailure.text, primary.toString());
-    expect(after!.secondaryCloseFailure!.text, contains('without verified normal'));
-    expect(after!.observerFailure!.text, contains('observer failed'));
-    expect(after!.failedStartupQuarantine, isNotNull);
-    expect(after!.toJson()['accepted'], false);
-  });
-  test('marked startup failure rejects unrequested Released zero with actual dual EOF', () async {
-    final f = _Fixture();
-    f.emit(_state());
-    f.markFailed();
-    // No closeInput/kind3 and no ClosingUnconfirmed state has been delivered.
-    final released = _terminal()
-      ..remove('abnormal_resource_closure_prepared')
-      ..['phase'] = 'Released'
-      ..['owner_phase'] = 'Released'
-      ..['normal_shutdown'] = true
-      ..['child_exit_code'] = 0;
-    f.emit(released);
-    await f.finish(code: 0);
-    await expectLater(f.channel.exitCode,
-        throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
-    final snapshot = f.snapshot();
-    expect(snapshot.latestValidatedState!['phase'], 'Running');
-    expect(snapshot.latestValidatedState!['normal_shutdown'], false);
-    expect(snapshot.failedStartupQuarantine, isNull);
-    expect(snapshot.toJson()['accepted'], false);
-    expect(f.channel.supportsPrivateControl, false);
-    expect(f.commands.where((command) => command.kind == 3), isEmpty);
-    expect(f.commands.where((command) => command.kind == 4), isEmpty);
-  });
-  test('admitted kind4 waits for successful flush after actual exit and dual EOF', () async {
-    final control = _FlushControl();
-    final f = _Fixture(transport: _MemoryProcess(flushControl: control));
-    var settled = false;
-    unawaited(f.channel.exitCode.then<void>((_) { settled = true; },
-        onError: (Object _) { settled = true; }));
-    try {
+  test(
+    'failure observer keeps primary and actual failed close alongside separate receipt',
+    () async {
+      final f = _Fixture();
       await f.closing();
-      await control.entered.future;
-      expect(f.commands.where((c) => c.kind == 4).length, 1);
+      final primary = StateError('original startup');
+      WorkbenchStartupObservation? after;
+      final observed = observeWorkbenchStartupFailure(
+        primaryFailure: primary,
+        capture: f.channel.qualificationStartupObservation,
+        observe: (snapshot) {
+          if (snapshot.stage == 'before_original_close') {
+            throw StateError('observer failed');
+          }
+          after = snapshot;
+        },
+        closeOriginal: () async {
+          await f.channel.closeInput();
+          await f.channel.exitCode;
+        },
+      );
       f.emit(_terminal());
-      await _actualExitAndEofs(f);
-      expect(settled, false);
-      expect(f.snapshot().failedStartupQuarantine, isNull);
-      control.succeed();
       await f.finish();
-      expect(settled, true);
-      final receipt = f.snapshot().failedStartupQuarantine!;
-      expect(receipt['actual_supervisor_exit_code'], 2);
-      expect(receipt['stdout_eof'], true);
-      expect(receipt['stderr_eof'], true);
-      expect(receipt['accepted'], false);
-      expect(receipt['normal_shutdown'], false);
-      await expectLater(f.channel.exitCode,
-          throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
-      expect(f.commands.where((c) => c.kind == 4).length, 1);
-      expect(f.commands.where((c) => c.kind == 3), isEmpty);
-    } finally {
-      control.succeed();
-      await f.finish();
-    }
-  });
-
-  test('admitted kind4 late flush failure settles Unknown without receipt or retry', () async {
-    final control = _FlushControl();
-    final f = _Fixture(transport: _MemoryProcess(flushControl: control));
-    var settled = false;
-    unawaited(f.channel.exitCode.then<void>((_) { settled = true; },
-        onError: (Object _) { settled = true; }));
-    try {
-      await f.closing();
-      await control.entered.future;
-      f.emit(_terminal());
-      await _actualExitAndEofs(f);
-      expect(settled, false);
-      control.fail();
-      await f.finish();
-      expect(settled, true);
-      expect(f.snapshot().failedStartupQuarantine, isNull);
-      await expectLater(f.channel.exitCode,
-          throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
-      f.markFailed();
-      expect(f.commands.where((c) => c.kind == 4).length, 1);
-      expect(f.commands.where((c) => c.kind == 3), isEmpty);
-      expect(f.channel.supportsPrivateControl, false);
-    } finally {
-      control.succeed();
-      await f.finish();
-    }
-  });
-
-  test('successful late kind4 flush cannot replace missing private prepared proof', () async {
-    final control = _FlushControl();
-    final f = _Fixture(transport: _MemoryProcess(flushControl: control));
-    try {
-      await f.closing();
-      await control.entered.future;
-      await _actualExitAndEofs(f);
-      control.succeed();
-      await f.finish();
-      expect(f.snapshot().failedStartupQuarantine, isNull);
-      await expectLater(f.channel.exitCode,
-          throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
-      expect(f.commands.where((c) => c.kind == 4).length, 1);
-    } finally {
-      control.succeed();
-      await f.finish();
-    }
-  });
-
-  test('queued admitted kind4 rejects after actual exit and settles without writing', () async {
-    final control = _FlushControl();
-    final f = _Fixture(transport: _MemoryProcess(flushControl: control));
-    try {
+      final errors = await observed;
+      expect(errors.beforeObserverFailed, true);
+      expect(after!.primaryFailure.text, primary.toString());
+      expect(
+        after!.secondaryCloseFailure!.text,
+        contains('without verified normal'),
+      );
+      expect(after!.observerFailure!.text, contains('observer failed'));
+      expect(after!.failedStartupQuarantine, isNotNull);
+      expect(after!.toJson()['accepted'], false);
+    },
+  );
+  test(
+    'marked startup failure rejects unrequested Released zero with actual dual EOF',
+    () async {
+      final f = _Fixture();
       f.emit(_state());
-      final priorWrite = f.channel.send(Uint8List.fromList([1]));
-      await control.entered.future;
       f.markFailed();
-      f.emit(_state(phase: 'ClosingUnconfirmed'));
-      f.emit(_terminal());
-      await _actualExitAndEofs(f);
-      control.succeed();
-      await priorWrite;
-      await f.finish();
-      expect(f.snapshot().failedStartupQuarantine, isNull);
-      await expectLater(f.channel.exitCode,
-          throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
-      expect(f.commands.where((c) => c.kind == 4), isEmpty);
-      expect(f.commands.where((c) => c.kind == 3), isEmpty);
-    } finally {
-      control.succeed();
-      await f.finish();
-    }
-  });
-
-  test('normal kind3 retains original exit semantics without quarantine admission', () async {
-    final control = _FlushControl();
-    final f = _Fixture(transport: _MemoryProcess(flushControl: control));
-    try {
-      f.emit(_state());
-      final close = f.channel.closeInput();
-      await control.entered.future;
+      // No closeInput/kind3 and no ClosingUnconfirmed state has been delivered.
       final released = _terminal()
         ..remove('abnormal_resource_closure_prepared')
         ..['phase'] = 'Released'
@@ -539,19 +544,190 @@ void main() {
         ..['normal_shutdown'] = true
         ..['child_exit_code'] = 0;
       f.emit(released);
-      await _actualExitAndEofs(f, code: 0);
-      expect(await f.channel.exitCode, 0);
-      expect(f.snapshot().failedStartupQuarantine, isNull);
-      expect(f.commands.where((c) => c.kind == 3).length, 1);
-      expect(f.commands.where((c) => c.kind == 4), isEmpty);
-      control.succeed();
-      await close;
       await f.finish(code: 0);
-    } finally {
-      control.succeed();
-      await f.finish(code: 0);
-    }
-  });
+      await expectLater(
+        f.channel.exitCode,
+        throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+      );
+      final snapshot = f.snapshot();
+      expect(snapshot.latestValidatedState!['phase'], 'Running');
+      expect(snapshot.latestValidatedState!['normal_shutdown'], false);
+      expect(snapshot.failedStartupQuarantine, isNull);
+      expect(snapshot.toJson()['accepted'], false);
+      expect(f.channel.supportsPrivateControl, false);
+      expect(f.commands.where((command) => command.kind == 3), isEmpty);
+      expect(f.commands.where((command) => command.kind == 4), isEmpty);
+    },
+  );
+  test(
+    'admitted kind4 waits for successful flush after actual exit and dual EOF',
+    () async {
+      final control = _FlushControl();
+      final f = _Fixture(transport: _MemoryProcess(flushControl: control));
+      var settled = false;
+      unawaited(
+        f.channel.exitCode.then<void>(
+          (_) {
+            settled = true;
+          },
+          onError: (Object _) {
+            settled = true;
+          },
+        ),
+      );
+      try {
+        await f.closing();
+        await control.entered.future;
+        expect(f.commands.where((c) => c.kind == 4).length, 1);
+        f.emit(_terminal());
+        await _actualExitAndEofs(f);
+        expect(settled, false);
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+        control.succeed();
+        await f.finish();
+        expect(settled, true);
+        final receipt = f.snapshot().failedStartupQuarantine!;
+        expect(receipt['actual_supervisor_exit_code'], 2);
+        expect(receipt['stdout_eof'], true);
+        expect(receipt['stderr_eof'], true);
+        expect(receipt['accepted'], false);
+        expect(receipt['normal_shutdown'], false);
+        await expectLater(
+          f.channel.exitCode,
+          throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+        );
+        expect(f.commands.where((c) => c.kind == 4).length, 1);
+        expect(f.commands.where((c) => c.kind == 3), isEmpty);
+      } finally {
+        control.succeed();
+        await f.finish();
+      }
+    },
+  );
 
+  test(
+    'admitted kind4 late flush failure settles Unknown without receipt or retry',
+    () async {
+      final control = _FlushControl();
+      final f = _Fixture(transport: _MemoryProcess(flushControl: control));
+      var settled = false;
+      unawaited(
+        f.channel.exitCode.then<void>(
+          (_) {
+            settled = true;
+          },
+          onError: (Object _) {
+            settled = true;
+          },
+        ),
+      );
+      try {
+        await f.closing();
+        await control.entered.future;
+        f.emit(_terminal());
+        await _actualExitAndEofs(f);
+        expect(settled, false);
+        control.fail();
+        await f.finish();
+        expect(settled, true);
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+        await expectLater(
+          f.channel.exitCode,
+          throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+        );
+        f.markFailed();
+        expect(f.commands.where((c) => c.kind == 4).length, 1);
+        expect(f.commands.where((c) => c.kind == 3), isEmpty);
+        expect(f.channel.supportsPrivateControl, false);
+      } finally {
+        control.succeed();
+        await f.finish();
+      }
+    },
+  );
 
+  test(
+    'successful late kind4 flush cannot replace missing private prepared proof',
+    () async {
+      final control = _FlushControl();
+      final f = _Fixture(transport: _MemoryProcess(flushControl: control));
+      try {
+        await f.closing();
+        await control.entered.future;
+        await _actualExitAndEofs(f);
+        control.succeed();
+        await f.finish();
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+        await expectLater(
+          f.channel.exitCode,
+          throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+        );
+        expect(f.commands.where((c) => c.kind == 4).length, 1);
+      } finally {
+        control.succeed();
+        await f.finish();
+      }
+    },
+  );
+
+  test(
+    'queued admitted kind4 rejects after actual exit and settles without writing',
+    () async {
+      final control = _FlushControl();
+      final f = _Fixture(transport: _MemoryProcess(flushControl: control));
+      try {
+        f.emit(_state());
+        final priorWrite = f.channel.send(Uint8List.fromList([1]));
+        await control.entered.future;
+        f.markFailed();
+        f.emit(_state(phase: 'ClosingUnconfirmed'));
+        f.emit(_terminal());
+        await _actualExitAndEofs(f);
+        control.succeed();
+        await priorWrite;
+        await f.finish();
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+        await expectLater(
+          f.channel.exitCode,
+          throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+        );
+        expect(f.commands.where((c) => c.kind == 4), isEmpty);
+        expect(f.commands.where((c) => c.kind == 3), isEmpty);
+      } finally {
+        control.succeed();
+        await f.finish();
+      }
+    },
+  );
+
+  test(
+    'normal kind3 retains original exit semantics without quarantine admission',
+    () async {
+      final control = _FlushControl();
+      final f = _Fixture(transport: _MemoryProcess(flushControl: control));
+      try {
+        f.emit(_state());
+        final close = f.channel.closeInput();
+        await control.entered.future;
+        final released = _terminal()
+          ..remove('abnormal_resource_closure_prepared')
+          ..['phase'] = 'Released'
+          ..['owner_phase'] = 'Released'
+          ..['normal_shutdown'] = true
+          ..['child_exit_code'] = 0;
+        f.emit(released);
+        await _actualExitAndEofs(f, code: 0);
+        expect(await f.channel.exitCode, 0);
+        expect(f.snapshot().failedStartupQuarantine, isNull);
+        expect(f.commands.where((c) => c.kind == 3).length, 1);
+        expect(f.commands.where((c) => c.kind == 4), isEmpty);
+        control.succeed();
+        await close;
+        await f.finish(code: 0);
+      } finally {
+        control.succeed();
+        await f.finish(code: 0);
+      }
+    },
+  );
 }

@@ -1,0 +1,17 @@
+{
+  "source_accepted": false,
+  "old_owner_contacts": 0,
+  "observed_free_delta": 488136704,
+  "free_after": 877346816,
+  "release_eligible": false,
+  "preserved_files": 9429,
+  "VM_calls": 0,
+  "removed_files": 626,
+  "source_and_executable_removals": 0,
+  "concurrent_space_changes_not_attributed": true,
+  "logical_bytes_removed": 534650526,
+  "status": "PASS_CLOSED_WATCH_PROTECTED1544_CLIPPY_LIBRARY_RECLAIMED",
+  "free_before": 389210112,
+  "plan_sha256": "f4aab6cd0246abefe18cf19ba40274b249de2429679ff4a77f258ebf844a2644",
+  "protected_artifacts_equal": true
+}

@@ -1,0 +1,16 @@
+{
+  "name": "runtime",
+  "exit_code": 0,
+  "seconds": 1.219,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\runtime.stdout",
+    "bytes": 847,
+    "sha256": "03ccb91749228771be5a686132bf55e49d31d2836566baacd371ecc48c0ae7db"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-965\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

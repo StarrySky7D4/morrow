@@ -1,0 +1,56 @@
+{
+  "status": "IMPLEMENTATION_PLAN_NOT_IMPLEMENTED_OR_QUALIFIED",
+  "current_host_source_digest": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+  "current_host_api": "workbench_host/src/blob_history_delivery.rs",
+  "original_upload_metadata": "Never acknowledge, complete, replay, restage or release via history delivery",
+  "private_capnp": {
+    "schema": "workbench_host/schemas/host.capnp",
+    "proposed_actions": {
+      "blobHistoryDeliveryPrepare": 179,
+      "blobHistoryDeliveryPreview": 180,
+      "blobHistoryDeliveryApprove": 181,
+      "blobHistoryDeliveryRead": 182,
+      "blobHistoryDeliveryCancel": 183,
+      "blobHistoryDeliveryAcknowledge": 184,
+      "blobHistoryDeliveryDiscover": 185
+    },
+    "proposed_request_fields": {
+      "blobHistoryDeliveryRequest": 77,
+      "blobHistoryDeliveryApproval": 78,
+      "blobHistoryDeliveryKey": 79,
+      "blobHistoryDeliveryRequestId": 80
+    },
+    "proposed_response_fields": {
+      "blobHistoryDeliveryPreview": 66,
+      "blobHistoryDeliveryReceipt": 67
+    },
+    "route_before": "protocol.rs dispatch: state.try_reclaim, exactly like original history reads",
+    "strict_shapes": "Reject mixed prepare/approval/key/discovery envelopes and any new envelope on unrelated legacy actions; exact nonzero 32-byte identities; bounded text, packet, output and timeout",
+    "optional_presence": "Explicit present/found flags; absent original attempt never means previous dispatch failed",
+    "digest": "Regenerate Rust/Dart with existing generator and update actual private protocol digest; leave frozen public task and history schemas unchanged"
+  },
+  "trusted_dart": {
+    "new_files": ["lib/plugins/blob_history_delivery_models.dart", "lib/plugins/blob_history_delivery_native.dart"],
+    "adapter": "Implement same original exchange in workbench_native.dart, clear reply buffers; preserve cancellation/revocation fences",
+    "reply_validation": "Check key/request/recipient/revision/packet SHA/task ID, output type and packet bound, mandatory receipt presence; retain original execution separately from later delivery veto and close status",
+    "recovery": "Discover only original request ID after lost prepare/approve reply; never regenerate request ID or resubmit automatically",
+    "UI": "Explicit selection of record and eligible enabled transform; preview exact metadata and recipient before one confirmation; original Unknown/current stage/metadata phase shown separately; untrusted output rendered as plain data; close debt disables new submission"
+  },
+  "required_evidence": [
+    "Before enabling product route, withhold guest failure text as well as output on stale owner or revoked gate; keep original diagnostic only in retained owner",
+    "Retain exact original close error detail separately from first execution error, not only Failed state",
+    "Classify proven pre-connection preparation refusals without inventing cleanup proof; unknown connection outcomes still retain admission debt",
+    "At least seventeen successful acknowledged disclosures on one original Manager/HostRuntime must not leak bounded instance slots",
+    "History mutation between preview and approval is consumed refusal with no guest dispatch",
+    "Product gate stop handle targets original live guest and preserves first result/close proof",
+    "Private Capnp absent/mixed/truncated/overlong/wrong-owner/wrong-digest refusals",
+    "Actual Dart/native task correlation and no automatic resend after lost reply",
+    "Protected host integration with all three current language guests",
+    "Formal history UI confirmation only after direct post-Esc window-control reply",
+    "Current default-off build excludes fault injection; feature-qualified close failure is not default-product runtime evidence"
+  ],
+  "P2_next": "VM051 setup/environment identity before current-source default-DACL qualification; no guest actions while post-Esc window control remains pending",
+  "full_SDK26": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,73 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_VISIBLE_PICKER_AND_RUST_GUEST",
+  "canonical_source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\result.json",
+    "bytes": 3240,
+    "sha256": "c6078df0df476a5c8eb530a5231d7470ea2cc17cbf116aaed6c209f4b5b09941"
+  },
+  "original": {
+    "exit_code": 0,
+    "original_process_returned": true,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\original.stdout",
+      "bytes": 75,
+      "sha256": "f97c05d37a3ec63b165b0f85fb58e8fd0a18d0d40fb4fa04d3af13a02afe2b4b"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\original.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "original_exit_receipt": {
+      "path": "D:\\build_cache\\wp1525\\fixture\\exit.txt",
+      "bytes": 1163,
+      "sha256": "201adb221cad294e734a49b160a97d8b8582171be1eb01cb8498fb77d25639fb"
+    }
+  },
+  "decodes": [
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\wp1525\\fixture\\frame1.capnp",
+        "bytes": 168,
+        "sha256": "3b041d4d2e968ca2df4826d53c38960d5c0508eb50a15168056a373b532b1086"
+      },
+      "reference_decode": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\frame1.decoded",
+        "bytes": 399,
+        "sha256": "dbc6a34ca4b1a35ce07657e553a2a1df2623a52c30245f9947ef716bde27b268"
+      },
+      "decoder_exit_code": 0,
+      "original_decoder_process_returned": true
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\wp1525\\fixture\\frame2.capnp",
+        "bytes": 160,
+        "sha256": "ff4f6b1d6a1b44d2d080b83349c8f3b80de38c2604a0ca5e83a46d1948db13c5"
+      },
+      "reference_decode": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\frame2.decoded",
+        "bytes": 382,
+        "sha256": "0e82717d93c1d387bc3041245c76e62ac73728a49e9aa1d89fbb9a0b461b6a29"
+      },
+      "decoder_exit_code": 0,
+      "original_decoder_process_returned": true
+    }
+  ],
+  "native_confirmation_on_original_worker": true,
+  "actual_native_picker_started_and_closed": true,
+  "original_managed_worker_joined": true,
+  "original_native_handles_confirmed_closed": 6,
+  "actual_guest_frames": 2,
+  "original_resources_and_job_released": true,
+  "original_disconnect_and_maintenance_complete": true,
+  "production_workbench": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

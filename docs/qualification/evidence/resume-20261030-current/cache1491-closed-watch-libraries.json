@@ -1,0 +1,17 @@
+{
+  "free_after": 3976130560,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "removed_files": 167,
+  "observed_free_delta": 297066496,
+  "preserved_files": 2389,
+  "concurrent_space_changes_not_attributed": true,
+  "old_owner_contacts": 0,
+  "status": "PASS_CLOSED_WATCH_RUNTIME1472_ORIGINAL_RLIB_RECLAIMED",
+  "protected_artifacts_equal": true,
+  "logical_bytes_removed": 296706834,
+  "plan_sha256": "76967a816c7d5c5a398503c8b7e9ef51006e8e664e37eb22bfb7dbe133f7ec0c",
+  "source_and_executable_removals": 0,
+  "release_eligible": false,
+  "free_before": 3679064064
+}

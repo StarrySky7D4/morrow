@@ -1,0 +1,1779 @@
+{
+  "rust": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "version_check",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libversion_check-1b9f1c976da98159.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libversion_check-1b9f1c976da98159.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\build.rs",
+        "edition": "2015",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\generic-array-b1f0cd5fcff2164f\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\generic-array-b1f0cd5fcff2164f\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "typenum",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libtypenum-7d726f43b92d47b8.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libtypenum-7d726f43b92d47b8.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "generic_array",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libgeneric_array-6234b4687456b44d.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libgeneric_array-6234b4687456b44d.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcrypto_common-c3cd7e2929482370.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcrypto_common-c3cd7e2929482370.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "block-buffer",
+        "core-api",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnp",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcapnp-e0edce9ca7764174.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcapnp-e0edce9ca7764174.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cpufeatures",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cfg_if",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libsha2-4e77f429ea2ac2f7.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libsha2-4e77f429ea2ac2f7.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnpc",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcapnpc-93de809f8c1e4be9.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\deps\\libcapnpc-93de809f8c1e4be9.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "typenum",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libtypenum-a1077cde33beebe5.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libtypenum-a1077cde33beebe5.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "generic_array",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libgeneric_array-f946970ffb384cb0.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libgeneric_array-f946970ffb384cb0.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcrypto_common-ba9e3119a69084ef.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcrypto_common-ba9e3119a69084ef.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libblock_buffer-5f6ef5ffb9f92f94.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libblock_buffer-5f6ef5ffb9f92f94.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "block-buffer",
+        "core-api",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libdigest-5c91021b9166c31d.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libdigest-5c91021b9166c31d.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\build.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\morrow-blob-upload-history-v1-899d0bf355975ef0\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\morrow-blob-upload-history-v1-899d0bf355975ef0\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\sdk\\rust\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "C:\\ms1020\\sdk\\rust\\build.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "wasm-guest"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\morrow-plugin-sdk-58767ced62b3dcf5\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\release\\build\\morrow-plugin-sdk-58767ced62b3dcf5\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnp",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "default",
+        "std",
+        "unaligned"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcapnp-fdeeb5b1fba52688.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcapnp-fdeeb5b1fba52688.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cfg_if",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcfg_if-2729138454c1c53b.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libcfg_if-2729138454c1c53b.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libsha2-3dd4a68cf546e7a0.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libsha2-3dd4a68cf546e7a0.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "staticlib"
+        ],
+        "crate_types": [
+          "rlib",
+          "staticlib"
+        ],
+        "name": "morrow_blob_upload_history_v1",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_v1-aed15142e6edf42a.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_v1-aed15142e6edf42a.a"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\sdk\\rust\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "cdylib"
+        ],
+        "crate_types": [
+          "rlib",
+          "cdylib"
+        ],
+        "name": "morrow_plugin_sdk",
+        "src_path": "C:\\ms1020\\sdk\\rust\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "wasm-guest"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_plugin_sdk.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\deps\\morrow_plugin_sdk.wasm"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1/guests/rust#morrow-history-fixture-guest@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\guests\\rust\\Cargo.toml",
+      "target": {
+        "kind": [
+          "cdylib"
+        ],
+        "crate_types": [
+          "cdylib"
+        ],
+        "name": "morrow_history_fixture_guest",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\guests\\rust\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust-target\\wasm32-unknown-unknown\\release\\morrow_history_fixture_guest.wasm"
+      ],
+      "executable": null,
+      "fresh": false
+    }
+  ],
+  "ffi": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "version_check",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libversion_check-1b9f1c976da98159.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libversion_check-1b9f1c976da98159.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\build.rs",
+        "edition": "2015",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\generic-array-b1f0cd5fcff2164f\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\generic-array-b1f0cd5fcff2164f\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "typenum",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libtypenum-7d726f43b92d47b8.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libtypenum-7d726f43b92d47b8.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "generic_array",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libgeneric_array-6234b4687456b44d.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libgeneric_array-6234b4687456b44d.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcrypto_common-c3cd7e2929482370.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcrypto_common-c3cd7e2929482370.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "block-buffer",
+        "core-api",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnp",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcapnp-e0edce9ca7764174.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcapnp-e0edce9ca7764174.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cfg_if",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cpufeatures",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libsha2-4e77f429ea2ac2f7.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libsha2-4e77f429ea2ac2f7.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnpc",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcapnpc-93de809f8c1e4be9.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\deps\\libcapnpc-93de809f8c1e4be9.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "typenum",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libtypenum-a1077cde33beebe5.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libtypenum-a1077cde33beebe5.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "generic_array",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\src\\lib.rs",
+        "edition": "2015",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libgeneric_array-f946970ffb384cb0.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libgeneric_array-f946970ffb384cb0.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libblock_buffer-5f6ef5ffb9f92f94.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libblock_buffer-5f6ef5ffb9f92f94.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcrypto_common-ba9e3119a69084ef.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcrypto_common-ba9e3119a69084ef.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "block-buffer",
+        "core-api",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libdigest-5c91021b9166c31d.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libdigest-5c91021b9166c31d.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\build.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\morrow-blob-upload-history-v1-899d0bf355975ef0\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\morrow-blob-upload-history-v1-899d0bf355975ef0\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\sdk\\rust\\Cargo.toml",
+      "target": {
+        "kind": [
+          "custom-build"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "build-script-build",
+        "src_path": "C:\\ms1020\\sdk\\rust\\build.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": false
+      },
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "wasm-c"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\morrow-plugin-sdk-f2d1e73432ca0e1c\\build-script-build.exe",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\release\\build\\morrow-plugin-sdk-f2d1e73432ca0e1c\\build_script_build.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "capnp",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\src\\lib.rs",
+        "edition": "2021",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "alloc",
+        "default",
+        "std",
+        "unaligned"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcapnp-fdeeb5b1fba52688.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcapnp-fdeeb5b1fba52688.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "cfg_if",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcfg_if-2729138454c1c53b.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libcfg_if-2729138454c1c53b.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "manifest_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\src\\lib.rs",
+        "edition": "2018",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libsha2-3dd4a68cf546e7a0.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libsha2-3dd4a68cf546e7a0.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "staticlib"
+        ],
+        "crate_types": [
+          "rlib",
+          "staticlib"
+        ],
+        "name": "morrow_blob_upload_history_v1",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_v1-aed15142e6edf42a.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_v1-aed15142e6edf42a.a"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\sdk\\rust\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "cdylib"
+        ],
+        "crate_types": [
+          "rlib",
+          "cdylib"
+        ],
+        "name": "morrow_plugin_sdk",
+        "src_path": "C:\\ms1020\\sdk\\rust\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "wasm-c"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_plugin_sdk.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\morrow_plugin_sdk.wasm"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1/task-adapter#morrow-blob-upload-history-task-v1@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\task-adapter\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "staticlib"
+        ],
+        "crate_types": [
+          "rlib",
+          "staticlib"
+        ],
+        "name": "morrow_blob_upload_history_task_v1",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\task-adapter\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_task_v1-7a0b7ef078fa547e.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\deps\\libmorrow_blob_upload_history_task_v1-7a0b7ef078fa547e.a"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1/guests/ffi-support#morrow-history-fixture-codecs@0.1.0",
+      "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\guests\\ffi-support\\Cargo.toml",
+      "target": {
+        "kind": [
+          "staticlib"
+        ],
+        "crate_types": [
+          "staticlib"
+        ],
+        "name": "morrow_history_fixture_codecs",
+        "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\guests\\ffi-support\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "2",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\ffi-target\\wasm32-unknown-unknown\\release\\libmorrow_history_fixture_codecs.a"
+      ],
+      "executable": null,
+      "fresh": false
+    }
+  ]
+}

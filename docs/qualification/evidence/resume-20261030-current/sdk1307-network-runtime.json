@@ -1,0 +1,195 @@
+{
+  "status": "PASS_CURRENT_FROZEN_TRANSPORT_AND_WINDOWS_TLS_DPAPI",
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "source_unchanged": true,
+  "frozen_files_unchanged": 17,
+  "all_frozen_inputs_unchanged": 57,
+  "actual_methods": 9,
+  "transport_methods": 6,
+  "tls_dpapi_methods": 3,
+  "phases": [
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::credential_injection_and_http_error_are_observed_without_secret_in_request_material",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.672,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\01.log",
+        "bytes": 225,
+        "sha256": "1e8ceeb45bcf1c56fce8ae084d3ebb4fd5db3138e320463080d20eb0e3b1a47e"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::dropped_response_is_unknown_not_retried_and_survives_store_reopen",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.172,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\02.log",
+        "bytes": 207,
+        "sha256": "6f6a2df838f4328dd1a76d7820392e06ec9620ab28577ee27e1f465a4bc7d4df"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_preserve_real_tls_dpapi_and_durable_exact_response",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.61,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\03.log",
+        "bytes": 651,
+        "sha256": "17b52af0adba13d4797171625739ec96d812e77c4c13e0fde7b6913e5cb2cae9"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_reject_wrong_tls_hostname_before_application_dispatch",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.625,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\04.log",
+        "bytes": 657,
+        "sha256": "a6bf573869b929ba67b5ef01c1965310dd3ddc02bc1595f36f09736a8c2c4049"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_reject_wrong_tls_root_before_application_dispatch",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.75,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\05.log",
+        "bytes": 653,
+        "sha256": "d1e1a8079294c4bef6a47f4c2974666d38f5ed6c0ebc6c1dc5575b82ccc6becc"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::seven_methods_preserve_binary_bytes_headers_and_durable_receipts",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 4.86,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\06.log",
+        "bytes": 206,
+        "sha256": "34a6420c618e1c3a4488a23830dd6d4407e6e2c588246e47acd661e4112aeb1d"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::unapproved_endpoint_method_and_credential_never_send_or_create_intent",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 2.078,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\07.log",
+        "bytes": 211,
+        "sha256": "f0a0475fb7afc23c4a17d19d62127d44161df3c13ee15d4c417692fc0480620f"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+        "bytes": 14354944,
+        "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "sdk_service_guest",
+      "test": "generated_original_packages_serve_seven_methods_and_enforce_grants",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.922,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\08.log",
+        "bytes": 191,
+        "sha256": "a120949fc89d52e642a44b8fd077edd0b5d5411fa60a40985f1e84009db508ad"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\sdk_service_guest-8edabd40735989e9.exe",
+        "bytes": 10171392,
+        "sha256": "4057ea9a3bd72b3ae4099f7865a8f4520563956904a4beebe9edd61ad10ea5f0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "sdk_service_guest",
+      "test": "generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.188,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\09.log",
+        "bytes": 206,
+        "sha256": "3105552233a5c1cf52332fc914a3082719378907e95fd0d573123f3d120ed3e8"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\sdk_service_guest-8edabd40735989e9.exe",
+        "bytes": 10171392,
+        "sha256": "4057ea9a3bd72b3ae4099f7865a8f4520563956904a4beebe9edd61ad10ea5f0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    }
+  ],
+  "failure": null,
+  "all_original_processes_returned": true,
+  "real_loopback_network": true,
+  "synthetic_credentials": true,
+  "guest_rebuilt": false,
+  "VM_calls": 0,
+  "production_TLS_accepted": false,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

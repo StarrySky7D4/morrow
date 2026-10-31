@@ -1,0 +1,198 @@
+{
+  "status": "PASS_CURRENT_LOGON_REFUSAL_CLOSED_REVIEWED_AND_SAVED",
+  "tag": "4624471847ec4847bf0d839d1b7a8678",
+  "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1402-summary.json",
+    "bytes": 1338,
+    "sha256": "86e01b05e3d65b59bf00b90944de0e2c301e5353fe6142df86ca2c1d39836b22"
+  },
+  "completed": [
+    {
+      "phase": "resume-known-clean-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\01-resume-known-clean-vm.stdout",
+        "bytes": 46,
+        "sha256": "5518e39ff81a42ccabf38af9566f98a9bd44f85c8e6d06c9636a2ae69b35746a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\01-resume-known-clean-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\02-authorized-protected-login-input.stdout",
+        "bytes": 56,
+        "sha256": "6bc88051e006f11c585282962acd6537afc427cb491dbab03d35766e3eaa9e98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\02-authorized-protected-login-input.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "fresh-readiness",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\03-fresh-readiness.stdout",
+        "bytes": 616,
+        "sha256": "9d702b788723d7abf6f53f0eaa4612a1a176df7cf38455bbe3c5670b5ae38be5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\03-fresh-readiness.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\04-prepare-current-stage.stdout",
+        "bytes": 555,
+        "sha256": "b59a4e76e71cb050cd992d78c7ba203154c7bd07b7b909ab0d31d0b7afbc9d7a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\04-prepare-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\05-review-current-stage.stdout",
+        "bytes": 247,
+        "sha256": "014d213a0ce02aae011dadbfa98243490863db0dbb54686ff7ab1b8be0618890"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\05-review-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "stage-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\06-stage-once.stdout",
+        "bytes": 336,
+        "sha256": "ba9887cf2c24ece9ca103bfc0af2240e27f4f4e44fd418e38a7156fc9095c558"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\06-stage-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-reviewed-binding",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\07-prepare-reviewed-binding.stdout",
+        "bytes": 371,
+        "sha256": "8093a9258826a164542fdd2f623acc4fc5d704787295c9eb36c6f9fbd7700076"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\07-prepare-reviewed-binding.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "bind-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\08-bind-once.stdout",
+        "bytes": 212,
+        "sha256": "44336fa80885912b40af91182b746f24ad57bd5079c2a1b92514665b213fd911"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\08-bind-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-logon-refusal",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\09-prepare-logon-refusal.stdout",
+        "bytes": 655,
+        "sha256": "bc31f84195329809cb7b25d442f9c1d8d22422050c44326d98783d6f97494006"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\09-prepare-logon-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "logon-refusal-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\10-logon-refusal-once.stdout",
+        "bytes": 648,
+        "sha256": "eae8f0720250a00a14bfa1d1f81f75eab40f4c14f77f0ab6c5fb4fbea9bfa185"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\10-logon-refusal-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "closed-case-evidence-readback",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\11-closed-case-evidence-readback.stdout",
+        "bytes": 2190,
+        "sha256": "a91bdf4e56037eb3bcac3eededefa0abc15d5f0c564812117584e134ec6f1c9a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\11-closed-case-evidence-readback.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "save-closed-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\12-save-closed-vm.stdout",
+        "bytes": 660,
+        "sha256": "875a4bee42a5a43097208f5ec1c6d2756a5b613f79f2aacf3739538771bb38db"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\12-save-closed-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "independent-logon-refusal-review",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\13-independent-logon-refusal-review.stdout",
+        "bytes": 316,
+        "sha256": "caa2df167e29604938152100fba04ad8ed4f5a4085588c1aa970829ccd1ac392"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\13-independent-logon-refusal-review.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_pipeline_processes_returned": true,
+  "old_unknown_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

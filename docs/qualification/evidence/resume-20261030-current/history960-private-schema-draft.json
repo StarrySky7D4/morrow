@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT_SCHEMA_COMPILES_NOT_APPLIED_OR_RUNTIME",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "canonical_original_sha256": "4e3a27859d03a0dce41f7e437b53b5f0e0e1d0fb95264be106444a168a05c8d2",
+  "canonical_unchanged": true,
+  "draft_sha256": "fc790e85e3fcfd010feb240e26fef5ec35af0a4ef252f4e1411643343378398c",
+  "applied_to_repo": false,
+  "host_adapter": false,
+  "Dart_client": false,
+  "UI": false
+}

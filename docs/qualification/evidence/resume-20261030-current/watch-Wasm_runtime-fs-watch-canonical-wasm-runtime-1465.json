@@ -1,0 +1,365 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_WASM_OBSERVATIONS_ON_DEFAULT_RUNNER",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "candidate_source_digest": "9402113a623e9250088d5ed6d685a0019a89a3960ca471a6644ac98a594aec6e",
+  "original_native_inputs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-001.capnp",
+      "bytes": 160,
+      "sha256": "639b981ed749d2d80b10ae79a7f1a284ed2e45a73703af020cfc671bc75f4263"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-002.capnp",
+      "bytes": 160,
+      "sha256": "05268419aa2e61e7e0e39f11a9a07ab7a605b4439de2ee860ed8282d1ba55ef6"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-003.capnp",
+      "bytes": 160,
+      "sha256": "018b5d9de3487a64a97f05c2933ef8ba5c74bb7821fbf5a451169f83fd2ee3a2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-004.capnp",
+      "bytes": 208,
+      "sha256": "75e839e96aa8b94d790036cd65663a9cb15a4efc007ee1aaec0a224a4d4ae1b8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-005.capnp",
+      "bytes": 176,
+      "sha256": "48d081eede865a8c25531faa97cca691230027ced8dd0c212726034ef1a87cb0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\unacknowledged\\evidence\\frame-001.capnp",
+      "bytes": 168,
+      "sha256": "33d55cc326796470842ec8b275be4b7b94cc2024c46b726c91532690a26ae8c5"
+    }
+  ],
+  "synthetic_inputs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\after-events.capnp",
+      "bytes": 128,
+      "sha256": "bf83fb6a971dcb0fb11b7b7c1305c89dc3eba8e5fdb51eb19380868583232e99"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-1.capnp",
+      "bytes": 128,
+      "sha256": "5dad94d0a0c8ad0515274ceb517f648b81f0029c030b4f31ff8d398152c82bca"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-2.capnp",
+      "bytes": 128,
+      "sha256": "0662d81c9b8af750a9b860df129470d2ce5682592f84f704d49a7e4ea7356ced"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-3.capnp",
+      "bytes": 128,
+      "sha256": "0fed8ca1678e468387d423e27ebebe7f2e7326f03c60c87575eb0f3e50741fa4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-4.capnp",
+      "bytes": 128,
+      "sha256": "099586dbd7890805041714442c403f90d3001464f80d8709a3cc4d83b7b0cda0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-5.capnp",
+      "bytes": 128,
+      "sha256": "bf5c4fe15055aec27ded35595d8948ee662d2c2322f7321f43543e557bee992f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\unpaired.capnp",
+      "bytes": 152,
+      "sha256": "7e7794b8d8581aba424d7d6dc0fe74dc5425ffc5c6e9164443b723f8e4108828"
+    }
+  ],
+  "languages": [
+    {
+      "language": "rust",
+      "pid": 23312,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\rust.stdout",
+        "bytes": 1034,
+        "sha256": "4797afda985248631ecc4ebe3644d20fa9f41cacf1079ba2ff44f205ead8fc52"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\rust.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scenarios": 32,
+      "roundtrip_fuel": [
+        {
+          "input": 1,
+          "bytes": 160,
+          "fuel_used": 306823
+        },
+        {
+          "input": 2,
+          "bytes": 160,
+          "fuel_used": 20066
+        },
+        {
+          "input": 3,
+          "bytes": 160,
+          "fuel_used": 20066
+        },
+        {
+          "input": 4,
+          "bytes": 208,
+          "fuel_used": 23487
+        },
+        {
+          "input": 5,
+          "bytes": 176,
+          "fuel_used": 20432
+        },
+        {
+          "input": 6,
+          "bytes": 168,
+          "fuel_used": 43865
+        },
+        {
+          "input": 7,
+          "bytes": 128,
+          "fuel_used": 16394
+        },
+        {
+          "input": 8,
+          "bytes": 128,
+          "fuel_used": 36389
+        },
+        {
+          "input": 9,
+          "bytes": 128,
+          "fuel_used": 36389
+        },
+        {
+          "input": 10,
+          "bytes": 128,
+          "fuel_used": 36389
+        },
+        {
+          "input": 11,
+          "bytes": 128,
+          "fuel_used": 36389
+        },
+        {
+          "input": 12,
+          "bytes": 128,
+          "fuel_used": 36389
+        },
+        {
+          "input": 13,
+          "bytes": 152,
+          "fuel_used": 43001
+        }
+      ],
+      "module": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-build-1464\\watch-rust.wasm",
+        "bytes": 91643,
+        "sha256": "b47b4db04dfa1a7cc5a32764c6bd1b476ca8cba96fa8b8edb1e971b05801cf28"
+      }
+    },
+    {
+      "language": "c",
+      "pid": 25092,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\c.stdout",
+        "bytes": 992,
+        "sha256": "d3ed76068cab60667d1f07180b6dfb20ed39a7f826c082520ad541cd12f52b25"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\c.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scenarios": 32,
+      "roundtrip_fuel": [
+        {
+          "input": 1,
+          "bytes": 160,
+          "fuel_used": 336201
+        },
+        {
+          "input": 2,
+          "bytes": 160,
+          "fuel_used": 22328
+        },
+        {
+          "input": 3,
+          "bytes": 160,
+          "fuel_used": 22328
+        },
+        {
+          "input": 4,
+          "bytes": 208,
+          "fuel_used": 25893
+        },
+        {
+          "input": 5,
+          "bytes": 176,
+          "fuel_used": 22694
+        },
+        {
+          "input": 6,
+          "bytes": 168,
+          "fuel_used": 47800
+        },
+        {
+          "input": 7,
+          "bytes": 128,
+          "fuel_used": 18537
+        },
+        {
+          "input": 8,
+          "bytes": 128,
+          "fuel_used": 40494
+        },
+        {
+          "input": 9,
+          "bytes": 128,
+          "fuel_used": 40494
+        },
+        {
+          "input": 10,
+          "bytes": 128,
+          "fuel_used": 40494
+        },
+        {
+          "input": 11,
+          "bytes": 128,
+          "fuel_used": 40494
+        },
+        {
+          "input": 12,
+          "bytes": 128,
+          "fuel_used": 40494
+        },
+        {
+          "input": 13,
+          "bytes": 152,
+          "fuel_used": 47098
+        }
+      ],
+      "module": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-build-1464\\watch-c.wasm",
+        "bytes": 76140,
+        "sha256": "e1797f06cdaa3444838e8153f408486d80723064cda5fbcd7397033cba2c0133"
+      }
+    },
+    {
+      "language": "cpp",
+      "pid": 24788,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\cpp.stdout",
+        "bytes": 1020,
+        "sha256": "e6c334fec71b2a0b9f4f5a786737ca08ae588901c0de303fa4c2b81eef0a8585"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\cpp.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scenarios": 32,
+      "roundtrip_fuel": [
+        {
+          "input": 1,
+          "bytes": 160,
+          "fuel_used": 347938
+        },
+        {
+          "input": 2,
+          "bytes": 160,
+          "fuel_used": 25663
+        },
+        {
+          "input": 3,
+          "bytes": 160,
+          "fuel_used": 25663
+        },
+        {
+          "input": 4,
+          "bytes": 208,
+          "fuel_used": 29230
+        },
+        {
+          "input": 5,
+          "bytes": 176,
+          "fuel_used": 26096
+        },
+        {
+          "input": 6,
+          "bytes": 168,
+          "fuel_used": 51389
+        },
+        {
+          "input": 7,
+          "bytes": 128,
+          "fuel_used": 21870
+        },
+        {
+          "input": 8,
+          "bytes": 128,
+          "fuel_used": 44081
+        },
+        {
+          "input": 9,
+          "bytes": 128,
+          "fuel_used": 44081
+        },
+        {
+          "input": 10,
+          "bytes": 128,
+          "fuel_used": 44081
+        },
+        {
+          "input": 11,
+          "bytes": 128,
+          "fuel_used": 44081
+        },
+        {
+          "input": 12,
+          "bytes": 128,
+          "fuel_used": 44081
+        },
+        {
+          "input": 13,
+          "bytes": 152,
+          "fuel_used": 50687
+        }
+      ],
+      "module": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-build-1464\\watch-cpp.wasm",
+        "bytes": 77553,
+        "sha256": "508005f9ef91d5788a7d2cdd5f15581590051a829ecfd261c312c12f19572df6"
+      }
+    }
+  ],
+  "distinct_scenarios_per_language": 32,
+  "repeated_input_matrices_not_full_product_count": true,
+  "all_original_processes_returned": true,
+  "default_plugin_Runner": true,
+  "maximum_memory_bytes": 16777216,
+  "fuel_ceiling": 20000000,
+  "only_two_raw_task_imports": true,
+  "single_C_CPP_Rust_allocator": true,
+  "actual_native_watch": false,
+  "host_approval": false,
+  "shared_host_budget": false,
+  "managed_owner": false,
+  "package_installation": false,
+  "canonical_integrated": true,
+  "formal_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

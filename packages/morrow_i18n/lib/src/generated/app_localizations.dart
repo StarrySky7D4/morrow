@@ -6240,6 +6240,144 @@ abstract class AppLocalizations {
   /// **'The plugin view could not be opened'**
   String get pluginsViewFailed;
 
+  /// No description provided for @pluginsWatchAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'This observation is confirmed complete.'**
+  String get pluginsWatchAcknowledged;
+
+  /// No description provided for @pluginsWatchAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow this plugin to observe directory changes'**
+  String get pluginsWatchAllow;
+
+  /// No description provided for @pluginsWatchAllowNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Also approve List files, then confirm the folder for each run.'**
+  String get pluginsWatchAllowNotice;
+
+  /// Bounded directory observation values, rendered without numeric precision loss.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugin limits: {frames} records, {bytes} bytes, {ms} milliseconds.'**
+  String pluginsWatchBounds(String bytes, String frames, String ms);
+
+  /// No description provided for @pluginsWatchBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery data limit (bytes)'**
+  String get pluginsWatchBytes;
+
+  /// No description provided for @pluginsWatchCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'This observation was cancelled.'**
+  String get pluginsWatchCancelled;
+
+  /// No description provided for @pluginsWatchClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The directory has been released and cleanup is complete.'**
+  String get pluginsWatchClosed;
+
+  /// No description provided for @pluginsWatchExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This observation reached its time limit.'**
+  String get pluginsWatchExpired;
+
+  /// No description provided for @pluginsWatchFormError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the full folder path. Every limit must be positive and within the plugin limits.'**
+  String get pluginsWatchFormError;
+
+  /// No description provided for @pluginsWatchFrames.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum records delivered'**
+  String get pluginsWatchFrames;
+
+  /// No description provided for @pluginsWatchIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'No directory observation has started.'**
+  String get pluginsWatchIdle;
+
+  /// No description provided for @pluginsWatchIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Observe only the folder confirmed for this run. Stop at the time, record or data limit. Windows asks you to confirm the folder when starting.'**
+  String get pluginsWatchIntro;
+
+  /// No description provided for @pluginsWatchNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare a new observation'**
+  String get pluginsWatchNew;
+
+  /// No description provided for @pluginsWatchNoPlugins.
+  ///
+  /// In en, this message translates to:
+  /// **'No enabled plugin has both directory observation and List files approval.'**
+  String get pluginsWatchNoPlugins;
+
+  /// No description provided for @pluginsWatchOtherPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel.'**
+  String get pluginsWatchOtherPanel;
+
+  /// No description provided for @pluginsWatchPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder to observe (full path)'**
+  String get pluginsWatchPath;
+
+  /// No description provided for @pluginsWatchReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation has ended. Read its result once.'**
+  String get pluginsWatchReady;
+
+  /// Bounded directory observation values, rendered without numeric precision loss.
+  ///
+  /// In en, this message translates to:
+  /// **'Records received by the plugin: {frames}; data charged: {bytes} bytes.'**
+  String pluginsWatchRecords(String bytes, String frames);
+
+  /// No description provided for @pluginsWatchReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Result read. Review it before confirming completion.'**
+  String get pluginsWatchReviewed;
+
+  /// No description provided for @pluginsWatchRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'This observation is running. Refresh its status or request cancellation.'**
+  String get pluginsWatchRunning;
+
+  /// No description provided for @pluginsWatchStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm folder and start observing'**
+  String get pluginsWatchStart;
+
+  /// No description provided for @pluginsWatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory changes'**
+  String get pluginsWatchTitle;
+
+  /// No description provided for @pluginsWatchUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation could not be confirmed. Its record is retained. It will not retry or start a new task automatically.'**
+  String get pluginsWatchUnknown;
+
   /// No description provided for @pluginsWorkbench.
   ///
   /// In en, this message translates to:

@@ -43,6 +43,12 @@ pub struct PluginEntry {
     pub blob_upload_approved: bool,
     pub blob_upload_handlers: Vec<String>,
     pub blob_upload_max_bytes: u64,
+    pub fs_watch_supported: bool,
+    pub fs_watch_approved: bool,
+    pub fs_watch_handlers: Vec<String>,
+    pub fs_watch_max_frames: u32,
+    pub fs_watch_max_wire_bytes: u64,
+    pub fs_watch_max_window_ms: u64,
     pub blob_planners: Vec<(String, String)>,
     pub mutation_budget: Option<MutationBudgetDeclaration>,
     pub channel_supported: bool,
@@ -185,7 +191,7 @@ impl WorkbenchState {
         }
         Ok(r)
     }
-    fn external_package(&self, id: &str, digest: &[u8], revision: u64) -> Result<Package> {
+    pub(crate) fn external_package(&self, id: &str, digest: &[u8], revision: u64) -> Result<Package> {
         self.catalog_revision(Some(revision))?;
         if self.builtin_id(id) {
             return Err("内置工作台插件请使用原设置入口。".into());
@@ -258,6 +264,12 @@ impl WorkbenchState {
             blob_upload_approved: selected.is_some_and(|s| s.approved_blob_upload),
             blob_upload_handlers: p.blob_upload_declaration().map_or_else(Vec::new, |d| d.handlers.clone()),
             blob_upload_max_bytes: p.blob_upload_declaration().map_or(0, |d| d.max_object_bytes),
+            fs_watch_supported: p.fs_watch_declaration().is_some(),
+            fs_watch_approved: selected.is_some_and(|s| s.approved_fs_watch),
+            fs_watch_handlers: p.fs_watch_declaration().map_or_else(Vec::new, |d| d.handlers.clone()),
+            fs_watch_max_frames: p.fs_watch_declaration().map_or(0, |d| d.max_frames),
+            fs_watch_max_wire_bytes: p.fs_watch_declaration().map_or(0, |d| d.max_wire_bytes),
+            fs_watch_max_window_ms: p.fs_watch_declaration().map_or(0, |d| d.max_window_ms),
             blob_planners: m.blob_upload_proposal_declaration.as_ref().map_or_else(Vec::new, |d| d.handlers.iter().map(|h| (h.handler.clone(), h.upload_handler.clone())).collect()),
             channel_supported: p.channel_declaration().is_some(),
             channel_handlers: p
@@ -348,6 +360,12 @@ impl WorkbenchState {
                     blob_upload_approved: false,
                     blob_upload_handlers: vec![],
                     blob_upload_max_bytes: 0,
+                    fs_watch_supported: false,
+                    fs_watch_approved: false,
+                    fs_watch_handlers: vec![],
+                    fs_watch_max_frames: 0,
+                    fs_watch_max_wire_bytes: 0,
+                    fs_watch_max_window_ms: 0,
                     blob_planners: vec![],
                     mutation_budget: None,
                     channel_supported: false,
@@ -470,6 +488,21 @@ impl WorkbenchState {
         if digest != selection.digest { return Err("插件摘要已变化，请重新确认。".into()); }
         let exact = selection.digest;
         let result = manager.approve_blob_upload(id, exact, approved, revision);
+        let cleanup = self.maintain_external();
+        result?; cleanup
+    }
+    /// Independent category ceiling; grants no directory or observation window.
+    #[cfg(windows)]
+    pub fn configure_external_fs_watch(
+        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+    ) -> Result<()> {
+        self.catalog_revision(Some(revision))?;
+        if self.builtin_id(id) { return Err("内置插件需要专用设置入口。".into()); }
+        let manager = self.manager.as_mut().ok_or("插件目录不可用。")?;
+        let selection = manager.selection(id).ok_or("插件未选择。")?;
+        if digest != selection.digest { return Err("插件摘要已变化，请重新确认。".into()); }
+        let exact = selection.digest;
+        let result = manager.approve_fs_watch(id, exact, approved, revision);
         let cleanup = self.maintain_external();
         result?; cleanup
     }
@@ -853,6 +886,12 @@ impl Workbench {
         &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
     ) -> Result<()> {
         self.local_state_mut()?.configure_external_blob_upload(id, digest, revision, approved)
+    }
+    #[cfg(windows)]
+    pub fn configure_external_fs_watch(
+        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+    ) -> Result<()> {
+        self.local_state_mut()?.configure_external_fs_watch(id, digest, revision, approved)
     }
     pub fn configure_external(
         &mut self,

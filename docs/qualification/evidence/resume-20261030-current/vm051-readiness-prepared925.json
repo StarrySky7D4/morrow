@@ -1,0 +1,106 @@
+{
+  "status": "VM051_READINESS_PIPELINE_PREPARED_NOT_RUN",
+  "scripts": [
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\inspect_vm050_environment_880.ps1",
+        "bytes": 9426,
+        "sha256": "6f2a86668da6ef1293afd1fea0010ddd0de3031c381d643c67f877986ec2c737"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\inspect_vm051_environment_926.ps1",
+        "bytes": 9426,
+        "sha256": "7f5ca294cd9eb62302a1d945300151fe1f44713197bc6b4af472656f54d82a46"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm051-readiness-pipeline-prepared-925\\inspect_vm051_environment_926.ps1.diff",
+        "bytes": 2984,
+        "sha256": "cde7eea2356197115d5c7705e13903ba14aa80b91ac16ca599804631d48ef91b"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm050_environment_880.py",
+        "bytes": 1486,
+        "sha256": "ae7d91dc4748940ff613da51f8c4747959f0f39f88edba63f9ad3d28efe05718"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm051_environment_926.py",
+        "bytes": 1486,
+        "sha256": "f7174631cb318a7627044e2113ff0fc9499c1279977a42e89d210e8a4e649335"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm051-readiness-pipeline-prepared-925\\run_vm051_environment_926.py.diff",
+        "bytes": 2107,
+        "sha256": "4bace51a5206d8f8c1cf23e69233e477f08fb840333fc3a887a3f43bd70737f6"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_vm050_runtime_883.py",
+        "bytes": 2552,
+        "sha256": "92cc69d9caf82fd859473e6515f647c488a2f8da15cd361eb601c8b9bd77ded7"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_vm051_runtime_927.py",
+        "bytes": 2593,
+        "sha256": "403babf1665fe6ae36558d62f1abbef62b566c85caa4b1461bcd67542a025bbb"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm051-readiness-pipeline-prepared-925\\prepare_vm051_runtime_927.py.diff",
+        "bytes": 4211,
+        "sha256": "02785fabd515eeb74f9b064064b6248c3946db03e34c0becaf639edc4e2320af"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\derive_vm050_readiness_885.py",
+        "bytes": 6036,
+        "sha256": "b0469f92449f3117d9052c696d01fcd07ab7bc8f3e4865b77a6cd2bd7e183613"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\derive_vm051_readiness_928.py",
+        "bytes": 6036,
+        "sha256": "ad795be82531e9fa1f4d51ad9aaba6cf77ca3457932b53c2cf564327c2759511"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm051-readiness-pipeline-prepared-925\\derive_vm051_readiness_928.py.diff",
+        "bytes": 5776,
+        "sha256": "a4236174e4b4f16a5ef5758d772340b8094acd81f21c6a4187ce62859956c20a"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm050_readiness_885.py",
+        "bytes": 1518,
+        "sha256": "29130f47b16715464d6913a97fea8cc0b8e061ebb9ad4ef9a1a05a993e755fb2"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm051_readiness_928.py",
+        "bytes": 1518,
+        "sha256": "13410e8dcb23ebed45215f29870cd6de02030123f19611bb885de81e12781c55"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm051-readiness-pipeline-prepared-925\\run_vm051_readiness_928.py.diff",
+        "bytes": 1244,
+        "sha256": "b2e426650e86cad51f8ea966c1aad03f6431988248606cc35ed0e7b694ea921f"
+      }
+    }
+  ],
+  "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+  "maximum_registered_vms": 4,
+  "VM_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "credential_reads": 0,
+  "canonical_source_edits": 0,
+  "installation_completion_not_observed": true,
+  "window_actions": 0,
+  "new_firmware_uuid": "NOT_OBSERVED",
+  "new_account_sid": "NOT_OBSERVED",
+  "new_identity_must_be_observed_before_runtime_or_readiness_generation": true,
+  "strict_checks": 17,
+  "strict_predicates_relaxed": 0,
+  "automatic_replay": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,49 @@
+{
+  "status": "PASS_KNOWN_CLOSED_RUNTIME_SETUP_INDEPENDENT_EXACT_DLL_REVIEW",
+  "original_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm048-runtime-prerequisite-759\\guest-receipt.json",
+    "bytes": 379897,
+    "sha256": "4192c8c46e1c369e7ca1dbdf26ec04dfccd082108aad2ef4f665f9de39534daf"
+  },
+  "rows": [
+    {
+      "installed": {
+        "signer": "CN=Microsoft Windows Software Compatibility Publisher, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+        "version": "14.44.35211.0",
+        "signature": "Valid",
+        "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066",
+        "bytes": 124544,
+        "path": "C:\\Windows\\System32\\VCRUNTIME140.dll"
+      },
+      "local_redistributable": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.44.35112\\x64\\Microsoft.VC143.CRT\\VCRUNTIME140.dll",
+        "bytes": 124544,
+        "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+      }
+    },
+    {
+      "installed": {
+        "signer": "CN=Microsoft Windows Software Compatibility Publisher, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+        "version": "14.44.35211.0",
+        "signature": "Valid",
+        "sha256": "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f",
+        "bytes": 49792,
+        "path": "C:\\Windows\\System32\\VCRUNTIME140_1.dll"
+      },
+      "local_redistributable": {
+        "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.44.35112\\x64\\Microsoft.VC143.CRT\\VCRUNTIME140_1.dll",
+        "bytes": 49792,
+        "sha256": "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f"
+      }
+    }
+  ],
+  "installer_dword": 0,
+  "restart_required": false,
+  "own_transport_closed": true,
+  "prerequisite_verified": true,
+  "original759_validation_failure": "Installer signer was incorrectly reused as DLL signer requirement; installed DLLs are Valid Microsoft Windows Software Compatibility Publisher signed and byte-identical to signed local redistribution kit",
+  "install_retries": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

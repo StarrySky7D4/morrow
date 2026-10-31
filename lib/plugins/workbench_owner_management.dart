@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'workbench_supervision_wire.dart';
 
 /// A transient invocation of the existing trusted supervisor. No guest/replay.
 final class WorkbenchOwnerManager {
@@ -48,10 +49,11 @@ final class WorkbenchOwnerManager {
         collect(process.stdout),
         collect(process.stderr),
       ]).timeout(const Duration(seconds: 10));
-      final value = jsonDecode(utf8.decode(results[1] as List<int>));
-      if (value is! Map<String, dynamic> ||
-          value['version'] != 1 ||
-          value['business_outcome'] != 'Unknown') {
+      final value = decodeWorkbenchOwnerManagement(
+        results[1] as List<int>,
+        preview: args.first == '--owner-preview',
+      );
+      if (value['version'] != 1 || value['business_outcome'] != 'Unknown') {
         throw const FormatException('Invalid owner management result');
       }
       if (results[0] != 0) {

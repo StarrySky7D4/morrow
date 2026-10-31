@@ -1,0 +1,1 @@
+STAGED_WATCH_WIRE_CHECKS_PASS checks=44 native_calls=0 UI=false

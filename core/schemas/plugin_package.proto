@@ -61,6 +61,16 @@ message BlobUploadProposalDeclaration {
   bytes schema_sha256 = 2;
   repeated BlobUploadProposalHandler handlers = 3;
 }
+// Independent filesystem observation ceiling. FileList never implies watch approval.
+// The original IO budget still limits resources, jobs, bytes and lifetime.
+message FsWatchDeclaration {
+  uint32 schema_version = 1;
+  bytes frame_schema_sha256 = 2;
+  repeated string handlers = 3;
+  uint32 max_frames = 4;
+  uint64 max_wire_bytes = 5;
+  uint64 max_window_ms = 6;
+}
 message Manifest {
   uint32 schema_version = 1;
   string package_id = 2;
@@ -86,6 +96,7 @@ message Manifest {
   morrow.plugin.channel.v1.ChannelDeclaration channel_declaration = 21; // Requires channel-v1; declaration only.
   BlobUploadDeclaration blob_upload_declaration = 22; // Requires blob-upload-request-v1; independent approval.
   BlobUploadProposalDeclaration blob_upload_proposal_declaration = 23; // Requires blob-upload-proposal-v1; pure metadata only.
+  FsWatchDeclaration fs_watch_declaration = 24; // Requires fs-watch-v1 and separate exact-package approval.
 }
 message Package {
   uint32 schema_version = 1;

@@ -447,6 +447,7 @@ fn accepted(language: &str, length: usize) {
     assert!(journal.record.acknowledged_at_unix_ms().is_none());
     assert_eq!(journal.current_stage, Observation::Staged);
     let original = journal.record.original_result().unwrap();
+    check_public_history(&w, [1; 32], 2, false, Observation::Staged);
     assert_eq!(
         original.outcome,
         morrow_core::blob_upload_journal::Outcome::Staged
@@ -471,6 +472,7 @@ fn accepted(language: &str, length: usize) {
     let mut w = Workbench::open(&database, None).unwrap();
     let journal = w.inspect_persisted_blob_upload(&[1; 32]).unwrap();
     assert_eq!(journal.record.revision(), 3);
+    check_public_history(&w, [1; 32], 3, false, Observation::Staged);
     assert_eq!(journal.record.original_result(), Some(original));
     assert_eq!(
         w.list_blob_upload_history(None, 16).unwrap(),
@@ -502,6 +504,110 @@ fn accepted(language: &str, length: usize) {
     history(&database, &s, Some(true));
     eprintln!(
         "PROTECTED_UPLOAD_ACCEPTED language={language} bytes={length} original_workers_joined=2 protected_reopen=true sealed=true"
+    );
+}
+
+fn check_public_history(
+    w: &Workbench,
+    submission: [u8; 32],
+    revision: u16,
+    unknown: bool,
+    stage: Observation,
+) {
+    use morrow_blob_upload_history_v1::{Packet, Stage};
+    // io_status can reclaim a worker. This check uses only immutable reads.
+    let original = w.inspect_persisted_blob_upload(&submission).unwrap();
+    let bytes = w
+        .read_blob_upload_history_packet(&submission, [211; 32])
+        .unwrap();
+    let packet = Packet::decode_for(&bytes, submission, [211; 32]).unwrap();
+    let row = packet.record();
+    assert_eq!(row.revision(), revision);
+    assert_eq!(row.original_unknown(), unknown);
+    assert_eq!(row.package_id, original.record.request().package_id);
+    assert_eq!(row.package_digest, original.record.request().package_digest);
+    assert_eq!(
+        row.registry_revision,
+        original.record.request().registry_revision
+    );
+    assert_eq!(row.handler, original.record.request().handler);
+    assert_eq!(row.input_sha256, original.record.request().input_sha256);
+    assert_eq!(
+        row.request_binding_sha256,
+        original.record.request().binding_sha256
+    );
+    assert_eq!(
+        row.operation_id,
+        original.record.request().command.operation_id
+    );
+    assert_eq!(row.whole_sha256, original.record.request().command.sha256);
+    assert_eq!(
+        row.byte_length,
+        original.record.request().command.byte_length
+    );
+    assert_eq!(row.reserved_at, original.record.reserved_at_unix_ms());
+    match row.metadata {
+        morrow_blob_upload_history_v1::Metadata::Reserved => {
+            assert!(original.record.observed_at_unix_ms().is_none());
+            assert!(original.record.acknowledged_at_unix_ms().is_none());
+        }
+        morrow_blob_upload_history_v1::Metadata::Observed { at, .. } => {
+            assert_eq!(Some(at), original.record.observed_at_unix_ms());
+            assert!(original.record.acknowledged_at_unix_ms().is_none());
+        }
+        morrow_blob_upload_history_v1::Metadata::Acknowledged {
+            observed_at, at, ..
+        } => {
+            assert_eq!(Some(observed_at), original.record.observed_at_unix_ms());
+            assert_eq!(Some(at), original.record.acknowledged_at_unix_ms());
+        }
+    }
+    match (row.original(), original.record.original_result()) {
+        (None, None) => (),
+        (Some(actual), Some(expected)) => {
+            use morrow_blob_upload_history_v1::Outcome as Public;
+            use morrow_core::blob_upload_journal::Outcome as Stored;
+            assert_eq!(
+                actual.outcome,
+                match expected.outcome {
+                    Stored::Absent => Public::Absent,
+                    Stored::Staged => Public::Staged,
+                    Stored::Released => Public::Released,
+                    Stored::Error(code) => Public::Error(code),
+                }
+            );
+            assert_eq!(actual.unknown, expected.unknown);
+            assert_eq!(actual.calls, expected.calls);
+            assert_eq!(actual.wire_bytes, expected.wire_bytes);
+            assert_eq!(actual.native_work_bytes, expected.native_work_bytes);
+            assert_eq!(
+                actual.execution.map(|e| (e.outcome, e.host_calls)),
+                expected.execution.map(|e| (e.outcome, e.host_calls))
+            );
+        }
+        _ => panic!("the projection changed presence of the original result"),
+    }
+    assert_eq!(
+        row.current_stage,
+        match stage {
+            Observation::Absent => Stage::Absent,
+            Observation::Staged => Stage::Staged,
+            Observation::Released => Stage::Released,
+        }
+    );
+    assert!(
+        w.read_blob_upload_history_packet(&submission, [0; 32])
+            .is_err()
+    );
+    assert!(
+        w.read_blob_upload_history_packet(&[0; 32], [211; 32])
+            .is_err()
+    );
+    assert!(Packet::decode_for(&bytes, submission, [212; 32]).is_err());
+    assert_eq!(
+        w.inspect_persisted_blob_upload(&submission).unwrap().record,
+        original.record,
+        "reading cannot complete or rewrite metadata"
     );
 }
 macro_rules! accepted_case {
@@ -662,6 +768,10 @@ fn product_gate_loss_preserves_owner_and_refuses_delivery_or_replacement() {
     assert!(w.poll_blob_upload(key).unwrap().recovery_required);
     assert!(w.read_blob_upload(key).is_err());
     assert!(w.inspect_blob_upload_history(key).is_err());
+    assert!(
+        w.read_blob_upload_history_packet(&[1; 32], [211; 32])
+            .is_err()
+    );
     assert!(w.acknowledge_io(key).is_err());
     assert!(w.finish().is_err());
     assert!(Workbench::open(&database, None).is_err());
@@ -857,6 +967,14 @@ fn private_history_read_never_reclaims_the_retained_original_worker() {
     assert!(
         w.list_blob_upload_history(None, 16).is_err(),
         "history queries did not restore the retained owner"
+    );
+    assert!(
+        w.read_blob_upload_history_packet(&[92; 32], [211; 32])
+            .is_err()
+    );
+    assert!(
+        w.list_blob_upload_history(None, 16).is_err(),
+        "the public history read did not restore the retained owner"
     );
     assert_eq!(read(&mut w, key).outcome, Ok(Phase::Staged));
     assert_eq!(
@@ -1149,6 +1267,7 @@ fn protected_abrupt_commit_keeps_missing_original_result_uncertain_after_reopen(
             "current blob presence cannot upgrade the original result"
         );
         assert!(w.io_status().key.is_none());
+        check_public_history(&w, [93; 32], 1, true, actual.current_stage);
         w.finish().unwrap();
         drop(w);
         let database = morrow_audit::library::Registry::open(&root)

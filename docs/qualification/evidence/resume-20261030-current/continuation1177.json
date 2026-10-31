@@ -1,0 +1,83 @@
+{
+  "status": "RUNNING_CURRENT_BINARY_PROTOCOL_RUNTIME_AND_DESKTOP_HISTORY_SCOPED_PASS_P2_LOCK_FIXED",
+  "utc": "2026-10-31T04:45:48.796569+00:00",
+  "source_digest": "2900f789e1b932e39ba0903a5fb22dc367d2289d1c74fd8c8b7fbd11abf1b531",
+  "tested_runtime_source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "previous_checkpoint": "continuation1133.json",
+  "case736": "FIXED_PRIOR_NORMAL806_SCOPED_PASS_RETAINED",
+  "supervision_internal_protocol": "CapnProto",
+  "supervision_durable_protocol": "Protobuf plus LZ4",
+  "current_protocol_runtime": "PASS_SCOPED_1122_1123_1151",
+  "native_default_build": "PASS_1120_HOST_SUPERVISOR_FIXTURE",
+  "native_supervision_tests": "27_METHODS_IN_FOUR_SEPARATE_GROUPS_1121",
+  "three_language_sessions": "PASS_SCOPED_RUST_C_CPP_1122",
+  "three_language_recipient_revocation": "PASS_SCOPED_RUST_C_CPP_1123",
+  "native_owner_recovery": "FOUR_ACTUAL_SCENARIOS_PASS_SCOPED_1151",
+  "formal_history_UI": "PASS_SCOPED_1166_REOPEN_PHASE_REVIEW1174",
+  "formal_history_UI_scope": "One visible approval, matching 464-byte plugin return, explicit acknowledgement, finish, normal close, and independent unchanged original history; synthetic original record, no original upload.",
+  "formal_history_UI_initial_control_failure": "PRESERVED_RUN_PHASE_NO_DELIVERY_PASS",
+  "formal_UI1161": "UNKNOWN_RETAINED_NO_REPLAY",
+  "formal_UI1072": "UNKNOWN_RETAINED_NO_REPLAY",
+  "original_history_after_delivery": {
+    "unknown": true,
+    "revision": 2,
+    "acknowledged": false,
+    "upload_calls": 0
+  },
+  "legacy_v1_owner_migration": "OPEN_LEGACY_REFUSED_PRESERVE_ORIGINAL",
+  "P2_roles058": "P_COLD_PASS_1148_C_REFUSED_LOCK_1169_R_S_NOT_RUN_NO_VM_DISPATCH",
+  "P2_lock_fix": "ONE_DEPENDENCY_EDGE_ADDED_NO_VERSION_CHANGES_1178",
+  "P2_next": "Fresh roles059 against next frozen source; preserve all prior closed refusals; use pristine VM053.",
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "98edd953-ddaa-45f3-ba72-2bc90497acb4",
+      "name": "Morrow Windows Acceptance 20261031 053",
+      "state": "Running"
+    }
+  ],
+  "registered_vms": 4,
+  "vm053": "FRESH_DISCONNECTED_READY17_AND_RUNTIME_VERIFIED_NO_P2_DISPATCH",
+  "vm052": "FULL_OFFLINE_ARCHIVE_VERIFIED_UNREGISTERED_ORIGINAL_DISK_RETAINED",
+  "cache_root": "D:\\build_cache",
+  "closed_sdk1120_libraries_reclaimed": {
+    "files": 1465,
+    "logical_bytes": 2354519887,
+    "programs_and_evidence_preserved": true
+  },
+  "retired_source_copy_archive1165": {
+    "files": 265243,
+    "logical_bytes": 3974151713,
+    "archive_bytes": 999499320,
+    "all_archive_bytes_verified": true,
+    "reclamation": "ORIGINAL_PROCESS_RUNNING_NOT_COUNTED_AS_COMPLETE"
+  },
+  "free_bytes_sample": {
+    "C": 32315928576,
+    "D": 9452425216
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "P2": "OPEN",
+  "full_P2": false,
+  "formal_current_P3": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Freeze the lock repair and this report, cold-build roles059, then run the partial-output P2 case once in VM053. Remaining Windows P2 matrix, complete SDK capabilities and freeze stay open."
+}

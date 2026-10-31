@@ -1,0 +1,114 @@
+{
+  "status": "PASS_SCOPED_PRIVATE_CAPNP_HISTORY_DISCLOSURE",
+  "source_digest": "cbc79946c7de63db4f05df1f833d6a533be1d389bb1eed58920be3faca604c4d",
+  "original_empty_target_source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+  "source_unchanged": true,
+  "completed_dependencies_inputs_unchanged": true,
+  "whole_current_tree_fully_cold_claim": false,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 172.313,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\build.stdout",
+        "bytes": 1018893,
+        "sha256": "2aa985297b1ca75854a7f55726a5c0a5400e7a79813ff65a906c8e4fe14c1462"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\build.stderr",
+        "bytes": 681,
+        "sha256": "7db9f808f402f587c6782aac6beb6b67fb236eecf4bcb88ffc0b2026e6b55513"
+      }
+    },
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "seconds": 0.109,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\discovery.stdout",
+        "bytes": 1210,
+        "sha256": "090e870720e870267467fe0d59c686c575a1f1aec1d7d350eefd82124d1c1d50"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "runtime",
+      "exit_code": 0,
+      "seconds": 4.266,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\runtime.stdout",
+        "bytes": 1552,
+        "sha256": "d9a794cc8a3d79757be7f6990612f61c3f38650a888893813349162b811a64ec"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "close-refusal",
+      "exit_code": 0,
+      "seconds": 0.281,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-refusal.stdout",
+        "bytes": 191,
+        "sha256": "f5c0a4b381dff5b60edb309777a2d6e1dfcc5f2cdd51211c67f313e3d3b2bb72"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "close-unwind",
+      "exit_code": 0,
+      "seconds": 0.297,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-unwind.stdout",
+        "bytes": 190,
+        "sha256": "e50276e73e55eca80628df8e23fe85b7e740ee25fa7671915c5989f9085da232"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-unwind.stderr",
+        "bytes": 442,
+        "sha256": "f75b2a5eecc0843ce153832269d36d0e284dc87a3b8a2337f5457bdb079b100b"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\programs\\blob_history_delivery-cd4598be63046a4b.exe",
+    "bytes": 32839680,
+    "sha256": "85ea63fe871bda671b88927d7653a840ec9ed03a4a6ec1e014bfb42abaad8572"
+  },
+  "error": null,
+  "ordinary_methods": 14,
+  "explicit_close_refusal_methods": 1,
+  "explicit_close_refusal_scenarios": 2,
+  "explicit_close_unwind_methods": 1,
+  "explicit_close_unwind_scenarios": 2,
+  "same_owner_sequential_deliveries": 130,
+  "protected_store": true,
+  "private_capnp_same_process": true,
+  "native_process_pipe": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

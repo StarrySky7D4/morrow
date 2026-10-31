@@ -1,0 +1,27 @@
+{
+  "status": "REVIEW_FINDINGS_NOT_YET_IMPLEMENTED_OR_QUALIFIED",
+  "active_frozen_build": "public-history-private-969",
+  "source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+  "items": [
+    {
+      "task": "Close unwind is not a known native refusal",
+      "finding": "Current catch_unwind close Err maps to CloseState::Failed plus CloseFailure::Unwind. The private schema describes Failed as an actual refusal, while a panic may leave close outcome unknown. Debt is retained but classification should be Unknown.",
+      "required": "Before product UI enablement, map unwind to Unknown and add isolated fault evidence preserving original execution, instance, and debt. Do not reclassify current real core Invalid refusal test as an unwind test."
+    },
+    {
+      "task": "Proven preconnection refusal",
+      "draft": "history-preparation-refusal-next-970.rs",
+      "required": "Test only: seed an enabled unsupported module via trusted Registry before opening the actual original delivery owner; verify Preparation + NotCreated and acknowledgement, without post-connect inference."
+    },
+    {
+      "task": "C and C++ task-bound consumers",
+      "finding": "Both current guests still accept only history.fixture.inspect and fixed IDs; only Rust accepts history.inspect with task correlation.",
+      "required": "Add general task-bound paths preserving fixed regression fixtures, rebuild all languages and exercise the protected host route.",
+      "independent_task_id_gap": "sdk/rust/src/ffi.rs mp_task_get requires task.request(), which is absent for transform tasks. Therefore C mp_task_get and C++ task.view() cannot supply the independently decoded ID here. Do not synthesize it from packet nonce/submission. Add a compatible extension adapter that decodes the actual original Task envelope with the existing SDK, and keep frozen base SDK inputs unchanged unless explicitly revising that contract."
+    },
+    {
+      "task": "Private Dart and formal UI",
+      "required": "Add original-owner client models/decoder, exact packet preview and recipient binding, one-shot approval and lost-reply discovery; resume window control only after the pending direct post-Esc reply."
+    }
+  ]
+}

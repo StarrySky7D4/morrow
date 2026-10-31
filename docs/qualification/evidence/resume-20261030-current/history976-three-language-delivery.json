@@ -1,0 +1,219 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_PROTECTED_HISTORY_DELIVERY",
+  "current_source_digest": "eb67d1b57488375ee699ee51a6b583b13155fef083af9062cf9538b94e94e5aa",
+  "qualified_host_source_digest": "cbc79946c7de63db4f05df1f833d6a533be1d389bb1eed58920be3faca604c4d",
+  "host_program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\programs\\blob_history_delivery-cd4598be63046a4b.exe",
+    "bytes": 32839680,
+    "sha256": "85ea63fe871bda671b88927d7653a840ec9ed03a4a6ec1e014bfb42abaad8572"
+  },
+  "source_unchanged": true,
+  "all_host_and_base_history_build_inputs_unchanged": true,
+  "whole_current_tree_cold_claim": false,
+  "host_rebuilt_this_case": false,
+  "frozen_inputs_unchanged": true,
+  "artifacts_unchanged": true,
+  "all_original_processes_returned": true,
+  "commands": [
+    {
+      "name": "rust-runtime",
+      "exit_code": 0,
+      "seconds": 4.25,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-runtime.stdout",
+        "bytes": 1552,
+        "sha256": "f95d9113898507b0857fc6ec2d390f6eb4a3ee443bcaf8f208f28f03bf23e249"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rust-close-refusal",
+      "exit_code": 0,
+      "seconds": 0.282,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-close-refusal.stdout",
+        "bytes": 191,
+        "sha256": "f5c0a4b381dff5b60edb309777a2d6e1dfcc5f2cdd51211c67f313e3d3b2bb72"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rust-close-unwind",
+      "exit_code": 0,
+      "seconds": 0.265,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-close-unwind.stdout",
+        "bytes": 190,
+        "sha256": "a05060ac42e115ecbe8102171766ae0e799fac993e17709c187d8ec5f8e757f2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\rust-close-unwind.stderr",
+        "bytes": 442,
+        "sha256": "81ab246a070cd5310314677c140c8dc47b76062bc34037aa2016853b8226a471"
+      }
+    },
+    {
+      "name": "c-runtime",
+      "exit_code": 0,
+      "seconds": 2.875,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-runtime.stdout",
+        "bytes": 1552,
+        "sha256": "38f9f53d85133296fe07dc5fb2a77f6827ee734999b4addaa8dfdd71f2dacc1b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-close-refusal",
+      "exit_code": 0,
+      "seconds": 0.25,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-close-refusal.stdout",
+        "bytes": 191,
+        "sha256": "6fd580cfb4d3454cdb83c3a1f043378db6de9821ce4697324795425ad56bc1cb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-close-unwind",
+      "exit_code": 0,
+      "seconds": 0.235,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-close-unwind.stdout",
+        "bytes": 190,
+        "sha256": "2fb3a7a5926f075b58415b5f4c435f4e33852f700b6f4b18e86abbfa40fb238e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\c-close-unwind.stderr",
+        "bytes": 442,
+        "sha256": "24da7d59bd964fa4262cf3ef5270bade09b458c58e7e4d0438b0d5dac3d3cad0"
+      }
+    },
+    {
+      "name": "cpp-runtime",
+      "exit_code": 0,
+      "seconds": 2.843,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-runtime.stdout",
+        "bytes": 1552,
+        "sha256": "bc08a8e4659070b4f8214a6ea74cb047e455af76cfe6d3554eab3eca678ca460"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-close-refusal",
+      "exit_code": 0,
+      "seconds": 0.25,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-close-refusal.stdout",
+        "bytes": 191,
+        "sha256": "6fd580cfb4d3454cdb83c3a1f043378db6de9821ce4697324795425ad56bc1cb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-close-unwind",
+      "exit_code": 0,
+      "seconds": 0.25,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-close-unwind.stdout",
+        "bytes": 190,
+        "sha256": "2fb3a7a5926f075b58415b5f4c435f4e33852f700b6f4b18e86abbfa40fb238e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-three-languages-976\\cpp-close-unwind.stderr",
+        "bytes": 442,
+        "sha256": "688cb8cc697c3bf621d803b2fa5330ab4732a2fe4edeee7ab0432591b971085c"
+      }
+    }
+  ],
+  "languages": [
+    {
+      "language": "rust",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust_history.wasm",
+        "bytes": 328582,
+        "sha256": "7d1f7836b2f5b4e933931d0b08e7a4ace8d658bdbaf2bd33819a41b1634a5faa"
+      },
+      "ordinary_methods": 14,
+      "explicit_close_fault_methods": 2,
+      "explicit_close_fault_scenarios": 4,
+      "same_original_owner_sequential_deliveries": 130,
+      "actual_original_Task_ID_correlation": true,
+      "protected_store": true,
+      "private_Capnp_same_process": true
+    },
+    {
+      "language": "c",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\c_history.wasm",
+        "bytes": 103344,
+        "sha256": "9c323b749fbfba8731f80760752b3b4904e2ab7301be7920eafbaae074637b16"
+      },
+      "ordinary_methods": 14,
+      "explicit_close_fault_methods": 2,
+      "explicit_close_fault_scenarios": 4,
+      "same_original_owner_sequential_deliveries": 130,
+      "actual_original_Task_ID_correlation": true,
+      "protected_store": true,
+      "private_Capnp_same_process": true
+    },
+    {
+      "language": "cpp",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\cpp_history.wasm",
+        "bytes": 104878,
+        "sha256": "78c29b79def7a1dfa2d2b978beda4dcf14fd96fdae54829caaeb43b93342cf3f"
+      },
+      "ordinary_methods": 14,
+      "explicit_close_fault_methods": 2,
+      "explicit_close_fault_scenarios": 4,
+      "same_original_owner_sequential_deliveries": 130,
+      "actual_original_Task_ID_correlation": true,
+      "protected_store": true,
+      "private_Capnp_same_process": true
+    }
+  ],
+  "error": null,
+  "close_unwind_is_injected_boundary_not_OS_handle_close": true,
+  "native_process_pipe": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

@@ -1,0 +1,19 @@
+{
+  "correct_original_and_zip_join_accepted": true,
+  "rejections": [
+    "zip_as_closure",
+    "missing_disk_proof",
+    "wrong_vm",
+    "missing_memory",
+    "wrong_archive_path",
+    "manifest_binding",
+    "changed_member",
+    "old_owner_contact",
+    "case_clean",
+    "policy_not_restored",
+    "disk_not_retained",
+    "duplicate_member"
+  ],
+  "runtime_invocations": 0,
+  "VM_calls": 0
+}

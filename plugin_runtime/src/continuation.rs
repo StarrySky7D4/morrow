@@ -68,6 +68,36 @@ impl Execution {
         input: Option<&[u8]>,
         cancel: Cancellation,
     ) -> Result<Self, Fault> {
+        Self::start_bounded(runner, input, cancel, runner.limits, false)
+    }
+
+    /// The original watch worker supplies only its remaining window budget.
+    /// This cannot raise a prepared package ceiling or refill a live window.
+    #[cfg(all(feature = "packages", windows))]
+    pub(crate) fn start_watch(
+        runner: &Runner,
+        input: &[u8],
+        cancel: Cancellation,
+        fuel: u64,
+        calls: u32,
+    ) -> Result<Self, Fault> {
+        if fuel == 0 || fuel > runner.limits.fuel || calls > runner.limits.host_calls {
+            return Err(Fault::Limits);
+        }
+        Self::start_bounded(runner, Some(input), cancel, Limits {
+            fuel,
+            memory_bytes: runner.limits.memory_bytes,
+            host_calls: calls,
+        }, true)
+    }
+
+    fn start_bounded(
+        runner: &Runner,
+        input: Option<&[u8]>,
+        cancel: Cancellation,
+        limits: Limits,
+        count_task_calls: bool,
+    ) -> Result<Self, Fault> {
         if runner.task_abi != input.is_some() {
             return Err(Fault::UnsupportedAbi);
         }
@@ -93,7 +123,7 @@ impl Execution {
             pending: None,
             session: Arc::new(()),
             limits: StoreLimitsBuilder::new()
-                .memory_size(runner.limits.memory_bytes)
+                .memory_size(limits.memory_bytes)
                 .memories(1)
                 .tables(1)
                 .table_elements(4096)
@@ -102,12 +132,13 @@ impl Execution {
                 .build(),
             cancel,
             calls: 0,
-            max_calls: runner.limits.host_calls,
+            max_calls: limits.host_calls,
+            count_task_calls,
             stopped: None,
         };
         let mut store = Store::new(&runner.engine, state);
         store.limiter(|s| &mut s.limits);
-        store.set_fuel(runner.limits.fuel).expect("fuel enabled");
+        store.set_fuel(limits.fuel).expect("fuel enabled");
         let mut linker = Linker::new(&runner.engine);
         linker
             .func_wrap("morrow_v1", "exchange", host_exchange)

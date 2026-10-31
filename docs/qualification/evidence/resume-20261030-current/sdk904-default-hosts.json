@@ -1,0 +1,64 @@
+{
+  "status": "COMPILED_CURRENT_DEFAULT_DESKTOP_HOSTS_NOT_RUNTIME",
+  "exit_code": 0,
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "programs": {
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\morrow-workbench-host.exe",
+      "bytes": 31406592,
+      "sha256": "35dbca241c75d238972532974adbab83b2dc5205f78adcbcf4d034ba2d547342"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\morrow-workbench-supervisor.exe",
+      "bytes": 14087168,
+      "sha256": "e3a704ef6d0541d93ddfa12888a2ad3ca458d523fdb81b19fd4d021e60f2a18a"
+    },
+    "history-observer": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\check_blob_text_fixture.exe",
+      "bytes": 4729856,
+      "sha256": "60d8cd86293ce827588e29359b6637329438ccf211d9bc83839ce9a6f2f9577e"
+    }
+  },
+  "commands": [
+    {
+      "label": "host",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\morrow-workbench-host.exe",
+        "bytes": 31406592,
+        "sha256": "35dbca241c75d238972532974adbab83b2dc5205f78adcbcf4d034ba2d547342"
+      }
+    },
+    {
+      "label": "supervisor",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\morrow-workbench-supervisor.exe",
+        "bytes": 14087168,
+        "sha256": "e3a704ef6d0541d93ddfa12888a2ad3ca458d523fdb81b19fd4d021e60f2a18a"
+      }
+    },
+    {
+      "label": "history-observer",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-904\\programs\\check_blob_text_fixture.exe",
+        "bytes": 4729856,
+        "sha256": "60d8cd86293ce827588e29359b6637329438ccf211d9bc83839ce9a6f2f9577e"
+      }
+    }
+  ],
+  "features": [],
+  "frozen_inputs_unchanged": 57,
+  "source_unchanged": true,
+  "selected_programs_freshly_compiled": true,
+  "all_original_compiler_processes_returned": true,
+  "dependencies_warm": false,
+  "host_cold_build_claim": true,
+  "subsequent_program_dependencies_same_run_only": true,
+  "original_SDK_guests_rebuilt": false,
+  "VM_calls": 0,
+  "product_starts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

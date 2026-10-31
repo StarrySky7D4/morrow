@@ -55,6 +55,8 @@ impl PreparedPackage {
             .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE);
         let runner = if package.blob_upload_declaration().is_some() {
             Runner::new_blob_upload_task(package.module(), limits)?
+        } else if package.fs_watch_declaration().is_some() {
+            Runner::new_fs_watch_task(package.module(), limits)?
         } else if directory {
             if dependency
                 || package.io_declaration().is_none()
@@ -149,6 +151,34 @@ impl PreparedPackage {
     }
     pub fn limits(&self) -> Limits {
         self.limits
+    }
+    /// Exact read/complete watch ABI only. Authority, delivery correlation and
+    /// cumulative budget remain with the original native worker.
+    #[cfg(all(feature = "packages", windows))]
+    pub(crate) fn run_watch_frame(
+        &self,
+        input: &[u8],
+        cancel: Cancellation,
+        fuel: u64,
+        calls: u32,
+    ) -> crate::TaskRun {
+        let started = if self.package.fs_watch_declaration().is_some() {
+            crate::continuation::Execution::start_watch(&self.runner, input, cancel, fuel, calls)
+        } else {
+            Err(Fault::UnsupportedAbi)
+        };
+        match started {
+            Ok(mut execution) => {
+                if execution.pending().is_some() {
+                    execution.abort(Fault::UnsupportedAbi);
+                }
+                execution.finish()
+            }
+            Err(fault) => crate::TaskRun {
+                report: Report { outcome: Err(fault), host_calls: 0, fuel_remaining: fuel },
+                completion: None,
+            },
+        }
     }
     /// No grants are created here. This is called only after host approval, not by the guest.
     pub fn connect(&self, host: &mut HostRuntime) -> morrow_core::Result<Connection> {

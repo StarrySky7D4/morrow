@@ -1,0 +1,41 @@
+{
+  "source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "target": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224",
+  "dependencies_warm": true,
+  "cold_program_build_claim": false,
+  "original_compile": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-941\\build-result.json",
+    "bytes": 592,
+    "sha256": "3f76ff515981ba88cdedd99f1a15f0e4f0639c0f50bffd68370af65b1a32d344"
+  },
+  "test_only_repair": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-test-repair-940\\result.json",
+    "bytes": 1015,
+    "sha256": "287b49115dd3c32c566e4f202cb80c4cc5e3d52599b721c66b146e60c505661f"
+  },
+  "same_canonical_manifest_paths": true,
+  "features": [
+    "blob-upload-guest-qualification",
+    "fault-injection"
+  ],
+  "guest_pins": [
+    {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  ],
+  "guest_recompiled": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

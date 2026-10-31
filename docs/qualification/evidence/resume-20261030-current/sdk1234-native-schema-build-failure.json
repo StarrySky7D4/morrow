@@ -1,0 +1,14 @@
+{
+  "exit_code": 101,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\native-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\native-tests.stderr",
+    "bytes": 877,
+    "sha256": "a90b978239d8fb57aa7b18e33e05555f360205e1e158b5efbb0e56c081619980"
+  }
+}

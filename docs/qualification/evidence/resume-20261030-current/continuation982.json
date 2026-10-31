@@ -1,0 +1,669 @@
+{
+  "status": "RUNNING_VM051_READY_NEXT_DEFAULT_DACL_COLD_BUILD_PENDING",
+  "utc": "2026-10-30T21:41:29.251668+00:00",
+  "verified_host_build_and_test_source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "native_and_standalone_source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "production_inputs_identical_across_test_only_repair": true,
+  "documentation_update_does_not_relabel_runtime_source": true,
+  "previous_P2_and_backend_source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "case736_startup_defect": "FIXED_BY_NEW_CASE806_HISTORICAL736_REMAINS_UNKNOWN",
+  "sdk_history": {
+    "profile": "blob-upload-history-v1",
+    "contract": "CAPNP_READ_ONLY_SELECTED_HISTORY",
+    "Rust_methods": 8,
+    "independent_native_C_CPP_consumers": 2,
+    "protected_host_methods": 15,
+    "ignored_explicit_helpers": 4,
+    "counts_are_separate_scopes": true,
+    "compiler_artifacts": 895,
+    "cold_host_program_build": false,
+    "completed_cold_libraries_from935": 889,
+    "same_build_warm_dependencies_in941": 889,
+    "current_test_freshly_compiled_in941": true,
+    "first_test_execution_in942": true,
+    "associated_binaries_built_not_executed": 5,
+    "failed935_preserved_no_runtime": true,
+    "classification941_failure_preserved_no_test_execution": true,
+    "original_Unknown_not_promoted": true,
+    "known_closed_reopen": true,
+    "actual_crash_before_and_after_commit": true,
+    "gate_revocation_refused": true,
+    "retained_worker_not_reclaimed_by_read": true,
+    "frozen_inputs_unchanged": 57,
+    "old_bounded_guest_fixtures_not_current_SDK_guest_builds": true,
+    "public_product_delivery": false,
+    "negative_fixture_debt_is_not_successful_product_retirement": true,
+    "rendered_UI": false,
+    "standalone_distribution": true,
+    "standalone_scope": "EXPERIMENTAL_WINDOWS_NATIVE_SOURCE_PACKAGE",
+    "standalone_code_files": 14,
+    "standalone_delivery_files": 15,
+    "standalone_repeat_consumers_not_added_to_method_count": true,
+    "Wasm_consumers": false,
+    "source_archive": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-939\\morrow-blob-upload-history-v1-experimental-source.zip",
+      "bytes": 29200,
+      "sha256": "0b001fb5078a5b2d1d4e059225c22012329bb454823e7858a91ba7cb0d8329ca"
+    },
+    "full_SDK26": false
+  },
+  "current_Windows_lock_closures_verified": true,
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "a63ae90d-27e0-4049-988d-9c979033c448",
+      "name": "Morrow Windows Acceptance 20261031 051",
+      "state": "Running"
+    }
+  ],
+  "vm051": {
+    "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+    "state": "INSTALLED_READINESS_PASSED_NOT_P2_DISPATCHED",
+    "firmware_uuid": "3ea5d09e-d966-46c8-a345-f7edc08d38ca",
+    "account_sid": "S-1-5-21-3489778776-2292438894-1424306462-1000",
+    "environment_read_closed": true,
+    "runtime_installation_closed": true,
+    "runtime_prerequisite_verified": true,
+    "strict_readiness_checks": 17,
+    "strict_readiness_transport_closed": true,
+    "COM_and_parent_checks_passed": true,
+    "fixture_rebound_only_one_literal": true,
+    "P2_dispatched": false
+  },
+  "build_cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 55017963520,
+    "D": 10078621696
+  },
+  "window_control": "USER_EXPLICITLY_RESUMED_VM051_INSTALLATION_SCOPE_INSTALLATION_COMPLETED",
+  "input_files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 72452,
+      "sha256": "a038663390991da4acd1bb04717376c11273be28c9ae71e1e7b03f0451ba91a7"
+    },
+    {
+      "path": "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock",
+      "bytes": 234887,
+      "sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/.gitattributes",
+      "bytes": 91,
+      "sha256": "047e7066a6593c00b8d75acc25cb32d106e4602b9a1c54de7de7174dbae8b0db"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/Cargo.lock",
+      "bytes": 3073,
+      "sha256": "056981515a8b129790a80e524517fea00fcdd65885b7be594c5d1cc6bf6af6af"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/Cargo.toml",
+      "bytes": 328,
+      "sha256": "f8a2718c4125eaeae473841cbbbdd27bedd85eba2c78987fcda38332986b0bb0"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/README.md",
+      "bytes": 4464,
+      "sha256": "6fc0c58cfcbbdd836f00348484523a7347769b9abd41c9676ab3fbcaceed8304"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/build.rs",
+      "bytes": 858,
+      "sha256": "a6c872ea07c8b4df9eb4fe6d6f50da425bcf2e2cb30bf2833803d194443f63cd"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/contracts/blob_upload_history.capnp",
+      "bytes": 1047,
+      "sha256": "00132fb24ddccabdd1ae73f131394c461e9deb2db49ebb3b3303ccdeab932dcf"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/contracts/schema.sha256",
+      "bytes": 65,
+      "sha256": "524722d6fea433e7d106b6844426ed91beae758a0fecbaeb8e5ff818ad620cb4"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/README.md",
+      "bytes": 1174,
+      "sha256": "12bb0939a627e2597db7f953a98c78280579b15c188228f6ec5dc4b599e94a4e"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/c/plugin.c",
+      "bytes": 1835,
+      "sha256": "48f5b7b05f5e3413b193fefcad8c90ce4a35f7cdf97298daa913c1d2bbf8699c"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/common/fixture.h",
+      "bytes": 2103,
+      "sha256": "23174c8af6b54541bd0a748d26c4877b0a399e314fcb8c282d311005e1cf4517"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/cpp/plugin.cpp",
+      "bytes": 1733,
+      "sha256": "8296b30efee7c643643b68ec73dbe2f9fc92513705313b20245b8805b2bb884c"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/Cargo.lock",
+      "bytes": 3522,
+      "sha256": "f26b51f0675216f79060e123d1af910d0c0ca4a05549cbdd8d81ac4ca64a17dd"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/Cargo.toml",
+      "bytes": 446,
+      "sha256": "1e24a25be4687ff746272b7c8bb6ac07202b927f3d51956fa0cb11e610689537"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/src/lib.rs",
+      "bytes": 222,
+      "sha256": "b19cc31b67f519a3e1c880f133f88cadb35325cf8ca3ca4da12d8f8551ae3ff2"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/Cargo.lock",
+      "bytes": 3332,
+      "sha256": "f62735af868364680f69550d42ae842f7900d1c71733b4d7670dddb15fbe22c1"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/Cargo.toml",
+      "bytes": 377,
+      "sha256": "90779825fb0ced72abbf4963f9776ba938586474b6f19a101599facea84daaf3"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/src/lib.rs",
+      "bytes": 2466,
+      "sha256": "cd615a231c8c6171095fd7354c30cbd4763dcf6b05ad990c46fb086e3e6d267c"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_task_v1.h",
+      "bytes": 1030,
+      "sha256": "07bec9206d305fbba54c36c344334715becfedc89af6c9657516a82e2b54253f"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_task_v1.hpp",
+      "bytes": 1542,
+      "sha256": "0f6a9d166eed7fa3f0487c96aab7c49b774d34ffd816e43bae1a59b91890ae33"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_v1.h",
+      "bytes": 2546,
+      "sha256": "215aa8a04e9243637011f7e7eb6fca835da67e5d1dcacbcb9ed28321376e7b9e"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_v1.hpp",
+      "bytes": 1858,
+      "sha256": "b5ee5407e7a6d11ea2224acc552c06f94c4dba0fb07c830504a5c2866d047989"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/ffi.rs",
+      "bytes": 10813,
+      "sha256": "a56328581191619c33ab0cd5113c2893c17ba8cca79d4f37d74d904cb0218eab"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/lib.rs",
+      "bytes": 15111,
+      "sha256": "4cb85b96f916f5754732c36b5cac5982ec98fe71de9846ec5a4b6144369ff1f3"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/task.rs",
+      "bytes": 1921,
+      "sha256": "b695ae0def953709eb33760d373dd9f556272029650ad5ac43417cde9b64307a"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/tests.rs",
+      "bytes": 15617,
+      "sha256": "f5e0836345140f530eae34ac937f1ca343547db6a0e5c329b4d1360f30453bf7"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/Cargo.lock",
+      "bytes": 3357,
+      "sha256": "7f5eded515e4195be729ddab575ab22b692bf6da9c125b59a1617831c8f67683"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/Cargo.toml",
+      "bytes": 411,
+      "sha256": "fa6ae561f180d54b2401f3a5828c4169762e92ff5b0a24f2d1c603fc26cd4ae2"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/src/lib.rs",
+      "bytes": 5097,
+      "sha256": "971fceffdcdb3ef2a6fc588a1cbaeb23f8993a30d478aca0898b4b06d7b100b1"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/src/tests.rs",
+      "bytes": 9640,
+      "sha256": "40c77280aa4d12f569e7aaffc2c9c2f83d64420459faf1f8c2e52fa1ac3daa15"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/tests/consumer.c",
+      "bytes": 1908,
+      "sha256": "49d8fa2cb25c53d38f652f436ffcc63a55839e2be2af11c7ec889aa7ee8c4886"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/task-adapter/tests/consumer.cpp",
+      "bytes": 1705,
+      "sha256": "72ea57c1ad9cabe9b462096a50f4fe4edec20d5b3051bef6a9e25029406f3274"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/tests/consumer.c",
+      "bytes": 2927,
+      "sha256": "7eb23467e96ce7d2a6fcfb151cbf33e7069847f8fb5bbf5eef04376c58205739"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/tests/consumer.cpp",
+      "bytes": 2179,
+      "sha256": "90f43d30aa598e7a70c9d512891a2f089886f47f7099124e331a84cb1bdb14bf"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.ids.dart",
+      "bytes": 3807,
+      "sha256": "4643b1dc6d050b8027f477179e8b22d528785d52421854db7d70a6ccbee64d08"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.native.dart",
+      "bytes": 408109,
+      "sha256": "32cafc43d095b9b7a810d34f4dbd1618f5a74f89257d81d8bd9d4b5befcce5e9"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.web.dart",
+      "bytes": 246397,
+      "sha256": "34e7d249ba72bc464f59d0ba3ec612c0d57b36b967ca8d3860d4d614478c7733"
+    },
+    {
+      "path": "lib/plugins/generated/identity.dart",
+      "bytes": 2845,
+      "sha256": "03601de369508dbd7c58e5186f419a74d1dce3f350fdefe82303a08b2b0447b8"
+    },
+    {
+      "path": "plugin_runtime/src/manager.rs",
+      "bytes": 42503,
+      "sha256": "40dee91aaa131820c59c32f6515facefc20d2038e0600e4f7a554e0adea29d62"
+    },
+    {
+      "path": "tool/build_upload_history_guests.py",
+      "bytes": 8319,
+      "sha256": "46c213d7a2df78df993d33cdfd77a2687cc036c3579a8596b0bd0b485d7a93f4"
+    },
+    {
+      "path": "workbench_host/Cargo.lock",
+      "bytes": 236224,
+      "sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3"
+    },
+    {
+      "path": "workbench_host/Cargo.toml",
+      "bytes": 4567,
+      "sha256": "cd23cee09f923be3735e9c786d73fa25c2119b24a9a72dee64fd09921cb51f16"
+    },
+    {
+      "path": "workbench_host/schemas/host.capnp",
+      "bytes": 32707,
+      "sha256": "4f3fa8f18fc629402459860c3b5085d527a633329feb869e666d0f6139207215"
+    },
+    {
+      "path": "workbench_host/src/blob_history_delivery.rs",
+      "bytes": 21113,
+      "sha256": "5304c91201abcb6237f854d2fd65eb77ac629e35ce506c5de3cc16b156d9d799"
+    },
+    {
+      "path": "workbench_host/src/blob_history_delivery_protocol.rs",
+      "bytes": 11611,
+      "sha256": "3cb7d6940af59eb3439e587c78d2b0a7db8dc9cc0c7f529aba495e25deda1c3e"
+    },
+    {
+      "path": "workbench_host/src/blob_upload_history.rs",
+      "bytes": 3682,
+      "sha256": "79261639c41f7f7f6027c6435b604b24d6f361bbb8fbd93a6d27ea6ebcd15608"
+    },
+    {
+      "path": "workbench_host/src/io_tasks.rs",
+      "bytes": 39411,
+      "sha256": "38970c5791226752ed5790ac33d06a6ce3f369a87d4fe09205705e011cdd49f9"
+    },
+    {
+      "path": "workbench_host/src/lib.rs",
+      "bytes": 39933,
+      "sha256": "4c7e933e57c76ec093b9df5ed5e990b8d2a204f4e9f199d7fbb10189fda3e750"
+    },
+    {
+      "path": "workbench_host/src/plugin_catalog.rs",
+      "bytes": 36289,
+      "sha256": "818743a15d4049adcaf2019a8f0243e957bfc465386e430b369a60bdc7aa0a92"
+    },
+    {
+      "path": "workbench_host/src/protocol.rs",
+      "bytes": 94824,
+      "sha256": "6b58c42bf538d43cafbc0c3a4bb737ecf2d477391a56da99343ae6c872fa0e56"
+    },
+    {
+      "path": "workbench_host/tests/blob_history_delivery.rs",
+      "bytes": 20728,
+      "sha256": "ce2b4c148adc384c3ee62f4fd5a86d8094ccc77dbade43239fff00f628030995"
+    },
+    {
+      "path": "workbench_host/tests/blob_upload_history_guest.rs",
+      "bytes": 6854,
+      "sha256": "b90b4ec9c1629e0dea221db55229964c09c3e5aecd91dc676e7dda9959979b90"
+    },
+    {
+      "path": "workbench_host/tests/blob_upload_protected.rs",
+      "bytes": 50095,
+      "sha256": "6728fc3b479d992912f1044066a1962889778956742f7f816bbd7171eaef344c"
+    },
+    {
+      "path": "workbench_host/tests/support/blob_history_delivery_private.rs",
+      "bytes": 11645,
+      "sha256": "dff052d0a69ae314040ecfd933694ab1476222c18a99d99b7d9155ad537c7c75"
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false,
+  "P2": "OPEN",
+  "P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "commit_or_push_this_resume": false,
+  "next": "Freeze current report-complete source and cold-build four independent roles for DEFAULT_DACL native refusal in ready VM051; continue private Dart client/native process pipe/formal SDK UI afterward.",
+  "checkout_line_endings": {
+    "status": "ONLY_CHECKOUT_LINE_ENDING_RULES_ADDED_AFTER_RUNTIME",
+    "original": {
+      "path": "C:\\ms1020\\.gitattributes",
+      "bytes": 71850,
+      "sha256": "3ddf10072d1b7d44dadd15a0c4ecce6182724562c1a650a02f58e7b0dad1b66a"
+    },
+    "updated": {
+      "path": "C:\\ms1020\\.gitattributes",
+      "bytes": 72032,
+      "sha256": "e58629637ea30d8ce7a6bedf4775ab68fe6747e8a38a1e87a36e893825bdea5c"
+    },
+    "rules": [
+      "/workbench_host/src/blob_upload_history.rs text eol=lf",
+      "/workbench_host/tests/blob_upload_protected.rs text eol=lf"
+    ],
+    "qualified_code_files_unchanged": true,
+    "new_runtime_claim": false
+  },
+  "latest_wasm_task_source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+  "previous_checkpoint": "continuation977.json",
+  "sdk_history_wasm": {
+    "meaningful_methods": 3,
+    "actual_task_cases": 27,
+    "languages": [
+      "Rust",
+      "C",
+      "C++17"
+    ],
+    "original_pools_closed": true,
+    "unapproved_and_disabled_packages_refused": true,
+    "content_host_calls": 0,
+    "source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+    "imports": [
+      "morrow_task_v1.read_input",
+      "morrow_task_v1.complete"
+    ],
+    "fixed_synthetic_selection": true,
+    "keyless_local_store": true,
+    "protected_store_reading": false,
+    "current_product_disclosure_approval": false,
+    "source_distribution_verified": true,
+    "source_distribution_files": 104,
+    "source_archive": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\morrow-history-wasm-experimental-source.zip",
+      "bytes": 200851,
+      "sha256": "b13b347339c155f80fac9bab0b656ffbc47aecead7c3606ca529570f6ccf4f89"
+    },
+    "source_package_digest": "7d7dee99559127ef23e872d635053a645cf27955b955dcd159ca7aad22f2403e",
+    "package_repeat_not_additional_method_credit": true,
+    "fresh_host_units": 8,
+    "verified_warm_dependencies": 887,
+    "cold_full_host_build": false,
+    "original946_classification_failure_retained_no_test_execution": true,
+    "prior_native_and_protected_host_scopes_retain_original_source": true,
+    "full_SDK26": false
+  },
+  "latest_native_task_binding_source_digest": "ea63fa2a8b5ee95df92f28ab91729d1f5d337b81d047092515f61b3a027e5d3b",
+  "sdk_history_task_binding": {
+    "source_digest": "ea63fa2a8b5ee95df92f28ab91729d1f5d337b81d047092515f61b3a027e5d3b",
+    "task_id_bytes": 140,
+    "canonical_format": "history-v1.<lowercase hex submission>.<lowercase hex query nonce>",
+    "original_task_schema_unchanged": true,
+    "history_packet_schema_unchanged": true,
+    "Rust_methods": 11,
+    "includes_previous_codec_methods": 8,
+    "new_binding_methods": 3,
+    "native_C_CPP_consumers": 2,
+    "strict_library_clippy": true,
+    "vector_producer_not_method_credit": true,
+    "stale_selection_and_nonce_refused": true,
+    "noncanonical_task_id_refused": true,
+    "failed_outputs_preserved": true,
+    "task_id_is_not_disclosure_approval": true,
+    "host_one_shot_disclosure_route": "IN_PROGRESS",
+    "current_task_bound_Wasm_execution": "NOT_RUN",
+    "previous_Wasm948_retains_original_source": true,
+    "protected_store_reading": false,
+    "public_product_delivery": false,
+    "full_SDK26": false
+  },
+  "latest_history_delivery_source_digest": "eb67d1b57488375ee699ee51a6b583b13155fef083af9062cf9538b94e94e5aa",
+  "sdk_history_delivery": {
+    "source_digest": "eb67d1b57488375ee699ee51a6b583b13155fef083af9062cf9538b94e94e5aa",
+    "host_route": "PASS_SCOPED_PROTECTED_ORIGINAL_OWNER",
+    "private_Capnp_route": "PASS_SCOPED_SAME_PROCESS_SERIALIZED_PROTECTED_HOST_EXCHANGE",
+    "native_process_pipe": false,
+    "original_empty_target_source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+    "host_library_first_success": true,
+    "whole_qualified_tree_cold_claim": false,
+    "warm_dependencies_verified": 878,
+    "fresh_records": 17,
+    "ordinary_methods": 14,
+    "explicit_close_refusal_methods": 1,
+    "explicit_close_refusal_scenarios": 2,
+    "same_owner_sequential_deliveries": 130,
+    "explicit_close_unwind_methods": 1,
+    "explicit_close_unwind_scenarios": 2,
+    "close_unwind_is_unknown": true,
+    "proven_preconnection_refusal": true,
+    "protected_store": true,
+    "current_Rust_guest": true,
+    "current_C_CPP_compiled_not_new_route_executed": false,
+    "preview_no_guest_dispatch": true,
+    "explicit_recipient_approval_consumed_once": true,
+    "lost_reply_reads_original": true,
+    "original_unknown_unchanged": true,
+    "first_execution_error_retained": true,
+    "exact_core_close_error_retained": true,
+    "failed_original_close_debt_retained": true,
+    "veto_withholds_guest_failure_and_output": true,
+    "qualification_features": [
+      "blob-upload-guest-qualification",
+      "fault-injection"
+    ],
+    "default_product_build": "NOT_RUN_FOR_THIS_SOURCE",
+    "Dart_bindings": "GENERATED_AND_CHECKED",
+    "Dart_client": "NOT_IMPLEMENTED",
+    "formal_UI": "NOT_RUN",
+    "full_SDK26": false,
+    "pending_before_product_enable": [
+      "Gate stop during actual guest execution and changed-history approval refusal need independent evidence",
+      "Strict Dart client, native process pipe, supervised application path and formal UI confirmation remain open"
+    ],
+    "qualified_host_source_digest": "cbc79946c7de63db4f05df1f833d6a533be1d389bb1eed58920be3faca604c4d",
+    "host_rebuilt_this_case": false,
+    "host_inputs_identical_to972": true,
+    "host_program": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\programs\\blob_history_delivery-cd4598be63046a4b.exe",
+      "bytes": 32839680,
+      "sha256": "85ea63fe871bda671b88927d7653a840ec9ed03a4a6ec1e014bfb42abaad8572"
+    },
+    "new_guest_empty_targets": [
+      "sdk975-HISTORY-WASM/rust-target",
+      "sdk975-HISTORY-WASM/ffi-target"
+    ],
+    "actual_three_language_host_route": true,
+    "languages": [
+      {
+        "language": "rust",
+        "artifact": {
+          "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust_history.wasm",
+          "bytes": 328582,
+          "sha256": "7d1f7836b2f5b4e933931d0b08e7a4ace8d658bdbaf2bd33819a41b1634a5faa"
+        },
+        "ordinary_methods": 14,
+        "explicit_close_fault_methods": 2,
+        "explicit_close_fault_scenarios": 4,
+        "same_original_owner_sequential_deliveries": 130,
+        "actual_original_Task_ID_correlation": true,
+        "protected_store": true,
+        "private_Capnp_same_process": true
+      },
+      {
+        "language": "c",
+        "artifact": {
+          "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\c_history.wasm",
+          "bytes": 103344,
+          "sha256": "9c323b749fbfba8731f80760752b3b4904e2ab7301be7920eafbaae074637b16"
+        },
+        "ordinary_methods": 14,
+        "explicit_close_fault_methods": 2,
+        "explicit_close_fault_scenarios": 4,
+        "same_original_owner_sequential_deliveries": 130,
+        "actual_original_Task_ID_correlation": true,
+        "protected_store": true,
+        "private_Capnp_same_process": true
+      },
+      {
+        "language": "cpp",
+        "artifact": {
+          "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\cpp_history.wasm",
+          "bytes": 104878,
+          "sha256": "78c29b79def7a1dfa2d2b978beda4dcf14fd96fdae54829caaeb43b93342cf3f"
+        },
+        "ordinary_methods": 14,
+        "explicit_close_fault_methods": 2,
+        "explicit_close_fault_scenarios": 4,
+        "same_original_owner_sequential_deliveries": 130,
+        "actual_original_Task_ID_correlation": true,
+        "protected_store": true,
+        "private_Capnp_same_process": true
+      }
+    ],
+    "original_Task_adapter": "PASS_SCOPED_RUST_C_CPP_NATIVE_AND_WASM",
+    "adapter_Rust_methods": 6,
+    "independent_native_C_CPP_consumers": 2,
+    "counts_are_separate_scopes": true
+  },
+  "previous_sdk_history_delivery966": {
+    "source_digest": "0474129a87cbca7fd19e31c522124c3c5c30677266028ef8db718ec055ae2afb",
+    "host_route": "PASS_SCOPED_PROTECTED_ORIGINAL_OWNER",
+    "cold_production_source_digest": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+    "test_only_repairs_since_cold_build": true,
+    "warm_dependencies_verified": 894,
+    "whole_current_tree_cold_claim": false,
+    "ordinary_methods": 8,
+    "explicit_close_refusal_methods": 1,
+    "explicit_close_refusal_scenarios": 2,
+    "protected_store": true,
+    "current_Rust_guest": true,
+    "current_C_CPP_compiled_not_new_route_executed": true,
+    "preview_no_guest_dispatch": true,
+    "explicit_recipient_approval_consumed_once": true,
+    "lost_reply_reads_original": true,
+    "original_unknown_unchanged": true,
+    "first_execution_error_retained": true,
+    "failed_original_close_debt_retained": true,
+    "private_Capnp_route": "NOT_IMPLEMENTED",
+    "Dart_client": "NOT_IMPLEMENTED",
+    "formal_UI": "NOT_RUN",
+    "full_SDK26": false,
+    "pending_before_product_enable": [
+      "Retain exact close error separately from first execution error",
+      "Withhold guest failure text as well as output after owner/gate veto",
+      "Prove at least seventeen acknowledged deliveries on the same owner",
+      "Classify proven pre-connection refusals without unsupported close assumptions",
+      "Private Capnp and Dart implementation, actual formal UI and three-language product route"
+    ],
+    "private_Capnp_draft": "SCHEMA_COMPILES_ONLY_NOT_APPLIED"
+  },
+  "review970_resolutions": {
+    "close_unwind": "PASS_SCOPED_INJECTED_BOUNDARY_UNKNOWN",
+    "preconnection_refusal": "PASS_SCOPED_ACTUAL_UNSUPPORTED_MODULE",
+    "C_CPP_task_adapter": "PASS_SCOPED_ORIGINAL_TASK_BYTES_AND_THREE_LANGUAGE_HOST_ROUTE",
+    "Dart_UI": "OPEN"
+  },
+  "cache967": {
+    "status": "NOT_EXECUTED_AUTOMATIC_POLICY_REJECTION",
+    "action": "Delete manifest-listed SDK935 .rlib/.rmeta cache leaves",
+    "tool_returned_reason": "blocked by policy",
+    "delete_command_started": false,
+    "deleted_files": 0,
+    "deleted_bytes": 0,
+    "candidate_count": 1467,
+    "candidate_bytes": 2402385011,
+    "protected_count": 6410,
+    "all_inventoried_files_still_present_with_same_size": true,
+    "free_space_change_attributed_to_cleanup": false,
+    "alternative": "Proceed with separate cold build on available D drive space; no retry of rejected deletion"
+  },
+  "previous_sdk_history_delivery973": {
+    "source_digest": "cbc79946c7de63db4f05df1f833d6a533be1d389bb1eed58920be3faca604c4d",
+    "host_route": "PASS_SCOPED_PROTECTED_ORIGINAL_OWNER",
+    "private_Capnp_route": "PASS_SCOPED_SAME_PROCESS_SERIALIZED_PROTECTED_HOST_EXCHANGE",
+    "native_process_pipe": false,
+    "original_empty_target_source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+    "host_library_first_success": true,
+    "whole_qualified_tree_cold_claim": false,
+    "warm_dependencies_verified": 878,
+    "fresh_records": 17,
+    "ordinary_methods": 14,
+    "explicit_close_refusal_methods": 1,
+    "explicit_close_refusal_scenarios": 2,
+    "same_owner_sequential_deliveries": 130,
+    "explicit_close_unwind_methods": 1,
+    "explicit_close_unwind_scenarios": 2,
+    "close_unwind_is_unknown": true,
+    "proven_preconnection_refusal": true,
+    "protected_store": true,
+    "current_Rust_guest": true,
+    "current_C_CPP_compiled_not_new_route_executed": true,
+    "preview_no_guest_dispatch": true,
+    "explicit_recipient_approval_consumed_once": true,
+    "lost_reply_reads_original": true,
+    "original_unknown_unchanged": true,
+    "first_execution_error_retained": true,
+    "exact_core_close_error_retained": true,
+    "failed_original_close_debt_retained": true,
+    "veto_withholds_guest_failure_and_output": true,
+    "qualification_features": [
+      "blob-upload-guest-qualification",
+      "fault-injection"
+    ],
+    "default_product_build": "NOT_RUN_FOR_THIS_SOURCE",
+    "Dart_bindings": "GENERATED_AND_CHECKED",
+    "Dart_client": "NOT_IMPLEMENTED",
+    "formal_UI": "NOT_RUN",
+    "full_SDK26": false,
+    "pending_before_product_enable": [
+      "Gate stop during actual guest execution and changed-history approval refusal need independent evidence",
+      "C/C++ transform Task-ID accessor adaptation, actual three-language host route, strict Dart client and formal UI confirmation"
+    ]
+  },
+  "pre_fixture_source_digest": "c34551b4f5af5fa8d8f922e5ef9ffc88d0d59ad51eb7c3a088c0a1fddf285e65",
+  "post_fixture_pre_report_source_digest": "6932f70aba2bd8c6a57936ca0337565a1ff345610181e070d8ceaee55382090b",
+  "derived_installation_ISO_removed": true,
+  "installation_media_logical_bytes_reclaimed": 5069602816,
+  "original_installer_retained": true
+}

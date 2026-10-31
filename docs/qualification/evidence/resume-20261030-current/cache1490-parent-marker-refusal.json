@@ -1,0 +1,9 @@
+{
+  "deleted_files": 0,
+  "all_target_files_retained": true,
+  "utc": "2026-10-31T17:06:23.9089236Z",
+  "target": "D:\\build_cache\\qualification-targets\\roles062-P-f7540d3c432fa9d6",
+  "original_process_returned": true,
+  "status": "REFUSED_MISSING_CARGO_TARGET_MARKER",
+  "exit_code": 1
+}

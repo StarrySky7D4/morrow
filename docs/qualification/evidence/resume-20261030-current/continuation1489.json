@@ -1,0 +1,130 @@
+{
+  "status": "RUNNING_WATCH_ORIGINAL_CAPTURE_AND_AUTHORITY_PROVEN_MANAGED_DELIVERY_OPEN",
+  "utc": "2026-10-31T17:00:52.356904+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "f9fef0ba2b2f7b8ab1367dbffc196f85993c39ac151cad942b1e5c23113eba21",
+  "previous_checkpoint": "continuation1467.json",
+  "authority": {
+    "review": 1473,
+    "source_digest": "c3f125ede13291ca271e954d9f6a0d86107c1237912bb6df3b1e92407847aed2",
+    "prior_core_methods": 70,
+    "selected_methods": 54,
+    "overlapping_methods_not_added": true,
+    "independent_persistent_approval": true,
+    "exact_live_window": true,
+    "one_window_per_original_IO_context": true,
+    "formal_product_UI": false
+  },
+  "watch_owner": {
+    "review": 1487,
+    "methods": 33,
+    "native_integration_methods": 13,
+    "live_approval_regressions": 11,
+    "original_IO_regressions": 9,
+    "all_compiler_outputs_cold": true,
+    "lint_diagnostics": 0,
+    "original_native_test_threads_joined": 13,
+    "counts": {
+      "ancestor_objects": 46,
+      "ancestor_close_calls": 46,
+      "ancestor_confirmed": 46,
+      "native_handles": 15,
+      "native_close_calls": 15,
+      "native_confirmed": 15,
+      "reads": 10,
+      "completions": 10,
+      "frames": 5,
+      "cancels": 5,
+      "relative_leaf_opens": 10
+    },
+    "actual_original_watch_and_ancestor_handles_closed": 61,
+    "actual_native_payloads": 5,
+    "reference_decoder_verified_exact_UTF16": true,
+    "original_shared_IO_budget": true,
+    "host_nominated_relative_capture": true,
+    "managed_watch_worker": false,
+    "actual_guest_dispatch": false,
+    "protected_picker_selection": false,
+    "formal_UI": false,
+    "volume_root_supported": false,
+    "actual_native_overflow": false,
+    "actual_native_close_failure": false,
+    "business_rename": false
+  },
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "original_frozen_inputs_unchanged": 57,
+  "corrections": {
+    "failed_build_1476": "test retention return not recorded; no native execution",
+    "failed_runtime_1479": "reparse safely refused and five originals closed; overly narrow test error expectation",
+    "failed_runtime_1482": "terminal observation reported Pending; six originals closed; fixed state precedence",
+    "old_results_relabelled": false
+  },
+  "cleanup": {
+    "case": 1484,
+    "removed_files": 184,
+    "logical_bytes_removed": 177241300,
+    "preserved_files": 737,
+    "protected_artifacts_equal": true,
+    "recent_runtime_target_1472_retained": true,
+    "preflight1488_removed_files": 0,
+    "free_delta_not_fully_attributed": true
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "VM_actions_this_stage": 0,
+  "old_owner_contacts": 0,
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57348329472,
+    "D": 3690684416
+  },
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Integrate original managed worker and actual watch guest execution; qualify protected picker/product approval, loss/overflow/close-failure boundaries and remaining Windows P2/SDK matrix."
+}

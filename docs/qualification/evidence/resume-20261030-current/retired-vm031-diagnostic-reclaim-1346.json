@@ -1,0 +1,21 @@
+{
+  "free_before": 31856451584,
+  "status": "PASS_AUTHORIZED_RETIRED_VM031_LEFTOVER_DIAGNOSTIC_RECLAIMED",
+  "registered_vms_unchanged": true,
+  "removed_path": "C:\\MorrowQA\\offline-diagnostics\\case043\\acceptance-readonly-copy.vhdx",
+  "observed_free_delta": 34827403264,
+  "registered_VM_actions": 0,
+  "plan_sha256": "c3b4b8051b012ce7a46376472ed4ec016b354992e9d3b9559626822abb0dcecc",
+  "old_Unknown_not_reclassified": true,
+  "concurrent_changes_not_attributed": true,
+  "new_VM_disk_preserved": true,
+  "owner_contacts": 0,
+  "release_eligible": false,
+  "free_after": 66683854848,
+  "logical_bytes_removed": 34827403264,
+  "clean_base_preserved": true,
+  "retired_VM_recovery_already_unavailable": true,
+  "source_accepted": false,
+  "current_and_retained_VM_references_checked": 38,
+  "small_logs_and_diagnostics_preserved": true
+}

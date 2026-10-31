@@ -1,0 +1,40 @@
+{
+  "status": "FIRST_NATIVE_CLOSE_FAILURE_NOW_STOPS_FURTHER_ORIGINAL_NATIVE_CALLS",
+  "old_source_digest": "0e273645a1889c98f31a01c74089bdcb28a5d807b76cfc647f47a6a3a2964e6a",
+  "new_source_digest": "f76a8d020f5937a659b5ce8fbc6caee55dacac24bb626ac4f28ccd7df13e1c05",
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-close-first-failure-correction-1503\\before.rs",
+    "bytes": 24902,
+    "sha256": "60277ae4588ed2dcbd3bfd07b3e23237aefd557a335cc52cc45c1c5073ae5465"
+  },
+  "after": {
+    "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\src\\windows.rs",
+    "bytes": 25075,
+    "sha256": "ad3c4c96bc436a3914828d7e03712d1f3e27546eebb25a9f8f846785ac09638a"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "original_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1502\\result.json",
+    "bytes": 12515,
+    "sha256": "d59b705271cf023b890dfef073450f36259e4726f59c7482f2644f1fd0c21b2a"
+  },
+  "original_close_refusal_output": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1502\\actual-close-refusal.stdout",
+    "bytes": 542,
+    "sha256": "0d3d63a2986b967e134e8984f51f15046970f9dcdbf71b02f4cbf2c1d4e3b91e"
+  },
+  "actual_prior_close_calls": 2,
+  "actual_prior_confirmed_closed": 1,
+  "actual_prior_first_error": {
+    "call": "CloseDirectory",
+    "code": 6
+  },
+  "prior_failed_driver_facts_were_expected_values_not_actual": "Do not use failed1502 facts as measured closure. Raw original stdout above is authoritative and preserved.",
+  "original_process_closed": true,
+  "original_native_retirement": false,
+  "original_outcome_not_relabelled": true,
+  "old_owner_contacts": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

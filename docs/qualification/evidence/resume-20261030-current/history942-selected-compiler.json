@@ -1,0 +1,318 @@
+{
+  "source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "compiler_artifacts": 895,
+  "selected": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+    "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+    "target": {
+      "kind": [
+        "test"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "blob_upload_protected",
+      "src_path": "C:\\ms1020\\workbench_host\\tests\\blob_upload_protected.rs",
+      "edition": "2024",
+      "doc": false,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    },
+    "features": [
+      "blob-upload-guest-qualification",
+      "fault-injection"
+    ],
+    "filenames": [
+      "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.exe",
+      "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.pdb"
+    ],
+    "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.exe",
+    "fresh": false
+  },
+  "selected_test_freshly_compiled": true,
+  "compiled_by": "original closed build941",
+  "original_build_result": {
+    "name": "build",
+    "exit_code": 0,
+    "seconds": 43.625,
+    "original_process_returned": true,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-941\\build.stdout",
+      "bytes": 1012816,
+      "sha256": "38bac8c99b4b99cd7049b04a4dd55cfbe47bd4d61619efbcb38f15a5f4dbca95"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-941\\build.stderr",
+      "bytes": 386,
+      "sha256": "24644b7b9e8d00d7baa5e5cc64a348cc351f6fd2a2980ff1da918ae3da5a96da"
+    }
+  },
+  "dependencies_warm": true,
+  "dependency_count": 889,
+  "all_dependency_outputs_byte_identical_to_completed935": true,
+  "cold_program_build_claim": false,
+  "ordinary_associated_binaries_built_not_executed": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "morrow-migrate-library",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\bin\\migrate_library.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-migrate-library.exe",
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_migrate_library.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-migrate-library.exe",
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "morrow-content-replay",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\bin\\content_replay.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-content-replay.exe",
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_content_replay.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-content-replay.exe",
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "package",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\bin\\package.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.exe",
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.exe",
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "morrow-workbench-supervisor",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\bin\\morrow-workbench-supervisor.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe",
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_supervisor.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe",
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "bin"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "morrow-workbench-host",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\main.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-host.exe",
+        "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_host.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-host.exe",
+      "fresh": false
+    }
+  ],
+  "fresh_outputs": {
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.exe",
+      "bytes": 31753216,
+      "sha256": "8bf954f4b99fc15ca08e908e00c3db7ef250a17abb38f88834a84ffaf25fcabd"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-d293924b59b45ced.pdb",
+      "bytes": 14602240,
+      "sha256": "128711ec07389eff7373570203eb9e4e878963cdcc06ac9d0bff7bee312b2ec1"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-migrate-library.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-migrate-library.exe",
+      "bytes": 20322816,
+      "sha256": "4410600e69c46bcab7af4516b703694cf965840bd7568bb1ec83909a0876db3f"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_migrate_library.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_migrate_library.pdb",
+      "bytes": 10620928,
+      "sha256": "0d0085c978b6e1b599b2d6a407ea914d05039b0e12239ccca3b6f66ddad4ef82"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-content-replay.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-content-replay.exe",
+      "bytes": 16715264,
+      "sha256": "6d7f38229248dc8300e4436f7555f1e0c7a9588a4d8f81a9de5ee3f06ba322d0"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_content_replay.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_content_replay.pdb",
+      "bytes": 9662464,
+      "sha256": "8e2ee7f4fea789339bb4bbb20853c96105f11733ef193df874c7722524696375"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.exe",
+      "bytes": 3189248,
+      "sha256": "b3d8995a7bd2765a9f377f19a304b44c0887eee0906170b96f5690055f91fec3"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\package.pdb",
+      "bytes": 2183168,
+      "sha256": "32f5583a049bd8adcd60f26e7fcb05f6580abedd06e3f5f7ca660fae8e197634"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe",
+      "bytes": 14086144,
+      "sha256": "dbd4719e663fd7360451974bca50d681f3844d3a019294ff52c14f3553db087b"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_supervisor.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_supervisor.pdb",
+      "bytes": 8802304,
+      "sha256": "3ee60cf71119f428529e941a91af7c4a03cf16eb9a13148ded5b74405fd2ae00"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-host.exe": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow-workbench-host.exe",
+      "bytes": 31427584,
+      "sha256": "82ccc7e1c27e880ce358701ce8502bcc07ae787b531745e05f73de19a039fa5a"
+    },
+    "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_host.pdb": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224\\x86_64-pc-windows-msvc\\release\\morrow_workbench_host.pdb",
+      "bytes": 13176832,
+      "sha256": "e00ea91fcdd98501ecfedb2fefc2e5de883906aebbe9395270c6ce7002f441bd"
+    }
+  },
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\programs\\blob_upload_protected-d293924b59b45ced.exe",
+    "bytes": 31753216,
+    "sha256": "8bf954f4b99fc15ca08e908e00c3db7ef250a17abb38f88834a84ffaf25fcabd"
+  },
+  "dependency_origin": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-test-repair-940\\completed-library-proof.json",
+    "bytes": 1692621,
+    "sha256": "50393f260b0957c650fdec81da8d149a1019f826d3e98a91d1aa52dc8a444cd2"
+  },
+  "correction": "941 expected only one final program; Cargo also compiled five ordinary package binaries. All six explicitly bound and classified here.",
+  "test_execution_before942": false
+}

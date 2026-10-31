@@ -1,0 +1,31 @@
+{
+  "status": "NEW_VM052_STARTED_OFFLINE_INSTALLATION_NOT_YET_ACCEPTED",
+  "completed": [
+    {
+      "phase": "create",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 12.266
+    },
+    {
+      "phase": "start",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 3.281
+    }
+  ],
+  "all_original_processes_returned": true,
+  "exit_code": 0,
+  "maximum_registered_vms": 4,
+  "window_actions": 0,
+  "old_owner_contacts": 0,
+  "guest_case_dispatches": 0,
+  "prior_media_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm052-installation-driver-1034\\result.json",
+    "bytes": 610,
+    "sha256": "114b6f750b114a84c83c335d8cd8aaa1b59c58d1aa02cfd52b87da1031c1b10c"
+  },
+  "public_hash_cmdlet_discovery_pre_action_failure_retained": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -477,6 +477,31 @@
       }
     }
   },
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      }
+    }
+  },
   "@recoverySwitchUnconfirmed": {
     "placeholders": {
       "path": {
@@ -1997,6 +2022,29 @@
   "pluginsUseText": "Использовать текст",
   "pluginsUseTransform": "Использовать преобразование",
   "pluginsViewFailed": "Не удалось открыть представление плагина",
+  "pluginsWatchAcknowledged": "Завершение наблюдения подтверждено.",
+  "pluginsWatchAllow": "Разрешить плагину наблюдать за изменениями каталога",
+  "pluginsWatchAllowNotice": "Также разрешите просмотр списка файлов и подтверждайте папку для каждого запуска.",
+  "pluginsWatchBounds": "Лимиты плагина: {frames} записей, {bytes} байт, {ms} миллисекунд.",
+  "pluginsWatchBytes": "Лимит передаваемых данных (байты)",
+  "pluginsWatchCancelled": "Наблюдение отменено.",
+  "pluginsWatchClosed": "Каталог освобождён, очистка завершена.",
+  "pluginsWatchExpired": "Наблюдение остановлено по истечении времени.",
+  "pluginsWatchFormError": "Проверьте полный путь к папке. Все лимиты должны быть положительными и не превышать лимиты плагина.",
+  "pluginsWatchFrames": "Максимум передаваемых записей",
+  "pluginsWatchIdle": "Наблюдение за каталогом ещё не начато.",
+  "pluginsWatchIntro": "Наблюдение касается только папки, подтверждённой для этого запуска. Оно прекращается при достижении лимита времени, записей или данных. При запуске Windows запросит подтверждение папки.",
+  "pluginsWatchNew": "Подготовить новое наблюдение",
+  "pluginsWatchNoPlugins": "Нет включённых плагинов с разрешениями на наблюдение за каталогом и просмотр списка файлов.",
+  "pluginsWatchOtherPanel": "Завершение наблюдения за каталогом ещё не подтверждено. Проверьте исходную задачу на панели изменений каталога.",
+  "pluginsWatchPath": "Наблюдаемая папка (полный путь)",
+  "pluginsWatchReady": "Наблюдение завершено. Результат можно прочитать один раз.",
+  "pluginsWatchRecords": "Плагин получил записей: {frames}; учтено данных: {bytes} байт.",
+  "pluginsWatchReviewed": "Результат прочитан. Проверьте его и подтвердите завершение.",
+  "pluginsWatchRunning": "Наблюдение выполняется. Обновите состояние или запросите отмену.",
+  "pluginsWatchStart": "Подтвердить папку и начать наблюдение",
+  "pluginsWatchTitle": "Изменения каталога",
+  "pluginsWatchUnknown": "Результат операции не подтверждён. Запись сохранена. Автоматического повтора или запуска новой задачи не будет.",
   "pluginsWorkbench": "Плагин рабочего пространства",
   "pluginsWorkbenchReadOnly": "Плагин разрешён, но пространство доступно только для чтения. Устраните проблему библиотеки или плагина и обновите состояние.",
   "recoveryAllFiles": "Все файлы",

@@ -1,0 +1,17 @@
+{
+  "status": "PASS_27_CLOSED_SDK_PROJECT_CACHE_COMPRESSION_ALL_BYTES_RETAINED",
+  "unique_files_compressed": 729,
+  "aliases_compressed": 801,
+  "files_byte_verified": 5301,
+  "all_Wasm_and_source_locks_unchanged": true,
+  "all_original_logs_unchanged": true,
+  "free_before": 4381487104,
+  "free_after": 24567812096,
+  "observed_free_delta": 20186324992,
+  "concurrent_changes_not_attributed": true,
+  "file_deletions": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,47 @@
+{
+  "status": "PASS_SCOPED_WINDOWS_X64_NATIVE_SDK_AND_INDEPENDENT_CONSUMERS",
+  "canonical_source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+  "committed_tool_and_baseline": "35357a7097f48ccf9148a0275a456886a285570f",
+  "current_SDK_files_byte_equal": 344,
+  "results": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-sdk-bounded-1204\\results.json",
+    "bytes": 6212,
+    "sha256": "4fd6805dcff6b1fde5f6090d7688f7def1bdbd9397863ac11ea8bf0e29d84bce"
+  },
+  "original_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-sdk-driver-1204\\result.json",
+    "bytes": 1066,
+    "sha256": "9f96796f805805849c3523ec4b04b37163f560ead4837ff0a76fde9c49e973e8"
+  },
+  "provenance": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native-sdk-bounded-1204\\provenance.json",
+    "bytes": 160855,
+    "sha256": "da307930dd13baf7d4b5f32189690ba5e902267ac333359eb4029bd71293ac1d"
+  },
+  "verified_record_files": 51,
+  "verified_bound_artifact_roles": 5,
+  "rust_tests_passed": 92,
+  "rust_tests_failed": 0,
+  "rust_ignored_methods": [],
+  "clang_msvc_native_programs_passed": 14,
+  "independent_consumers_passed": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "all_46_original_commands_returned": true,
+  "newer_product_schemas_qualified": false,
+  "scope_exclusions": [
+    "Windows Wasmi bounded-client import/fuel execution",
+    "Windows protected host/executor/product/UI",
+    "Windows ARM64/x86"
+  ],
+  "canonical_source_unchanged": true,
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

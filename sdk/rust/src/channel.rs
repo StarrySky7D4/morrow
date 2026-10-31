@@ -88,13 +88,48 @@ pub struct Directory {
     pub scope_sha256: [u8; 32],
     pub channels: Vec<Endpoint>,
 }
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq)]
 pub struct Frame {
     pub sequence: u64,
     pub source_epoch: [u8; 32],
     pub bytes: Vec<u8>,
     pub cursor: Vec<u8>,
 }
+// The wasm32 byte-wise memcmp fallback is expensive under instruction fuel.
+// Compare every full word and every remaining byte with safe bounded loads.
+// Native targets retain the platform's optimized slice equality implementation.
+#[cfg(any(target_arch = "wasm32", test))]
+fn equal_payload_words(left: &[u8], right: &[u8]) -> bool {
+    if left.len() != right.len() {
+        return false;
+    }
+    let (left_words, left_tail) = left.as_chunks::<8>();
+    let (right_words, right_tail) = right.as_chunks::<8>();
+    left_words
+        .iter()
+        .zip(right_words)
+        .all(|(a, b)| u64::from_le_bytes(*a) == u64::from_le_bytes(*b))
+        && left_tail == right_tail
+}
+impl PartialEq for Frame {
+    fn eq(&self, other: &Self) -> bool {
+        if self.sequence != other.sequence
+            || self.source_epoch != other.source_epoch
+            || self.cursor != other.cursor
+        {
+            return false;
+        }
+        #[cfg(target_arch = "wasm32")]
+        {
+            equal_payload_words(&self.bytes, &other.bytes)
+        }
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            self.bytes == other.bytes
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Action {
     Receive {
@@ -647,5 +682,40 @@ impl TranscriptDigest {
     }
     pub fn finish(&self) -> [u8; 32] {
         self.0.clone().finalize().into()
+    }
+}
+
+#[cfg(test)]
+mod payload_equality_tests {
+    use super::*;
+    #[test]
+    fn word_equality_checks_all_bytes_tails_lengths_and_unaligned_slices() {
+        for len in 0..=257 {
+            let bytes: Vec<u8> = (0..len + 7).map(|n| (n * 17 % 251) as u8).collect();
+            for offset in 0..=7 {
+                let left = &bytes[offset..offset + len];
+                let mut right = left.to_vec();
+                assert!(equal_payload_words(left, &right));
+                right.push(1);
+                assert!(!equal_payload_words(left, &right));
+                right.pop();
+                for i in 0..len {
+                    right[i] ^= 1;
+                    assert!(!equal_payload_words(left, &right));
+                    assert!(!equal_payload_words(&right, left));
+                    right[i] ^= 1;
+                }
+            }
+        }
+        for len in [32768, 65536] {
+            let left = vec![0xa5; len];
+            let mut right = left.clone();
+            for i in (0..len).step_by(521).chain(len - 16..len) {
+                right[i] ^= 0x80;
+                assert!(!equal_payload_words(&left, &right));
+                right[i] ^= 0x80;
+            }
+            assert!(equal_payload_words(&left, &right));
+        }
     }
 }

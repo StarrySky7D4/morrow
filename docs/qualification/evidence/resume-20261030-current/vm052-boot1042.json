@@ -1,0 +1,66 @@
+{
+  "installer_created_windows_boot_manager_first": true,
+  "status": "NEW_INSTALLATION_WINDOWS_BOOT_PRIORITY_VERIFIED",
+  "vm_id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+  "old_VM_contacts": 0,
+  "license_keys_supplied": 0,
+  "after": [
+    {
+      "description": "Windows Boot Manager",
+      "type": "File",
+      "device": null
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "DvdDrive (Name = 'DVD 驱动器 on SCSI controller number 0 at location 1', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\1\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "HardDiskDrive (Name = '硬盘驱动器 on SCSI controller number 0 at location 0', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\0\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI Network",
+      "type": "Network",
+      "device": "VMNetworkAdapter (Name = '网络适配器', VMName = 'Morrow Windows Acceptance 20261031 052') [VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "DvdDrive (Name = 'DVD 驱动器 on SCSI controller number 0 at location 2', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\2\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    }
+  ],
+  "forced_restarts": 0,
+  "security_setting_changes": 0,
+  "firmware_changed": false,
+  "P2_dispatched": false,
+  "guest_commands": 0,
+  "before": [
+    {
+      "description": "Windows Boot Manager",
+      "type": "File",
+      "device": null
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "DvdDrive (Name = 'DVD 驱动器 on SCSI controller number 0 at location 1', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\1\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "HardDiskDrive (Name = '硬盘驱动器 on SCSI controller number 0 at location 0', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\0\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI Network",
+      "type": "Network",
+      "device": "VMNetworkAdapter (Name = '网络适配器', VMName = 'Morrow Windows Acceptance 20261031 052') [VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    },
+    {
+      "description": "EFI SCSI Device",
+      "type": "Drive",
+      "device": "DvdDrive (Name = 'DVD 驱动器 on SCSI controller number 0 at location 2', VMName = 'Morrow Windows Acceptance 20261031 052') [Id = 'Microsoft:E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579\\BFCB0EF1-10C3-498F-A55E-7E24ADD0D864\\0\\2\\D', VMId = 'e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579']"
+    }
+  ]
+}

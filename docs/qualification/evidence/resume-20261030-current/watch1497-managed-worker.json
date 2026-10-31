@@ -1,0 +1,1084 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_MANAGED_WATCH_GUEST_EXECUTION_CUMULATIVE_BUDGET_AND_JOIN",
+  "source_digest": "6bdd867f3d507030a7020243521af535a1d7994dee324f4c65054b03e14ca75b",
+  "all_original_processes_returned": true,
+  "all_compiler_artifacts_cold": true,
+  "binaries": {
+    "fs_watch_worker": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker.exe",
+      "bytes": 8472064,
+      "sha256": "751db4a68b4692b7da6fa75fb17bfb2d0dd0eee534083198ad89ef5d1bbfe5f5"
+    },
+    "fs_watch_native_owner": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner.exe",
+      "bytes": 8104448,
+      "sha256": "6099d9bc832a35e6af570465f5c93f26410aed072a8862a9e01910f61488b98d"
+    },
+    "fs_watch_approval": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval.exe",
+      "bytes": 8413184,
+      "sha256": "bf6747f2c82981b8f0d8a903db48ce5d485a2e1cd58f3015aa8c69380e576e33"
+    },
+    "io_binding": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding.exe",
+      "bytes": 8573440,
+      "sha256": "f130d5a41ac0de6521781dc2a09af34a1f5ccdb81c858dd68c01de38e4f00dd2"
+    },
+    "task_bounds": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds.exe",
+      "bytes": 5119488,
+      "sha256": "6a7c9a483bfb6e42ba5282baf947c8aa0f780070d8a322af1b4f76586cc9ad71"
+    },
+    "task_contracts": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts.exe",
+      "bytes": 2522624,
+      "sha256": "231dd3306faf96f52348e8934b8c9191d9806b7557c7eab87cb90ab1ef3b8487"
+    },
+    "task_failures": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures.exe",
+      "bytes": 8054272,
+      "sha256": "c943809c34435c0837f12ce6dbfe561b35dcbc6ea891fd1a0182eea4b1deea7b"
+    }
+  },
+  "methods": {
+    "fs_watch_worker": [
+      "c_sdk_receives_actual_original_frames",
+      "cancellation_closes_pending_read_on_original_worker",
+      "cpp_sdk_receives_actual_original_frames",
+      "failed_prepare_returns_original_owner_without_native_capture",
+      "foreign_owner_is_refused_before_clock_or_worker",
+      "fuel_budget_is_shared_across_actual_frames",
+      "live_revocation_closes_without_dispatching_a_guest",
+      "mismatched_completion_retains_original_owner_without_retry",
+      "original_clock_rollback_closes_without_guest_dispatch",
+      "raw_echo_has_cumulative_budget_and_original_join",
+      "real_deadline_has_no_budget_or_authority_refresh",
+      "rust_sdk_receives_actual_original_frames",
+      "task_call_budget_is_shared_across_actual_frames"
+    ],
+    "fs_watch_native_owner": [
+      "actual_intermediate_junction_is_refused_before_final_native_open",
+      "actual_leaf_junction_is_refused_without_observing_target",
+      "captured_leaf_and_parent_cannot_be_renamed_until_original_closes",
+      "foreign_callers_cannot_sample_clock_charge_or_poison_the_original_watch",
+      "logical_expiry_cannot_be_rescued_and_cleanup_does_not_need_a_new_grant",
+      "nonexistent_final_component_preserves_original_failure_and_closes_ancestors",
+      "ordinary_file_cannot_be_used_as_a_directory_watch",
+      "other_original_reservations_are_not_refunded_by_watch_admission_failure",
+      "quiet_pending_read_is_cancelled_completed_and_closed_once",
+      "real_create_modify_rename_delete_and_exact_ack_preserve_original_accounting",
+      "real_deadline_withholds_late_frame_even_when_host_tick_does_not_advance",
+      "revoked_window_with_pending_completion_delivers_nothing_and_still_retires",
+      "volume_root_nomination_is_explicitly_unsupported_without_native_or_budget_work"
+    ],
+    "fs_watch_approval": [
+      "approval_observes_original_shared_resources_jobs_and_nonrefundable_bytes",
+      "dropped_or_revoked_approval_cannot_reset_the_same_instance_window",
+      "exact_watch_profile_accepts_only_input_and_completion_imports",
+      "foreign_manager_host_instance_and_binding_cannot_advance_the_legitimate_clock",
+      "invalid_and_noop_manager_approvals_leave_live_instance_intact_but_revocation_stops_it",
+      "invalid_requests_do_not_claim_a_window_or_spend_the_original_budget",
+      "list_approval_and_connection_do_not_create_watch_approval",
+      "ordinary_list_profile_cannot_issue_watch_and_invalid_approval_does_not_revoke_it",
+      "original_instance_stop_invalidates_approval_without_refunding_held_reservations",
+      "rollback_and_expiration_are_sticky_and_cannot_be_rescued_by_new_binding",
+      "wall_clock_deadline_is_enforced_even_when_the_host_tick_stays_constant"
+    ],
+    "io_binding": [
+      "actual_manager_drop_revokes_control_even_when_binding_and_instance_survive",
+      "capability_subsets_share_budget_but_never_widen_a_binding",
+      "declaration_and_live_connection_do_not_imply_io_approval",
+      "foreign_manager_host_connection_and_binding_attempts_cannot_poison_owner",
+      "invalid_budget_deadline_and_clock_leave_shared_state_unchanged",
+      "invalid_or_stale_approval_never_stops_a_healthy_instance",
+      "narrowing_approval_and_stop_revoke_held_jobs_and_old_bindings",
+      "pool_restart_requires_fresh_binding_and_old_session_drop_revokes_immediately",
+      "repeated_bindings_share_resources_jobs_and_nonrefundable_byte_budget"
+    ],
+    "task_bounds": [
+      "completion_is_copied_and_discarded_after_later_trap_or_cancellation",
+      "task_abi_rejects_wrong_modes_buffers_repetition_and_missing_completion"
+    ],
+    "task_contracts": [
+      "independent_host_and_guest_task_codecs_agree_for_all_content_commands",
+      "task_contract_and_provenance_reject_changed_ids_payloads_and_forged_success"
+    ],
+    "task_failures": [
+      "guest_business_failure_is_distinct_from_trap_protocol_fault_and_cancel",
+      "independent_failure_codecs_bind_all_codes_and_unicode_messages_to_input",
+      "malformed_or_mixed_failures_do_not_become_results",
+      "plugin_failure_cannot_replace_or_accompany_core_response"
+    ]
+  },
+  "total_methods": 54,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\build.stdout",
+        "bytes": 198503,
+        "sha256": "5379cdc01571c693faa20ce438ba1417a856654c92d85f79551e1e1f7ce7e972"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\build.stderr",
+        "bytes": 5232,
+        "sha256": "80bfae88b65eb9fa1aa5e46ebb3fb8bc317067294c0fd08b33295066a08ba4b1"
+      }
+    },
+    {
+      "name": "fs_watch_worker-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-discovery.stdout",
+        "bytes": 711,
+        "sha256": "e3cff7bfd83f148f50642ef2b52526fdab97c12dd9631c46151f7ce66effac9b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-discovery.stdout",
+        "bytes": 965,
+        "sha256": "9dd07006872469449d11cde76fb93b87744109ddfc837277df6126887f2f50a2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-discovery.stdout",
+        "bytes": 861,
+        "sha256": "d8b64780398bb3b7fe88db10eccc8b88b28b80ce0a35e6dc6aa8e2172aee4b05"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-discovery.stdout",
+        "bytes": 645,
+        "sha256": "7c64efd76766dd46bddbd9ba22fdfaa5d5de4882bfb48c8e9ed496471a18f05c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_bounds-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-discovery.stdout",
+        "bytes": 151,
+        "sha256": "b6c9c51e072f720e3d41b5ba66431fe2f6f7dffe2495558154916e06e397c4d5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_contracts-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-discovery.stdout",
+        "bytes": 158,
+        "sha256": "44e9c81f97c4173172ece0e65778261fac25e2cc727f374c31f5c1460509c228"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_failures-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-discovery.stdout",
+        "bytes": 274,
+        "sha256": "85509b98e282d6d2488c1fbbe4edafa1cd68792a70f4d9980aaf295c24c652c9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case00.stdout",
+        "bytes": 163,
+        "sha256": "97e1613a941ca3fa8a3ef33845547687b2ae25c9c894388352e1344e1b0faebe"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case01.stdout",
+        "bytes": 177,
+        "sha256": "a28f440ce73d62e859c6a83d3065c87a9d99305066b909dc1fe8b9576aa5fa77"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case02",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case02.stdout",
+        "bytes": 165,
+        "sha256": "b2269f819f37ef5047b36f38bb19b89a51c68d2c42fdbbcbbf5c17e000d16461"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case03",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case03.stdout",
+        "bytes": 186,
+        "sha256": "8b69102352ca9761f4065debdea8f54e6cae0f4779d33497e35fd4a8971685f4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case04",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case04.stdout",
+        "bytes": 173,
+        "sha256": "29ee6eca7dd789c5ad7c79154f43b853e1e88fe12ef21a7e54f82709ca2b3cd3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case05",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case05.stdout",
+        "bytes": 168,
+        "sha256": "4162394ae2c049f5cec0a91f294b70ae74ca51f0668844634df0a28a552ee70b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case06",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case06.stdout",
+        "bytes": 176,
+        "sha256": "c4434c579e7f9c56eb168e922b7708685e205408d137a5ddf226182864c0eda3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case07",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case07.stdout",
+        "bytes": 184,
+        "sha256": "2700b6e189ca50d360797a4cbe87d7ab1d210e47089643bb04b9aca711893e32"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case07.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case08",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case08.stdout",
+        "bytes": 179,
+        "sha256": "f0adda2036a00d52e4ce08c168abcaae02d539d33f4a71a63577ed5c2ae608a7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case08.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case09",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case09.stdout",
+        "bytes": 174,
+        "sha256": "9ce90ef4b22063f5d45c4f7670f9f5f3054c7ebf7e4a3d6d9d2af286b168652d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case09.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case10",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case10.stdout",
+        "bytes": 174,
+        "sha256": "60e16b6a02ce1c1b463591df23a2de2243f53e3bfd13f138b146d1c8b86006a4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case10.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case11",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case11.stdout",
+        "bytes": 166,
+        "sha256": "579030db72642d7708c0faae22362c9d40bec4d3919fbebf14e4f0ea9dad829f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case11.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_worker-case12",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case12.stdout",
+        "bytes": 173,
+        "sha256": "fa3b2578824bebb7ab7d7bfc59edb313c74615a1459cc34482840b3e9f3e1653"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_worker-case12.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case00.stdout",
+        "bytes": 190,
+        "sha256": "eaf3980473671ef4b3ff70ec206c9e0ba8ecb6d41aac83d6ca97466eecf4e9d4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case01.stdout",
+        "bytes": 182,
+        "sha256": "689c757be4f812cfd0316e1a1d5a11f39b59dd302e34f9af54e1826ec4d07303"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case02",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case02.stdout",
+        "bytes": 190,
+        "sha256": "5b98ef66ddd3e0049a51ed877301005f0d41f8f38403f577fb280afc257d6534"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case03",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case03.stdout",
+        "bytes": 197,
+        "sha256": "9e04152ccdf92a2f0f6cd8d7a43be792a2308a70cf09cec738b14a74cf013f00"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case04",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case04.stdout",
+        "bytes": 196,
+        "sha256": "b55bfc020aaa9a67d052023bd7ad6f929d9d3cc4611f3be0f529b69ebdd0a0ad"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case05",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case05.stdout",
+        "bytes": 201,
+        "sha256": "3d6b69d54102b21905dc2a2d7eaa835de34cc7fe4598c8d1edbbb891c7c4ad0b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case06",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case06.stdout",
+        "bytes": 175,
+        "sha256": "d9d3577a759fa2e0d3fb6c5ba34933d4a15b81d51488c49c5b3c94426bd2ec5c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case07",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case07.stdout",
+        "bytes": 197,
+        "sha256": "09952a6e6d979f859c395c4900f3c35b46047ad8fc9738d37d9252ad24205c1f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case07.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case08",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case08.stdout",
+        "bytes": 183,
+        "sha256": "b7378a17c2cc5aee8b5beada159e4cae2f0d26d3c0ebdf3c579ea9ac6e665ce4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case08.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case09",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case09.stdout",
+        "bytes": 201,
+        "sha256": "974636657eff5a4adc574bb432913c51e11fd291d81f669804260bcf9ad9aa9d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case09.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case10",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case10.stdout",
+        "bytes": 197,
+        "sha256": "f046dafb69b519f0132c6ca554b180340d030ea98bbd3fb8aef8a5497657aa88"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case10.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case11",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case11.stdout",
+        "bytes": 199,
+        "sha256": "2d37866703f49a1bbdfa6a2481a344077081d5a1156ddda4617a3e99c5cefce0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case11.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_native_owner-case12",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case12.stdout",
+        "bytes": 204,
+        "sha256": "39c7b31bbfcb75a7546e3b67ceebaec2a6aa8940ba4640a6fa141e45f39adf0e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_native_owner-case12.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case00.stdout",
+        "bytes": 198,
+        "sha256": "26344d7b4f388b0db4736be52dc474d30511cd1dc1945ccbed909ee8cb4445d7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case01.stdout",
+        "bytes": 191,
+        "sha256": "84dc82fa66d0f21f76b331f6ff1de5a39c2305885a4cc843b1a67a7d400c5b7a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case02",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case02.stdout",
+        "bytes": 187,
+        "sha256": "75cd839373aee911624a46e6b03e67ef526cf9653f83568416402cd59b08748f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case03",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case03.stdout",
+        "bytes": 203,
+        "sha256": "8f0fd92055f1a3112d94282cc5d44d862673ecd57f7202ef485941cb27304ba9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case04",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case04.stdout",
+        "bytes": 211,
+        "sha256": "f8472651bc742e916e6d30f47cd4b7fc86ec1e361ec52f38c454a49c53d2c83e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case05",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case05.stdout",
+        "bytes": 193,
+        "sha256": "98579ec6b4585d2914b353c70b256010c70dd53176a05ed0faa5393f047877e5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case06",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case06.stdout",
+        "bytes": 183,
+        "sha256": "ee3f01dafa52cbf1c2ec5b6f0a71039bdad4e1d7c2bdc701676419be9769dcd8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case07",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case07.stdout",
+        "bytes": 206,
+        "sha256": "f8dcebf6dc8082379dab8377b9d054f9331409fa8109de94561cf9fb96dc46c5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case07.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case08",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case08.stdout",
+        "bytes": 205,
+        "sha256": "798a9efdb2f41c2c56a6241f4b0ca082bd4ed22b9971cfec2f2782bc7d199ddc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case08.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case09",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case09.stdout",
+        "bytes": 197,
+        "sha256": "9cbc2bcdb8591e1e0f3e6d4bd782628ce237426828cd81beb94869da7aeb9618"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case09.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-case10",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case10.stdout",
+        "bytes": 196,
+        "sha256": "d42e2c5f840c8366a5ef5d7e9611827b1c74d17a0bafc98cb7ee73d8ee5d4d73"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\fs_watch_approval-case10.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case00.stdout",
+        "bytes": 199,
+        "sha256": "9e8778b729deffdb4fd809481db9fe10e80703c0c7e9e1bdc27d4d867bf3a82a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case01.stdout",
+        "bytes": 182,
+        "sha256": "9cdba136a8340f4aba39e212c9e967a2dea253ad8c861aa7574fde524010f6a7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case02",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case02.stdout",
+        "bytes": 181,
+        "sha256": "13ddff5bbdae7b3124186984f33abe307c2ab27b8571ad60247c44a0a56abccc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case03",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case03.stdout",
+        "bytes": 197,
+        "sha256": "6dd50dedda3350d759b294fe3b348ea6ac3ea288690ceab73439511537f5f71a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case04",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case04.stdout",
+        "bytes": 187,
+        "sha256": "53918b7f31d3f23f83fa5e2d7409e76491657be20a738b80c13e8e56f5a8f12b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case05",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case05.stdout",
+        "bytes": 181,
+        "sha256": "c79b7878785fece9d33da7bb337e773d19a9567835c37425ad03ed2e7c926b8a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case06",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case06.stdout",
+        "bytes": 186,
+        "sha256": "54d0bea6cd02065f19fe23e1e6a8dadabfe81a0feef77120aa31196bf4601843"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case07",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case07.stdout",
+        "bytes": 201,
+        "sha256": "c5906d806c52d0d1ec29ed2770b373e564a513c6363596c43785681ac48fb41b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case07.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-case08",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case08.stdout",
+        "bytes": 193,
+        "sha256": "1c8ca1005c949453a154f45a7ec093e4af07545b0d1a8b0fec519e4fa58326d5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\io_binding-case08.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_bounds-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-case00.stdout",
+        "bytes": 192,
+        "sha256": "dc3e38df424890014604ac7dac86c469640c94abf4471e2776b288ec6cf8e6ae"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_bounds-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-case01.stdout",
+        "bytes": 195,
+        "sha256": "08d96ecca792958ac7f5234cfcecf818c1d1ad6810b126ff33960daf6bced7d3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_bounds-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_contracts-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-case00.stdout",
+        "bytes": 194,
+        "sha256": "bc07b927d796a910dd718f7163d7e753d380dbe5e7f14e3714adb8781893e989"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_contracts-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-case01.stdout",
+        "bytes": 200,
+        "sha256": "4dbc154365f3d68d95298063ad0df473ae9c5ec9c2d46867c26ab19e9fb3c36e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_contracts-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_failures-case00",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case00.stdout",
+        "bytes": 195,
+        "sha256": "a5851f6b7acfdc595d5ff171f5ec4435c4fe6bb333603f1b54e8a8e273113677"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case00.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_failures-case01",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case01.stdout",
+        "bytes": 196,
+        "sha256": "d47544f35dbb188f632d153bd53f8e263d78a3aacc9fda7ed6a7c65ab92c3dd7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case01.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_failures-case02",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case02.stdout",
+        "bytes": 174,
+        "sha256": "f075bd8770c68dcd311418d90d66d27f06dbb72b6a1029cc8a2e2796f3a944aa"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "task_failures-case03",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case03.stdout",
+        "bytes": 181,
+        "sha256": "662d13e70c3da0dabcfbbaa8c0b984936fc1ace665368abd9a6108383c9ea21c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\task_failures-case03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "lint",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\lint.stdout",
+        "bytes": 174689,
+        "sha256": "7e9571ca6cf7cce0ff295d16dad2ea00d9b48a4688ddb9cfac7cd8755560ed18"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\lint.stderr",
+        "bytes": 3717,
+        "sha256": "a16c5d83d0c5d9a508d0cb0e6b9c1f9f83c7d9ec67cb49aada5ac2fdad397ef8"
+      }
+    }
+  ],
+  "legacy_diagnostics": 0,
+  "original_frozen_inputs_unchanged": 57,
+  "actual_watch_native_dispatch": true,
+  "actual_managed_guest_dispatch": true,
+  "SDK_languages": [
+    "rust",
+    "c",
+    "cpp"
+  ],
+  "cumulative_fuel_and_task_calls": true,
+  "original_native_retirement_separate_from_join": true,
+  "isolated_negative_unknown_cases": 3,
+  "protected_picker_selection": false,
+  "production_UI": false,
+  "actual_native_overflow": false,
+  "actual_native_close_failure": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

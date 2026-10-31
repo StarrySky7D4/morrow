@@ -837,5 +837,53 @@
     }
   },
   "pluginsDirectoryNativePickerStart": "Escolher pasta e executar o plugin",
-  "pluginsDirectoryNativePickerIntro": "A escolha da pasta inicia o plugin. O prazo inclui a seleção; sair desta vista cancela a tarefa pendente."
+  "pluginsDirectoryNativePickerIntro": "A escolha da pasta inicia o plugin. O prazo inclui a seleção; sair desta vista cancela a tarefa pendente.",
+  "pluginsWatchTitle": "Alterações no diretório",
+  "pluginsWatchIntro": "Observe apenas a pasta confirmada para esta execução. A observação para ao atingir o limite de tempo, registros ou dados. O Windows pede a confirmação da pasta ao iniciar.",
+  "pluginsWatchAllow": "Permitir que este plugin observe alterações no diretório",
+  "pluginsWatchAllowNotice": "Autorize também a listagem de arquivos e confirme a pasta a cada execução.",
+  "pluginsWatchNoPlugins": "Nenhum plugin ativado tem permissão para observar diretórios e listar arquivos.",
+  "pluginsWatchPath": "Pasta a observar (caminho completo)",
+  "pluginsWatchFrames": "Máximo de registros entregues",
+  "pluginsWatchBytes": "Limite de dados entregues (bytes)",
+  "pluginsWatchStart": "Confirmar pasta e iniciar observação",
+  "pluginsWatchBounds": "Limites do plugin: {frames} registros, {bytes} bytes, {ms} milissegundos.",
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchNew": "Preparar nova observação",
+  "pluginsWatchIdle": "Nenhuma observação de diretório foi iniciada.",
+  "pluginsWatchRunning": "A observação está em andamento. Atualize o estado ou solicite o cancelamento.",
+  "pluginsWatchReady": "A observação terminou. Leia o resultado uma única vez.",
+  "pluginsWatchReviewed": "Resultado lido. Revise antes de confirmar a conclusão.",
+  "pluginsWatchAcknowledged": "A conclusão desta observação foi confirmada.",
+  "pluginsWatchUnknown": "Não foi possível confirmar esta operação. Seu registro foi mantido. Não haverá nova tentativa nem nova tarefa automática.",
+  "pluginsWatchCancelled": "Esta observação foi cancelada.",
+  "pluginsWatchExpired": "Esta observação atingiu o limite de tempo.",
+  "pluginsWatchClosed": "O diretório foi liberado e a limpeza foi concluída.",
+  "pluginsWatchRecords": "Registros recebidos pelo plugin: {frames}; dados contabilizados: {bytes} bytes.",
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchFormError": "Verifique o caminho completo da pasta. Todos os limites devem ser positivos e respeitar os máximos do plugin.",
+  "pluginsWatchOtherPanel": "A conclusão da observação ainda não foi confirmada. Revise a tarefa original no painel de alterações do diretório."
 }

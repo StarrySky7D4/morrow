@@ -1,0 +1,46 @@
+{
+  "status": "PASS_INDEPENDENT_VM054_RETAINED_BYTES_AFTER_STORAGE_INTERRUPTION",
+  "verified_files": [
+    {
+      "path": "D:\\build_cache\\retained-unknown-archives\\vm054\\disk\\acceptance-original.vhdx",
+      "bytes": 19633537024,
+      "sha256": "eeaf700a7be549a357665f944ef29f04afa00dc85efffa150677e833cc913380",
+      "mtime_ns": 1793443602702664500
+    },
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261031-054\\acceptance.vhdx",
+      "bytes": 19633537024,
+      "sha256": "eeaf700a7be549a357665f944ef29f04afa00dc85efffa150677e833cc913380",
+      "mtime_ns": 1793443479080195800
+    },
+    {
+      "path": "D:\\build_cache\\retained-unknown-archives\\vm054\\state\\603281BE-F3F0-474D-9835-FD9939AA9B52.vmcx",
+      "bytes": 73728,
+      "sha256": "8adff058bb3fa84d4b019f965b96def79b11c2a5afab0a2abfcfb438981eaac5",
+      "mtime_ns": 1793443607627976000
+    },
+    {
+      "path": "D:\\build_cache\\retained-unknown-archives\\vm054\\state\\603281BE-F3F0-474D-9835-FD9939AA9B52.vmgs",
+      "bytes": 4194816,
+      "sha256": "14959784e2a77f8a6161b1da62b55a54c3ce020334e5722faa42137ac62ff8c5",
+      "mtime_ns": 1793443607775063200
+    },
+    {
+      "path": "D:\\build_cache\\retained-unknown-archives\\vm054\\state\\603281BE-F3F0-474D-9835-FD9939AA9B52.VMRS",
+      "bytes": 2095058944,
+      "sha256": "9beb6dc53d2a621287d5a1d1c15818dab2b4a5b8789ea49478190d3e8b1e7a13",
+      "mtime_ns": 1793443611622575400
+    }
+  ],
+  "all_four_archive_members_and_detached_original_disk_byte_identical": true,
+  "original_1327_status": "FAILED_POST_COMPRESSION_VERIFICATION",
+  "original_1327_not_retried": true,
+  "original_case1300_Unknown_unchanged": true,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "compression_calls": 0,
+  "file_removals": 0,
+  "restore_or_replay": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

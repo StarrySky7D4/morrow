@@ -1,0 +1,9 @@
+{
+  "status": "ORIGINAL_HOST_COMMAND_RETURNED_1_AT_IMMEDIATE_EJECT_POSTCONDITION",
+  "message": "EJECT_NOT_OBSERVED",
+  "original_process_returned": true,
+  "public_file_not_removed": true,
+  "private_file_untouched": true,
+  "new_read_observation": "Both VM054 DVD paths now null; no second media mutation authorized by this continuation.",
+  "old_owner_contacts": 0
+}

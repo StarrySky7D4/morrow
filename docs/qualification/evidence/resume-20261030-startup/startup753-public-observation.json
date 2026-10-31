@@ -1,0 +1,146 @@
+{
+  "original_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm048-startup-probe-753\\guest-receipt.json",
+    "bytes": 10795,
+    "sha256": "0c5f191eb6db59085a554469f918fdff64ffbb5702da8234d9d233642da25015"
+  },
+  "observation": {
+    "thread_token_returned": false,
+    "thread_token_error": 1008,
+    "primary_token_returned": true,
+    "primary_token_error": 0,
+    "user_sid": "S-1-5-21-2905472164-2625933686-2543038763-1000",
+    "owner_sid": "S-1-5-32-544",
+    "logon_sid": "S-1-5-5-0-920448",
+    "original_subject_predicates_pass": true,
+    "job_query_returned": true,
+    "in_job": false,
+    "job_error": 0,
+    "windows_directory": "C:\\WINDOWS",
+    "windows_directory_return": 10,
+    "exception_type": "InvalidOperationException",
+    "original_token_closed": true,
+    "token_close_error": 0,
+    "query_memory_freed": true,
+    "actual_default_dacl": {
+      "bytes": 80,
+      "entries": [
+        {
+          "type": 0,
+          "flags": 0,
+          "mask": 268435456,
+          "sid": "S-1-5-32-544"
+        },
+        {
+          "type": 0,
+          "flags": 0,
+          "mask": 268435456,
+          "sid": "S-1-5-18"
+        },
+        {
+          "type": 0,
+          "flags": 0,
+          "mask": 2684354560,
+          "sid": "S-1-5-5-0-920448"
+        }
+      ]
+    },
+    "schema": "READONLY_STARTUP_PREFIX751",
+    "first_original_guard": "FIXED_GUEST_WINDOWS_ROOT",
+    "queries": [
+      {
+        "kind": 10,
+        "returned": true,
+        "bytes": 56,
+        "error": 0
+      },
+      {
+        "kind": 1,
+        "returned": true,
+        "bytes": 44,
+        "error": 0
+      },
+      {
+        "kind": 2,
+        "returned": true,
+        "bytes": 408,
+        "error": 0
+      },
+      {
+        "kind": 4,
+        "returned": true,
+        "bytes": 24,
+        "error": 0
+      },
+      {
+        "kind": 6,
+        "returned": true,
+        "bytes": 88,
+        "error": 0
+      },
+      {
+        "kind": 25,
+        "returned": true,
+        "bytes": 28,
+        "error": 0
+      },
+      {
+        "kind": 12,
+        "returned": true,
+        "bytes": 4,
+        "error": 0
+      },
+      {
+        "kind": 3,
+        "returned": true,
+        "bytes": 292,
+        "error": 0
+      },
+      {
+        "kind": 10,
+        "returned": true,
+        "bytes": 56,
+        "error": 0
+      }
+    ],
+    "original_read_resources_closed": true,
+    "source_prefix_only_no_file_pins_or_product_creation": true,
+    "vcruntime140_system32_present": false,
+    "vcruntime140_1_system32_present": false,
+    "process_architecture_bits": 64,
+    "P2_accepted": false
+  },
+  "original_child_capture": {
+    "reason": null,
+    "exit_query_error": 0,
+    "pid": 5808,
+    "managed_readers_joined": true,
+    "creation_filetime_100ns": 134378259490185074,
+    "original_native_handle": 2780,
+    "elapsed_ms": 393,
+    "exit_raw_buffer": 0,
+    "actual_native_dword": 0,
+    "original_image_path": "C:\\Morrow-StartupProbe752\\StartupReadOnly751.exe",
+    "exit_query_returned": true,
+    "stderr_native_close": "CLOSED_VERIFIED",
+    "stderr_EOF": true,
+    "status": "CLOSED_NEW_ORIGINAL_0_OR_ASSERTION_RESULT_NOT_PRODUCT_ACCEPTANCE",
+    "no_replay": false,
+    "stdout_native_close": "CLOSED_VERIFIED",
+    "record_directory_created": true,
+    "stdout_bytes": 1500,
+    "stdout_EOF": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "record_directory_error": 0,
+    "original_process_disposed_after_checked_native_close": true,
+    "reader_native_TLS": "NOT_CLAIMED_BY_MANAGED_THREAD_JOIN",
+    "stderr_bytes": 0,
+    "stdout_sha256": "99f038f508e5b06a70b8f68a32423d990402af130e3509315a8ee0df878f09c1",
+    "process_close": "CLOSED_VERIFIED",
+    "managed_streams_closed": true,
+    "original_process_signaled": true
+  },
+  "firmware_uuid": "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+  "account_sid": "S-1-5-21-2905472164-2625933686-2543038763-1000",
+  "scope": "Public facts copied from closed read-only probe; no P2 product execution"
+}

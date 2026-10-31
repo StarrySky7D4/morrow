@@ -3240,6 +3240,80 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsViewFailed => '插件界面未能打开';
 
   @override
+  String get pluginsWatchAcknowledged => '本次观察已确认结束。';
+
+  @override
+  String get pluginsWatchAllow => '允许此插件观察目录变化';
+
+  @override
+  String get pluginsWatchAllowNotice => '还需批准“列出文件”，并逐次确认要观察的文件夹。';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return '插件上限：$frames 条记录、$bytes 字节、$ms 毫秒。';
+  }
+
+  @override
+  String get pluginsWatchBytes => '交付数据上限（字节）';
+
+  @override
+  String get pluginsWatchCancelled => '本次观察已取消。';
+
+  @override
+  String get pluginsWatchClosed => '目录已释放，本次清理已完成。';
+
+  @override
+  String get pluginsWatchExpired => '本次观察已到时停止。';
+
+  @override
+  String get pluginsWatchFormError => '请核对完整目录路径，并确保各项限额为正数且不超过插件上限。';
+
+  @override
+  String get pluginsWatchFrames => '最多交付记录数';
+
+  @override
+  String get pluginsWatchIdle => '尚未开始目录观察';
+
+  @override
+  String get pluginsWatchIntro =>
+      '仅观察本次确认的文件夹。达到时间、记录数或数据上限后停止；开始时仍需在 Windows 窗口确认。';
+
+  @override
+  String get pluginsWatchNew => '准备新的目录观察';
+
+  @override
+  String get pluginsWatchNoPlugins => '暂无已启用并获得目录观察和列出文件授权的插件。';
+
+  @override
+  String get pluginsWatchOtherPanel => '目录观察尚未确认结束，请在“目录变化观察”面板核对原任务。';
+
+  @override
+  String get pluginsWatchPath => '要观察的文件夹（完整路径）';
+
+  @override
+  String get pluginsWatchReady => '观察已结束，可以读取一次结果。';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return '插件接收记录：$frames 条；已计入数据：$bytes 字节。';
+  }
+
+  @override
+  String get pluginsWatchReviewed => '结果已读取，请核对后确认结束。';
+
+  @override
+  String get pluginsWatchRunning => '本次观察正在进行；可刷新状态或请求停止。';
+
+  @override
+  String get pluginsWatchStart => '确认文件夹并开始观察';
+
+  @override
+  String get pluginsWatchTitle => '目录变化观察';
+
+  @override
+  String get pluginsWatchUnknown => '本次操作结果无法确认，记录已保留。不会自动重试或开始新任务。';
+
+  @override
   String get pluginsWorkbench => '工作台插件';
 
   @override

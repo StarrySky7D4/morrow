@@ -27,6 +27,8 @@ pub struct Selection {
     pub approved_io: BTreeSet<IoCapability>,
     /// Exact-package upload ceiling; never an object, Store or live owner grant.
     pub approved_blob_upload: bool,
+    /// Exact-package watch ceiling. No FileList approval or restored selection implies it.
+    pub approved_fs_watch: bool,
 }
 /// Persistent exact-version approval; this is not a live instance binding or object grant.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -88,11 +90,14 @@ impl Registry {
             let state = proto::Registry::decode(raw.as_slice())
                 .map_err(|_| Error::Invalid("registry protobuf"))?;
             // Refuse unknown/noncanonical data rather than silently rewriting and losing it.
-            if !matches!(state.schema_version, 1..=3) || state.encode_to_vec() != raw {
+            if !matches!(state.schema_version, 1..=4) || state.encode_to_vec() != raw {
                 return Err(Error::UnsupportedVersion);
             }
             let legacy = state.schema_version == 1;
             if state.schema_version < 3 && state.selections.iter().any(|s| s.approved_blob_upload) {
+                return Err(Error::UnsupportedVersion);
+            }
+            if state.schema_version < 4 && state.selections.iter().any(|s| s.approved_fs_watch) {
                 return Err(Error::UnsupportedVersion);
             }
             result.format_version = state.schema_version.max(2);
@@ -152,6 +157,7 @@ impl Registry {
                         approved,
                         approved_io,
                         approved_blob_upload: entry.approved_blob_upload,
+                        approved_fs_watch: entry.approved_fs_watch,
                     },
                 );
             }
@@ -242,6 +248,7 @@ impl Registry {
             || !selection.approved.is_subset(package.capabilities())
             || !selection.approved_io.is_subset(package.io_capabilities())
             || (selection.approved_blob_upload && package.blob_upload_declaration().is_none())
+            || (selection.approved_fs_watch && package.fs_watch_declaration().is_none())
         {
             return Err(Error::Integrity);
         }
@@ -471,7 +478,7 @@ impl Registry {
         }
         let revision = self.revision.checked_add(1).ok_or(Error::Limit)?;
         let state = proto::Registry {
-            schema_version: self.format_version.max(if next.values().any(|s| s.approved_blob_upload) { 3 } else { 2 }),
+            schema_version: self.format_version.max(if next.values().any(|s| s.approved_fs_watch) { 4 } else if next.values().any(|s| s.approved_blob_upload) { 3 } else { 2 }),
             revision,
             dependency_locks: dependencies
                 .values()
@@ -497,6 +504,7 @@ impl Registry {
                         .map(IoCapability::number)
                         .collect(),
                     approved_blob_upload: s.approved_blob_upload,
+                    approved_fs_watch: s.approved_fs_watch,
                 })
                 .collect(),
         };
@@ -523,6 +531,7 @@ impl Registry {
             approved: BTreeSet::new(),
             approved_io: BTreeSet::new(),
             approved_blob_upload: false,
+            approved_fs_watch: false,
         };
         if let Some(previous) = self.selections.get(id) {
             let old = self.load(previous)?;
@@ -636,6 +645,27 @@ impl Registry {
         next.get_mut(id).expect("existing selection").approved_blob_upload = approved;
         self.commit(next, self.dependencies.clone())
     }
+    /// Validate exact code and revision before a manager revokes a live instance.
+    pub fn validate_fs_watch_approval(
+        &self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+    ) -> Result<()> {
+        self.check_revision(revision)?;
+        let selection = self.selections.get(id).ok_or(Error::NotFound)?;
+        if selection.digest != digest { return Err(Error::RevisionConflict); }
+        if approved && self.load(selection)?.fs_watch_declaration().is_none() {
+            return Err(Error::Invalid("watch approval exceeds declaration"));
+        }
+        Ok(())
+    }
+    /// Independent approval, cleared on upgrade and never inferred from IO capabilities.
+    pub fn approve_fs_watch(
+        &mut self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+    ) -> Result<()> {
+        self.validate_fs_watch_approval(id, digest, approved, revision)?;
+        let mut next = self.selections.clone();
+        next.get_mut(id).expect("existing selection").approved_fs_watch = approved;
+        self.commit(next, self.dependencies.clone())
+    }
     /// Preflight the active presentation slot without changing any selection.
     pub fn exclusive_peers(
         &self,
@@ -734,7 +764,7 @@ mod tests {
         duplicate.extend_from_slice(&[8, 1]); // Repeated scalar field.
         assert_eq!(reject(&duplicate), Error::UnsupportedVersion);
         let mut future = state.clone();
-        future.schema_version = 4;
+        future.schema_version = 5;
         assert_eq!(reject(&future.encode_to_vec()), Error::UnsupportedVersion);
         let mut zero = state;
         zero.revision = 0;
@@ -749,6 +779,7 @@ mod tests {
             approved_capabilities: vec![],
             approved_io_capabilities: vec![],
             approved_blob_upload: false,
+            approved_fs_watch: false,
         };
         let duplicate = proto::Registry {
             schema_version: 1,

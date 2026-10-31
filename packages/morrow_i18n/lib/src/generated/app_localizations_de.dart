@@ -3557,6 +3557,93 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Plugin-Ansicht konnte nicht geöffnet werden';
 
   @override
+  String get pluginsWatchAcknowledged =>
+      'Der Abschluss dieser Beobachtung wurde bestätigt.';
+
+  @override
+  String get pluginsWatchAllow =>
+      'Diesem Plugin das Beobachten von Verzeichnisänderungen erlauben';
+
+  @override
+  String get pluginsWatchAllowNotice =>
+      'Erlauben Sie außerdem das Auflisten von Dateien und bestätigen Sie den Ordner für jeden Lauf.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'Plugin-Limits: $frames Datensätze, $bytes Bytes, $ms Millisekunden.';
+  }
+
+  @override
+  String get pluginsWatchBytes => 'Datenlimit der Übermittlung (Bytes)';
+
+  @override
+  String get pluginsWatchCancelled => 'Diese Beobachtung wurde abgebrochen.';
+
+  @override
+  String get pluginsWatchClosed =>
+      'Das Verzeichnis wurde freigegeben und die Bereinigung ist abgeschlossen.';
+
+  @override
+  String get pluginsWatchExpired =>
+      'Diese Beobachtung hat ihr Zeitlimit erreicht.';
+
+  @override
+  String get pluginsWatchFormError =>
+      'Prüfen Sie den vollständigen Ordnerpfad. Alle Limits müssen positiv sein und innerhalb der Plugin-Limits liegen.';
+
+  @override
+  String get pluginsWatchFrames => 'Maximal übermittelte Datensätze';
+
+  @override
+  String get pluginsWatchIdle =>
+      'Es wurde noch keine Verzeichnisbeobachtung gestartet.';
+
+  @override
+  String get pluginsWatchIntro =>
+      'Nur der für diesen Lauf bestätigte Ordner wird beobachtet. Beim Zeit-, Datensatz- oder Datenlimit endet die Beobachtung. Windows bittet beim Start um Bestätigung des Ordners.';
+
+  @override
+  String get pluginsWatchNew => 'Neue Beobachtung vorbereiten';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'Kein aktiviertes Plugin darf sowohl Verzeichnisse beobachten als auch Dateien auflisten.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'Der Abschluss der Verzeichnisbeobachtung ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Task im Bereich Verzeichnisänderungen.';
+
+  @override
+  String get pluginsWatchPath => 'Zu beobachtender Ordner (vollständiger Pfad)';
+
+  @override
+  String get pluginsWatchReady =>
+      'Beobachtung beendet. Lesen Sie das Ergebnis einmal.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'Vom Plugin empfangene Datensätze: $frames; angerechnete Daten: $bytes Bytes.';
+  }
+
+  @override
+  String get pluginsWatchReviewed =>
+      'Ergebnis gelesen. Prüfen Sie es, bevor Sie den Abschluss bestätigen.';
+
+  @override
+  String get pluginsWatchRunning =>
+      'Die Beobachtung läuft. Aktualisieren Sie den Status oder fordern Sie den Abbruch an.';
+
+  @override
+  String get pluginsWatchStart => 'Ordner bestätigen und Beobachtung starten';
+
+  @override
+  String get pluginsWatchTitle => 'Verzeichnisänderungen';
+
+  @override
+  String get pluginsWatchUnknown =>
+      'Dieser Vorgang konnte nicht bestätigt werden. Sein Datensatz bleibt erhalten. Es erfolgt kein automatischer Wiederholungsversuch oder neuer Task.';
+
+  @override
   String get pluginsWorkbench => 'Arbeitsbereich-Plugin';
 
   @override

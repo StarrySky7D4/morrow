@@ -1,0 +1,9 @@
+[package]
+name = "morrow-watch-observation-host"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[dependencies]
+morrow-plugin-runtime = { path = "../../../../plugin_runtime", default-features = false }
+sha2 = "=0.10.9"

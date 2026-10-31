@@ -1,0 +1,18 @@
+{
+  "status": "PASS_CLOSED_NONEXECUTABLE_COMPRESSION_ALL_BYTES_PRESERVED",
+  "unique_files_compressed": 220,
+  "aliases_compressed": 328,
+  "files_byte_verified": 7396,
+  "all_external_evidence_equal": true,
+  "free_before": 8029192192,
+  "free_after": 8379265024,
+  "observed_free_delta": 350072832,
+  "concurrent_space_changes_not_attributed": true,
+  "file_deletions": 0,
+  "executable_or_dll_changes": 0,
+  "original_failed_lint_retained": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

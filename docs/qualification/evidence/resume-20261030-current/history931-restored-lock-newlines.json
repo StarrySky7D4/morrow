@@ -1,0 +1,16 @@
+[
+  {
+    "path": "workbench_host/Cargo.lock",
+    "before_sha256": "d99e31c6a0550f8a55cd0de7a12026eb60496da494ccbd7a9224bcda16a37445",
+    "after_sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3",
+    "restored_original_LF": true,
+    "dependency_content_unchanged": true
+  },
+  {
+    "path": "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock",
+    "before_sha256": "e0cd5c41796b750ecb76249570edc00405f3dd45abc11ee69645c55091770881",
+    "after_sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d",
+    "restored_original_LF": true,
+    "dependency_content_unchanged": true
+  }
+]

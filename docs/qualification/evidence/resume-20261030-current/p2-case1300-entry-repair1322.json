@@ -1,0 +1,75 @@
+{
+  "status": "REPAIRED_ARCHIVE_EVIDENCE_ADAPTER_BEFORE_FIRST_PRODUCT_CASE_DISPATCH",
+  "tag": "5228f346f70f4556b180d07a2d364a26",
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "old_entry": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_1300.py",
+    "bytes": 6260,
+    "sha256": "1dd632ef70fb6d20ed4b9f58dbb1d048ea72587fb94e6337dd7003c978068ce0"
+  },
+  "new_entry": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_1323.py",
+    "bytes": 6802,
+    "sha256": "301f1c767cc72d430f370fd762f46b07daa3070c980e45fc6b0d4bd9da403baa"
+  },
+  "new_guard": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_cold_guarded_1323.py",
+    "bytes": 5291,
+    "sha256": "d757091e50744021c601b634b4354c7c44866fc4d8c88cbd6cba5f5d37f4ef7d"
+  },
+  "helper": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\verify_vm053_retained_archive_1322.py",
+    "bytes": 5241,
+    "sha256": "a610e1229bc1330432e435294225b2256d5cb304c45c8fd65d318096a3a20edd"
+  },
+  "retained_inputs": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\retained-inputs.json",
+    "bytes": 998,
+    "sha256": "df2da02c18c8ac93523f04e0c7b8426292defcade6c243473b497a8736b467f6"
+  },
+  "original_refusal": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\original-refusal.json",
+    "bytes": 2088,
+    "sha256": "50b243a604c3cca5af859624739c4f586e28bc62d50675269bd650a364c96a7b"
+  },
+  "current_retained_archive_check": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\retained-archive-checked.json",
+    "bytes": 1886,
+    "sha256": "47811ef7782dbdd3369e466ff549ff318cc0d78c774cd1e1ed01f916414406ac"
+  },
+  "pure_evidence_contract": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\pure-evidence-contract-checks.json",
+    "bytes": 414,
+    "sha256": "dfcee2bc22625241146cb936154987d363486e9677cce588adfe8db045317357"
+  },
+  "entry_diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\entry.diff",
+    "bytes": 1172,
+    "sha256": "d413de173bebc9de5dfa791a0072e4ed07e53478d38a621bc0e59843e96ece9e"
+  },
+  "guard_diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\guard.diff",
+    "bytes": 3113,
+    "sha256": "1b23c5550d962ed6344bbef5cc4385834af5f51097735e07af8241e3250d6884"
+  },
+  "all_original_case_authority_native_owner_deadline_and_powerShell_checks_unchanged": true,
+  "case_plan_unchanged": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-plan.json",
+    "bytes": 7831,
+    "sha256": "9501731f9a67e0365d2373bb287f7c5e35f21c1c43cde9e3d6715f61d13a1fdc"
+  },
+  "PowerShell_script_unchanged": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\Invoke-Transaction1737.ps1",
+    "bytes": 22444,
+    "sha256": "f219906b6c405a3046ba371d470942ddb0a2a6f50e78e69c52ce56caa41bbdac"
+  },
+  "old_entry_not_replayed": true,
+  "first_product_case_still_not_dispatched": true,
+  "VM_calls": 0,
+  "policy_calls": 0,
+  "credential_reads": 0,
+  "canonical_source_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,16 @@
+{
+  "name": "close-unwind",
+  "exit_code": 0,
+  "seconds": 0.297,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-unwind.stdout",
+    "bytes": 190,
+    "sha256": "e50276e73e55eca80628df8e23fe85b7e740ee25fa7671915c5989f9085da232"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-unwind.stderr",
+    "bytes": 442,
+    "sha256": "f75b2a5eecc0843ce153832269d36d0e284dc87a3b8a2337f5457bdb079b100b"
+  }
+}

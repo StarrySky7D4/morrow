@@ -341,7 +341,7 @@ namespace C28.RootP1682 {
      NoImpersonation(NoThread[0]);Memory(Scratch,65536);OpenToken(Token0,Native.GetCurrentProcess());Initial=ReadSubject(Token0.Raw);
      bool inJob;Need(Native.IsProcessInJob(Native.GetCurrentProcess(),IntPtr.Zero,out inJob)&&!inJob,"CREATOR_JOB_NOT_PROVEN_EMPTY");
      StringBuilder system=new StringBuilder(260);uint n=Native.GetWindowsDirectoryW(system,260);
-     Need(n>0&&n<260&&system.ToString()==@"C:\Windows","FIXED_GUEST_WINDOWS_ROOT");
+     Need(Rules.FixedWindowsRoot(n,system.ToString()),"FIXED_GUEST_WINDOWS_ROOT");
      PinAll();Check();
      NamespaceAttempted=true;Need(Native.CreateDirectoryW(OutputRoot,IntPtr.Zero),"FRESH_OUTPUT_NAMESPACE_REQUIRED");NamespaceCreated=true;
      OpenFile(OutputDirectory,OutputRoot,0x80000000,3,true,false);

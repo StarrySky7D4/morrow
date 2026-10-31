@@ -1,0 +1,35 @@
+{
+  "status": "PAUSED_UNCOMPILED_WIRE_QUALIFICATION_SOURCE",
+  "source_digest_before_report": "57230cf6eb2b8d98109ec82c5b04e76e5132fe8379586f570e7f91a1ca62b444",
+  "canonical_integration_test": {
+    "path": "C:\\ms1020\\workbench_host\\tests\\fs_watch_protected.rs",
+    "bytes": 20078,
+    "sha256": "e13f90201bc12ed94e6e00ee6142e72331537fd4f5db14d957cbbaf62f96f3f7"
+  },
+  "original_test_before_addition": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-wire-qualification-preparation-1623\\fs_watch_protected.before.rs",
+    "bytes": 12607,
+    "sha256": "4fb0871bc93e622a80d57b2ea4e9d683671886d09cd7df48ccd65bef2f4edc42"
+  },
+  "native_protocol_source": {
+    "path": "C:\\ms1020\\workbench_host\\src\\fs_watch_protocol.rs",
+    "bytes": 5905,
+    "sha256": "c81ab1fa88c469c4ea50e6b4c000c51f325b132d3d959728c7367393dbc6bcd1"
+  },
+  "generated_host_identity": {
+    "path": "C:\\ms1020\\lib\\plugins\\generated\\identity.dart",
+    "bytes": 2845,
+    "sha256": "03601de369508dbd7c58e5186f419a74d1dce3f350fdefe82303a08b2b0447b8"
+  },
+  "schema_digest": "276a2ed0842cedd7867568dbf930d1c3587b506b6850857001ee587c29d2bf9e",
+  "generated_host_digest": "451024bca08d2de8860aee434f6d6c24e55db3fae056b7e593f4d07dba65f78f",
+  "generated_host_digest_matches_schema": false,
+  "new_capnp_native_test": "NOT_COMPILED_NOT_RUN",
+  "Dart_decode_of_actual_native_result": "NOT_RUN",
+  "note": "Regenerate and verify the canonical Dart host identity before the next native/formal UI build.",
+  "build_jobs_started_after_pause": 0,
+  "runtime_cases_started_after_pause": 0,
+  "VM_actions": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

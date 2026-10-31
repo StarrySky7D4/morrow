@@ -1,0 +1,28 @@
+{
+  "status": "PASS_WINDOWS_ROOT_NORMAL91_PURE_ONLY",
+  "utc": "2026-10-30T09:28:56.806085+00:00",
+  "rows": [
+    {
+      "mode": "normal",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\controller-startup-fix-754\\pure-normal.exe",
+        "bytes": 172032,
+        "sha256": "5ce55a77b69aff8610899c7009c910ab2e6eb1f1d00905bd41780ffaf3f3028c"
+      },
+      "pure_methods": 91,
+      "original_compiler_and_test_returned": true
+    }
+  ],
+  "new_diagnostic_methods": 3,
+  "new_path_methods": 3,
+  "ascii_case_variants_checked": 256,
+  "original_pure_methods_per_mode": 85,
+  "source_unchanged": true,
+  "native_or_VM_calls": 0,
+  "product_processes_created": 0,
+  "original_unknown_owner_contacts": 0,
+  "windows_root_ascii_case_comparison_fixed": true,
+  "additional_roots_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

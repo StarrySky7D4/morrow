@@ -1,0 +1,109 @@
+{
+  "status": "PASS_SCOPED_CURRENT_NATIVE_SDK_RUST93_NATIVE14_INDEPENDENT3_REVIEWED",
+  "source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "checks": 983,
+  "commands": 46,
+  "rust_tests": 93,
+  "native_programs": 14,
+  "independent_consumers": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "retained_outputs_captured_after_closed_run": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\c_channel.exe",
+      "bytes": 190464,
+      "sha256": "e40fa4b7ab0d77586c1d02e67cbb7236f38f14580e37a2347bf5b8d9d999590b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\cpp_channel.exe",
+      "bytes": 298496,
+      "sha256": "86c949e03dda3b965276fd7c8be9f7f968c1ac5eb9b3d594d08892de6e1ace7e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\c_channel_guardpage.exe",
+      "bytes": 190464,
+      "sha256": "2666ac749aea5c4a2d22e9ede0cfcd1118802ad24df4e5d08f8f090b5bdc4bce"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\cpp_channel_guardpage.exe",
+      "bytes": 189952,
+      "sha256": "cf15b75a06e0611d9a7b28e5f0d4a29c317394ac803f883fd372d77c7a93c50e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\c_transport.exe",
+      "bytes": 162816,
+      "sha256": "552b8d15d76c7c9c25b7898724cf5c2f3a07388011b2ec643f0df435aaffd9f0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\cpp_transport.exe",
+      "bytes": 274432,
+      "sha256": "1d0660c5b3559778f0384879c6de32b6f11749d02e7056ed96968366d50eedba"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-clang\\cpp_codec.exe",
+      "bytes": 328192,
+      "sha256": "e0b26562281d10b6a5f83c9ada74e26162c5de2603283e418d1554187bf49f7c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\c_channel.exe",
+      "bytes": 21504,
+      "sha256": "0435dd69c702761723fca189cb8b17569e9c544afb314bbfed5283df5116ae32"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\cpp_channel.exe",
+      "bytes": 48128,
+      "sha256": "c3b349197e1b62f4bbacc6f334de8c759aa65f01788246f18de8ccc76466daa8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\c_channel_guardpage.exe",
+      "bytes": 22016,
+      "sha256": "560b53fa77763a751367ed761defa9634e9f3f64b30c1f53ef1ab314029f7e24"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\cpp_channel_guardpage.exe",
+      "bytes": 22016,
+      "sha256": "1db174912bb6b4f040a1370433724b3a08fcf7d2975785387f12f0c5400eaf05"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\c_transport.exe",
+      "bytes": 14336,
+      "sha256": "dbf75ce69149d953b33663bbc02d3462e7a282bfed71103f0e16667eb09b29d4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\cpp_transport.exe",
+      "bytes": 27136,
+      "sha256": "7b62b0aa833c38f455782bc2756eaf7b07416583aee58adc509a3234b4103aa8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\native-msvc\\cpp_codec.exe",
+      "bytes": 89088,
+      "sha256": "32060e04a3643775c5eb8a3094b689ece2776f80ff3c4fa2ff6542c5afd7859c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\standalone-native-msvc\\sdk_consumer-c.exe",
+      "bytes": 26624,
+      "sha256": "92374841d9003390a86abdcc76ba3c2434ddd34856d1ce631662074172755faa"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\standalone-native-msvc\\sdk_consumer-cpp.exe",
+      "bytes": 62976,
+      "sha256": "eb456b1cf2362329d7f1f5d5438891da39ab417575a348dc864cf1499abcdd05"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\consumer-target\\debug\\morrow-windows-sdk-consumer.exe",
+      "bytes": 357376,
+      "sha256": "05d838acb1ed6f57bd9e44fffa0a87c6835c5acf84324d9051355c3e61a25934"
+    }
+  ],
+  "first_build_artifact_roles_verified": 5,
+  "current_core_schema_tests": true,
+  "original_processes_returned": true,
+  "full_SDK26_accepted": false,
+  "protected_host_or_UI_acceptance": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "runtime_owner_contacts": 0
+}

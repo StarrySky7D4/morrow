@@ -1,0 +1,27 @@
+{
+  "kind": "historical_interactive_tool_observation_summary",
+  "windows": [
+    {
+      "app": "process:D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\watch-picker-1524.exe",
+      "id": 23791600,
+      "title": "Morrow - select directory"
+    }
+  ],
+  "confirmation": {
+    "window": {
+      "app": "process:D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\watch-picker-1524.exe",
+      "id": 23791600,
+      "title": "Morrow - select directory"
+    },
+    "folder": "D:\\build_cache\\wp1525\\fixture\\observed",
+    "action": "select folder",
+    "element_index": 55
+  },
+  "folder_value_observed_in_native_edit": true,
+  "click_returned_before_refresh": true,
+  "post_click_refresh": "no screenshot targets found",
+  "original_process_result_file": "original-result.json",
+  "original_native_result_file": "result.json",
+  "window_objects_and_element_indexes_are_stale": true,
+  "old_morrow_windows_operated": false
+}

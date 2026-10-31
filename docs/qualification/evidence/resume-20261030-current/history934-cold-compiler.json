@@ -1,0 +1,192 @@
+{
+  "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "compiler_artifacts": 15,
+  "all_fresh_false": true,
+  "outputs": [
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libversion_check-1b9f1c976da98159.rlib",
+      "bytes": 474474,
+      "sha256": "6abc7bd707a8175f7ac63e9765164ed7b27dc144bd6611ea99e7341d7d8d7efd"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libversion_check-1b9f1c976da98159.rmeta",
+      "bytes": 74339,
+      "sha256": "52ec3016683d78b0a578e0389760e1ddd93a17bffd8ce6b449997991888b0eb7"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\build\\generic-array-b1f0cd5fcff2164f\\build-script-build.exe",
+      "bytes": 285184,
+      "sha256": "f99cc3a31592381f1a24c420f4a40b888e8cdeae356ae5a7eb3a8278f5bb8af5"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\build\\generic-array-b1f0cd5fcff2164f\\build_script_build.pdb",
+      "bytes": 1617920,
+      "sha256": "1ad3292464c63e430de3445debe3950828f379e1b249b2f2684b8aa5ec856d9d"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libtypenum-7d726f43b92d47b8.rlib",
+      "bytes": 2724972,
+      "sha256": "e38d960b025a87f7f5996a383ea5cec1c1cfd9c0d2122bb9a9a6551a0d54bf3e"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libtypenum-7d726f43b92d47b8.rmeta",
+      "bytes": 2718488,
+      "sha256": "3bb39436512214d75cd0e8f44ed5627f6a4b80d9d5dd38b9325606a67befd929"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libgeneric_array-6234b4687456b44d.rlib",
+      "bytes": 809204,
+      "sha256": "b1e573b64ed6bcabc5c5e1606d5c746c2b88f36c505bafa5d34cf2ecc6ebebb5"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libgeneric_array-6234b4687456b44d.rmeta",
+      "bytes": 804843,
+      "sha256": "98457ca42c4c65ae6b0f602faeb37165e6d51e0e45881b99dcedc931c2caec39"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcrypto_common-c3cd7e2929482370.rlib",
+      "bytes": 29166,
+      "sha256": "06f4e8235a1a79c425ebd665f5d4a77e568b79bafc6ff11069cb5085edc5f0a8"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcrypto_common-c3cd7e2929482370.rmeta",
+      "bytes": 27483,
+      "sha256": "6c2eb557c52e08637f1104cc127910871b452b827eaa57c352249a2e4f7df260"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rlib",
+      "bytes": 50980,
+      "sha256": "cc0b8d809884f88d4a76c94769bb6a3f2d171db8bd59bea69b16e4ece6df236e"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libblock_buffer-c59cb3de5dae4bb9.rmeta",
+      "bytes": 49324,
+      "sha256": "7097d465bed28bf60acf8ece15a02f7d84317436b936b5e913f2a8c27ae88714"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rlib",
+      "bytes": 172320,
+      "sha256": "09a97d28121ea9b9bfce3aee1214592e82d0ca358e9a846e8d23fd58b80ff819"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libdigest-b11f4dba4e4c5ecc.rmeta",
+      "bytes": 169076,
+      "sha256": "db4194271f3078a8129a082c96216688502ecc4c83035f03dce036dd8aca5885"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rlib",
+      "bytes": 40106,
+      "sha256": "b562ee1366508cdda03706cad7a89a9ca3de2ef3ea6893f8ad22877b0c6f4ae1"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcpufeatures-3bf78bc8a1138d3f.rmeta",
+      "bytes": 39299,
+      "sha256": "b0090d795c4ac8dc91eb6074582ad2e6e0956e43027781a3b51483dd532d8240"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcapnp-e0edce9ca7764174.rlib",
+      "bytes": 5216746,
+      "sha256": "8f02ff03bca763031abb3d2bc682a46c76f067bfedc1fc3e04c7a0591ca4defd"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcapnp-e0edce9ca7764174.rmeta",
+      "bytes": 2887023,
+      "sha256": "3c1e20987de1b5e50f40e89b88f59380510e20d6276072324865b7bc1d0b843d"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rlib",
+      "bytes": 6642,
+      "sha256": "3fc5d8c11795d955c36acbc844291446d565281adcc4365bfa76642395e8c31b"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcfg_if-1e73d3c9b84c4226.rmeta",
+      "bytes": 5846,
+      "sha256": "79032055db169703728cbc73ea08dab10f70807b4953db306add1f7986b2aba3"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libsha2-4e77f429ea2ac2f7.rlib",
+      "bytes": 860086,
+      "sha256": "dd2283218831c868c895388f0451f7a57c22e620d56faf70c24db6d9221a72cc"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libsha2-4e77f429ea2ac2f7.rmeta",
+      "bytes": 652742,
+      "sha256": "67d68b27142207fc93117513edbb181900a985adc646b16d20bd0c704393ace2"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcapnpc-93de809f8c1e4be9.rlib",
+      "bytes": 2519588,
+      "sha256": "07e56e02b1ad2cc4ec2e9ffea21609bcc7178e97f5786b9fc34c011e3a14e56e"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\deps\\libcapnpc-93de809f8c1e4be9.rmeta",
+      "bytes": 193197,
+      "sha256": "b234d80854deeec91dfa80c042ed3a5c5b9b6cb688802e002ca55fc7128cd1e2"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\build\\morrow-blob-upload-history-v1-1d050a15f05140cc\\build-script-build.exe",
+      "bytes": 1107968,
+      "sha256": "7ec0009f390fa2f2225f512994e2f520482b73d2123cd6fa81056809d3cfec9d"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\release\\build\\morrow-blob-upload-history-v1-1d050a15f05140cc\\build_script_build.pdb",
+      "bytes": 2174976,
+      "sha256": "9829e185b08de407486373496b0baa3a20fb4e81f56c1da6b40a6404d0300eac"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\deps\\libcapnp-fb2e0287ae68b9ee.rlib",
+      "bytes": 4438428,
+      "sha256": "a75f02075dac1d6e56bd8689933a38bb0b168070dc3058a51456f3f6e5b1bdb1"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\deps\\libcapnp-fb2e0287ae68b9ee.rmeta",
+      "bytes": 3392573,
+      "sha256": "9b82f12a6a3a30ffb5dc8b5c4209561615cec33ff1240f2d14269a197e182226"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\libmorrow_blob_upload_history_v1.rlib",
+      "bytes": 390706,
+      "sha256": "49617f279287251fbef8d82c16b05e84878f59e829b97c4463b929d33a53f061"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\morrow_blob_upload_history_v1.lib",
+      "bytes": 13161000,
+      "sha256": "c61fb76eae7a9cef0bc8c845f2d03c2436ffc92687faf4fd9dc008b86b6e9582"
+    }
+  ],
+  "selected": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///C:/ms1020/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+    "manifest_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\Cargo.toml",
+    "target": {
+      "kind": [
+        "rlib",
+        "staticlib"
+      ],
+      "crate_types": [
+        "rlib",
+        "staticlib"
+      ],
+      "name": "morrow_blob_upload_history_v1",
+      "src_path": "C:\\ms1020\\extensions\\blob-upload-history-v1\\src\\lib.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\libmorrow_blob_upload_history_v1.rlib",
+      "D:\\build_cache\\qualification-targets\\sdk934-HISTORY-df7aefaa8f1db1b8\\x86_64-pc-windows-msvc\\release\\morrow_blob_upload_history_v1.lib"
+    ],
+    "executable": null,
+    "fresh": false
+  }
+}

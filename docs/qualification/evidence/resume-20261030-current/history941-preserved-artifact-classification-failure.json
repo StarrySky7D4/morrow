@@ -1,0 +1,43 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "old_bounded_guest_fixtures_unchanged": true,
+  "guest_recompiled": false,
+  "current_guest_source_qualification": false,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 43.625,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-941\\build.stdout",
+        "bytes": 1012816,
+        "sha256": "38bac8c99b4b99cd7049b04a4dd55cfbe47bd4d61619efbcb38f15a5f4dbca95"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-941\\build.stderr",
+        "bytes": 386,
+        "sha256": "24644b7b9e8d00d7baa5e5cc64a348cc351f6fd2a2980ff1da918ae3da5a96da"
+      }
+    }
+  ],
+  "program": null,
+  "error": "AssertionError: ",
+  "all_original_top_level_processes_returned": true,
+  "meaningful_methods": 0,
+  "explicit_helpers_ignored": 4,
+  "dependencies_warm": true,
+  "cold_program_build_claim": false,
+  "same_build_completed_production_libraries": true,
+  "negative_fixture_debt_is_not_successful_product_retirement": true,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "window_actions": 0,
+  "public_product_delivery": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

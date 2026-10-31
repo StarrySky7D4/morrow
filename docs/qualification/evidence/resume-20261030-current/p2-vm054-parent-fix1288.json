@@ -1,0 +1,31 @@
+{
+  "status": "FIXED_PARENT_VM054_DEPLOYMENT_LITERAL_NEW_COLD_ROLES_REQUIRED",
+  "original_case": "1270",
+  "original_case_status": "REJECTED_BEFORE_VM_DEPLOYMENT_NO_REPLAY",
+  "prior_source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "corrected_source_digest": "b2b76b91f144600c49cda72664528c75ebdfeac25f7cee8ac4df2c0f90b6a759",
+  "changed_existing": [
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_parent_native.rs"
+  ],
+  "original": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm054-parent-binding-correction-1288\\asuser_parent_native.before.rs",
+    "bytes": 83653,
+    "sha256": "b8074092c6b05dddfa88cd72ceeca8269180f82f10653271799d7e9cb1e77c11"
+  },
+  "corrected": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs",
+    "bytes": 83653,
+    "sha256": "54f7101d7dc749d99614c25afe3340e2f37b8b58b4a8442d377a717704c3f93a"
+  },
+  "expected_firmware_uuid": "f97328cf-049c-4194-9e4c-458d5610d3f1",
+  "deployment_guard_preserved": true,
+  "all_other_inventory_file_bytes_unchanged": true,
+  "changed_files": 1,
+  "previous_roles060_not_deployable_to_VM054": true,
+  "P2_runtime_executed": false,
+  "VM_calls": 0,
+  "VM_firmware_changes": 0,
+  "credential_reads": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

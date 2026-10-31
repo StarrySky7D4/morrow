@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-30T23:41:45.1588636Z",
+  "window_title": "localhost 上的 Morrow Windows Acceptance 20261031 052 - 虚拟机连接",
+  "installation_completed": false,
+  "license_keys_entered": 0,
+  "input_method": "computer-use sky targeted screenshot click",
+  "status": "INSTALLER_NO_KEY_OPTION_SELECTED_PREPARING_INSTALLATION",
+  "window_id": 14748182,
+  "credential_dialog_actions": 0,
+  "observed_after": "我们正在进行准备工作",
+  "strict_environment_acceptance": false,
+  "activation_API_changes": 0,
+  "old_VM_window_actions": 0,
+  "vm_id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579"
+}

@@ -1,0 +1,66 @@
+{
+  "status": "PASS_SCOPED_NATIVE_CHOOSER_ORIGINAL_WATCH_AND_GUEST_REVIEW",
+  "source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "managed_62_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-edge-review-1519\\result.json",
+    "bytes": 18416,
+    "sha256": "575021dac086428b7efe3fb479fe6650bc584cfd20f6ae8b04258a0f81e1de2f"
+  },
+  "original_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1524\\result.json",
+    "bytes": 3240,
+    "sha256": "c6078df0df476a5c8eb530a5231d7470ea2cc17cbf116aaed6c209f4b5b09941"
+  },
+  "original_runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\result.json",
+    "bytes": 2955,
+    "sha256": "d37d631188c7f60ef2a47d54eeb1f63dfc43dce6f33a2a1e36a49c0761483965"
+  },
+  "original_UI_tool_observation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-ui-1525\\ui-tool-observation.json",
+    "bytes": 1024,
+    "sha256": "ab825f4ad46a9105c89d92f509187f424242834bc8e4565454ed45a59a43cbe3"
+  },
+  "source_copies": {
+    "source\\probe\\Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-review-1526\\source\\probe\\Cargo.toml",
+      "bytes": 368,
+      "sha256": "23bca455b49f5fa6649cc076e150af899b9611c3a247edbc1206b1f6dbca3dd4"
+    },
+    "source\\probe\\Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-review-1526\\source\\probe\\Cargo.lock",
+      "bytes": 28503,
+      "sha256": "95903a4391c118ec44d3bffeb90ab58d5d2b029bdadb414078d9728a5dbda62f"
+    },
+    "source\\probe\\src\\main.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-review-1526\\source\\probe\\src\\main.rs",
+      "bytes": 8725,
+      "sha256": "04508d72db4ddb21b9a272af3c8ee5d4b51cc42a045596df6ec354fed085d8f8"
+    },
+    "source\\canonical\\plugin_runtime\\src\\directory_io\\watch\\picker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-review-1526\\source\\canonical\\plugin_runtime\\src\\directory_io\\watch\\picker.rs",
+      "bytes": 4742,
+      "sha256": "5ce914c810071dd195a6b311c443d74092da7c4e270f68832a3aafad8f31d222"
+    },
+    "source\\canonical\\plugin_runtime\\src\\fs_watch_binding.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-review-1526\\source\\canonical\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 7570,
+      "sha256": "6427cc41f1d27c53e489aa0e839d93c5a2ad767808cd0b967acb1502aec5ffe7"
+    }
+  },
+  "original_process_returned": true,
+  "original_worker_joined": true,
+  "actual_native_picker_confirmation": true,
+  "confirmed_native_handles_closed": 6,
+  "actual_Rust_guest_frames": 2,
+  "all_third_party_versions_and_checksums_match_original_lock": true,
+  "original_watch_window_not_extended": true,
+  "product_Workbench": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

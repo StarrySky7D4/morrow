@@ -49,6 +49,27 @@ impl DirectoryAbsolutePath {
             .map_or(0, DirectoryRelativePath::retained_input_bytes)
     }
 
+    /// Display-only spelling for the original native confirmation. No parsing,
+    /// normalization, filesystem access or authority is added by this copy.
+    pub(super) fn picker_spelling(&self) -> Vec<u16> {
+        let components = self.relative.as_ref().map(|p| p.as_components());
+        let count = components.map_or(3, |parts| {
+            3 + parts.iter().map(Vec::len).sum::<usize>() + parts.len() - 1
+        });
+        let mut spelling = Vec::with_capacity(count + 1);
+        spelling.extend_from_slice(&[self.drive as u16, 58, 92]);
+        if let Some(parts) = components {
+            for (n, part) in parts.iter().enumerate() {
+                if n != 0 {
+                    spelling.push(92);
+                }
+                spelling.extend_from_slice(part);
+            }
+        }
+        spelling.push(0);
+        spelling
+    }
+
     pub(super) fn into_parts(self) -> (u8, Option<DirectoryRelativePath>) {
         (self.drive, self.relative)
     }
@@ -58,6 +79,21 @@ impl DirectoryAbsolutePath {
 mod tests {
     use super::*;
     use std::{ffi::OsString, os::windows::ffi::OsStringExt};
+
+    #[test]
+    fn native_confirmation_prefill_preserves_exact_utf16_and_one_terminator() {
+        for raw in [
+            vec![100, 58, 92],
+            vec![100, 58, 92, 0xd800, 92, 0x76ee, 0x5f55, 0xd83d, 0xde00],
+        ] {
+            let os = OsString::from_wide(&raw);
+            let selected = DirectoryAbsolutePath::new(Path::new(&os)).unwrap();
+            let spelling = selected.picker_spelling();
+            assert_eq!(&spelling[..spelling.len() - 1], raw);
+            assert_eq!(spelling.last(), Some(&0));
+            assert_eq!(spelling.iter().filter(|v| **v == 0).count(), 1);
+        }
+    }
 
     #[test]
     fn preserves_raw_units_and_never_normalizes_a_selected_path() {

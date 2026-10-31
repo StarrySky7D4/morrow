@@ -1,0 +1,151 @@
+{
+  "status": "PASS_SCOPED_OPTIMIZED_SDK_MATRIX_AND_NEW_EXACT_NEGATIVE_BOUNDARY",
+  "passed": 8,
+  "failed": 0,
+  "methods": [
+    {
+      "name": "matched_fresh_oneshot_control_records_real_outcomes_without_claiming_old_case_failed",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-01.stdout",
+        "bytes": 209,
+        "sha256": "139ef9081c033843421bfeebb0e2165567134dbd714b15e2e3939b60f76e23b6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-01.stderr",
+        "bytes": 6549,
+        "sha256": "b535d9b56d5aac8212879d83dd74be527cf7f9d560b235ec7375b6178a7682eb"
+      }
+    },
+    {
+      "name": "matched_fresh_standard_oneshot_control_records_original_five_frame_outcomes",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-02.stdout",
+        "bytes": 200,
+        "sha256": "81382ef1f912b551d08f4b676d2fe33107b6204cc96516e9e18c22bfd1b5b015"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-02.stderr",
+        "bytes": 2457,
+        "sha256": "6313b3b9f085645662f034bf838d1ff553b60f052a08aaec58d2a7ef7a7c1a57"
+      }
+    },
+    {
+      "name": "reusable_four_full_frames_preserve_original_limits_fault_revoke_and_actual_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-03.stdout",
+        "bytes": 204,
+        "sha256": "f6d461a7930e03463f62426be4a3d501e9f6fde0e0ce0f27fc10197561d78483"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-03.stderr",
+        "bytes": 1774,
+        "sha256": "c2afdee883bc214c35cfaba077a769f64363a6be6bdd4a42bebb397607098fda"
+      }
+    },
+    {
+      "name": "reusable_full_64kib_boundary_bytes_and_events_ack_original_frame_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-04.stdout",
+        "bytes": 198,
+        "sha256": "94db52acefad87cd1bac2b2ab08055bd665b23cfe9a9e247fc1d8b2aa4785d61"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-04.stderr",
+        "bytes": 1562,
+        "sha256": "5c7627ffee1e0a2623d30ce6404b115f7a5c0470bdff4ef6c29e9dea4e75f33f"
+      }
+    },
+    {
+      "name": "reusable_repeated_full_64kib_frames_bytes_and_events_keep_default_limits",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-05.stdout",
+        "bytes": 197,
+        "sha256": "79b854a7e9028f3d2ae2ccaa9df6588634a11b0d455c07cd300da060dc929284"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-05.stderr",
+        "bytes": 1787,
+        "sha256": "5bc3308d14ad21a358d697c86c7750a8d347b29e96bbbb0d91e3de47070e6c65"
+      }
+    },
+    {
+      "name": "reusable_small_frames_bytes_and_events_preserve_owned_responses_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-06.stdout",
+        "bytes": 197,
+        "sha256": "c2ee87760979b5b6b30785d56615eb7c024625cc1d5968159c0c0e0fb5f3b100"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-06.stderr",
+        "bytes": 2225,
+        "sha256": "446360348f9f3a3e0cd6875ce96cdf2288860f3c403de0d41d01cd88a073cc58"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_byte_frames_use_all_sixteen_calls_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-07.stdout",
+        "bytes": 196,
+        "sha256": "4751e93f5538ef7fed060b419c74d165bbe395f60ccdaee74865825d58844d88"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-07.stderr",
+        "bytes": 807,
+        "sha256": "77682ea1543ccff41a4d6e30a5580ed2216bb40e8c23b2e7fb6d06c149a7d698"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_event_frames_persist_exact_acks_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-08.stdout",
+        "bytes": 194,
+        "sha256": "8ec998184ebaa9ea69c8f0ca45a0626d40b555088d4f61b2fd57eee5213f515e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-equality-boundary-1240\\test-08.stderr",
+        "bytes": 1918,
+        "sha256": "239243a753fc5e65941a5a0a6e35dbf840561ea2ed8940217fd57f48896a6099"
+      }
+    }
+  ],
+  "source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+  "canonical_source_edits": 0,
+  "historical_matrix_preserved": true,
+  "original_budgets_unchanged": true,
+  "new_negative_boundary": {
+    "host_calls": 11,
+    "last_acked": 3,
+    "bytes_and_events_observed": true,
+    "no_business_output": true,
+    "original_control_revoked": true,
+    "actual_producer_joined": true
+  },
+  "all_original_processes_returned": true,
+  "full_SDK26_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

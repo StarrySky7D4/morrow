@@ -1,0 +1,96 @@
+syntax = "proto3";
+package morrow.workbench.supervision.v1;
+
+// Stored only inside a bounded, versioned Protobuf + LZ4 container.
+// SQLite stores the exact container BLOB and its digest; compare-and-swap and
+// commit readback compare original bytes, never a normalized representation.
+enum OwnerPhase { OWNER_UNSPECIFIED = 0; PENDING = 1; ACTIVE = 2; CLOSING = 3; RELEASED = 4; RECOVERED = 5; }
+enum ObservedTruth { TRUTH_UNSPECIFIED = 0; NO = 1; YES = 2; }
+enum BusinessOutcome { BUSINESS_UNSPECIFIED = 0; UNKNOWN = 1; }
+enum ProtocolAck { ACK_UNSPECIFIED = 0; NOT_APPLICABLE = 1; }
+
+message Identity {
+  bytes profile = 1;
+  uint64 generation = 2;
+  bytes incarnation = 3;
+  bytes host_sha256 = 4;
+  bytes package_sha256 = 5;
+  bytes supervisor_sha256 = 6;
+  uint32 supervisor_pid = 7;
+  uint64 supervisor_creation_filetime = 8;
+  uint32 child_pid = 9;
+  uint64 child_creation_filetime = 10;
+  bytes recovery_history_head = 11;
+}
+
+message ResourceFacts {
+  bool resource_reclaimed = 1;
+  bool gate_closed = 2;
+  bool tree_empty = 3;
+  bool child_exit = 4;
+  bool stdout_eof = 5;
+  bool stderr_eof = 6;
+  bool control_reaped = 7;
+  bool business_gate_revoked = 8;
+  ObservedTruth normal_shutdown = 9;
+  optional int32 child_exit_code = 10;
+}
+
+message ReaderJoins {
+  uint32 version = 1;
+  bool stdout_reader_joined = 2;
+  bool stderr_reader_joined = 3;
+  bool controller_reader_joined = 4;
+}
+
+message RecoveryBinding {
+  uint32 version = 1;
+  bytes original_digest = 2;
+  bytes receipt_digest = 3;
+  bytes history_head = 4;
+}
+
+message OwnerRecord {
+  uint32 model_version = 1;
+  Identity identity = 2;
+  OwnerPhase phase = 3;
+  ResourceFacts resources = 4;
+  BusinessOutcome business_outcome = 5;
+  ProtocolAck protocol_ack = 6;
+  ReaderJoins reader_joins = 7;
+  RecoveryBinding recovery = 8;
+}
+
+message RecoveryReceipt {
+  uint32 version = 1;
+  bool acknowledged_unknown = 2;
+  bytes original_digest = 3;
+  bytes profile = 4;
+  uint64 generation = 5;
+  bytes incarnation = 6;
+  uint32 manager_pid = 7;
+  uint64 manager_creation_filetime = 8;
+  bytes manager_sha256 = 9;
+  bool original_supervisor_ended = 10;
+}
+
+// Hash this exact versioned message, not a string concatenation or JSON array.
+message RecoveryHistoryBinding {
+  uint32 version = 1;
+  uint64 sequence = 2;
+  bytes original_record_container = 3;
+  bytes original_digest = 4;
+  bytes receipt_container = 5;
+  bytes receipt_digest = 6;
+  bytes previous_head = 7;
+}
+
+message PreviewBinding {
+  uint32 version = 1;
+  uint32 sqlite_schema_version = 2;
+  bytes profile = 3;
+  bytes original_record_container = 4;
+  bytes original_digest = 5;
+  bytes history_head = 6;
+  string reason = 7;
+}

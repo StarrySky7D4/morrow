@@ -1,4 +1,7 @@
 fn main() {
+    use sha2::{Digest, Sha256};
+    println!("cargo:rerun-if-changed=schemas/workbench_supervision.proto");
+    println!("cargo:rerun-if-changed=schemas/workbench_supervision.capnp");
     println!("cargo:rerun-if-changed=schemas/ui_preferences.proto");
     println!("cargo:rerun-if-changed=schemas/projection.proto");
     println!("cargo:rerun-if-changed=schemas/tasks_migration.proto");
@@ -11,6 +14,20 @@ fn main() {
     println!("cargo:rerun-if-changed=schemas/editor_draft_handoff_proposal.proto");
     println!("cargo:rerun-if-changed=schemas/query_capture.proto");
     let protoc = protoc_bin_vendored::protoc_bin_path().expect("protoc");
+    prost_build::Config::new()
+        .protoc_executable(&protoc)
+        .compile_protos(&["schemas/workbench_supervision.proto"], &["schemas"])
+        .expect("typed supervisor owner schema");
+    let supervision_digest = Sha256::digest(
+        std::fs::read_to_string("schemas/workbench_supervision.capnp")
+            .expect("supervision schema").replace("\r\n", "\n").as_bytes(),
+    );
+    std::fs::write(
+        std::path::Path::new(&std::env::var_os("OUT_DIR").expect("out"))
+            .join("supervision-schema.sha256"),
+        supervision_digest,
+    )
+    .expect("supervision schema digest");
     prost_build::Config::new()
         .protoc_executable(&protoc)
         .compile_protos(&["schemas/editor_draft.proto"], &["schemas"])
@@ -45,6 +62,7 @@ fn main() {
     println!("cargo:rerun-if-changed=schemas/editor_draft_staging_api.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
+        .file("schemas/workbench_supervision.capnp")
         .file("schemas/host.capnp")
         .file("schemas/agent_product_control.capnp")
         .file("schemas/agent_task_discovery.capnp")

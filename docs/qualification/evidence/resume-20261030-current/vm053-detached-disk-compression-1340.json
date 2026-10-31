@@ -1,0 +1,19 @@
+{
+  "file_removals": 0,
+  "source_accepted": false,
+  "mtime_unchanged": true,
+  "complete_independent_zip_preserved": true,
+  "release_eligible": false,
+  "bytes": 14734589952,
+  "restore_note": "Restore or copy to an uncompressed destination before attaching. No historical runtime replay authorized.",
+  "concurrent_changes_not_attributed": true,
+  "observed_free_delta": -14094618624.0,
+  "status": "PASS_DETACHED_VM053_ORIGINAL_DISK_LOSSLESS_COMPRESSION",
+  "free_before": 31159226368,
+  "original_Unknown_unchanged": true,
+  "owner_contacts": 0,
+  "original": "C:\\MorrowQA\\windows-acceptance-20261031-053\\acceptance.vhdx",
+  "VM_starts": 0,
+  "free_after": 17064607744,
+  "sha256": "3d89eeebfe244858c9ba011ca62239a60cf69d7da0fc814e7e517f92b628429a"
+}

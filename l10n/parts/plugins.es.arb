@@ -837,5 +837,53 @@
     }
   },
   "pluginsDirectoryNativePickerStart": "Elegir carpeta y ejecutar el complemento",
-  "pluginsDirectoryNativePickerIntro": "Al elegir una carpeta se ejecuta el complemento. El plazo incluye la selección; salir de esta vista cancela la tarea pendiente."
+  "pluginsDirectoryNativePickerIntro": "Al elegir una carpeta se ejecuta el complemento. El plazo incluye la selección; salir de esta vista cancela la tarea pendiente.",
+  "pluginsWatchTitle": "Cambios del directorio",
+  "pluginsWatchIntro": "Solo se observa la carpeta confirmada para esta ejecución. La observación se detiene al alcanzar el límite de tiempo, registros o datos. Windows pide confirmar la carpeta al iniciar.",
+  "pluginsWatchAllow": "Permitir que este plugin observe cambios del directorio",
+  "pluginsWatchAllowNotice": "Autorice también la lista de archivos y confirme la carpeta en cada ejecución.",
+  "pluginsWatchNoPlugins": "No hay plugins activados con permisos para observar directorios y listar archivos.",
+  "pluginsWatchPath": "Carpeta que se observará (ruta completa)",
+  "pluginsWatchFrames": "Máximo de registros entregados",
+  "pluginsWatchBytes": "Límite de datos entregados (bytes)",
+  "pluginsWatchStart": "Confirmar carpeta e iniciar observación",
+  "pluginsWatchBounds": "Límites del plugin: {frames} registros, {bytes} bytes, {ms} milisegundos.",
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchNew": "Preparar una nueva observación",
+  "pluginsWatchIdle": "No se ha iniciado ninguna observación del directorio.",
+  "pluginsWatchRunning": "La observación está en curso. Actualice su estado o solicite la cancelación.",
+  "pluginsWatchReady": "La observación ha terminado. Lea su resultado una sola vez.",
+  "pluginsWatchReviewed": "Resultado leído. Revíselo antes de confirmar la finalización.",
+  "pluginsWatchAcknowledged": "Se ha confirmado la finalización de esta observación.",
+  "pluginsWatchUnknown": "No se pudo confirmar esta operación. Su registro se conserva. No se reintentará ni iniciará otra tarea automáticamente.",
+  "pluginsWatchCancelled": "Esta observación se canceló.",
+  "pluginsWatchExpired": "Esta observación alcanzó su límite de tiempo.",
+  "pluginsWatchClosed": "El directorio se ha liberado y la limpieza ha terminado.",
+  "pluginsWatchRecords": "Registros recibidos por el plugin: {frames}; datos contabilizados: {bytes} bytes.",
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchFormError": "Revise la ruta completa. Todos los límites deben ser positivos y respetar los máximos del plugin.",
+  "pluginsWatchOtherPanel": "Aún no se ha confirmado el fin de la observación. Revise la tarea original en el panel de cambios del directorio."
 }

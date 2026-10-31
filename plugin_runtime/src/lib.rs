@@ -26,6 +26,10 @@ mod continuation;
 pub mod dependency;
 #[cfg(all(feature = "packages", windows))]
 pub mod directory_io;
+#[cfg(all(feature = "packages", windows))]
+pub mod fs_watch_binding;
+#[cfg(all(feature = "packages", windows))]
+pub mod fs_watch_worker;
 #[cfg(feature = "package-management")]
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
@@ -196,6 +200,9 @@ struct State {
     cancel: Cancellation,
     calls: u32,
     max_calls: u32,
+    // Only the independent watch profile counts its two raw task imports.
+    // Existing task and exchange profiles retain their established accounting.
+    count_task_calls: bool,
     stopped: Option<Fault>,
 }
 pub const MAX_DIRECTORY_REQUEST_BYTES: usize = 512;
@@ -227,6 +234,20 @@ impl Runner {
         Self::prepare(
             bytes, limits, true, false, false, false, false, false, false, false, false,
         )
+    }
+    /// Watch consumers receive already-authorized bytes only; no Core or IO import.
+    #[cfg(feature = "package-execution")]
+    fn new_fs_watch_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        let runner = Self::new_task(bytes, limits)?;
+        let imports: std::collections::BTreeSet<_> = runner.module.imports()
+            .map(|import| (import.module().to_owned(), import.name().to_owned())).collect();
+        if imports != std::collections::BTreeSet::from([
+            ("morrow_task_v1".into(), "read_input".into()),
+            ("morrow_task_v1".into(), "complete".into()),
+        ]) {
+            return Err(Fault::UnsupportedAbi);
+        }
+        Ok(runner)
     }
     /// Task ABI with one additional fixed dependency import. The callback is host-routed;
     /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
@@ -655,6 +676,7 @@ fn task_read(
     if let Some(fault) = caller.data().cancel.fault() {
         return Err(trap(caller.data_mut(), fault));
     }
+    charge_task_import(caller.data_mut())?;
     if output < 0
         || capacity as usize != MAX_TASK_BYTES
         || caller.data().task.as_ref().is_none_or(|t| t.read)
@@ -686,6 +708,7 @@ fn task_complete(
     if let Some(fault) = caller.data().cancel.fault() {
         return Err(trap(caller.data_mut(), fault));
     }
+    charge_task_import(caller.data_mut())?;
     if input < 0
         || length <= 0
         || length as usize > MAX_TASK_BYTES
@@ -711,6 +734,16 @@ fn task_complete(
     let bytes = memory.data(&caller)[start..end].to_vec();
     caller.data_mut().task.as_mut().unwrap().completion = Some(bytes);
     Ok(0)
+}
+
+fn charge_task_import(state: &mut State) -> Result<(), wasmi::Error> {
+    if state.count_task_calls {
+        if state.calls >= state.max_calls {
+            return Err(trap(state, Fault::Limits));
+        }
+        state.calls += 1;
+    }
+    Ok(())
 }
 
 // Fixed byte exchange only. Authorization and dependency routing belong to the trusted callback.

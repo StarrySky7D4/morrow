@@ -1,0 +1,2 @@
+# The schema digest and native consumer fixtures bind exact LF source bytes.
+* text eol=lf

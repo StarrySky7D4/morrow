@@ -1,0 +1,1890 @@
+{
+  "status": "PASS_SCOPED_LIVE_WATCH_APPROVAL_AND_SHARED_CONTEXT_REGRESSIONS",
+  "source_digest": "c3f125ede13291ca271e954d9f6a0d86107c1237912bb6df3b1e92407847aed2",
+  "all_original_processes_returned": true,
+  "new_target_initially_empty": true,
+  "core_first_build_all_cold": true,
+  "subsequent_same_run_dependencies_reused": true,
+  "all_selected_programs_fresh": true,
+  "binaries": {
+    "morrow_core": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\morrow_core.exe",
+      "bytes": 6159360,
+      "sha256": "c11b0ddbb262aef2ab6a76bebe79c5b0add11c8aaa3fe6dd216f8aeeb239460e"
+    },
+    "package_fs_watch": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\package_fs_watch.exe",
+      "bytes": 4073472,
+      "sha256": "47c965a026699efc9f3e762d1f640092f91b4ba05a12cf6db37ce3e93a644142"
+    },
+    "fs_watch_approval": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\fs_watch_approval.exe",
+      "bytes": 8413184,
+      "sha256": "f4fc717ddbeffd8f6ceb5a7a581a09e508a89c9305bbc0b221a9173e1fa6b5ce"
+    },
+    "io_binding": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\io_binding.exe",
+      "bytes": 8573440,
+      "sha256": "31f9bcff42a59a563a08eee644d0f6bc3c06a66f62feb46c9bc58de5a4885ee4"
+    },
+    "directory_request_profile": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\directory_request_profile.exe",
+      "bytes": 6517760,
+      "sha256": "5dd0ebb63132eb398989d715d98a4a1fde97ee2522943c11a54b78cf19a3d7d7"
+    },
+    "blob_upload_approval": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\blob_upload_approval.exe",
+      "bytes": 7775232,
+      "sha256": "1c69f5d895d54f21f37e993946708cc2683d7dcf00de1a9fc5a391bef6f8aca3"
+    },
+    "service_run_binding": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\service_run_binding.exe",
+      "bytes": 7825920,
+      "sha256": "6f9f280e6845f4a6282c108736fad82c3459f49bedb2f60acea71d40defe0ac9"
+    }
+  },
+  "methods": {
+    "morrow_core": [
+      "plugin_package::registry::tests::duplicate_selection_and_unknown_approval_are_rejected",
+      "plugin_package::registry::tests::unknown_semantics_and_noncanonical_data_never_get_rewritten"
+    ],
+    "package_fs_watch": [
+      "actual_native_registry_reopen_preserves_only_the_exact_package_ceiling",
+      "invalid_approval_is_readonly_and_revocation_survives_missing_package",
+      "list_approval_never_implies_watch_and_v4_restore_grants_no_live_object",
+      "old_registry_versions_cannot_smuggle_watch_or_silently_downgrade_v4",
+      "ordinary_list_package_cannot_receive_independent_watch_approval",
+      "uncertain_watch_approval_blocks_second_decision_and_noop",
+      "upgrade_removal_and_reselection_clear_watch_approval",
+      "watch_and_io_handler_sets_must_be_complete_unique_and_separate_from_transforms",
+      "watch_declaration_rejects_duplicate_unknown_and_noncanonical_privileged_wire",
+      "watch_limits_remain_subordinate_to_original_io_bytes_and_lifetime",
+      "watch_metadata_round_trip_preserves_exact_bytes_and_does_not_add_io_capability",
+      "watch_profile_refuses_missing_feature_hash_and_legacy_combinations"
+    ],
+    "fs_watch_approval": [
+      "approval_observes_original_shared_resources_jobs_and_nonrefundable_bytes",
+      "dropped_or_revoked_approval_cannot_reset_the_same_instance_window",
+      "exact_watch_profile_accepts_only_input_and_completion_imports",
+      "foreign_manager_host_instance_and_binding_cannot_advance_the_legitimate_clock",
+      "invalid_and_noop_manager_approvals_leave_live_instance_intact_but_revocation_stops_it",
+      "invalid_requests_do_not_claim_a_window_or_spend_the_original_budget",
+      "list_approval_and_connection_do_not_create_watch_approval",
+      "ordinary_list_profile_cannot_issue_watch_and_invalid_approval_does_not_revoke_it",
+      "original_instance_stop_invalidates_approval_without_refunding_held_reservations",
+      "rollback_and_expiration_are_sticky_and_cannot_be_rescued_by_new_binding",
+      "wall_clock_deadline_is_enforced_even_when_the_host_tick_stays_constant"
+    ],
+    "io_binding": [
+      "actual_manager_drop_revokes_control_even_when_binding_and_instance_survive",
+      "capability_subsets_share_budget_but_never_widen_a_binding",
+      "declaration_and_live_connection_do_not_imply_io_approval",
+      "foreign_manager_host_connection_and_binding_attempts_cannot_poison_owner",
+      "invalid_budget_deadline_and_clock_leave_shared_state_unchanged",
+      "invalid_or_stale_approval_never_stops_a_healthy_instance",
+      "narrowing_approval_and_stop_revoke_held_jobs_and_old_bindings",
+      "pool_restart_requires_fresh_binding_and_old_session_drop_revokes_immediately",
+      "repeated_bindings_share_resources_jobs_and_nonrefundable_byte_budget"
+    ],
+    "directory_request_profile": [
+      "a_directory_runner_cannot_be_driven_by_an_unbound_synchronous_callback",
+      "directory_factory_refuses_absent_future_or_wrong_import_signatures",
+      "directory_import_does_not_enable_any_second_extra_import_or_wasi",
+      "directory_only_declarations_reject_read_mutation_network_and_content_ceilings",
+      "every_legacy_factory_refuses_the_new_import",
+      "exact_opt_in_prepares_without_creating_authority_or_running_a_guest",
+      "original_io_resource_job_and_byte_ceilings_still_bound_the_new_profile",
+      "package_feature_and_import_must_match_in_both_directions",
+      "unknown_profile_and_changed_legacy_contracts_do_not_fallback"
+    ],
+    "blob_upload_approval": [
+      "independent_upload_declaration_cannot_fall_through_to_pure_execution",
+      "manager_approval_is_exact_persistent_ceiling_and_does_not_create_an_upload_instance",
+      "manager_validates_upload_approval_before_revoking_an_unrelated_legacy_instance"
+    ],
+    "service_run_binding": [
+      "clock_regression_permanently_invalidates_the_service_run_and_held_lease",
+      "clock_rollback_after_expiry_cannot_revive_a_service_run",
+      "declaration_is_not_approval_and_revocation_invalidates_original_run",
+      "frozen_host_clock_does_not_extend_real_service_deadline",
+      "one_shot_issuance_survives_expiry_and_dropping_every_binding",
+      "rejected_issuance_does_not_consume_first_valid_run",
+      "sequential_requests_release_capacity_without_refunding_run_bytes",
+      "service_profile_requires_explicit_entry_and_legacy_remains_thirty_seconds"
+    ]
+  },
+  "total_methods": 54,
+  "compiler_proofs": {
+    "core-build": [
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.107\\Cargo.toml"
+      },
+      {
+        "target": "unicode_ident",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\unicode-ident-1.0.24\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.47\\Cargo.toml"
+      },
+      {
+        "target": "proc_macro2",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.107\\Cargo.toml"
+      },
+      {
+        "target": "quote",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.47\\Cargo.toml"
+      },
+      {
+        "target": "syn",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\syn-2.0.119\\Cargo.toml"
+      },
+      {
+        "target": "typenum",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.104\\Cargo.toml"
+      },
+      {
+        "target": "either",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\either-1.18.0\\Cargo.toml"
+      },
+      {
+        "target": "itertools",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\itertools-0.14.0\\Cargo.toml"
+      },
+      {
+        "target": "anyhow",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.104\\Cargo.toml"
+      },
+      {
+        "target": "prost_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-derive-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "version_check",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml"
+      },
+      {
+        "target": "hybrid_array",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hybrid-array-0.4.14\\Cargo.toml"
+      },
+      {
+        "target": "cfg_if",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.4\\Cargo.toml"
+      },
+      {
+        "target": "windows_link",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-link-0.2.1\\Cargo.toml"
+      },
+      {
+        "target": "semver",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\semver-1.0.28\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.17.1\\Cargo.toml"
+      },
+      {
+        "target": "foldhash",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\foldhash-0.1.5\\Cargo.toml"
+      },
+      {
+        "target": "shlex",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\shlex-2.0.1\\Cargo.toml"
+      },
+      {
+        "target": "regex_syntax",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-syntax-0.8.11\\Cargo.toml"
+      },
+      {
+        "target": "equivalent",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\equivalent-1.0.2\\Cargo.toml"
+      },
+      {
+        "target": "bytes",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bytes-1.12.1\\Cargo.toml"
+      },
+      {
+        "target": "find_msvc_tools",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\find-msvc-tools-0.1.12\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prettyplease-0.2.37\\Cargo.toml"
+      },
+      {
+        "target": "cc",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cc-1.4.5\\Cargo.toml"
+      },
+      {
+        "target": "prost",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "indexmap",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\indexmap-2.14.2\\Cargo.toml"
+      },
+      {
+        "target": "regex_automata",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-automata-0.4.18\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.15.5\\Cargo.toml"
+      },
+      {
+        "target": "rustc_version",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rustc_version-0.4.1\\Cargo.toml"
+      },
+      {
+        "target": "windows_sys",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-sys-0.61.2\\Cargo.toml"
+      },
+      {
+        "target": "generic_array",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml"
+      },
+      {
+        "target": "block_buffer",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.12.1\\Cargo.toml"
+      },
+      {
+        "target": "crypto_common",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.2.2\\Cargo.toml"
+      },
+      {
+        "target": "fastrand",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fastrand-2.5.0\\Cargo.toml"
+      },
+      {
+        "target": "once_cell",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\once_cell-1.21.4\\Cargo.toml"
+      },
+      {
+        "target": "fixedbitset",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fixedbitset-0.5.7\\Cargo.toml"
+      },
+      {
+        "target": "vcpkg",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\vcpkg-0.2.15\\Cargo.toml"
+      },
+      {
+        "target": "pkg_config",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\pkg-config-0.3.34\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libsqlite3-sys-0.38.2\\Cargo.toml"
+      },
+      {
+        "target": "petgraph",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\petgraph-0.8.3\\Cargo.toml"
+      },
+      {
+        "target": "tempfile",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tempfile-3.27.0\\Cargo.toml"
+      },
+      {
+        "target": "digest",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.11.3\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-5.0.0\\Cargo.toml"
+      },
+      {
+        "target": "regex",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-1.13.1\\Cargo.toml"
+      },
+      {
+        "target": "prost_types",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-types-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "prettyplease",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prettyplease-0.2.37\\Cargo.toml"
+      },
+      {
+        "target": "capnp",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_s390_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-s390_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_aarch_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-aarch_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_win32",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-win32-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_x86_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-x86_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\getrandom-0.4.3\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_macos_x86_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-macos-x86_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "cpufeatures",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.3.0\\Cargo.toml"
+      },
+      {
+        "target": "foldhash",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\foldhash-0.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_x86_32",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-x86_32-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "windows_link",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-link-0.2.1\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_ppcle_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-ppcle_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "bytes",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bytes-1.12.1\\Cargo.toml"
+      },
+      {
+        "target": "log",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\log-0.4.34\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_macos_aarch_64",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-macos-aarch_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "multimap",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\multimap-0.10.1\\Cargo.toml"
+      },
+      {
+        "target": "heck",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\heck-0.5.0\\Cargo.toml"
+      },
+      {
+        "target": "prost_build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-build-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "prost",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "windows_sys",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-sys-0.61.2\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.17.1\\Cargo.toml"
+      },
+      {
+        "target": "capnpc",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\Cargo.toml"
+      },
+      {
+        "target": "block_buffer",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml"
+      },
+      {
+        "target": "crypto_common",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml"
+      },
+      {
+        "target": "curve25519_dalek_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-derive-0.1.1\\Cargo.toml"
+      },
+      {
+        "target": "signature",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\signature-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "zeroize",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zeroize-1.9.0\\Cargo.toml"
+      },
+      {
+        "target": "subtle",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\subtle-2.6.1\\Cargo.toml"
+      },
+      {
+        "target": "curve25519_dalek",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-5.0.0\\Cargo.toml"
+      },
+      {
+        "target": "ed25519",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ed25519-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "digest",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml"
+      },
+      {
+        "target": "libsqlite3_sys",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libsqlite3-sys-0.38.2\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "getrandom",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\getrandom-0.4.3\\Cargo.toml"
+      },
+      {
+        "target": "hashlink",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashlink-0.12.2\\Cargo.toml"
+      },
+      {
+        "target": "prost_types",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-types-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "sha2",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.11.0\\Cargo.toml"
+      },
+      {
+        "target": "fastrand",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fastrand-2.5.0\\Cargo.toml"
+      },
+      {
+        "target": "bitflags",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bitflags-2.13.1\\Cargo.toml"
+      },
+      {
+        "target": "fallible_streaming_iterator",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fallible-streaming-iterator-0.1.9\\Cargo.toml"
+      },
+      {
+        "target": "smallvec",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\smallvec-1.16.0\\Cargo.toml"
+      },
+      {
+        "target": "fallible_iterator",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fallible-iterator-0.3.0\\Cargo.toml"
+      },
+      {
+        "target": "cpufeatures",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\Cargo.toml"
+      },
+      {
+        "target": "once_cell",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\once_cell-1.21.4\\Cargo.toml"
+      },
+      {
+        "target": "tempfile",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tempfile-3.27.0\\Cargo.toml"
+      },
+      {
+        "target": "sha2",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml"
+      },
+      {
+        "target": "rusqlite",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rusqlite-0.40.2\\Cargo.toml"
+      },
+      {
+        "target": "ed25519_dalek",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ed25519-dalek-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "prost_reflect",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-reflect-0.16.5\\Cargo.toml"
+      },
+      {
+        "target": "morrow_windows_user_directories",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\windows_user_directories\\Cargo.toml"
+      },
+      {
+        "target": "lz4_flex",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\lz4_flex-0.14.0\\Cargo.toml"
+      },
+      {
+        "target": "capnp",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml"
+      },
+      {
+        "target": "semver",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\semver-1.0.28\\Cargo.toml"
+      },
+      {
+        "target": "morrow_core",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "morrow-core-check",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "morrow-core-store",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "package_fs_watch",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "morrow_core",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      }
+    ],
+    "runtime-build": [
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.107\\Cargo.toml"
+      },
+      {
+        "target": "unicode_ident",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\unicode-ident-1.0.24\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.47\\Cargo.toml"
+      },
+      {
+        "target": "proc_macro2",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\proc-macro2-1.0.107\\Cargo.toml"
+      },
+      {
+        "target": "quote",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\quote-1.0.47\\Cargo.toml"
+      },
+      {
+        "target": "version_check",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml"
+      },
+      {
+        "target": "syn",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\syn-2.0.119\\Cargo.toml"
+      },
+      {
+        "target": "capnp",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml"
+      },
+      {
+        "target": "capnpc",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0\\Cargo.toml"
+      },
+      {
+        "target": "typenum",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml"
+      },
+      {
+        "target": "generic_array",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml"
+      },
+      {
+        "target": "crypto_common",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml"
+      },
+      {
+        "target": "block_buffer",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml"
+      },
+      {
+        "target": "digest",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml"
+      },
+      {
+        "target": "cpufeatures",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\Cargo.toml"
+      },
+      {
+        "target": "cfg_if",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.4\\Cargo.toml"
+      },
+      {
+        "target": "sha2",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml"
+      },
+      {
+        "target": "typenum",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.104\\Cargo.toml"
+      },
+      {
+        "target": "synstructure",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\synstructure-0.13.2\\Cargo.toml"
+      },
+      {
+        "target": "cfg_if",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.4\\Cargo.toml"
+      },
+      {
+        "target": "either",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\either-1.18.0\\Cargo.toml"
+      },
+      {
+        "target": "itertools",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\itertools-0.14.0\\Cargo.toml"
+      },
+      {
+        "target": "anyhow",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\anyhow-1.0.104\\Cargo.toml"
+      },
+      {
+        "target": "generic_array",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7\\Cargo.toml"
+      },
+      {
+        "target": "prost_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-derive-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "zerofrom_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerofrom-derive-0.1.7\\Cargo.toml"
+      },
+      {
+        "target": "syn",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\syn-3.0.5\\Cargo.toml"
+      },
+      {
+        "target": "zerofrom",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerofrom-0.1.8\\Cargo.toml"
+      },
+      {
+        "target": "yoke_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\yoke-derive-0.8.2\\Cargo.toml"
+      },
+      {
+        "target": "stable_deref_trait",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\stable_deref_trait-1.2.1\\Cargo.toml"
+      },
+      {
+        "target": "yoke",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\yoke-0.8.3\\Cargo.toml"
+      },
+      {
+        "target": "crypto_common",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7\\Cargo.toml"
+      },
+      {
+        "target": "block_buffer",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4\\Cargo.toml"
+      },
+      {
+        "target": "digest",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7\\Cargo.toml"
+      },
+      {
+        "target": "zerovec_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerovec-derive-0.11.6\\Cargo.toml"
+      },
+      {
+        "target": "foldhash",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\foldhash-0.1.5\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.17.1\\Cargo.toml"
+      },
+      {
+        "target": "windows_link",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-link-0.2.1\\Cargo.toml"
+      },
+      {
+        "target": "cpufeatures",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17\\Cargo.toml"
+      },
+      {
+        "target": "bytes",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bytes-1.12.1\\Cargo.toml"
+      },
+      {
+        "target": "equivalent",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\equivalent-1.0.2\\Cargo.toml"
+      },
+      {
+        "target": "regex_syntax",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-syntax-0.8.11\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prettyplease-0.2.37\\Cargo.toml"
+      },
+      {
+        "target": "capnp",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1\\Cargo.toml"
+      },
+      {
+        "target": "regex_automata",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-automata-0.4.18\\Cargo.toml"
+      },
+      {
+        "target": "indexmap",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\indexmap-2.14.2\\Cargo.toml"
+      },
+      {
+        "target": "prost",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "sha2",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9\\Cargo.toml"
+      },
+      {
+        "target": "windows_sys",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-sys-0.61.2\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.15.5\\Cargo.toml"
+      },
+      {
+        "target": "zerovec",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerovec-0.11.8\\Cargo.toml"
+      },
+      {
+        "target": "displaydoc",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\displaydoc-0.2.7\\Cargo.toml"
+      },
+      {
+        "target": "once_cell",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\once_cell-1.21.4\\Cargo.toml"
+      },
+      {
+        "target": "shlex",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\shlex-2.0.1\\Cargo.toml"
+      },
+      {
+        "target": "find_msvc_tools",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\find-msvc-tools-0.1.12\\Cargo.toml"
+      },
+      {
+        "target": "fixedbitset",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fixedbitset-0.5.7\\Cargo.toml"
+      },
+      {
+        "target": "fastrand",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fastrand-2.5.0\\Cargo.toml"
+      },
+      {
+        "target": "tempfile",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tempfile-3.27.0\\Cargo.toml"
+      },
+      {
+        "target": "petgraph",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\petgraph-0.8.3\\Cargo.toml"
+      },
+      {
+        "target": "cc",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cc-1.4.5\\Cargo.toml"
+      },
+      {
+        "target": "prost_types",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-types-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "regex",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-1.13.1\\Cargo.toml"
+      },
+      {
+        "target": "prettyplease",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prettyplease-0.2.37\\Cargo.toml"
+      },
+      {
+        "target": "hybrid_array",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hybrid-array-0.4.14\\Cargo.toml"
+      },
+      {
+        "target": "multimap",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\multimap-0.10.1\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_x86_32",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-x86_32-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_win32",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-win32-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_ppcle_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-ppcle_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "heck",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\heck-0.5.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_macos_x86_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-macos-x86_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_macos_aarch_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-macos-aarch_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_aarch_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-aarch_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_s390_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-s390_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored_linux_x86_64",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-linux-x86_64-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "log",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\log-0.4.34\\Cargo.toml"
+      },
+      {
+        "target": "smallvec",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\smallvec-1.16.0\\Cargo.toml"
+      },
+      {
+        "target": "prost_build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-build-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "protoc_bin_vendored",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\protoc-bin-vendored-3.2.0\\Cargo.toml"
+      },
+      {
+        "target": "semver",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\semver-1.0.28\\Cargo.toml"
+      },
+      {
+        "target": "rustc_version",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rustc_version-0.4.1\\Cargo.toml"
+      },
+      {
+        "target": "crypto_common",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.2.2\\Cargo.toml"
+      },
+      {
+        "target": "block_buffer",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.12.1\\Cargo.toml"
+      },
+      {
+        "target": "tinystr",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tinystr-0.8.4\\Cargo.toml"
+      },
+      {
+        "target": "vcpkg",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\vcpkg-0.2.15\\Cargo.toml"
+      },
+      {
+        "target": "bytes",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bytes-1.12.1\\Cargo.toml"
+      },
+      {
+        "target": "litemap",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\litemap-0.8.3\\Cargo.toml"
+      },
+      {
+        "target": "writeable",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\writeable-0.6.4\\Cargo.toml"
+      },
+      {
+        "target": "pkg_config",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\pkg-config-0.3.34\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libm-0.2.16\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libsqlite3-sys-0.38.2\\Cargo.toml"
+      },
+      {
+        "target": "icu_locale_core",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_locale_core-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "prost",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "digest",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\digest-0.11.3\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-5.0.0\\Cargo.toml"
+      },
+      {
+        "target": "zerotrie",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zerotrie-0.2.5\\Cargo.toml"
+      },
+      {
+        "target": "potential_utf",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\potential_utf-0.1.6\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-transfer-v1\\Cargo.toml"
+      },
+      {
+        "target": "windows_link",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-link-0.2.1\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\getrandom-0.4.3\\Cargo.toml"
+      },
+      {
+        "target": "cpufeatures",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.3.0\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_properties_data-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "bitflags",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bitflags-2.13.2\\Cargo.toml"
+      },
+      {
+        "target": "foldhash",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\foldhash-0.2.0\\Cargo.toml"
+      },
+      {
+        "target": "utf8_iter",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\utf8_iter-1.0.4\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_normalizer_data-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "icu_collections",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_collections-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "hashbrown",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashbrown-0.17.1\\Cargo.toml"
+      },
+      {
+        "target": "windows_sys",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-sys-0.61.2\\Cargo.toml"
+      },
+      {
+        "target": "icu_provider",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_provider-2.3.1\\Cargo.toml"
+      },
+      {
+        "target": "prost_types",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-types-0.14.4\\Cargo.toml"
+      },
+      {
+        "target": "libm",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libm-0.2.16\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\fs-directory-v1\\Cargo.toml"
+      },
+      {
+        "target": "curve25519_dalek_derive",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-derive-0.1.1\\Cargo.toml"
+      },
+      {
+        "target": "signature",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\signature-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "subtle",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\subtle-2.6.1\\Cargo.toml"
+      },
+      {
+        "target": "memchr",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\memchr-2.8.3\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmparser-0.239.0\\Cargo.toml"
+      },
+      {
+        "target": "zeroize",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\zeroize-1.9.0\\Cargo.toml"
+      },
+      {
+        "target": "curve25519_dalek",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\curve25519-dalek-5.0.0\\Cargo.toml"
+      },
+      {
+        "target": "ed25519",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ed25519-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "wasmi_core",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmi_core-1.1.0\\Cargo.toml"
+      },
+      {
+        "target": "libsqlite3_sys",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\libsqlite3-sys-0.38.2\\Cargo.toml"
+      },
+      {
+        "target": "prost_reflect",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\prost-reflect-0.16.5\\Cargo.toml"
+      },
+      {
+        "target": "morrow_blob_transfer_v1",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-transfer-v1\\Cargo.toml"
+      },
+      {
+        "target": "getrandom",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\getrandom-0.4.3\\Cargo.toml"
+      },
+      {
+        "target": "icu_properties_data",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_properties_data-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "hashlink",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\hashlink-0.12.2\\Cargo.toml"
+      },
+      {
+        "target": "icu_normalizer_data",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_normalizer_data-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "sha2",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\sha2-0.11.0\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-upload-request-v1\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\fs-directory-request-v1\\Cargo.toml"
+      },
+      {
+        "target": "fallible_streaming_iterator",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fallible-streaming-iterator-0.1.9\\Cargo.toml"
+      },
+      {
+        "target": "once_cell",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\once_cell-1.21.4\\Cargo.toml"
+      },
+      {
+        "target": "fallible_iterator",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fallible-iterator-0.3.0\\Cargo.toml"
+      },
+      {
+        "target": "fastrand",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\fastrand-2.5.0\\Cargo.toml"
+      },
+      {
+        "target": "tempfile",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\tempfile-3.27.0\\Cargo.toml"
+      },
+      {
+        "target": "rusqlite",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\rusqlite-0.40.2\\Cargo.toml"
+      },
+      {
+        "target": "ed25519_dalek",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\ed25519-dalek-3.0.0\\Cargo.toml"
+      },
+      {
+        "target": "icu_normalizer",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_normalizer-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "icu_properties",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\icu_properties-2.3.0\\Cargo.toml"
+      },
+      {
+        "target": "wasmi_ir",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmi_ir-1.1.0\\Cargo.toml"
+      },
+      {
+        "target": "morrow_fs_directory_v1",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\fs-directory-v1\\Cargo.toml"
+      },
+      {
+        "target": "wasmparser",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmparser-0.239.0\\Cargo.toml"
+      },
+      {
+        "target": "morrow_windows_user_directories",
+        "fresh": true,
+        "manifest": "C:\\ms1020\\windows_user_directories\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "wasmi_collections",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmi_collections-1.1.0\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasm-encoder-0.239.0\\Cargo.toml"
+      },
+      {
+        "target": "semver",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\semver-1.0.28\\Cargo.toml"
+      },
+      {
+        "target": "spin",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\spin-0.9.9\\Cargo.toml"
+      },
+      {
+        "target": "lz4_flex",
+        "fresh": true,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\lz4_flex-0.14.0\\Cargo.toml"
+      },
+      {
+        "target": "morrow_core",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\core\\Cargo.toml"
+      },
+      {
+        "target": "wasmi",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasmi-1.1.0\\Cargo.toml"
+      },
+      {
+        "target": "morrow_fs_directory_request_v1",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\fs-directory-request-v1\\Cargo.toml"
+      },
+      {
+        "target": "idna_adapter",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\idna_adapter-1.2.2\\Cargo.toml"
+      },
+      {
+        "target": "morrow_blob_upload_proposal_v1",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\Cargo.toml"
+      },
+      {
+        "target": "morrow_blob_upload_request_v1",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\extensions\\blob-upload-request-v1\\Cargo.toml"
+      },
+      {
+        "target": "aho_corasick",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\aho-corasick-1.1.5\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\sdk\\rust\\Cargo.toml"
+      },
+      {
+        "target": "regex_syntax",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-syntax-0.8.11\\Cargo.toml"
+      },
+      {
+        "target": "leb128fmt",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\leb128fmt-0.1.0\\Cargo.toml"
+      },
+      {
+        "target": "percent_encoding",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\percent-encoding-2.3.2\\Cargo.toml"
+      },
+      {
+        "target": "form_urlencoded",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\form_urlencoded-1.2.2\\Cargo.toml"
+      },
+      {
+        "target": "wasm_encoder",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wasm-encoder-0.239.0\\Cargo.toml"
+      },
+      {
+        "target": "regex_automata",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-automata-0.4.18\\Cargo.toml"
+      },
+      {
+        "target": "morrow_plugin_runtime",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "idna",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\idna-1.1.0\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugins\\workbench\\Cargo.toml"
+      },
+      {
+        "target": "build-script-build",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\sdk\\examples\\blob-upload-common\\Cargo.toml"
+      },
+      {
+        "target": "bumpalo",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\bumpalo-3.20.3\\Cargo.toml"
+      },
+      {
+        "target": "unicode_width",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\unicode-width-0.2.2\\Cargo.toml"
+      },
+      {
+        "target": "wast",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wast-239.0.0\\Cargo.toml"
+      },
+      {
+        "target": "url",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\url-2.5.8\\Cargo.toml"
+      },
+      {
+        "target": "morrow_plugin_sdk",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\sdk\\rust\\Cargo.toml"
+      },
+      {
+        "target": "regex",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\regex-1.13.1\\Cargo.toml"
+      },
+      {
+        "target": "morrow_workbench_plugin",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugins\\workbench\\Cargo.toml"
+      },
+      {
+        "target": "morrow_blob_upload_sample",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\sdk\\examples\\blob-upload-common\\Cargo.toml"
+      },
+      {
+        "target": "wat",
+        "fresh": false,
+        "manifest": "D:\\build_cache\\cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\wat-1.239.0\\Cargo.toml"
+      },
+      {
+        "target": "blob_upload_approval",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "directory_request_profile",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "service_run_binding",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "fs_watch_approval",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "io_binding",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "morrow-transform-replay",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      },
+      {
+        "target": "morrow-shared-reader",
+        "fresh": false,
+        "manifest": "C:\\ms1020\\plugin_runtime\\Cargo.toml"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "name": "core-build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\core-build.stdout",
+        "bytes": 107170,
+        "sha256": "e839d03e1d64399cf95cef802e94477428a29ca999ad565fefb3a750717d2b13"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\core-build.stderr",
+        "bytes": 2941,
+        "sha256": "5773889cb94f06908c10ec856d9178d93f2976e8718cc2075cc232d7c65e0921"
+      }
+    },
+    {
+      "name": "runtime-build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\runtime-build.stdout",
+        "bytes": 192494,
+        "sha256": "ddb9a42c65022cb8e36a2554624ba06901323e201271fb0681a3af5fbde74dfa"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\runtime-build.stderr",
+        "bytes": 3074,
+        "sha256": "3c237d38ae4b5c58af4c054e64f81d099900ac397b77234ae30e8c48513a6a7e"
+      }
+    },
+    {
+      "name": "morrow_core-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\morrow_core-discovery.stdout",
+        "bytes": 192,
+        "sha256": "ef90e8a1d3652d3a0f5b88542d8cc65578bdc3944d8a5dceb1f6e9084d449cb1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\morrow_core-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "morrow_core-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\morrow_core-runtime.stdout",
+        "bytes": 318,
+        "sha256": "6016916ad73d01cdd03e1b3066b2774c3d8edb8a33869f18ebb96770d6b214b7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\morrow_core-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_fs_watch-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\package_fs_watch-discovery.stdout",
+        "bytes": 893,
+        "sha256": "05798e2fa65fa30aac2afae38ca776eb8e994405b0cf436b7a17b83350009e58"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\package_fs_watch-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_fs_watch-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\package_fs_watch-runtime.stdout",
+        "bytes": 1080,
+        "sha256": "17f52e7a42e624a8613e3cbf8e21af00a805319d4d6d84973af6552b6ebfcf10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\package_fs_watch-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\fs_watch_approval-discovery.stdout",
+        "bytes": 861,
+        "sha256": "d8b64780398bb3b7fe88db10eccc8b88b28b80ce0a35e6dc6aa8e2172aee4b05"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\fs_watch_approval-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fs_watch_approval-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\fs_watch_approval-runtime.stdout",
+        "bytes": 1042,
+        "sha256": "b78845c0963bb10779ca87e5c9b0c5bc4326b15a22fdf695ac300182cfdb6bdb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\fs_watch_approval-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\io_binding-discovery.stdout",
+        "bytes": 645,
+        "sha256": "7c64efd76766dd46bddbd9ba22fdfaa5d5de4882bfb48c8e9ed496471a18f05c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\io_binding-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "io_binding-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\io_binding-runtime.stdout",
+        "bytes": 812,
+        "sha256": "8066415f8b97b3284db4c25e21220bdcf2d3ab608b2f2b5ce498d557028e5a3a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\io_binding-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "directory_request_profile-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\directory_request_profile-discovery.stdout",
+        "bytes": 636,
+        "sha256": "ea02e4099c953bd21bf0433371946360e992ece3a93ea84ae6667ffb3fd03f78"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\directory_request_profile-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "directory_request_profile-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\directory_request_profile-runtime.stdout",
+        "bytes": 803,
+        "sha256": "1f2d1b82ed04ee466a54843c6fed859a9df8d348d7b8e27d16c2981164f3c035"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\directory_request_profile-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "blob_upload_approval-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\blob_upload_approval-discovery.stdout",
+        "bytes": 250,
+        "sha256": "cd53ccf5e8788604475a367deca59af646efd9bf43c7f9e596208ccf961eddda"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\blob_upload_approval-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "blob_upload_approval-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\blob_upload_approval-runtime.stdout",
+        "bytes": 381,
+        "sha256": "91cd0e73f2e86704a45d7967635469c121da469a35dbf4cbf3108471cc7c7883"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\blob_upload_approval-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "service_run_binding-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\service_run_binding-discovery.stdout",
+        "bytes": 551,
+        "sha256": "e21b8883c21489a295981a3c99f4ace07c5535e965f38d314335086d7a24ea61"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\service_run_binding-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "service_run_binding-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\service_run_binding-runtime.stdout",
+        "bytes": 712,
+        "sha256": "5883b8470039e0e4169aab12e83bccf55b020286173bc714c6b7296ed7f8140e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\service_run_binding-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "core-lint",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\core-lint.stdout",
+        "bytes": 96765,
+        "sha256": "3d74f5463eec6956e5bf00880d4dd80353be7e6ad6231c7a6a87ba230f161f37"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\core-lint.stderr",
+        "bytes": 1522,
+        "sha256": "dbde49ed986cc1b362a1f51b91cd0a53237f46c654545aabfb78b89d55774bdb"
+      }
+    },
+    {
+      "name": "plugin_runtime-lint",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\plugin_runtime-lint.stdout",
+        "bytes": 169838,
+        "sha256": "e01edbab15469a39602fb091002cc1f9d7b00c993eeb0c4c841f2baf3339e8cb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\plugin_runtime-lint.stderr",
+        "bytes": 2464,
+        "sha256": "9a15f665fc2edc7cc1f349c374daf662654c73d62a27ad9b566f14be91f21419"
+      }
+    }
+  ],
+  "new_watch_modules_deny_warnings": true,
+  "legacy_diagnostics": 0,
+  "original_frozen_inputs_unchanged": 57,
+  "actual_registry_and_managed_instances": true,
+  "actual_watch_native_dispatch": false,
+  "protected_selection": false,
+  "managed_watch_worker": false,
+  "production_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

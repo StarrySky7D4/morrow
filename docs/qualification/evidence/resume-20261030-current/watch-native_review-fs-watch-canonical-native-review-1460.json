@@ -1,0 +1,166 @@
+{
+  "status": "PASS_SCOPED_SIX_WINDOWS_WATCH_FIXTURES_AND_REFERENCE_WIRE_REVIEW",
+  "candidate_source_digest": "84a3c8d05a2fb3e1e8a09cc5754f030f07edc91f49302c106e2e24412c9934f6",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "original_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-build-1458\\result.json",
+    "bytes": 7820,
+    "sha256": "157dd384f2857f0aca6f3aaface78772d70b5b60176c6e216c8bf118458f28a6"
+  },
+  "original_runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\result.json",
+    "bytes": 9654,
+    "sha256": "bb61617f9a61e7754c049243d15dd9a266244bcd7177cf7a3726cecc75e35fb9"
+  },
+  "exact_original_native_counts": {
+    "owned": 10,
+    "close_calls": 10,
+    "confirmed_closed": 10,
+    "reads": 8,
+    "completions": 8,
+    "frames": 6,
+    "cancel_called": 2
+  },
+  "original_directory_count_included_not_added": 6,
+  "actual_kind_mask": 62,
+  "reference_decoder": {
+    "path": "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "bytes": 3926542,
+    "sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34"
+  },
+  "schema": {
+    "path": "C:\\ms1020\\extensions\\fs-watch-v1\\contracts\\fs_watch.capnp",
+    "bytes": 539,
+    "sha256": "3312e334f5d298d3c56df9c06ed3ac940bbf8fc9a058d113ac30b0d6854f346f"
+  },
+  "reference_decodes": [
+    {
+      "scenario": "events",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-001.capnp",
+        "bytes": 160,
+        "sha256": "639b981ed749d2d80b10ae79a7f1a284ed2e45a73703af020cfc671bc75f4263"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-01.stdout",
+        "bytes": 335,
+        "sha256": "5df66ccd30d47c636aeb0fa068ee7f5885c4feadcb1fe5154740d56bde5f158f"
+      }
+    },
+    {
+      "scenario": "events",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-002.capnp",
+        "bytes": 160,
+        "sha256": "05268419aa2e61e7e0e39f11a9a07ab7a605b4439de2ee860ed8282d1ba55ef6"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-02.stdout",
+        "bytes": 335,
+        "sha256": "8a07082e5c1dbf7f8d8ba3c6369d977118d83c372ce91372e0f1df924e5c4298"
+      }
+    },
+    {
+      "scenario": "events",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-003.capnp",
+        "bytes": 160,
+        "sha256": "018b5d9de3487a64a97f05c2933ef8ba5c74bb7821fbf5a451169f83fd2ee3a2"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-03.stdout",
+        "bytes": 335,
+        "sha256": "518e4ad972560a7a62e71b9dee06345a4dbd17a43f287269f13fd3269618365c"
+      }
+    },
+    {
+      "scenario": "events",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-004.capnp",
+        "bytes": 208,
+        "sha256": "75e839e96aa8b94d790036cd65663a9cb15a4efc007ee1aaec0a224a4d4ae1b8"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-04.stdout",
+        "bytes": 467,
+        "sha256": "3e31f3ca52b3c1488ed763769832d685df65caa7650bbb500176848288bd1d9d"
+      }
+    },
+    {
+      "scenario": "events",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-005.capnp",
+        "bytes": 176,
+        "sha256": "48d081eede865a8c25531faa97cca691230027ced8dd0c212726034ef1a87cb0"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-05.stdout",
+        "bytes": 362,
+        "sha256": "a938058861152b3d32cc085100cb5e1b3cc4aee2d37ee5454b7002b21986f78c"
+      }
+    },
+    {
+      "scenario": "unacknowledged",
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\unacknowledged\\evidence\\frame-001.capnp",
+        "bytes": 168,
+        "sha256": "33d55cc326796470842ec8b275be4b7b94cc2024c46b726c91532690a26ae8c5"
+      },
+      "reference_exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\decode-06.stdout",
+        "bytes": 344,
+        "sha256": "0cfaf30ee95499c98956cba98d7953652b7067065658d189bd66e4468acca2d5"
+      }
+    }
+  ],
+  "original_failed_runs_retained": {
+    "1424": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-native-runtime-1424\\result.json",
+      "bytes": 1936,
+      "sha256": "caa480bb7fffa73029b7aaf793e84076267cd3021b2864f5a247d459fcb070f9"
+    },
+    "1426": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-native-runtime-1426\\result.json",
+      "bytes": 1939,
+      "sha256": "4e4da358a24de9c87fa4058c3e95f0312f8ee96e0b86d62cbdec6ce53883eba7"
+    },
+    "1428": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-native-runtime-1428\\result.json",
+      "bytes": 1943,
+      "sha256": "74f34c9cd4b14827ebfdfa5e6b6e1fb2a13cdd923d50d1370d3f33d589e45f21"
+    },
+    "1432": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-native-runtime-1432\\result.json",
+      "bytes": 1958,
+      "sha256": "099cdf9b262250e0efe009a42295101bb5dd2afde686c52ca5dc5490f205934f"
+    }
+  },
+  "source_copy": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\native-source",
+  "all_original_processes_returned": true,
+  "old_owners_contacted": 0,
+  "VM_calls": 0,
+  "canonical_integrated": true,
+  "explicit_product_approval": false,
+  "shared_product_budget": false,
+  "independent_C_CPP_consumers": false,
+  "actual_overflow": false,
+  "actual_close_failure": false,
+  "formal_UI": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

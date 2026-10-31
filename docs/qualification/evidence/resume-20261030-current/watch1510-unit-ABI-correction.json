@@ -1,0 +1,29 @@
+{
+  "status": "UNIT_ONLY_WINDOWS_ABI_IMPORT_CORRECTED_NOT_RUN",
+  "old_source_digest": "366dbc348177d17f37695c6c4cec357b62ec290a29b2bed069fad4af02aed525",
+  "new_source_digest": "caaf6916ad013ed6a2e25a0b430c56c3a497899198c5621024fa3f34cd273e9a",
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\managed-watch-fixture-correction-1510\\before.rs",
+    "bytes": 6327,
+    "sha256": "1f16489eb480ba790082569dbdaec455b27816f9207a67bc6a3728cfafe66fd8"
+  },
+  "after": {
+    "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch\\native.rs",
+    "bytes": 6485,
+    "sha256": "eaf083f4f2d27d95e6c34cd1bc79d47bb915576214e3598f6c57302caf64b3ab"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "production_bytes_unchanged": true,
+  "Cargo_lock_unchanged": true,
+  "original_compile_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1508\\failure.json",
+    "bytes": 812,
+    "sha256": "ddee4ed4d83bf239ae61727d37cd9da4c5f65a09bdba83cbbaaef1e1bc4f3b18"
+  },
+  "original_process_closed": true,
+  "original_runtime_not_started": true,
+  "old_owner_contacts": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,15 @@
+{
+    "original_outcome":  "UNKNOWN_RETAINED_NO_REPLAY",
+    "registered_vms":  4,
+    "state":  "Saved",
+    "case_clean":  false,
+    "other_vms_unchanged":  true,
+    "utc":  "2026-10-30T23:19:52.5018507Z",
+    "status":  "UNKNOWN_VM051_MEMORY_SAVED_FOR_APPROVED_OFFLINE_ARCHIVE",
+    "policy_clean":  true,
+    "vm_id":  "a63ae90d-27e0-4049-988d-9c979033c448",
+    "guest_commands":  0,
+    "restore_or_replay":  false,
+    "source_disks_retained":  true,
+    "owner_contacts":  0
+}

@@ -1,0 +1,17 @@
+{
+  "status": "PASS_CLOSED_SDK_COMPILER_LIBRARIES_RECLAIMED",
+  "old_owner_contacts": 0,
+  "preserved_files": 15480,
+  "source_and_executable_removals": 0,
+  "concurrent_space_changes_not_attributed": true,
+  "free_after": 9213698048,
+  "protected_artifacts_equal": true,
+  "release_eligible": false,
+  "logical_bytes_removed": 334112879,
+  "plan_sha256": "ce47fdcfd569888248a507758c4b03f10ce8a91554e36ea9d624c46705f3e99a",
+  "VM_calls": 0,
+  "observed_free_delta": 303992832,
+  "source_accepted": false,
+  "free_before": 8909705216,
+  "removed_files": 228
+}

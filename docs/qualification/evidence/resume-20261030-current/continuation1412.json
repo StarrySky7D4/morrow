@@ -1,0 +1,115 @@
+{
+  "status": "RUNNING_WINDOWS_CURRENT_THREE_P2_CASES_CLOSED_AND_CANONICAL_SDK_SCOPED_PASS",
+  "utc": "2026-10-31T13:55:44.080661+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "original_guest_source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "previous_checkpoint": "continuation1348.json",
+  "P2": {
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "all_original_processes_returned": true,
+    "all_three_cases_clean": true,
+    "all_three_policy_owners_clean": true,
+    "roles": "062",
+    "cold_roles": 4,
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "production_sources_unchanged_after_adding_six_SDK_tests": true,
+    "historical_Unknown_owners_untouched": true,
+    "full_fault_matrix": "OPEN",
+    "matrix_review": 1413,
+    "current_native_guard_methods": 153,
+    "current_native_guard_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "current_native_guard_review": 1416,
+    "actual_readonly_token_closes": 34,
+    "Unknown_negative_controls": 7,
+    "same_final_candidate_reseal": "OPEN"
+  },
+  "SDK": {
+    "default_archive_projects": 27,
+    "default_archives_actually_executed": 27,
+    "default_review": 1397,
+    "new_separately_declared_optin_archives": 6,
+    "optin_methods": 8,
+    "optin_review": 1405,
+    "canonical_test_files_added": 6,
+    "canonical_test_programs_compiled": 5,
+    "canonical_methods": 17,
+    "canonical_original_archives": 15,
+    "canonical_build": 1408,
+    "canonical_runtime": 1409,
+    "independent_review": 1411,
+    "default_and_renewable_profiles_distinct": true,
+    "original27_archives_unchanged": true,
+    "frozen57_unchanged": true,
+    "IO_HTTP": "codec only",
+    "service_HTTP": "actual local TCP with synthetic credentials",
+    "directory": "finite original channel producers; not filesystem directory qualification",
+    "selected_test_programs_fresh": true,
+    "dependencies_warm": true,
+    "whole_target_cold_claim": false,
+    "formal_UI": false,
+    "production_TLS": false,
+    "all_original_processes_returned": true,
+    "counts_not_added_to_SDK26": true
+  },
+  "retained_failures": {
+    "roles1363": "space guard refused C before compiler; distinct never-dispatched continuation1380 closed",
+    "service1371": "discovery assertion only; no test dispatched",
+    "service1391": "undeclared budgeted service run denied; original failure preserved"
+  },
+  "SDK_watch_candidate": {
+    "review": 1418,
+    "pure_methods": 18,
+    "strict_lint": true,
+    "canonical_integrated": false,
+    "Windows_native_watch": false,
+    "three_language_consumers": false,
+    "product_approval": false
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57342976000,
+    "D": 3620417536
+  },
+  "current_cleanup": "No new cleanup in this checkpoint; guarded library reclaim1379 separately retained",
+  "new_VM_disk_preserved": true,
+  "free_space_deltas_not_added_or_attributed": true,
+  "formal_UI": "Prior scoped1166/reopen1174 retained; late feedback1215 unbound",
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Review current P2 fault-matrix differences and remaining SDK product capabilities; preserve original owners and evidence identities."
+}

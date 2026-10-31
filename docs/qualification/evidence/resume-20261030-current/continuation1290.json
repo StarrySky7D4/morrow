@@ -1,0 +1,102 @@
+{
+  "status": "RUNNING_WINDOWS_NATIVE_SDK_SCOPED_PASS_P2_PREDEPLOYMENT_BINDING_CORRECTED",
+  "utc": "2026-10-31T09:31:44.940189+00:00",
+  "source_digest": "b2b76b91f144600c49cda72664528c75ebdfeac25f7cee8ac4df2c0f90b6a759",
+  "tested_sdk_source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "previous_checkpoint": "continuation1252.json",
+  "current_source_native_SDK_inputs_identical_to1282": true,
+  "SDK_native": {
+    "run": 1282,
+    "review": 1283,
+    "commands": 46,
+    "Rust_tests": 93,
+    "C_CPP_programs": 14,
+    "independent_consumers": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "original_processes_returned": true,
+    "current_core_schema_tests": true,
+    "formal_UI_or_protected_host_acceptance": false
+  },
+  "P2_case1270": {
+    "status": "REJECTED_BEFORE_VM_DEPLOYMENT",
+    "four_roles_cold_compiled": true,
+    "reason": "Parent still embedded VM053 firmware UUID; original verifier refused VM054 deployment.",
+    "product_case_invocations": 0,
+    "guest_connections": 0,
+    "policy_calls": 0,
+    "unknown_runtime": false,
+    "automatic_replay": false,
+    "unused_single_use_inputs_invalidated": 6
+  },
+  "P2_binding_fix": {
+    "run": 1288,
+    "files_changed": 1,
+    "deployment_guard_preserved": true,
+    "VM_firmware_changed": false,
+    "expected_firmware_uuid": "f97328cf-049c-4194-9e4c-458d5610d3f1",
+    "new_cold_roles_required": "061"
+  },
+  "P2_partial_output": "PRIOR_CASE1190_SOURCE4F2_SCOPED_PASS_ORIGINAL_UNKNOWN_RETAINED",
+  "P2_aliased_output": "NOT_RUN_PREDEPLOYMENT_REFUSAL1270_NEW_CASE_REQUIRED",
+  "formal_UI": "PRIOR_SCOPED1166_REOPEN1174_RETAINED_LATE_FEEDBACK1215_UNBOUND",
+  "cache_root": "D:\\build_cache",
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+      "name": "Morrow Windows Acceptance 20261031 054",
+      "state": "Running"
+    }
+  ],
+  "VM054": "NO_PRODUCT_STAGE_BIND_OR_CASE_DISPATCH_NEW_STRICT_READINESS_PENDING",
+  "storage": {
+    "source_copies1276_roots": 18,
+    "source_copies1276_files": 950265,
+    "source_copies1276_logical_bytes": 14245644162,
+    "source_copies1276_observed_free_delta": 8500514816,
+    "full_base_and_delta_archives_retained": true,
+    "concurrent_space_changes_not_attributed": true,
+    "next_disjoint_source_archive1286": "IN_PROGRESS_NO_REMOVAL",
+    "prior_library_reclaim1261_and1264_complete": true,
+    "prior_lossless_compression1262_and1266_complete": true
+  },
+  "free_bytes_sample": {
+    "C": 14195474432,
+    "D": 15669067776
+  },
+  "diagnostic_numeric_correction": {
+    "run": 1284,
+    "paired1234_32KiB": [
+      295162,
+      37124
+    ],
+    "separate1225_baseline": 295159
+  },
+  "P2": "OPEN",
+  "formal_current_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Fresh read-only VM054 readiness, early parent UUID guard, four new cold roles061, then one new aliased-output case. Original case1270 remains rejected before deployment."
+}

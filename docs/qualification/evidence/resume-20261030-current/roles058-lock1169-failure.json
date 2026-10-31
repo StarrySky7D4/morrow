@@ -1,0 +1,28 @@
+{
+  "status": "CLOSED_COMPILER_OR_PREFLIGHT_FAILURE_RETAINED_NO_RETRY",
+  "exit_code": 1,
+  "original_process_returned": true,
+  "original_P_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles058-parent-driver-1148\\result.json",
+    "bytes": 281,
+    "sha256": "9421f03c319506178061f66eab460fc1874bfb8989fefb2d80cdf0737e9b8a99"
+  },
+  "original_completed_P": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-058\\P\\result.json",
+    "bytes": 952,
+    "sha256": "49c5e9e8a767681da75381f4d8e55dd14cf0cbfa77fd3fdd551098678aa04506"
+  },
+  "P_recompiled": false,
+  "prior_driver_replayed": false,
+  "original_closed_space_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles058-build-driver-1149\\result.json",
+    "bytes": 877,
+    "sha256": "d983dbc360043e7f3707beeac3b0f6f4ac30d63dd43215e542e254d35a20a69b"
+  },
+  "source_copy_reused_after_full_hash_verification": true,
+  "roles": null,
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

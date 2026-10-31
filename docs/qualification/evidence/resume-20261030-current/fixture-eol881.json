@@ -1,0 +1,11 @@
+{
+  "status": "ONLY_EXISTING_CHANGED_FIXTURE_LINE_EOL_NORMALIZED",
+  "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_parent_native.rs",
+  "line": 340,
+  "before_sha256": "701d9f2d4a5eacfc7759d2885ea9ecc5d9e26b663d778ebe0c9ca4af8ba5a434",
+  "after_sha256": "a74ad0346c8daaae4c50d2e254ce7abf67996f6d8189724d8c51463b15816a1f",
+  "bytes_removed": 1,
+  "code_tokens_unchanged": true,
+  "VM_calls": 0,
+  "tests_run": 0
+}

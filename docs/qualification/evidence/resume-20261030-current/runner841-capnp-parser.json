@@ -1,0 +1,17 @@
+{
+  "status": "PASS_CURRENT_RUNNER_CAPNP_PARSER_ONLY",
+  "source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "source_unchanged": true,
+  "method": "win::checked_lifecycle_tests::checked_input_capnp_reader_rejects_json_and_partial_boundaries_without_native_resources",
+  "exit_code": 0,
+  "methods": 1,
+  "original_process_returned": true,
+  "native_guards_total_with_838": 128,
+  "VM_calls": 0,
+  "Runner_business_starts": 0,
+  "host_account_or_policy_calls": 0,
+  "actual_after_helper_fault_injection": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,151 @@
+{
+  "status": "PASS_SOURCE_SCOPE_COMPARISON_ONLY_RUNTIME_NOT_RELABELLED",
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "tested_SDK_source_digest": "fc097a680f7804c70f4d938c0217f86703733696c260af9cacac34d0da8660e4",
+  "tested_SDK": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-owner-candidate-860\\result.json",
+    "bytes": 4176,
+    "sha256": "27696e29a51390fb90ac8b765cc609087629f419d218a5f0183a0619e66441cc"
+  },
+  "current_distribution": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-distribution-892\\result.json",
+    "bytes": 773,
+    "sha256": "e276451f69a99cdf227f79666c2a7f50a195a821a8e87aa548afeaf41c82677f"
+  },
+  "unchanged_public_SDK_and_extension_files": 633,
+  "existing_product_changed_files": [
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_parent_native.rs"
+  ],
+  "exact_product_change": "Only the independently observed VM050 firmware deployment literal plus line-ending normalization; no statement/control-flow change.",
+  "new_files_are_qualification_reports_only": true,
+  "other_existing_changes": [
+    "docs/qualification/RESUMED_WINDOWS_20261030.md",
+    "docs/qualification/current.json",
+    "reports/project-progress-2026-10-26/index.html",
+    "reports/project-progress-2026-10-26/manifest.json",
+    "reports/project-progress-2026-10-26/report-data.json",
+    "reports/project-progress-2026-10-26/verification.json"
+  ],
+  "added": [
+    "docs/qualification/evidence/resume-20261030-current/case806-original47-nine.json",
+    "docs/qualification/evidence/resume-20261030-current/case822-shared17.json",
+    "docs/qualification/evidence/resume-20261030-current/case829-logon-refusal.json",
+    "docs/qualification/evidence/resume-20261030-current/case829-offline-reader-correction.json",
+    "docs/qualification/evidence/resume-20261030-current/case845-execution-session.json",
+    "docs/qualification/evidence/resume-20261030-current/case845-helper-before-runner.json",
+    "docs/qualification/evidence/resume-20261030-current/checkpoint876.json",
+    "docs/qualification/evidence/resume-20261030-current/checkpoint887.json",
+    "docs/qualification/evidence/resume-20261030-current/fixture-eol881.json",
+    "docs/qualification/evidence/resume-20261030-current/manifest.json",
+    "docs/qualification/evidence/resume-20261030-current/native836-refusal-capacity.json",
+    "docs/qualification/evidence/resume-20261030-current/native838-guards.json",
+    "docs/qualification/evidence/resume-20261030-current/roles054-cold.json",
+    "docs/qualification/evidence/resume-20261030-current/runner841-capnp-parser.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk-cache-retired882.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk821-frozen-compatibility.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk832-protected-directory.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk856-preserved-compile-failure.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk857-lock-refinement.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk858-cold-build.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk860-owner-guards.json",
+    "docs/qualification/evidence/resume-20261030-current/sdk866-applied-lock.json",
+    "docs/qualification/evidence/resume-20261030-current/ui810-incomplete-observer.json",
+    "docs/qualification/evidence/resume-20261030-current/ui810-original-apps-closed.json",
+    "docs/qualification/evidence/resume-20261030-current/ui810-visible-observations.json",
+    "docs/qualification/evidence/resume-20261030-current/vm045-duplicate-reclaimed862.json",
+    "docs/qualification/evidence/resume-20261030-current/vm049-archive865.json",
+    "docs/qualification/evidence/resume-20261030-current/vm049-saved863.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-created873.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-environment880.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-fixture886.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-installation874.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-media-preflight-correction872.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-media-retired884.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-readiness885.json",
+    "docs/qualification/evidence/resume-20261030-current/vm050-runtime883.json"
+  ],
+  "protocol_sources": [
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/runner_wire.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\runner_wire.rs",
+        "bytes": 26218,
+        "sha256": "351a30ea3d6ea720273a6a2300cbe3888cb26072eef1933143af5cc23df91a93"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/framed_io.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\framed_io.rs",
+        "bytes": 3284,
+        "sha256": "ab490739d432b6688f10912dbd1fd5ca91b12adade1e6acf0f17a7eaa16158c0"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/ipc_framed.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\ipc_framed.rs",
+        "bytes": 11329,
+        "sha256": "54b191346f8d9bcdbd0b75febb237925394f228f847c8200ac95e32804b4d385"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/native_close_protocol.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_protocol.rs",
+        "bytes": 184317,
+        "sha256": "2997dee8d8ec105a2028aa746f2269813347d9fa717cbc7bc01054c04ce6ab69"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/native_close_runtime.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_runtime.rs",
+        "bytes": 46649,
+        "sha256": "a45b425388afbd10acdb5b3dea48f7b6a0abf7e3dd9f1cc45f2870009b473389"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/native_close_codec.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_codec.rs",
+        "bytes": 110481,
+        "sha256": "9d9d546b837641c825c0873f46bdff4fbaa2a22ee8f328d0e8d2ff0d2a806064"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    },
+    {
+      "file": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/bin/command_runner/win/checked_lifecycle.rs",
+      "pin": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\bin\\command_runner\\win\\checked_lifecycle.rs",
+        "bytes": 247525,
+        "sha256": "2686e3a47e3903c379caf55e473cb77592a490cae4222a6c5a8582ba1d8f66e2"
+      },
+      "production_json_calls": false,
+      "bytes_identical_to_tested_sdk_candidate": true
+    }
+  ],
+  "production_parent_Runner_and_native_close_IPC_unchanged": true,
+  "diagnostic_JSON_is_not_IPC": true,
+  "previous_SDK_runtime_binding_retained": "fc097a680f7804c70f4d938c0217f86703733696c260af9cacac34d0da8660e4",
+  "current_VM050_P2": "NOT_RUN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "compiler_calls": 0,
+  "tests_reexecuted": 0
+}

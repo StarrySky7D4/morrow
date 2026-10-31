@@ -1,0 +1,26 @@
+{
+  "status": "ALL_FOUR_ROLES061_COLD_COMPILED_NOT_RUNTIME_ACCEPTED",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "original_P_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles061-parent-driver-1294\\result.json",
+    "bytes": 281,
+    "sha256": "d99f5bde5de1ee405112977ba10d4ddadad44199a6a0b8f0f0c819a8dd8bd477"
+  },
+  "original_completed_P": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\P\\result.json",
+    "bytes": 952,
+    "sha256": "e0f05a2e2302cccaa9c222fbc203c3eb715fade6f1fe1478b697d38814300955"
+  },
+  "P_recompiled": false,
+  "prior_driver_replayed": false,
+  "roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\result.json",
+    "bytes": 2165,
+    "sha256": "b0567d8238098cad1325cbc8710eade9f807400b14bdb00d2c52c97befcf17f7"
+  },
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,22 @@
+{
+  "status": "FIXED_VM048_DEPLOYMENT_LITERAL_REBOUND_RUNTIME_NOT_RUN",
+  "utc": "2026-10-30T09:47:42.534675+00:00",
+  "previous_source_digest": "1e4a4ccba1e94d23f2e61dbdc8eb203bc6cd6a56560b524e6968e03c97cac2dd",
+  "source_digest": "73f6d3f93a86156cf317e60f2af9518c68227e7cbb22f42248bf4ad91ece6d90",
+  "changed_files": [
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_parent_native.rs"
+  ],
+  "literals_changed": 1,
+  "all_other_source_bytes_unchanged": true,
+  "VM_id": "e1d386a2-7695-4db8-83e3-09dc019a756c",
+  "observed_firmware_uuid": "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+  "VM_firmware_uuid_changed": false,
+  "checks_removed": 0,
+  "control_flow_changes": 0,
+  "ipc_changes": 0,
+  "policy_helper_and_regression_in_canonical_source": true,
+  "all_four_roles_require_new_build": true,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,13 @@
+{
+    "P2_dispatched":  false,
+    "installer_dword":  0,
+    "vm_id":  "a421ee21-2963-43dd-8b5c-c082857cf2f2",
+    "prerequisite_verified":  true,
+    "firmware_uuid":  "754dfadc-c74e-4bd1-87b3-25888424a496",
+    "source_accepted":  false,
+    "restart_required":  false,
+    "own_transport_closed":  true,
+    "status":  "PASS_FIXED_X64_RUNTIME_SETUP_AND_TRANSPORT_CLOSED_NOT_P2",
+    "release_eligible":  false,
+    "old_owner_calls":  0
+}

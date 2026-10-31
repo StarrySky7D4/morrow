@@ -1,0 +1,27 @@
+{
+  "original_disk": {
+    "path": "C:\\MorrowQA\\windows-acceptance-20261031-053\\acceptance.vhdx",
+    "ticks": 639290259607314485,
+    "bytes": 14734589952
+  },
+  "archive": {
+    "path": "D:\\build_cache\\retained-unknown-archives\\vm053\\vm053-complete-saved-state-1237.zip",
+    "sha256": "483747ca05cfab2745fddb8934f01ae82656341ebebabde8d5b78d81733ce648",
+    "bytes": 13547442049
+  },
+  "original_disk_retained": true,
+  "release_eligible": false,
+  "source_accepted": false,
+  "original_Unknown_outcome_unchanged": true,
+  "all_four_saved_state_members_retained": true,
+  "archive_data_discarded": false,
+  "independent_destination_hashes": 2,
+  "C_free": 31168184320,
+  "VM_calls": 0,
+  "old_location_zip_removed": true,
+  "old_path": "C:\\MorrowQA\\retained-unknown-archives\\vm053\\vm053-complete-saved-state-1237.zip",
+  "D_free": 11020259328,
+  "status": "PASS_COMPLETE_VM053_ZIP_RELOCATED_BYTE_IDENTICAL_TO_D",
+  "restore_or_replay": false,
+  "owner_contacts": 0
+}

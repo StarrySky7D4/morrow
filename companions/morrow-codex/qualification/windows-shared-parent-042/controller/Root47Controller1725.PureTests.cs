@@ -4,6 +4,52 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 namespace C28.RootP1682 {
+ public static class HelperDiagnosticPureTests742 {
+  public static void cached_helper_failure_preserves_startup_guard_without_inventing_native_results(){
+   Io1725 io=new Io1725();io.Fail("HELPER_UNKNOWN_OR_STARTUP");
+   Assert(io.DiagnosticData("run")["helper_capture"]==null);
+   CaptureObservation c=new CaptureObservation{Status="UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY",
+    FirstError="UNSAFE_TOKEN_OWNER_OR_DEFAULT_DACL",NoReplay=true,CreateError=123};
+   var data=io.DiagnosticData("run",c);var helper=(Dictionary<string,object>)data["helper_capture"];
+   Assert((string)data["first_guard"]=="HELPER_UNKNOWN_OR_STARTUP");
+   Assert((string)helper["first_guard"]=="UNSAFE_TOKEN_OWNER_OR_DEFAULT_DACL"&&(bool)helper["cached_only"]);
+   Assert(!(bool)helper["create_attempted"]&&helper["create_returned"]==null&&helper["create_success"]==null
+    &&helper["create_error"]==null&&helper["creation_filetime"]==null&&helper["process_dword"]==null);
+   Assert(c.FirstError=="UNSAFE_TOKEN_OWNER_OR_DEFAULT_DACL"&&c.CreateError==123&&!c.CreateReturned);
+  }
+  public static void cached_helper_partial_creation_keeps_actual_failure_and_bounds_slot_diagnostics(){
+   CaptureObservation c=new CaptureObservation{Status="UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY",
+    FirstError="P_CREATE_REJECTED_OR_PARTIAL",NoReplay=true,CreateWasAttempted=true,CreateReturned=true,
+    CreateSuccess=false,CreateError=5,Slots=new SlotObservation[8]};
+   for(int i=0;i<c.Slots.Length;i++)c.Slots[i]=new SlotObservation{Name="PROCESS_"+i,
+    State=ResourceState.RetainedFailure,OriginalValueCaptured=true,ApiReturned=i==0?(bool?)false:null,Error=5};
+   var h=Io1725.CachedHelper(c);object[] slots=(object[])h["failed_slots"];
+   Assert((bool)h["create_returned"]&&!(bool)h["create_success"]&&(int)h["create_error"]==5
+    &&h["creation_filetime"]==null&&h["resume_return"]==null&&h["process_dword"]==null);
+   Assert(slots.Length==4&&(bool)h["failed_slots_truncated"]);
+   Assert((int)((Dictionary<string,object>)slots[0])["error"]==5&&((Dictionary<string,object>)slots[1])["error"]==null);
+   c.FirstError=@"C:\PRIVATE\PASSWORD";c.Status="untrusted body";c.Slots[0].Name="private path";
+   string text=Json1725.Encode(Io1725.CachedHelper(c));
+   Assert(!text.Contains("PRIVATE")&&!text.Contains("PASSWORD")&&!text.Contains("untrusted body")
+    &&!text.Contains("private path")&&Encoding.UTF8.GetByteCount(text)<1800);
+  }
+  public static void combined_cached_diagnostic_fits_existing_public_record_bound(){
+   string label=new string('X',120);Io1725 io=new Io1725();io.At(label,null);io.NativeBegin(label);
+   io.NativeResult(false,5);io.Fail(label);
+   Exception error=new InvalidOperationException("PRIVATE_BODY");
+   for(int i=0;i<8;i++)error=new InvalidOperationException("PRIVATE_BODY",error);
+   io.CaptureException(error);
+   CaptureObservation c=new CaptureObservation{Status=label,FirstError=label,NoReplay=true,
+    CreateWasAttempted=true,CreateReturned=true,CreateSuccess=false,CreateError=int.MaxValue,
+    CreationFileTime=ulong.MaxValue,ProcessDword=uint.MaxValue,PrimaryThreadDword=uint.MaxValue,
+    ResumeReturn=uint.MaxValue,ObservationPasses=int.MaxValue,Slots=new SlotObservation[4]};
+   for(int i=0;i<4;i++)c.Slots[i]=new SlotObservation{Name=label,State=ResourceState.RetainedFailure,
+    OriginalValueCaptured=true,ApiReturned=false,Error=int.MaxValue};
+   string text=Json1725.Encode(io.DiagnosticData("run",c));
+   Assert(Encoding.UTF8.GetByteCount(text)<=3500&&!text.Contains("PRIVATE_BODY"));
+  }
+  static void Assert(bool b){if(!b)throw new InvalidOperationException("HELPER_DIAGNOSTIC_PURE_ASSERTION");}
+ }
  public static class ControllerPureTests1725 {
   public static void cached_failure_diagnostic_keeps_first_guard_and_actual_or_unobserved_return_fields(){
    Io1725 empty=new Io1725();empty.At("PURE_STAGE",RootPPrebirth.Shell);empty.Fail("FIRST_GUARD");
@@ -160,6 +206,41 @@ namespace C28.RootP1682 {
    Assert(RolePins1725.Sha.Length==4&&RolePins1725.Bytes[0]==30112768&&RolePins1725.ShellBytes==450560);
    Assert(RolePins1725.ShellSha=="3247bcfd60f6dd25f34cb74b5889ab10ef1b3ec72b4d4b3d95b5b25b534560b8");
    Reject(delegate{Json1725.Parse("{\"approval\":true} trailing");});
+  }
+ }
+}
+
+namespace C28.RootP1682 {
+ public static class BeginShellPathPureTests789 {
+  static void Need(bool b){if(!b)throw new System.InvalidOperationException("BEGIN_SHELL_PURE");}
+  static JournalRecord1725 Reservation(string path,string uuid,string sha){
+   var review=new System.Collections.Generic.Dictionary<string,object>{{"expected_uuid",uuid},{"shell",path},{"shell_sha256",sha}};
+   return new JournalRecord1725{Sequence=1,Kind="ATTEMPT_RESERVED_OUTCOME_UNKNOWN",Payload=new System.Collections.Generic.Dictionary<string,object>{{"step","guest-identity"},{"review",review}}};
+  }
+  static StepGate1725 Empty(){var g=new StepGate1725(RolePins1725.ShellSha);g.Expect(0);return g;}
+  static void Reject(string path,string uuid,string sha){var g=Empty();bool rejected=false;try{g.Accept(Reservation(path,uuid,sha));}catch(System.InvalidOperationException){rejected=true;}
+   Need(rejected&&g.Failed&&g.First=="BEGIN_RESERVATION_SOURCE"&&!g.Current.ReservationSequence.HasValue);
+   try{g.Accept(Reservation(RootPPrebirth.Shell,Plan1725.Firmware,RolePins1725.ShellSha));}catch(System.InvalidOperationException){}
+   Need(g.Failed&&g.First=="BEGIN_RESERVATION_SOURCE"&&!g.Current.ReservationSequence.HasValue);
+  }
+  public static void observed_system_shell_letter_case_is_ordinal_and_culture_independent(){
+   string shell=RootPPrebirth.Shell;var culture=System.Threading.Thread.CurrentThread.CurrentCulture;
+   try{foreach(string name in new[]{"en-US","tr-TR"}){System.Threading.Thread.CurrentThread.CurrentCulture=new System.Globalization.CultureInfo(name);
+    foreach(string path in new[]{shell,shell.ToUpperInvariant(),shell.ToLowerInvariant(),@"C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe"}){var g=Empty();g.Accept(Reservation(path,Plan1725.Firmware,RolePins1725.ShellSha));Need(!g.Failed&&g.Current.ReservationSequence==1&&!g.Current.Returned&&g.Completed==0);}
+   }}finally{System.Threading.Thread.CurrentThread.CurrentCulture=culture;}
+  }
+  public static void alternate_paths_and_wrong_image_or_vm_binding_remain_rejected(){
+   string p=RootPPrebirth.Shell;foreach(string bad in new[]{"",p+" ",p+".",p+"\0",@"D:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",@"C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe",@"\\?\C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",@"C:\Windows\System32\..\System32\WindowsPowerShell\v1.0\powershell.exe",p.Replace('\\','/'),@"C:\Windows\System32\WindowsPowerShell\v1.0\cmd.exe"})Reject(bad,Plan1725.Firmware,RolePins1725.ShellSha);
+   Reject(p,"00000000-0000-0000-0000-000000000000",RolePins1725.ShellSha);Reject(p,Plan1725.Firmware,new string('0',64));
+  }
+  public static void cached_journal_failure_preserves_first_guard_without_exception_body(){
+   var g=Empty();try{g.Accept(Reservation(RootPPrebirth.Shell+" ",Plan1725.Firmware,RolePins1725.ShellSha));}catch(System.InvalidOperationException){}
+   var io=new Io1725();io.CacheJournalFailure(g.First);io.CacheJournalFailure("LATER_GUARD");io.Fail("ROOT_CONTROLLER_UNCERTAINTY_RETAINED");
+   var d=io.DiagnosticData("run");Need((string)d["journal_first_guard"]=="BEGIN_RESERVATION_SOURCE"&&!(bool)d["resource_release_or_native_exit_proven"]&&(bool)d["no_replay"]);
+  }
+  public static void diagnostic_rejects_late_or_unstructured_failure_data(){
+   var late=new Io1725();late.Fail("ALREADY_UNKNOWN");late.CacheJournalFailure("LATE_GUARD");Need(late.DiagnosticData("run")["journal_first_guard"]==null);
+   var unsafeData=new Io1725();unsafeData.CacheJournalFailure("SECRET EXCEPTION BODY C:\\private");string encoded=Json1725.Encode(unsafeData.DiagnosticData("run"));Need(!encoded.Contains("SECRET")&&!encoded.Contains("private")&&System.Text.Encoding.UTF8.GetByteCount(encoded)<=3500);
   }
  }
 }

@@ -1,0 +1,174 @@
+{
+  "status": "PASS_CURRENT_WINDOWS_FROZEN_GUEST_COMPATIBILITY",
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": 57,
+  "actual_methods": 13,
+  "phases": [
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "c_task",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\01.log",
+        "bytes": 131,
+        "sha256": "3553fed776f3a3c848bd3f018e98949d49b188007f56eb21ffcd88d0c6ffea3b"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "c_transform",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\02.log",
+        "bytes": 136,
+        "sha256": "6419be9253e715da0f1ca6e4fc674a21b982c2e71b70680bbedb20114f2d292b"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "c_ui",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\03.log",
+        "bytes": 129,
+        "sha256": "c0c2a127119bba16862f60223b7f91aad05c1889d3286fa9cba05901cfe2de12"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "cpp_task",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\04.log",
+        "bytes": 133,
+        "sha256": "09fe76a6644890affbad8e96631a2d10da7e26539588883f7417959770904f99"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "cpp_transform",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\05.log",
+        "bytes": 138,
+        "sha256": "8600656f1bd068e3b6f033f8a21adc028ad8664b16e20a2a16d9be6d8357beab"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "cpp_ui",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\06.log",
+        "bytes": 131,
+        "sha256": "5010d211c98a4226890362cc31e89f0f67446612cccdde06f6cd7f763c573b05"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "rust_task",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\07.log",
+        "bytes": 134,
+        "sha256": "da35abe25cc1cbb075bdc307ea29bb8cd9c23ade94299da64d43cd8cdc0ee315"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "rust_transform",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\08.log",
+        "bytes": 139,
+        "sha256": "dbd10e5dfbbf79703c3556f42518c3727cc6d708929c8e0bb29ad3ea2ecbdeb4"
+      }
+    },
+    {
+      "suite": "sdk_frozen_compat",
+      "name": "rust_ui",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\09.log",
+        "bytes": 132,
+        "sha256": "1871bf99363f2b27e5be2014baa0bc583da91d041ebaf22a061542cfbbc17608"
+      }
+    },
+    {
+      "suite": "sdk_frozen_dependency",
+      "name": "frozen_c_dependency_binary_preserves_routing_and_authorization",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\10.log",
+        "bytes": 187,
+        "sha256": "ab22e55c3b348539c700b298ef05e60c29bc3ec9a0aef299c8beb856319708c3"
+      }
+    },
+    {
+      "suite": "sdk_frozen_dependency",
+      "name": "frozen_cpp_dependency_binary_preserves_routing_and_authorization",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\11.log",
+        "bytes": 189,
+        "sha256": "7ea9f16161abae31a5d991897493ca56e2a2d659ab3478b28fda4fc20896afaf"
+      }
+    },
+    {
+      "suite": "sdk_frozen_dependency",
+      "name": "frozen_rust_dependency_binary_preserves_routing_and_authorization",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\12.log",
+        "bytes": 190,
+        "sha256": "656c16e58cd6ea5eb6ec752c6afb8a63f6de9ba054a30ac5fbabd918ec8e71da"
+      }
+    },
+    {
+      "suite": "sdk_transport_frozen",
+      "name": "six_original_transport_packages_keep_modules_profiles_and_bounded_budgets",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-918\\13.log",
+        "bytes": 198,
+        "sha256": "aaf190b6c9e63077e2ea285e240abe58c838103142a04d7ec4e583e2863e7f73"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "transport_metadata_only": true,
+  "guest_rebuilt": false,
+  "VM_calls": 0,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

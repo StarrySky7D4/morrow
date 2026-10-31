@@ -1,0 +1,38 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_PRODUCTION_SUPERVISED_RECIPIENT_REVOCATION",
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "default_native_source": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "languages": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1123\\receipts\\rust\\result.json",
+      "bytes": 1170,
+      "sha256": "19f00754a829e541c1823f2cdc42d5d7b4077a1a6fb3bb3ac69a7786f1c17d9b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1123\\receipts\\c\\result.json",
+      "bytes": 1167,
+      "sha256": "c591510dcc6ef6656e24729a743594f6fa9ada1fd1498e6e18fb4b71f4478170"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1123\\receipts\\cpp\\result.json",
+      "bytes": 1169,
+      "sha256": "c5ade1aca92ab8f416d55150aaa58f6abe866e3b8e9b2148c3f211afb312fff5"
+    }
+  ],
+  "current_production_factory": true,
+  "current_retained_view_session": true,
+  "all_original_fixture_test_and_native_owner_processes_returned": true,
+  "source_unchanged": true,
+  "business_IPC_CapnProto": true,
+  "supervisor_status_IPC_CapnProto": true,
+  "durable_supervision_Protobuf_LZ4": true,
+  "product_protocol_gate": "OPEN",
+  "formal_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

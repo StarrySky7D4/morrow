@@ -1,0 +1,69 @@
+{
+  "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-distribution-938\\morrow-blob-upload-history-v1-experimental-source.zip",
+    "bytes": 17836,
+    "sha256": "565478466e78ef4080cf03b2eb51262759ad17d8adfdc5253cc7cbb6f2f41025"
+  },
+  "files": {
+    ".gitattributes": {
+      "bytes": 91,
+      "sha256": "047e7066a6593c00b8d75acc25cb32d106e4602b9a1c54de7de7174dbae8b0db"
+    },
+    "build.rs": {
+      "bytes": 858,
+      "sha256": "a6c872ea07c8b4df9eb4fe6d6f50da425bcf2e2cb30bf2833803d194443f63cd"
+    },
+    "Cargo.lock": {
+      "bytes": 3073,
+      "sha256": "056981515a8b129790a80e524517fea00fcdd65885b7be594c5d1cc6bf6af6af"
+    },
+    "Cargo.toml": {
+      "bytes": 328,
+      "sha256": "f8a2718c4125eaeae473841cbbbdd27bedd85eba2c78987fcda38332986b0bb0"
+    },
+    "contracts/blob_upload_history.capnp": {
+      "bytes": 1047,
+      "sha256": "00132fb24ddccabdd1ae73f131394c461e9deb2db49ebb3b3303ccdeab932dcf"
+    },
+    "contracts/schema.sha256": {
+      "bytes": 65,
+      "sha256": "524722d6fea433e7d106b6844426ed91beae758a0fecbaeb8e5ff818ad620cb4"
+    },
+    "include/morrow_blob_upload_history_v1.h": {
+      "bytes": 1792,
+      "sha256": "8b38049e46f2f29df23d71a7a78e72eb7d2850b5815a150b720abcf6244bd10a"
+    },
+    "include/morrow_blob_upload_history_v1.hpp": {
+      "bytes": 1307,
+      "sha256": "a61a25fbeb4d24808f9861273ce17f78dc4ad5698ebe049995c4f16964efec29"
+    },
+    "README.md": {
+      "bytes": 2697,
+      "sha256": "e070d47426504cad9e1d93397a9d72ada7fd24a7dd6cd2497f3a24c571a0c01c"
+    },
+    "src/ffi.rs": {
+      "bytes": 7630,
+      "sha256": "5d0e252b00999196d8c33b39905adba44b3b6a1141eb69b2878edda68216872f"
+    },
+    "src/lib.rs": {
+      "bytes": 14642,
+      "sha256": "220df60bc3cd0983e7ca2891e76c593ebe8efba055f0def7aa22e08ad316b588"
+    },
+    "src/tests.rs": {
+      "bytes": 10272,
+      "sha256": "54e99681ea554cd170dc9b001d78ca39a0d2e7ed4fed32b78d704ad063951afb"
+    },
+    "tests/consumer.c": {
+      "bytes": 2277,
+      "sha256": "81c2e578e83a858d517a92ef2e2f28ceba88783cf4f6fab584d2b6b88d64b122"
+    },
+    "tests/consumer.cpp": {
+      "bytes": 1584,
+      "sha256": "dd82dee73380705253309eec7faee4490c6173d18eb71e39531a17b6065e6545"
+    }
+  },
+  "archive_roundtrip_byte_identical": true,
+  "experimental": true,
+  "published": false
+}

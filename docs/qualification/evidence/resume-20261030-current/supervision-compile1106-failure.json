@@ -1,0 +1,12 @@
+{
+  "status": "NOT_ACCEPTED_COMPILE_FAILED_OR_SOURCE_DRIFT",
+  "exit_code": 101,
+  "source_digest": "ce5856c9c8ca9eba816de2ea4e25e0b15c48d83b832ea509742aa29013f8e98e",
+  "source_unchanged": true,
+  "compile_only": true,
+  "runtime_accepted": false,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

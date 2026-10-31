@@ -27,6 +27,7 @@ pub use retirement::DirectoryRetirementSnapshot;
 use retirement::{Ledger, TrackedFile};
 mod selected_path;
 mod selection;
+pub mod watch;
 pub(crate) mod selection_path;
 pub use selected_path::DirectoryAbsolutePath;
 pub use selection_path::{DirectoryPathError, DirectoryRelativePath};

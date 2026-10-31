@@ -9,6 +9,7 @@ pub mod proto {
 }
 pub mod blob_upload;
 pub mod blob_upload_proposal;
+pub mod fs_watch;
 pub mod io;
 pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
@@ -133,6 +134,7 @@ impl Package {
             channel_declaration: None,
             blob_upload_declaration: None,
             blob_upload_proposal_declaration: None,
+            fs_watch_declaration: None,
         }
     }
     pub fn manifest_for_task(
@@ -145,6 +147,24 @@ impl Package {
         manifest.guest_abi_version = 2;
         manifest.task_schema_sha256 = crate::task::schema_digest().to_vec();
         manifest
+    }
+    /// Filesystem observation metadata only. FileList and watch approvals are separate.
+    pub fn manifest_for_fs_watch(
+        id: &str,
+        version: &str,
+        module: &[u8],
+        handlers: Vec<String>,
+    ) -> proto::Manifest {
+        let mut manifest = Self::manifest_for_task(id, version, module, vec![]);
+        manifest.required_features = vec![io::FEATURE.into(), fs_watch::FEATURE.into()];
+        manifest.io_declaration = Some(io::declaration(
+            vec![io::IoCapability::FileList], handlers.clone(),
+        ));
+        manifest.fs_watch_declaration = Some(fs_watch::declaration(handlers));
+        manifest
+    }
+    pub fn fs_watch_declaration(&self) -> Option<&proto::FsWatchDeclaration> {
+        self.manifest.fs_watch_declaration.as_ref()
     }
     pub fn manifest_for_transform(
         id: &str,
@@ -421,6 +441,7 @@ impl Package {
                     && f != crate::changes_metadata::FEATURE
                     && f != blob_upload::FEATURE
                     && f != blob_upload_proposal::FEATURE
+                    && f != fs_watch::FEATURE
             })
             || manifest
                 .required_features
@@ -443,6 +464,7 @@ impl Package {
             .any(|f| f == TRANSFORM_HANDLERS_FEATURE);
         blob_upload::validate_manifest(&package.manifest, &manifest)?;
         blob_upload_proposal::validate_manifest(&package.manifest, &manifest)?;
+        fs_watch::validate_manifest(&package.manifest, &manifest)?;
         let dependencies_feature = manifest
             .required_features
             .iter()

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'support/workbench_supervision_fixture.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,7 +8,10 @@ import 'package:morrow_studio/plugins/session_coordinator.dart';
 import 'package:morrow_studio/plugins/workbench_recovery.dart';
 
 Map<String, dynamic> status() => {
-  'version': 1,
+  'version': 2,
+  'supervisor_sha256': 'e' * 64,
+  'supervisor_creation_filetime': 1,
+  'child_creation_filetime': 2,
   'phase': 'Released',
   'owner_phase': 'Released',
   'profile': 'a' * 64,
@@ -35,11 +39,43 @@ Map<String, dynamic> status() => {
 };
 void main() {
   test(
+    'legacy JSON and fractional capability cannot enter the binary protocol',
+    () {
+      expect(
+        () => WorkbenchSupervisionState.decode(
+          utf8.encode(
+            jsonEncode(status()..['abnormal_resource_closure_protocol'] = 1.0),
+          ),
+        ),
+        throwsFormatException,
+      );
+    },
+  );
+  test(
+    'normal kernel facts without a confirmed durable commit remain unconfirmed',
+    () {
+      final value = status()
+        ..addAll({
+          'phase': 'ClosingUnconfirmed',
+          'owner_phase': 'Retained',
+          'wire_owner_phase': 'Released',
+          'durable_proof': false,
+        });
+      final state = WorkbenchSupervisionState.decode(
+        encodeSupervisionFixture(value),
+      );
+      expect(state.uncertain, true);
+      expect(state.released, false);
+      expect(state.record['normal_shutdown'], true);
+      expect(state.record['child_exit_code'], 0);
+    },
+  );
+  test(
     'ACK, process exit and resource proof cannot substitute for durable owner release',
     () {
       expect(
         WorkbenchSupervisionState.decode(
-          utf8.encode(jsonEncode(status())),
+          encodeSupervisionFixture(status()),
         ).released,
         isTrue,
       );
@@ -57,7 +93,7 @@ void main() {
         final invalid = status()..[key] = false;
         expect(
           () => WorkbenchSupervisionState.decode(
-            utf8.encode(jsonEncode(invalid)),
+            encodeSupervisionFixture(invalid),
           ),
           throwsFormatException,
           reason: key,
@@ -66,7 +102,7 @@ void main() {
       final invalid = status()..['protocol_ack'] = 'received';
       expect(
         () =>
-            WorkbenchSupervisionState.decode(utf8.encode(jsonEncode(invalid))),
+            WorkbenchSupervisionState.decode(encodeSupervisionFixture(invalid)),
         throwsFormatException,
       );
     },

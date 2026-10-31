@@ -1,0 +1,430 @@
+{
+    "os":  {
+               "sku":  48,
+               "architecture":  "64 位",
+               "installation_type":  "Client",
+               "build":  "26100",
+               "ubr":  2033,
+               "edition":  "Professional",
+               "last_boot_utc":  "2026-10-30T09:22:11.3740050Z",
+               "caption":  "Microsoft Windows 11 专业版",
+               "version":  "10.0.26100"
+           },
+    "manufacturer":  "Microsoft Corporation",
+    "system_images":  [
+                          {
+                              "signer":  "CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+                              "version":  "10.0.26100.1 (WinBuild.160101.0800)",
+                              "attributes":  32,
+                              "signature":  "Valid",
+                              "sha256":  "d3b4b97c2bf97d70e5655ff4c4ca1d8cef9ded51685cfd764247cfda98ee68df",
+                              "bytes":  454656,
+                              "path":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                              "hardlink_count":  2,
+                              "hardlinks":  [
+                                                "\\Windows\\WinSxS\\amd64_microsoft-windows-powershell-exe_31bf3856ad364e35_10.0.26100.1_none_6609a7146abf3e09\\powershell.exe",
+                                                "\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+                                            ]
+                          },
+                          {
+                              "signer":  "CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+                              "version":  "10.0.26100.1 (WinBuild.160101.0800)",
+                              "attributes":  32,
+                              "signature":  "Valid",
+                              "sha256":  "23240ef9f8b0a9a324110b1c2331de31dc1b0e08f5359cb707e51a939af56cd3",
+                              "bytes":  98304,
+                              "path":  "C:\\Windows\\System32\\whoami.exe",
+                              "hardlink_count":  2,
+                              "hardlinks":  [
+                                                "\\Windows\\System32\\whoami.exe",
+                                                "\\Windows\\WinSxS\\amd64_microsoft-windows-whoami_31bf3856ad364e35_10.0.26100.1882_none_6a1af2a731f65422\\whoami.exe"
+                                            ]
+                          }
+                      ],
+    "model":  "Virtual Machine",
+    "firmware_uuid":  "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+    "hypervisor":  true,
+    "schema":  "NEW_WINDOWS11_PRO_ENVIRONMENT_V1",
+    "computer":  "WINDEV2407EVAL",
+    "mutations":  0,
+    "utc":  "2026-10-30T09:39:58.2619040Z",
+    "password_output":  false,
+    "setup_in_progress":  0,
+    "identity":  {
+                     "account":  "WINDEV2407EVAL\\User",
+                     "sid":  "S-1-5-21-2905472164-2625933686-2543038763-1000",
+                     "administrator":  true
+                 },
+    "oobe_in_progress":  0,
+    "license":  [
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalCountrySpecific edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_SLP channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), ProfessionalCountrySpecific edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Education edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), ProfessionalCountrySpecific edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), Education edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), Enterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), ProfessionalEducation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), IoTEnterpriseK edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), ProfessionalEducation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), ProfessionalCountrySpecific edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  5,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), ProfessionalEducation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), CloudEdition edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalEducation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), Enterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Enterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), IoTEnterpriseK edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), IoTEnterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), Enterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), CloudEdition edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), IoTEnterpriseK edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalSingleLanguage edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), Education edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), IoTEnterprise edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), CloudEdition edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMS_W10 channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), Education edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), Education edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), ProfessionalEducation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalWorkstation edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_KMSCLIENT channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, VOLUME_MAK channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, RETAIL channel",
+                        "name":  "Windows(R), ProfessionalCountrySpecific edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_COA_NSLP channel",
+                        "name":  "Windows(R), ServerRdsh edition",
+                        "grace_minutes":  0
+                    },
+                    {
+                        "status":  0,
+                        "description":  "Windows(R) Operating System, OEM_DM channel",
+                        "name":  "Windows(R), Professional edition",
+                        "grace_minutes":  0
+                    }
+                ],
+    "PSComputerName":  "Morrow Windows Acceptance 20261030 048",
+    "RunspaceId":  "62e9c60a-cbe8-4866-9dc7-85144d155255",
+    "PSShowComputerName":  true
+}

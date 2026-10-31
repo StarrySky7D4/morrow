@@ -1,0 +1,26 @@
+{
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\d-short-source-copies-1272\\retired-d-build-source-copies.zip",
+    "bytes": 596203029,
+    "sha256": "587971913f35485a9ca1d95f3d46f0c6d7218ef7bc35062d4f4f98e82657b742"
+  },
+  "historical_replay_authorized": false,
+  "free_delta_nonisolated": true,
+  "free_after": 3437510656,
+  "canonical_source_edits": 0,
+  "source_data_discarded": 0,
+  "logical_bytes_preserved": 2374058057,
+  "VM_calls": 0,
+  "build_cache_root": "D:\\build_cache",
+  "old_owner_contacts": 0,
+  "status": "PASS_THREE_D_BUILD_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_D_ARCHIVE",
+  "VM_files_removed": 0,
+  "files_removed": 158373,
+  "free_before": 2362822656,
+  "observed_free_delta": 1074688000,
+  "retired_roots": [
+    "D:\\build_cache\\mr25c",
+    "D:\\build_cache\\mr25p",
+    "D:\\build_cache\\mr25s"
+  ]
+}

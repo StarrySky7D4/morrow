@@ -1,0 +1,49 @@
+{
+  "status": "PASS_SCOPED_PROTECTED_WATCH_NATIVE_CONFIRMATION_AND_ORIGINAL_OWNER",
+  "source_digest": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1577\\fs-watch-protected-1577.exe",
+    "bytes": 19408896,
+    "sha256": "7db0f31cfebd265944b3ea7557cff9f2d48c227c52378926ea1b558999195996"
+  },
+  "method": "original_protected_owner_visible_cpp_guest",
+  "original_process_returned": true,
+  "exit_code": 0,
+  "original_worker_joined": true,
+  "original_owner_returned": true,
+  "actual_native_picker": true,
+  "native_retirement_complete": true,
+  "explicit_result_acknowledged": true,
+  "known_closed_protected_session_integrity": true,
+  "original_receipt": {
+    "path": "D:\\build_cache\\pw1591\\visible-cpp-complete\\original-exit.txt",
+    "bytes": 1708,
+    "sha256": "e5f218cdc75c545375c7daa5defee0793a4b31d7bf2384b9a84cc3c06bef4f14"
+  },
+  "owner_finish_receipt": {
+    "path": "D:\\build_cache\\pw1591\\visible-cpp-complete\\original-owner-finished.txt",
+    "bytes": 168,
+    "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+  },
+  "runtime_stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1591\\runtime.stdout",
+    "bytes": 168,
+    "sha256": "a18fc3fccbfa8062fd6b99b6bc172f157ffdc44d00ec5b9bbfe4e3b18b54e652"
+  },
+  "runtime_stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1591\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_picker_selection_UI_record": "RECORDED_SEPARATELY",
+  "known_expiry_classification_failure_retained": true,
+  "display_only_native_prefill": true,
+  "rendered_product_approval_UI": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

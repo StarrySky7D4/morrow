@@ -1,0 +1,27 @@
+{
+  "status": "VERIFIED_STANDALONE_SDK_LOCK_FIX_APPLIED",
+  "old_source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "source_digest": "fc097a680f7804c70f4d938c0217f86703733696c260af9cacac34d0da8660e4",
+  "changed_files": [
+    "companions/morrow-codex/session-exec-windows-v1/Cargo.lock"
+  ],
+  "canonical_lock": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\session-exec-windows-v1\\Cargo.lock",
+    "bytes": 226266,
+    "sha256": "ea67a66b0c3aceed08884c0a524137c31e69114380d6c4a4bd27a5a823e9e3a7"
+  },
+  "isolated_compiler_and_runtime_source_bytes_exactly_match_canonical": true,
+  "cold_compiler_artifacts": 864,
+  "all_compiler_artifacts_fresh_false": true,
+  "original_sdk_owner_methods_passed": 14,
+  "actual_original_scheduler_shutdown_methods": 2,
+  "prior_failures_preserved": true,
+  "original_VM_case845_unchanged": true,
+  "VM_calls": 0,
+  "git_commit": false,
+  "git_push": false,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

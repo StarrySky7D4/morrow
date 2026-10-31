@@ -1,0 +1,15 @@
+{
+  "policy_clean": true,
+  "vm_id": "a421ee21-2963-43dd-8b5c-c082857cf2f2",
+  "other_vms_unchanged": true,
+  "owner_contacts": 0,
+  "state": "Saved",
+  "registered_vms": 4,
+  "utc": "2026-10-30T14:38:29.8804406Z",
+  "status": "UNKNOWN_VM049_MEMORY_SAVED_FOR_APPROVED_OFFLINE_ARCHIVE",
+  "case_clean": false,
+  "original_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+  "source_disks_retained": true,
+  "guest_commands": 0,
+  "restore_or_replay": false
+}

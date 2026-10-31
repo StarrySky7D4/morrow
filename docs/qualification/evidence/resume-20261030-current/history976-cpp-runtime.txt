@@ -1,0 +1,21 @@
+
+running 16 tests
+test cancel_consumes_preview_without_guest_or_original_upload_ack ... ok
+test disabled_recipient_invalidates_exact_preview_without_dispatch ... ok
+test expired_preview_is_consumed_before_admission ... ok
+test guest_failure_data_is_withheld_after_gate_owner_or_recipient_veto ... ok
+test guest_trap_retains_first_execution_error_and_actual_close ... ok
+test later_gate_loss_preserves_execution_and_withholds_output ... ok
+test mismatched_approval_and_foreign_owner_do_not_consume_or_dispatch ... ok
+test original_close_refusal_blocks_replacement_and_keeps_first_failure ... ignored, separate explicit fault-injection process; retains original close debt
+test original_close_unwind_is_unknown_and_never_becomes_cleanup_proof ... ignored, separate explicit close-boundary unwind process; original debt retained
+test original_owner_outlives_instance_budget_across_acknowledged_deliveries ... ok
+test persisted_enabled_unsupported_guest_refuses_before_connection ... ok
+test private_controls::private_capnp_gate_veto_keeps_execution_but_withholds_guest_output ... ok
+test private_controls::private_capnp_prepares_previews_delivers_once_and_recovers_original_receipt ... ok
+test private_controls::private_capnp_refuses_mixed_fields_bad_ids_missing_envelopes_and_wrong_contract ... ok
+test revoked_product_gate_refuses_disclosure_before_dispatch ... ok
+test selected_history_runs_once_lost_reply_reads_original_and_unknown_stays_unknown ... ok
+
+test result: ok. 14 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.82s
+

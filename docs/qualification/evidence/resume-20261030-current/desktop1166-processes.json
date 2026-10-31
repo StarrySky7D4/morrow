@@ -1,0 +1,99 @@
+{
+  "status": "ORIGINAL_FULL_MAIN_HISTORY_PROCESSES_RETURNED_VISIBLE_REVIEW_REQUIRED",
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "components": {
+    "current_UI_source": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+    "native_default_source": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+    "builtin_source": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36"
+  },
+  "receipts": [
+    {
+      "phase": "run",
+      "original_processes": [
+        {
+          "pid": 23548,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow_history_1166.exe",
+          "creation_filetime": 134378929700104518,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 24084,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134378929718168363,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 21584,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134378929719151867,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\run.stdout",
+        "bytes": 154,
+        "sha256": "a08dfb8ea90b5fc2fc4f5a498d6877cacfda30951f731af11794359e2dd244e9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\run.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    },
+    {
+      "phase": "reopen",
+      "original_processes": [
+        {
+          "pid": 12260,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow_history_1166.exe",
+          "creation_filetime": 134378947630279810,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 22652,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134378947645526681,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 22236,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-window-1166\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134378947646181908,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\reopen.stdout",
+        "bytes": 154,
+        "sha256": "69f595d8410ff631bda09d0f470f0f64ff72a927966dcac700fbc926f846926d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-desktop-1166\\reopen.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    }
+  ],
+  "source_unchanged": true,
+  "production_main_unchanged": true,
+  "qualification_shell": false,
+  "approval_seeded": false,
+  "synthetic_original_history": true,
+  "actual_original_upload_performed": false,
+  "independent_closed_library_checks": 2,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

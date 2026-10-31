@@ -1,0 +1,38 @@
+{
+  "status": "ALL_FOUR_ROLES060_COLD_COMPILED_NOT_RUNTIME_ACCEPTED",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "original_P_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles060-parent-driver-1257\\result.json",
+    "bytes": 281,
+    "sha256": "db4b968c340292c828c4ab0cb86e12f04cc5c45529dad7b484fb8f885de60156"
+  },
+  "original_completed_P": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-060\\P\\result.json",
+    "bytes": 951,
+    "sha256": "01d946091b0ec0e9861aa23e18353758e4852b549e84e1cfde8418d8905300ba"
+  },
+  "P_recompiled": false,
+  "C_recompiled": false,
+  "original_completed_C": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-060\\C\\result.json",
+    "bytes": 1807,
+    "sha256": "80c37fc4672e28c05263aa97f0da897f23909a408962934ab19f97d67d3067fb"
+  },
+  "prior_driver_replayed": false,
+  "original_closed_space_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles060-build-driver-1268\\result.json",
+    "bytes": 1204,
+    "sha256": "544fdc1905edb5389a0643674a6f283b40deef09ac05e6778dab32c4907dc656"
+  },
+  "source_copy_reused_after_full_hash_verification": true,
+  "roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-060\\result.json",
+    "bytes": 2165,
+    "sha256": "6d321574247542926ddf9591c87c2973846b86e48587d3e083f91869eb5af525"
+  },
+  "source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,55 @@
+{
+  "status": "PIPELINE_STOPPED_ON_ORIGINAL_NONZERO_NO_RETRY",
+  "failed_phase": "prepare-current-stage",
+  "phase_exit": 1,
+  "completed": [
+    {
+      "phase": "public-driver-static-review",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\01-public-driver-static-review.stdout",
+        "bytes": 168,
+        "sha256": "fbe225a13b40c16959593c2c3f839c37b022c4c1791666778352a6cf039dc192"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\01-public-driver-static-review.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\02-authorized-protected-login-input.stdout",
+        "bytes": 56,
+        "sha256": "6bc88051e006f11c585282962acd6537afc427cb491dbab03d35766e3eaa9e98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\02-authorized-protected-login-input.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "exit_code": 1,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\03-prepare-current-stage.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\aliased1270-preparation-pipeline-1270\\03-prepare-current-stage.stderr",
+        "bytes": 1495,
+        "sha256": "358a2de7371ddf759434e2fcbac156ee51f3e4df2630d0d6789fb3b50b92b2f7"
+      }
+    }
+  ],
+  "tag": "06d06c03d81d4b98a0932e1b04d033fe",
+  "source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "old_unknown_owner_contacts": 0,
+  "automatic_retry": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

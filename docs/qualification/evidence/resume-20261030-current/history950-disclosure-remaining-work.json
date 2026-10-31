@@ -1,0 +1,23 @@
+{
+  "status": "TASK_CORRELATION_IMPLEMENTED_HOST_DISCLOSURE_ROUTE_IN_PROGRESS",
+  "scope": "Windows public history selected record to approved recipient",
+  "implemented": [
+    "Canonical 140-byte task identity binds selected submission and fresh query nonce",
+    "Rust C and C++ decode against separately validated task envelope ID",
+    "Output preservation and original Unknown remain independent"
+  ],
+  "still_required": [
+    "Live same-owner preview binds immutable packet digest, recipient package version and registry revision",
+    "Explicit approval rechecks current packet, original owner, same ProductGate and deadline",
+    "One-shot dispatch retains original result and close debt; lost reply queries only, never replay",
+    "Private Capnp route, native Dart client and explicit user confirmation in formal history UI",
+    "Actual protected-store dynamic record and recipient tests; formal UI after Esc resume",
+    "Full P2 and full SDK gates remain open"
+  ],
+  "qualification_script": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualify_public_history_951.py",
+  "derived_from": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualify_public_history_934.py",
+  "source_script_sha256": "f85b8532a0152b9c0cf547d81e5379bab62170298c654dc9972ab766e8f50d36",
+  "runtime": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false
+}

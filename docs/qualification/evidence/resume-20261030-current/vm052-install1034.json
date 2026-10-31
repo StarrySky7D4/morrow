@@ -1,0 +1,27 @@
+{
+  "status": "INSTALLATION_PREPARATION_STOPPED_ORIGINAL_FAILURE_RETAINED",
+  "completed": [
+    {
+      "phase": "private-media",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.485
+    },
+    {
+      "phase": "boot-media",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 57.375
+    },
+    {
+      "phase": "create",
+      "exit_code": 1,
+      "original_process_returned": true,
+      "seconds": 0.328
+    }
+  ],
+  "exit_code": 1,
+  "automatic_retry": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

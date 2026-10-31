@@ -1,0 +1,20 @@
+{
+  "prior_immediate_eject_check_failed": true,
+  "observed_free_delta": 5069647872,
+  "automatic_retry": false,
+  "concurrent_space_changes_not_attributed": true,
+  "old_owner_contacts": 0,
+  "deleted_public_media": "D:\\build_cache\\vm054-media-1228\\autoboot.iso",
+  "registered_vms": 4,
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "logical_bytes_removed": 5069602816,
+  "P2_dispatched": false,
+  "free_after": 9591398400,
+  "status": "PASS_ALREADY_DETACHED_VM054_PUBLIC_BUILD_COPY_RECLAIMED",
+  "private_media_preserved": true,
+  "source_Windows_iso_preserved": true,
+  "private_media_content_read": false,
+  "VM_media_mutations": 0,
+  "free_before": 4521750528,
+  "guest_commands": 0
+}

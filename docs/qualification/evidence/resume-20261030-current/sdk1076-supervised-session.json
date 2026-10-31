@@ -1,0 +1,36 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_PRODUCTION_SUPERVISED_HISTORY_SESSION",
+  "source_digest": "ce6593a1c164b51323bd8f009927855153027e952cd63eff8d66fc2ef68dbe06",
+  "default_native_source": "92e94662944453d7a9a3aeb438cd9dd67d914be164052c409a0165866b090b70",
+  "languages": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1076\\receipts\\rust\\result.json",
+      "bytes": 1041,
+      "sha256": "30fc92f5fb4ecf45f48ef07ba0d04b0e8c5ba7e3681f064691cde791310b4d9d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1076\\receipts\\c\\result.json",
+      "bytes": 1038,
+      "sha256": "edf7af10b36e406e83c3a8ecf8009c0daf602710b62af43360c3eda946a5b258"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervised-history-session-1076\\receipts\\cpp\\result.json",
+      "bytes": 1040,
+      "sha256": "b4422dd450a9b582495cea07d19f65a3c88ca554944583b70c86a89be1d6cd70"
+    }
+  ],
+  "current_production_factory": true,
+  "current_retained_view_session": true,
+  "all_original_fixture_test_and_native_owner_processes_returned": true,
+  "source_unchanged": true,
+  "business_IPC_CapnProto": true,
+  "supervisor_status_IPC_JSON_migration_open": true,
+  "formal_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

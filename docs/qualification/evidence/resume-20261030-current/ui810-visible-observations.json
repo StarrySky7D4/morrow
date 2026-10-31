@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-30T13:49:32.486Z",
+  "no_pending_operation": true,
+  "normal_UI_close_requested": true,
+  "observed_no_pending_text": "当前没有待处理的上传提案。请从插件列表选择“保存内容”。",
+  "imported_fixture": "org.example.blob-text.rust",
+  "observed_body_empty": true,
+  "proposal_generation_requested": false,
+  "upload_approved": false,
+  "manual_input_received": false,
+  "text_save_acceptance": false,
+  "reason": "Two automated typing attempts left the actual body empty; no manual input arrived before normal close. Close before the original UI observation deadline.",
+  "observation_files": [
+    "ui-observations/03-automated-body-input-remains-empty.json",
+    "ui-observations/04-no-input-no-proposal-before-normal-close.json",
+    "ui-observations/05-visible-no-pending-upload-proposal.json",
+    "ui-observations/06-main-view-after-no-pending-dialog-close.json"
+  ]
+}

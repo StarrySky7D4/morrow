@@ -1,0 +1,146 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_DART_HISTORY_CLIENT_AND_PUBLIC_CODEC",
+  "source_digest": "c62bcdffacb70acde2e0ca93adb2969077a2702f145ea8b34231710a8c2bf507",
+  "prior_P2_source_digest": "7c531a3b8b05e4b7455ded47b3a37e1e53099e946ac1cbd0335f08c02a0ff660",
+  "checks": [
+    {
+      "name": "analyze",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 7.438000000001921,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\analyze.stdout",
+        "bytes": 155,
+        "sha256": "21ae2adb4a54d2ba6ff997f76e916e1de7b4e8c93a387c7cd4a0e4ff2c952c87"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "tests",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 6.953000000001339,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\tests.stdout",
+        "bytes": 4659,
+        "sha256": "ed1207d87c423da4025804c4fcfb1f77da43baa9be8f80aae17b05f3ab17cd05"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\tests.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "codegen-check",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.7969999999986612,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\codegen-check.stdout",
+        "bytes": 39,
+        "sha256": "4f46d93afaf0adcf6e5d96103b0e27d353c52033fc82295b762843757018ea6c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\codegen-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "whitespace",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.17100000000209548,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\whitespace.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-client-landed-1016\\whitespace.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_history_delivery_models.dart",
+      "bytes": 4682,
+      "sha256": "3c817239526d45108f97ae7c69bebc50416ccdda092806f944aefacbd1080359"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_history_delivery_native.dart",
+      "bytes": 17607,
+      "sha256": "3759180cabd962e90e553453e0663a71d1f7652428e7fafc526ab3be7683de92"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_upload_history_packet.dart",
+      "bytes": 9297,
+      "sha256": "7f5671b480992627d767a7713d619aa912a6c106306d8a2e1c0934bd1fea218d"
+    },
+    {
+      "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\blob_history_delivery_client_test.dart",
+      "bytes": 21638,
+      "sha256": "1f5c85a57380cb17c123c501b9ed9ba9c9ab030e5aef23575f6d9412c9e3aaee"
+    },
+    {
+      "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\history_packet_test.dart",
+      "bytes": 8724,
+      "sha256": "992cffa095cb9f751071b72ba4e323e94580588bb27929294cbccafdc8ed83ba"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_native.dart",
+      "bytes": 142904,
+      "sha256": "6b58558fd63d2d283809a56a62ab5eab78340d08ec8bb32cbb5033bb2bdb0d28"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.dart",
+      "bytes": 234,
+      "sha256": "8bb79d40d060144766d490320e1e07fa50441158a6f84a0f69e71ff83278adf6"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.ids.dart",
+      "bytes": 414,
+      "sha256": "7f6d9a5797cfa4e4295dac7d9f2036b10935996f1740ad845d15e218774edb15"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.native.dart",
+      "bytes": 15487,
+      "sha256": "d5da0c0c1c519f982c9398ea59b2591e8b03cd180d5dc0e4e10532266f8fec19"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.web.dart",
+      "bytes": 10295,
+      "sha256": "56aa624bf0d25762feebf25b40041cd89ebd1894c2c63301431f2b0a448b379c"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history_identity.dart",
+      "bytes": 346,
+      "sha256": "e2ef77a7b07cb0f058e083bf1de9dba3b62877569679c57dbfa4af4f6419f902"
+    },
+    {
+      "path": "C:\\ms1020\\tool\\generate_blob_history_client.py",
+      "bytes": 3392,
+      "sha256": "2b04f83a0c421ed3be118a1708aeb45fa66ff06bec48d6177879804ece638b84"
+    },
+    {
+      "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\fixtures\\history-unknown-acknowledged.capnp",
+      "bytes": 472,
+      "sha256": "8f54c4fe746a598ac53f6e985d720911b60d1056bd7578c095810ee517244805"
+    }
+  ],
+  "all_original_processes_returned": true,
+  "actual_host_transport": false,
+  "formal_UI": false,
+  "VM_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN"
+}

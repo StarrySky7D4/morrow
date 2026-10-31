@@ -1,0 +1,130 @@
+{
+  "status": "PASS_SCOPED_WATCH_DECLARATION_PERSISTENT_CEILING_LIVE_WINDOW_AND_ORIGINAL_IO_CONTEXT_REVIEW",
+  "source_digest": "c3f125ede13291ca271e954d9f6a0d86107c1237912bb6df3b1e92407847aed2",
+  "prior_core_source": "6d0415de89d9006d534666a7dc4ddc86ad2d64ad94771eae3deaf3f2895d8127",
+  "prior_core_methods": 70,
+  "current_selected_methods": 54,
+  "overlapping_methods_not_added": true,
+  "current_live_approval_methods": 11,
+  "current_core_watch_methods": 12,
+  "current_private_registry_methods": 2,
+  "current_other_profile_methods": 29,
+  "all_original_processes_returned": true,
+  "new_watch_lint_diagnostics": 0,
+  "selected_package_lint_diagnostics": 0,
+  "persistent_registry_v4_exact_ceiling": true,
+  "FileList_never_implies_watch": true,
+  "upgrade_clears_watch": true,
+  "unknown_approval_publication_blocks_decisions": true,
+  "one_watch_window_per_original_IoContext": true,
+  "shared_IO_usage_not_reinitialized": true,
+  "foreign_owner_does_not_advance_clock": true,
+  "revocation_expiry_clock_rollback_sticky": true,
+  "watch_resource_reservation_or_native_dispatch": false,
+  "protected_selection": false,
+  "managed_watch_worker": false,
+  "formal_UI": false,
+  "original_frozen_inputs_unchanged": 57,
+  "receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\result.json",
+      "bytes": 16656,
+      "sha256": "c60023296ce7e8041754943031f82a6364258efa5ef587dc548aa3b0922a799b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-live-approval-1472\\result.json",
+      "bytes": 78611,
+      "sha256": "8c49874142bcb13ea4cec38323fda4e686088c361ab4c96701b10aff793c05e2"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "C:\\ms1020\\core\\schemas\\plugin_package.proto",
+      "bytes": 4183,
+      "sha256": "c92d9dfda81ad87f0decda79537350b87b9245073cecdac60954d1f271a9b118"
+    },
+    {
+      "path": "C:\\ms1020\\core\\schemas\\plugin_registry.proto",
+      "bytes": 1124,
+      "sha256": "b6035f209c4a0195ca8dfef273063cdbf899931bf69290ac41423c43838f92a6"
+    },
+    {
+      "path": "C:\\ms1020\\core\\src\\plugin_package.rs",
+      "bytes": 37182,
+      "sha256": "34cc61ea7326fbe67f25781a9eab529b3a8fffbc5534771e2cbd8655620e4b40"
+    },
+    {
+      "path": "C:\\ms1020\\core\\src\\plugin_package\\registry.rs",
+      "bytes": 34020,
+      "sha256": "9864c5c19436629fb6119096545b69a65ea1d64ce6059647bf6833be97e4b772"
+    },
+    {
+      "path": "C:\\ms1020\\core\\tests\\dependency_registry.rs",
+      "bytes": 24242,
+      "sha256": "ae097a2003d85e68b6244fcc4c0fd9460996d35898dfad60b09a717433f23c05"
+    },
+    {
+      "path": "C:\\ms1020\\core\\tests\\plugin_registry_io.rs",
+      "bytes": 16778,
+      "sha256": "f76a8ee370a8bb746644540468fcd1d8ddec8b1eaff8beb3775affb2da4e0839"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\Cargo.toml",
+      "bytes": 4291,
+      "sha256": "2e6bc4f1115e974b78d5fb04984b26a15d72b9a8a006bb5e1d00492eff6c142d"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\Cargo.lock",
+      "bytes": 36516,
+      "sha256": "4a7e050dd3ff75ce4cf76e36e9ceedf775e12de478c80211c302ff0d0bfa4785"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\lib.rs",
+      "bytes": 40895,
+      "sha256": "5a2655949015ec19e678e92b565dcab368fe6bbcb8842bd44363cb165539a05e"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\manager.rs",
+      "bytes": 43088,
+      "sha256": "defe27eb9f206194471c7c8ea192ea32aaec372aed088df8031683f95fda8d59"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_binding.rs",
+      "bytes": 37660,
+      "sha256": "8ff6aed581f4d0cfa7c8434a37c50831389766996515ed071ca8eb9dc0e81fb9"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\package.rs",
+      "bytes": 14743,
+      "sha256": "af2fcb4c2092e785ef5940b355f76399f893502414dfa31c50565fba47c54b33"
+    },
+    {
+      "path": "C:\\ms1020\\core\\src\\plugin_package\\fs_watch.rs",
+      "bytes": 4978,
+      "sha256": "09950ce0f0ab4bb3dcece9fd3b2cb91f289e2df00f4b7c731a1418d2f327d263"
+    },
+    {
+      "path": "C:\\ms1020\\core\\tests\\package_fs_watch.rs",
+      "bytes": 15460,
+      "sha256": "1931709deed928fed40128173db814af8ed49ec43e2cda9594d208fc5ffcba35"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 6710,
+      "sha256": "e0cbc28730607d56dd748d2e554b877e9bd5b4ca3c1d1b29f5479d11568fdb36"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\fs_watch_approval.rs",
+      "bytes": 13447,
+      "sha256": "14351437aa3835aca9900e4cea9362ef390c37b23065b655bac311d0f282ea06"
+    }
+  ],
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "P2": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

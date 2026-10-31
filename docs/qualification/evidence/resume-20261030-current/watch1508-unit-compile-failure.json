@@ -1,0 +1,24 @@
+{
+  "status": "FAILED_CLOSED_NO_RETRY",
+  "type": "AssertionError",
+  "error": "build",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1508\\build.stdout",
+        "bytes": 198287,
+        "sha256": "996c16263491559909fb5130b7846eca4561c216c08e4252e8a8f68af5416627"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1508\\build.stderr",
+        "bytes": 5253,
+        "sha256": "a2f5f7fcf1f14df29aff77759bf0c15fc6994d3330c8189788ba299729f75634"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

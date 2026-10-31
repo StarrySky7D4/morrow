@@ -1,0 +1,265 @@
+{
+  "status": "PASS_SCOPED_CURRENT_SCHEMA_NATIVE_SDK_AND_WASM_EQUALITY",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "native_passed": 93,
+  "native_failed": 0,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\equality-sdk-native-1239\\native.stdout",
+    "bytes": 7880,
+    "sha256": "ff5894a725e490cbcdea20365fb4b027c1325070519f3c7010bda8be2d2e557f"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\equality-sdk-native-1239\\native.stderr",
+    "bytes": 2942,
+    "sha256": "050ff4fa64929e314cec5a4ab3b33ef84e4888d0756363df3db465446eff9abf"
+  },
+  "diagnostic": {
+    "baseline": {
+      "stages": [
+        {
+          "method": "payload_sha",
+          "size": 31,
+          "fuel": 67130,
+          "digest": "de247407648c9e1c5b8b99d9f14765d585d02046a9fdca119763532377bf98c4"
+        },
+        {
+          "method": "frame_sha",
+          "size": 31,
+          "fuel": 25557,
+          "digest": "63cc40d8ba33db7330e0432e7640de9a3df291b044b3004d0a78b99f8ed90e15"
+        },
+        {
+          "method": "frame_encode",
+          "size": 31,
+          "fuel": 7207,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 31,
+          "fuel": 97748,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 31,
+          "fuel": 7136,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 31,
+          "fuel": 5618,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "payload_sha",
+          "size": 32768,
+          "fuel": 1170939,
+          "digest": "da543851706e5244e4d893b78567e4af175fdde4b648aa01043c3672aecbb19e"
+        },
+        {
+          "method": "frame_sha",
+          "size": 32768,
+          "fuel": 1179684,
+          "digest": "8d85bb5aa8a30f76fc97eee585846932510651be09324f53faa0e099ddd8dbf0"
+        },
+        {
+          "method": "frame_encode",
+          "size": 32768,
+          "fuel": 6523,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 32768,
+          "fuel": 317572,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 32768,
+          "fuel": 2421,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 32768,
+          "fuel": 295162,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "payload_sha",
+          "size": 65536,
+          "fuel": 2339323,
+          "digest": "bb7d8e553e3e83cce835f144a5dfa8d56dc020d9c7b6a5fadb29f85184844ce5"
+        },
+        {
+          "method": "frame_sha",
+          "size": 65536,
+          "fuel": 2349092,
+          "digest": "11b74030a39720d91e6064dc5e0c436fb4dfafea90a15abeb110fcee0f34e86a"
+        },
+        {
+          "method": "frame_encode",
+          "size": 65536,
+          "fuel": 7547,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 65536,
+          "fuel": 614977,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 65536,
+          "fuel": 2933,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 65536,
+          "fuel": 590074,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "mutation_cases": 1656,
+      "all_mutations_passed": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\baseline-run.stdout",
+        "bytes": 3141,
+        "sha256": "ad9dcadbe8588194d675f9975d12d14747b11a95244b16de075bc17c3aac944d"
+      }
+    },
+    "equality": {
+      "stages": [
+        {
+          "method": "payload_sha",
+          "size": 31,
+          "fuel": 67130,
+          "digest": "de247407648c9e1c5b8b99d9f14765d585d02046a9fdca119763532377bf98c4"
+        },
+        {
+          "method": "frame_sha",
+          "size": 31,
+          "fuel": 25557,
+          "digest": "63cc40d8ba33db7330e0432e7640de9a3df291b044b3004d0a78b99f8ed90e15"
+        },
+        {
+          "method": "frame_encode",
+          "size": 31,
+          "fuel": 7207,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 31,
+          "fuel": 97748,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 31,
+          "fuel": 7136,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 31,
+          "fuel": 6202,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "payload_sha",
+          "size": 32768,
+          "fuel": 1170939,
+          "digest": "da543851706e5244e4d893b78567e4af175fdde4b648aa01043c3672aecbb19e"
+        },
+        {
+          "method": "frame_sha",
+          "size": 32768,
+          "fuel": 1179684,
+          "digest": "8d85bb5aa8a30f76fc97eee585846932510651be09324f53faa0e099ddd8dbf0"
+        },
+        {
+          "method": "frame_encode",
+          "size": 32768,
+          "fuel": 6523,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 32768,
+          "fuel": 317572,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 32768,
+          "fuel": 2421,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 32768,
+          "fuel": 37124,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "payload_sha",
+          "size": 65536,
+          "fuel": 2339323,
+          "digest": "bb7d8e553e3e83cce835f144a5dfa8d56dc020d9c7b6a5fadb29f85184844ce5"
+        },
+        {
+          "method": "frame_sha",
+          "size": 65536,
+          "fuel": 2349092,
+          "digest": "11b74030a39720d91e6064dc5e0c436fb4dfafea90a15abeb110fcee0f34e86a"
+        },
+        {
+          "method": "frame_encode",
+          "size": 65536,
+          "fuel": 7547,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_decode",
+          "size": 65536,
+          "fuel": 614977,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_clone",
+          "size": 65536,
+          "fuel": 2933,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "method": "response_equal",
+          "size": 65536,
+          "fuel": 73988,
+          "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "mutation_cases": 1656,
+      "all_mutations_passed": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\equality-run.stdout",
+        "bytes": 3139,
+        "sha256": "0b38714893249f07bcd5ff06018cbaa1ead86d262822a4bbadd811e7ca564699"
+      }
+    }
+  },
+  "source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+  "canonical_source_edits": 0,
+  "all_input_bytes_unchanged": true,
+  "previous_missing_schema_failure_preserved": true,
+  "original_business_matrix": "SEPARATE_1233_RESULT_REQUIRED",
+  "full_SDK26_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

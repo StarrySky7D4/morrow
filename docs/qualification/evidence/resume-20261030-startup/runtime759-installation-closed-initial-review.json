@@ -1,0 +1,13 @@
+{
+    "P2_dispatched":  false,
+    "installer_dword":  0,
+    "vm_id":  "e1d386a2-7695-4db8-83e3-09dc019a756c",
+    "prerequisite_verified":  false,
+    "firmware_uuid":  "4cfb5961-796a-474e-8a1e-7aee1d1bc3ad",
+    "source_accepted":  false,
+    "restart_required":  false,
+    "own_transport_closed":  true,
+    "status":  "KNOWN_RUNTIME_SETUP_CLOSED_REVIEW_REQUIRED",
+    "release_eligible":  false,
+    "old_owner_calls":  0
+}

@@ -1,0 +1,19 @@
+{
+  "logs_removed": 0,
+  "source_accepted": false,
+  "preserved_files": 6348,
+  "all_preserved_hashes_equal": true,
+  "old_owner_contacts": 0,
+  "free_before": 4364873728,
+  "VM_calls": 0,
+  "root": "D:\\build_cache\\qualification-targets\\sdk1120-DEFAULT-aaf94e1ca9daf796",
+  "free_after": 7874048000,
+  "executables_removed": 0,
+  "observed_free_delta": 3509174272,
+  "logical_bytes_removed": 2354519887,
+  "concurrent_space_changes_not_attributed": true,
+  "removed_files": 1465,
+  "source_files_removed": 0,
+  "status": "PASS_CLOSED_SDK_GENERATED_LIBRARIES_RECLAIMED_PROGRAMS_AND_SYMBOLS_PRESERVED",
+  "release_eligible": false
+}

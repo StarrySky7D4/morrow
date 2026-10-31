@@ -1,0 +1,59 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "e276b7ecae5f27f06c6459527d34f21be123511a2eb3823513bd4bcffe8bd53f",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "commands": [
+    {
+      "name": "static-library",
+      "exit_code": 0,
+      "seconds": 7.953,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-native-933\\static-library.stdout",
+        "bytes": 16039,
+        "sha256": "2e47a6923abea4e2daa707382df60a42adf9d151ce6275bee3a79646c297e46f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-native-933\\static-library.stderr",
+        "bytes": 493,
+        "sha256": "80e4ff8f3b9532e1fedebf45817744c6f5efc53426283ceaaec9a3b4c0694e35"
+      }
+    },
+    {
+      "name": "strict-clippy",
+      "exit_code": 101,
+      "seconds": 1.625,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-native-933\\strict-clippy.stdout",
+        "bytes": 18872,
+        "sha256": "03ed5af8b610210eb16fd348b5c8ec01e0d9165ccdf32c5b9ed22f43c8891b66"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-native-933\\strict-clippy.stderr",
+        "bytes": 210,
+        "sha256": "39f3693c4f4040ce2a7977776c9d2340bc1834cdb94a86ae6a4ed94281823283"
+      }
+    }
+  ],
+  "artifacts": {
+    "library": {
+      "path": "D:\\build_cache\\qualification-targets\\sdk933-HISTORY-e276b7ecae5f27f0\\x86_64-pc-windows-msvc\\release\\morrow_blob_upload_history_v1.lib",
+      "bytes": 13160706,
+      "sha256": "bfa89a9f01a6138342c3eee3f4d134b8ada02859918c1db53ef86613a693422d"
+    }
+  },
+  "error": "RuntimeError: strict-clippy failed; original logs retained, no automatic retry",
+  "all_original_processes_returned": true,
+  "meaningful_Rust_methods": 0,
+  "independent_C_CPP_consumers": 0,
+  "vector_producer_not_test_credit": true,
+  "VM_calls": 0,
+  "window_actions": 0,
+  "protected_store_runtime": false,
+  "public_product_delivery": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

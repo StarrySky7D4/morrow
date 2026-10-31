@@ -1,0 +1,19 @@
+{
+    "concurrent_space_changes_not_attributed":  true,
+    "all_preserved_hashes_equal":  true,
+    "executables_removed":  0,
+    "preserved_files":  6433,
+    "free_before":  7825965056,
+    "logs_removed":  0,
+    "root":  "D:\\build_cache\\qualification-targets\\sdk1106-NATIVE-CHECK-ce5856c9c8ca9eba",
+    "status":  "PASS_CLOSED_FAILED_CHECK_GENERATED_LIBRARY_CACHE_RECLAIMED",
+    "free_after":  8929144832,
+    "release_eligible":  false,
+    "source_files_removed":  0,
+    "removed_files":  1174,
+    "VM_calls":  0,
+    "observed_free_delta":  1103179776,
+    "source_accepted":  false,
+    "old_owner_contacts":  0,
+    "logical_bytes_removed":  1291261114
+}

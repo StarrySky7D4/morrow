@@ -43,11 +43,15 @@ import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'file_task_models.dart';
 import 'file_task_native.dart';
+import 'fs_watch_models.dart';
+import 'fs_watch_native.dart';
 import 'directory_task_models.dart';
 import 'directory_task_native.dart';
 import 'blob_upload_models.dart';
 import 'blob_upload_history_models.dart';
 import 'blob_upload_history_native.dart';
+import 'blob_history_delivery_models.dart';
+import 'blob_history_delivery_native.dart';
 import 'blob_upload_native.dart';
 import 'blob_plan_models.dart';
 import 'blob_plan_native.dart';
@@ -112,6 +116,12 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
     for (final value in values ?? <String?>[])
       if (value != null) value else throw const FormatException('插件资料不完整'),
   ];
+  if (!row.fsWatchSupported &&
+      (row.fsWatchMaxFrames != 0 ||
+          row.fsWatchMaxWireBytesBigInt != BigInt.zero ||
+          row.fsWatchMaxWindowMs != 0)) {
+    throw const FormatException('Observation ceilings without declaration');
+  }
   return PluginLibraryEntry(
     id: row.packageId ?? '',
     name: row.name ?? '',
@@ -139,12 +149,26 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
         : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
     directorySupported: row.directorySupported,
+    fsWatchSupported: row.fsWatchSupported,
+    fsWatchApproved: row.fsWatchApproved,
+    fsWatchHandlers: texts(row.fsWatchHandlers),
+    fsWatchLimits: row.fsWatchSupported
+        ? FsWatchLimits(
+            frames: row.fsWatchMaxFrames,
+            wireBytes: row.fsWatchMaxWireBytesBigInt,
+            windowMs: row.fsWatchMaxWindowMs,
+          )
+        : null,
     blobUploadSupported: row.blobUploadSupported,
     blobUploadApproved: row.blobUploadApproved,
     blobUploadHandlers: texts(row.blobUploadHandlers),
-    blobPlanners: [for (final p in row.blobPlanners ?? <host.BlobPlannerReader>[])
-      BlobPlannerMapping(p.handler ?? '', p.uploadHandler ?? '')],
-    blobUploadMaxBytes: row.blobUploadSupported ? row.blobUploadMaxBytesBigInt : null,
+    blobPlanners: [
+      for (final p in row.blobPlanners ?? <host.BlobPlannerReader>[])
+        BlobPlannerMapping(p.handler ?? '', p.uploadHandler ?? ''),
+    ],
+    blobUploadMaxBytes: row.blobUploadSupported
+        ? row.blobUploadMaxBytesBigInt
+        : null,
     mutationBudget: switch (row.mutationBudget) {
       null => null,
       final budget => PluginMutationBudget(
@@ -197,10 +221,13 @@ class RustWorkbench
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
         FileTaskBackend,
+        FsWatchBackend,
+        FsWatchPlatformCapabilities,
         DirectoryTaskBackend,
         BlobUploadBackend,
         BlobUploadMetadataBackend,
         BlobUploadHistoryBackend,
+        BlobHistoryDeliveryBackend,
         BlobPlanBackend,
         DirectoryTaskPlatformCapabilities,
         NativeDirectoryPickerCapabilities,
@@ -249,13 +276,19 @@ class RustWorkbench
   Future<EditorDraftOwner> resumeEditorDraft(EditorDraftReview original) {
     final record = original.record;
     final key = (record.request.cardId, record.request.draftId);
-    final attempt = _draftResumes.putIfAbsent(key, () => _NativeDraftResumeAttempt(this, record));
+    final attempt = _draftResumes.putIfAbsent(
+      key,
+      () => _NativeDraftResumeAttempt(this, record),
+    );
     if (attempt.original.generation != record.generation ||
         !_same(attempt.original.requestSha256, record.requestSha256)) {
-      return Future.error(StateError('Original resume attempt is still retained'));
+      return Future.error(
+        StateError('Original resume attempt is still retained'),
+      );
     }
     return attempt.run();
   }
+
   final _draftRetirements = <(String, String), EditorDraftRetirementAttempt>{};
   @override
   EditorDraftRetirementAttempt retirementFor(EditorDraftReview review) {
@@ -271,9 +304,14 @@ class RustWorkbench
       }
       return retained;
     }
-    final owners = _draftOwners.where((owner) =>
-        owner.session.cardId == key.$1 && owner.session.draftId == key.$2 &&
-        !owner.captureClosed).toList();
+    final owners = _draftOwners
+        .where(
+          (owner) =>
+              owner.session.cardId == key.$1 &&
+              owner.session.draftId == key.$2 &&
+              !owner.captureClosed,
+        )
+        .toList();
     if (owners.length > 1) throw StateError('Ambiguous original draft owner');
     final owner = owners.isEmpty ? null : owners.single;
     final operation =
@@ -288,9 +326,13 @@ class RustWorkbench
       // Merely opening/cancelling confirmation does not freeze the live owner.
       // start reserves synchronously before its first asynchronous observation.
       reserveOwner: () {
-        final actual = _draftOwners.where((candidate) =>
-            candidate.session.cardId == key.$1 &&
-            candidate.session.draftId == key.$2 && !candidate.captureClosed)
+        final actual = _draftOwners
+            .where(
+              (candidate) =>
+                  candidate.session.cardId == key.$1 &&
+                  candidate.session.draftId == key.$2 &&
+                  !candidate.captureClosed,
+            )
             .toList();
         if (actual.length != (owner == null ? 0 : 1) ||
             (owner != null && !identical(actual.single, owner))) {
@@ -300,8 +342,9 @@ class RustWorkbench
           reservation = owner.reserveRetirement(record, operation);
         }
       },
-      finishOwner: owner == null ? null : (retired) =>
-          owner.finishRetirement(reservation!, retired),
+      finishOwner: owner == null
+          ? null
+          : (retired) => owner.finishRetirement(reservation!, retired),
     );
   }
 
@@ -1334,42 +1377,123 @@ class RustWorkbench
   Future<ChannelSentFrame?> readChannelSent(Uint8List key, BigInt sequence) =>
       _channelTasks.readChannelSent(key, sequence);
 
+  @override
+  bool get supportsFsWatch => Platform.isWindows;
+  late final _fsWatch = NativeFsWatchClient(_callDecoded);
+  @override
+  Future<void> approveFsWatch(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    bool approved,
+  ) => _fsWatch.approveFsWatch(packageId, digest, revision, approved);
+  @override
+  Future<FsWatchSnapshot> startFsWatch(FsWatchRequest request) =>
+      _fsWatch.startFsWatch(request);
+  @override
+  Future<FsWatchSnapshot> pollFsWatch(Uint8List key) =>
+      _fsWatch.pollFsWatch(key);
+  @override
+  Future<FsWatchReply> readFsWatch(Uint8List key) => _fsWatch.readFsWatch(key);
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
   late final _directoryTasks = NativeDirectoryTaskClient(_callDecoded);
   late final _blobPlans = NativeBlobPlanClient(_callDecoded);
   @override
-  Future<BlobPlanSnapshot> startBlobPlan(BlobPlanRequest request) => _blobPlans.startBlobPlan(request);
+  Future<BlobPlanSnapshot> startBlobPlan(BlobPlanRequest request) =>
+      _blobPlans.startBlobPlan(request);
   @override
-  Future<BlobPlanSnapshot> statusBlobPlan(Uint8List key) => _blobPlans.statusBlobPlan(key);
+  Future<BlobPlanSnapshot> statusBlobPlan(Uint8List key) =>
+      _blobPlans.statusBlobPlan(key);
   @override
-  Future<BlobPlanReply> readBlobPlan(Uint8List key) => _blobPlans.readBlobPlan(key);
+  Future<BlobPlanReply> readBlobPlan(Uint8List key) =>
+      _blobPlans.readBlobPlan(key);
   @override
-  Future<BlobPlanSnapshot> cancelBlobPlan(Uint8List key) => _blobPlans.cancelBlobPlan(key);
+  Future<BlobPlanSnapshot> cancelBlobPlan(Uint8List key) =>
+      _blobPlans.cancelBlobPlan(key);
   @override
-  Future<void> acknowledgeBlobPlan(Uint8List key) => _blobPlans.acknowledgeBlobPlan(key);
+  Future<void> acknowledgeBlobPlan(Uint8List key) =>
+      _blobPlans.acknowledgeBlobPlan(key);
   @override
-  Future<BlobPlanSnapshot> approveBlobPlan(Uint8List key, BlobPlanView reviewed) => _blobPlans.approveBlobPlan(key, reviewed);
+  Future<BlobPlanSnapshot> approveBlobPlan(
+    Uint8List key,
+    BlobPlanView reviewed,
+  ) => _blobPlans.approveBlobPlan(key, reviewed);
   @override
-  Future<BlobPlanSnapshot?> discoverBlobPlan(Uint8List submission) => _blobPlans.discoverBlobPlan(submission);
+  Future<BlobPlanSnapshot?> discoverBlobPlan(Uint8List submission) =>
+      _blobPlans.discoverBlobPlan(submission);
   late final _blobUploads = NativeBlobUploadClient(_callDecoded);
-  late final _blobUploadMetadata = NativeBlobUploadClient(_localChannelExchange);
+  late final _blobUploadMetadata = NativeBlobUploadClient(
+    _localChannelExchange,
+  );
   @override
   Future<BlobUploadMetadataReview> reviewBlobUploadMetadata(Uint8List key) =>
       _blobUploadMetadata.reviewBlobUploadMetadata(key);
   @override
-  Future<BlobUploadMetadataCompletion> completeBlobUploadMetadata(BlobUploadMetadataReview review) =>
-      _blobUploadMetadata.completeBlobUploadMetadata(review);
-  late final _blobUploadHistory = NativeBlobUploadHistoryClient(_localChannelExchange);
+  Future<BlobUploadMetadataCompletion> completeBlobUploadMetadata(
+    BlobUploadMetadataReview review,
+  ) => _blobUploadMetadata.completeBlobUploadMetadata(review);
+  late final _blobHistoryDeliveries = NativeBlobHistoryDeliveryClient(
+    _localChannelExchange,
+  );
   @override
-  Future<BlobUploadHistoryPage> listBlobUploadHistory({Uint8List? after, int limit = 16}) =>
-      _blobUploadHistory.listBlobUploadHistory(after: after, limit: limit);
+  Future<BlobHistoryDeliveryPreview> prepareBlobHistoryDelivery(
+    BlobHistoryDeliveryRequest request,
+  ) => _blobHistoryDeliveries.prepareBlobHistoryDelivery(request);
   @override
-  Future<BlobUploadHistoryInspection> inspectBlobUploadHistory(Uint8List submission) =>
-      _blobUploadHistory.inspectBlobUploadHistory(submission);
+  Future<BlobHistoryDeliveryPreview> previewBlobHistoryDelivery(
+    Uint8List key,
+    BlobHistoryDeliveryRequest expected,
+  ) => _blobHistoryDeliveries.previewBlobHistoryDelivery(key, expected);
   @override
-  Future<void> approveBlobUpload(String packageId, Uint8List digest,
-      BigInt revision, bool approved) =>
-      _blobUploads.approveBlobUpload(packageId, digest, revision, approved);
+  Future<BlobHistoryDeliveryReceipt> approveBlobHistoryDelivery(
+    BlobHistoryDeliveryPreview reviewed,
+  ) => _blobHistoryDeliveries.approveBlobHistoryDelivery(reviewed);
+  @override
+  Future<BlobHistoryDeliveryReceipt> readBlobHistoryDelivery(
+    Uint8List key,
+    Uint8List requestId, {
+    String? expectedOutputType,
+  }) => _blobHistoryDeliveries.readBlobHistoryDelivery(
+    key,
+    requestId,
+    expectedOutputType: expectedOutputType,
+  );
+  @override
+  Future<BlobHistoryDeliveryReceipt> cancelBlobHistoryDelivery(
+    Uint8List key,
+    Uint8List requestId,
+  ) => _blobHistoryDeliveries.cancelBlobHistoryDelivery(key, requestId);
+  @override
+  Future<BlobHistoryDeliveryReceipt> acknowledgeBlobHistoryDelivery(
+    BlobHistoryDeliveryReceipt original,
+  ) => _blobHistoryDeliveries.acknowledgeBlobHistoryDelivery(original);
+  @override
+  Future<BlobHistoryDeliveryReceipt?> discoverBlobHistoryDelivery(
+    Uint8List requestId, {
+    String? expectedOutputType,
+  }) => _blobHistoryDeliveries.discoverBlobHistoryDelivery(
+    requestId,
+    expectedOutputType: expectedOutputType,
+  );
+  late final _blobUploadHistory = NativeBlobUploadHistoryClient(
+    _localChannelExchange,
+  );
+  @override
+  Future<BlobUploadHistoryPage> listBlobUploadHistory({
+    Uint8List? after,
+    int limit = 16,
+  }) => _blobUploadHistory.listBlobUploadHistory(after: after, limit: limit);
+  @override
+  Future<BlobUploadHistoryInspection> inspectBlobUploadHistory(
+    Uint8List submission,
+  ) => _blobUploadHistory.inspectBlobUploadHistory(submission);
+  @override
+  Future<void> approveBlobUpload(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    bool approved,
+  ) => _blobUploads.approveBlobUpload(packageId, digest, revision, approved);
   @override
   Future<BlobUploadSnapshot> startBlobUpload(BlobUploadRequest request) =>
       _blobUploads.startBlobUpload(request);
@@ -1384,8 +1508,9 @@ class RustWorkbench
       _blobUploads.inspectBlobUpload(key);
   @override
   Future<BlobUploadSnapshot> confirmBlobUpload(
-      Uint8List key, BlobUploadObservation expected) =>
-      _blobUploads.confirmBlobUpload(key, expected);
+    Uint8List key,
+    BlobUploadObservation expected,
+  ) => _blobUploads.confirmBlobUpload(key, expected);
   @override
   bool get supportsSelectedDirectoryTasks =>
       Platform.isWindows && _nativeProcess != null;
@@ -3521,7 +3646,9 @@ class RustWorkbench
 
   Future<void> close() {
     if (_draftResumes.values.any((attempt) => attempt.blocksClose)) {
-      return Future.error(StateError('Resolve the original draft resume before host EOF'));
+      return Future.error(
+        StateError('Resolve the original draft resume before host EOF'),
+      );
     }
     if (_draftOwners.isNotEmpty &&
         (_draftWorkspace?.disposed != true ||
@@ -3743,10 +3870,18 @@ class _NativeEditorSession
     complete: !_closed && _draftCapture.complete,
   );
   final bool create;
-  late final _DraftAssetBinding _draftAssets = _DraftAssetBinding(owner, targetId, revision, scope, commitOperation);
+  late final _DraftAssetBinding _draftAssets = _DraftAssetBinding(
+    owner,
+    targetId,
+    revision,
+    scope,
+    commitOperation,
+  );
   @override
-  Future<void> bindDraftAssets(EditorDraftRecord record, List<IdeaAttachment> selected) =>
-      _draftAssets.bind(record, selected).then((_) {});
+  Future<void> bindDraftAssets(
+    EditorDraftRecord record,
+    List<IdeaAttachment> selected,
+  ) => _draftAssets.bind(record, selected).then((_) {});
   @override
   BigInt get sourceRevision => revision;
   @override

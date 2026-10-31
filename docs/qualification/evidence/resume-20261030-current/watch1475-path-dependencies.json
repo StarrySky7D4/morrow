@@ -1,0 +1,22 @@
+{
+  "status": "PASS_SCOPED_NEW_WATCH_PATH_DEPENDENCIES_ONLY",
+  "original_process_returned": true,
+  "lock": {
+    "path": "C:\\ms1020\\plugin_runtime\\Cargo.lock",
+    "bytes": 36808,
+    "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+  },
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-preparation-1475\\before.lock",
+    "bytes": 36516,
+    "sha256": "4a7e050dd3ff75ce4cf76e36e9ceedf775e12de478c80211c302ff0d0bfa4785"
+  },
+  "after": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-owner-preparation-1475\\after.lock",
+    "bytes": 36808,
+    "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+  },
+  "registry_dependency_updates": 0,
+  "compilation": false,
+  "runtime": false
+}

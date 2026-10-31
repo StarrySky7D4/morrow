@@ -3340,6 +3340,84 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginsViewFailed => 'プラグインのビューを開けませんでした';
 
   @override
+  String get pluginsWatchAcknowledged => '今回の監視の終了を確認しました。';
+
+  @override
+  String get pluginsWatchAllow => 'このプラグインにディレクトリ変更の監視を許可';
+
+  @override
+  String get pluginsWatchAllowNotice => 'ファイル一覧の取得も許可し、実行ごとにフォルダーを確認してください。';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'プラグインの上限：記録 $frames 件、$bytes バイト、$ms ミリ秒。';
+  }
+
+  @override
+  String get pluginsWatchBytes => '配信データ量の上限（バイト）';
+
+  @override
+  String get pluginsWatchCancelled => '今回の監視はキャンセルされました。';
+
+  @override
+  String get pluginsWatchClosed => 'ディレクトリを解放し、後処理を完了しました。';
+
+  @override
+  String get pluginsWatchExpired => '今回の監視は制限時間に達しました。';
+
+  @override
+  String get pluginsWatchFormError =>
+      '完全なフォルダーパスを確認してください。各上限は正の値で、プラグインの上限以内である必要があります。';
+
+  @override
+  String get pluginsWatchFrames => '配信する記録数の上限';
+
+  @override
+  String get pluginsWatchIdle => 'ディレクトリの監視は開始されていません。';
+
+  @override
+  String get pluginsWatchIntro =>
+      '今回確認したフォルダーだけを監視します。時間、記録数、データ量の上限に達すると停止します。開始時に Windows の画面でフォルダーを確認します。';
+
+  @override
+  String get pluginsWatchNew => '新しい監視を準備';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'ディレクトリ監視とファイル一覧取得の両方が許可された有効なプラグインはありません。';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'ディレクトリ監視の終了はまだ確認されていません。「ディレクトリの変更」パネルで元のタスクを確認してください。';
+
+  @override
+  String get pluginsWatchPath => '監視するフォルダー（完全パス）';
+
+  @override
+  String get pluginsWatchReady => '監視が終了しました。結果を一度だけ読み取れます。';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'プラグインが受信した記録：$frames 件、計上データ量：$bytes バイト。';
+  }
+
+  @override
+  String get pluginsWatchReviewed => '結果を読み取りました。内容を確認してから終了を確定してください。';
+
+  @override
+  String get pluginsWatchRunning => '監視中です。状態を更新するか、キャンセルを要求できます。';
+
+  @override
+  String get pluginsWatchStart => 'フォルダーを確認して監視を開始';
+
+  @override
+  String get pluginsWatchTitle => 'ディレクトリの変更';
+
+  @override
+  String get pluginsWatchUnknown =>
+      '操作の結果を確認できませんでした。記録は保持され、自動再試行や新しいタスクの開始は行われません。';
+
+  @override
   String get pluginsWorkbench => 'ワークスペースプラグイン';
 
   @override

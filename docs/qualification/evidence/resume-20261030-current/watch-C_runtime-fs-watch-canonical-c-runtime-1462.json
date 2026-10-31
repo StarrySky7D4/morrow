@@ -1,0 +1,432 @@
+{
+  "status": "PASS_SCOPED_MSVC_AND_CLANG_C_CPP_WATCH_CONSUMERS",
+  "candidate_source_digest": "26e7c985864c8eb74ff190e3dbc3deb616f548c0318aea8edec99cb0a7be1158",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "original_native_payloads": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-001.capnp",
+      "bytes": 160,
+      "sha256": "639b981ed749d2d80b10ae79a7f1a284ed2e45a73703af020cfc671bc75f4263"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-002.capnp",
+      "bytes": 160,
+      "sha256": "05268419aa2e61e7e0e39f11a9a07ab7a605b4439de2ee860ed8282d1ba55ef6"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-003.capnp",
+      "bytes": 160,
+      "sha256": "018b5d9de3487a64a97f05c2933ef8ba5c74bb7821fbf5a451169f83fd2ee3a2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-004.capnp",
+      "bytes": 208,
+      "sha256": "75e839e96aa8b94d790036cd65663a9cb15a4efc007ee1aaec0a224a4d4ae1b8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\events\\evidence\\frame-005.capnp",
+      "bytes": 176,
+      "sha256": "48d081eede865a8c25531faa97cca691230027ced8dd0c212726034ef1a87cb0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\cases\\unacknowledged\\evidence\\frame-001.capnp",
+      "bytes": 168,
+      "sha256": "33d55cc326796470842ec8b275be4b7b94cc2024c46b726c91532690a26ae8c5"
+    }
+  ],
+  "synthetic_vectors": {
+    "after-events.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\after-events.capnp",
+      "bytes": 128,
+      "sha256": "bf83fb6a971dcb0fb11b7b7c1305c89dc3eba8e5fdb51eb19380868583232e99"
+    },
+    "terminal-1.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-1.capnp",
+      "bytes": 128,
+      "sha256": "5dad94d0a0c8ad0515274ceb517f648b81f0029c030b4f31ff8d398152c82bca"
+    },
+    "terminal-2.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-2.capnp",
+      "bytes": 128,
+      "sha256": "0662d81c9b8af750a9b860df129470d2ce5682592f84f704d49a7e4ea7356ced"
+    },
+    "terminal-3.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-3.capnp",
+      "bytes": 128,
+      "sha256": "0fed8ca1678e468387d423e27ebebe7f2e7326f03c60c87575eb0f3e50741fa4"
+    },
+    "terminal-4.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-4.capnp",
+      "bytes": 128,
+      "sha256": "099586dbd7890805041714442c403f90d3001464f80d8709a3cc4d83b7b0cda0"
+    },
+    "terminal-5.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-5.capnp",
+      "bytes": 128,
+      "sha256": "bf5c4fe15055aec27ded35595d8948ee662d2c2322f7321f43543e557bee992f"
+    },
+    "unpaired.capnp": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\unpaired.capnp",
+      "bytes": 152,
+      "sha256": "7e7794b8d8581aba424d7d6dc0fe74dc5425ffc5c6e9164443b723f8e4108828"
+    }
+  },
+  "reference_decodes": [
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\after-events.capnp",
+        "bytes": 128,
+        "sha256": "bf83fb6a971dcb0fb11b7b7c1305c89dc3eba8e5fdb51eb19380868583232e99"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\after-events.capnp.decoded",
+        "bytes": 232,
+        "sha256": "f8dc242a0fec714fa8ee9c7ca6d6d42770b1fe8712ca804d8789e53080c27bb1"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-1.capnp",
+        "bytes": 128,
+        "sha256": "5dad94d0a0c8ad0515274ceb517f648b81f0029c030b4f31ff8d398152c82bca"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\terminal-1.capnp.decoded",
+        "bytes": 232,
+        "sha256": "3a25781aba4e3af82d87ce7ed5c88760ace5b585cf17d8b846d0e1782fd9a605"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-2.capnp",
+        "bytes": 128,
+        "sha256": "0662d81c9b8af750a9b860df129470d2ce5682592f84f704d49a7e4ea7356ced"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\terminal-2.capnp.decoded",
+        "bytes": 232,
+        "sha256": "e290621102cccf4d853da719ba9afc716d858ff59c8c8e6e88e8e63efa9d1024"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-3.capnp",
+        "bytes": 128,
+        "sha256": "0fed8ca1678e468387d423e27ebebe7f2e7326f03c60c87575eb0f3e50741fa4"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\terminal-3.capnp.decoded",
+        "bytes": 232,
+        "sha256": "c8734257bba372d6d41552b4914d94a1a032401451174b728c08af21e083c1ca"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-4.capnp",
+        "bytes": 128,
+        "sha256": "099586dbd7890805041714442c403f90d3001464f80d8709a3cc4d83b7b0cda0"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\terminal-4.capnp.decoded",
+        "bytes": 232,
+        "sha256": "fbbd536d83e43f4a62a2d21dfff486df36c2dc728846fe72115561005aca32ae"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\terminal-5.capnp",
+        "bytes": 128,
+        "sha256": "bf5c4fe15055aec27ded35595d8948ee662d2c2322f7321f43543e557bee992f"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\terminal-5.capnp.decoded",
+        "bytes": 232,
+        "sha256": "bc68634e93a87cf0f2ea44c4913f315815b1694dfed63c07586cd24a9a88ca1a"
+      }
+    },
+    {
+      "input": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-vectors\\unpaired.capnp",
+        "bytes": 152,
+        "sha256": "7e7794b8d8581aba424d7d6dc0fe74dc5425ffc5c6e9164443b723f8e4108828"
+      },
+      "exit_code": 0,
+      "original_process_returned": true,
+      "decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\unpaired.capnp.decoded",
+        "bytes": 302,
+        "sha256": "ebd32cb56dd7acedaf7c74007932ab48fad0144daf7f45bdf1fc172a9ff8ad67"
+      }
+    }
+  ],
+  "consumers": [
+    {
+      "compiler": "msvc",
+      "language": "c",
+      "scenario_count": 12,
+      "scenarios": [
+        "six-original-native-payloads-raw-names-roundtrip",
+        "original-wire-ack-correlation-and-terminal-history",
+        "lost-ack-retains-original-charge",
+        "frame-change-byte-budgets-no-refund",
+        "malformed-oversized-and-phase-precedence",
+        "schema-identity-mismatch-refused",
+        "epoch-and-sequence-refusals-are-sticky",
+        "output-capacity-overlap-size-and-index-preservation",
+        "copied-input-may-alias-result-slot",
+        "five-explicit-synthetic-terminals-not-native-close",
+        "unpaired-utf16-surrogate-preserved",
+        "constructor-contract-and-null-disposal"
+      ],
+      "assertions": 736,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-c.exe",
+        "bytes": 357888,
+        "sha256": "83ecabf52dca3630cdf280d4ec3991110d71313ac8c6e3bf639db7a20a404000"
+      },
+      "original_process": {
+        "name": "msvc-c",
+        "pid": 25468,
+        "exit_code": 0,
+        "original_process_returned": true,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-c.stdout",
+          "bytes": 818,
+          "sha256": "27ccf1dde1dc022aa6d2148bc792b18c1198727f762266fa9cb7e9a68c123b91"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-c.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "all_original_native_payloads_consumed": true
+    },
+    {
+      "compiler": "msvc",
+      "language": "cpp",
+      "scenario_count": 7,
+      "scenarios": [
+        "six-unchanged-native-payloads-and-raw-components",
+        "original-digest-ack-and-synthetic-terminal",
+        "raii-moves-preserve-owners-and-unacknowledged-charge",
+        "budget-malformed-and-oversized-refusals",
+        "five-synthetic-terminal-kinds",
+        "unpaired-utf16-preserved",
+        "native-size-width-guard-preserves-phase-precedence"
+      ],
+      "assertions": 140,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\msvc-cpp.exe",
+        "bytes": 406016,
+        "sha256": "eb7ece70ff91d2c159f96ec76ae70d3c0721ab7b34853cbe8e224c6ef9826200"
+      },
+      "original_process": {
+        "name": "msvc-cpp",
+        "pid": 25504,
+        "exit_code": 0,
+        "original_process_returned": true,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-cpp.stdout",
+          "bytes": 545,
+          "sha256": "6975458a355b0014c968a92c6f119a9b6fba63900bfd0a3f0bafb0a4876ca5fb"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-cpp.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "all_original_native_payloads_consumed": true
+    },
+    {
+      "compiler": "clang",
+      "language": "c",
+      "scenario_count": 12,
+      "scenarios": [
+        "six-original-native-payloads-raw-names-roundtrip",
+        "original-wire-ack-correlation-and-terminal-history",
+        "lost-ack-retains-original-charge",
+        "frame-change-byte-budgets-no-refund",
+        "malformed-oversized-and-phase-precedence",
+        "schema-identity-mismatch-refused",
+        "epoch-and-sequence-refusals-are-sticky",
+        "output-capacity-overlap-size-and-index-preservation",
+        "copied-input-may-alias-result-slot",
+        "five-explicit-synthetic-terminals-not-native-close",
+        "unpaired-utf16-surrogate-preserved",
+        "constructor-contract-and-null-disposal"
+      ],
+      "assertions": 736,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-c.exe",
+        "bytes": 351744,
+        "sha256": "65066f7ddf78b6213f0ab65613e0dcaa4b63a598e65f0280116ea245334bc23a"
+      },
+      "original_process": {
+        "name": "clang-c",
+        "pid": 9980,
+        "exit_code": 0,
+        "original_process_returned": true,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-c.stdout",
+          "bytes": 818,
+          "sha256": "27ccf1dde1dc022aa6d2148bc792b18c1198727f762266fa9cb7e9a68c123b91"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-c.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "all_original_native_payloads_consumed": true
+    },
+    {
+      "compiler": "clang",
+      "language": "cpp",
+      "scenario_count": 7,
+      "scenarios": [
+        "six-unchanged-native-payloads-and-raw-components",
+        "original-digest-ack-and-synthetic-terminal",
+        "raii-moves-preserve-owners-and-unacknowledged-charge",
+        "budget-malformed-and-oversized-refusals",
+        "five-synthetic-terminal-kinds",
+        "unpaired-utf16-preserved",
+        "native-size-width-guard-preserves-phase-precedence"
+      ],
+      "assertions": 140,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\clang-cpp.exe",
+        "bytes": 398848,
+        "sha256": "b088ceb2769489af7f2a2312a714778fb7a014994ff1c4e172c8ee32c532cd81"
+      },
+      "original_process": {
+        "name": "clang-cpp",
+        "pid": 10056,
+        "exit_code": 0,
+        "original_process_returned": true,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-cpp.stdout",
+          "bytes": 545,
+          "sha256": "6975458a355b0014c968a92c6f119a9b6fba63900bfd0a3f0bafb0a4876ca5fb"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-cpp.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "all_original_native_payloads_consumed": true
+    }
+  ],
+  "distinct_C_scenarios": 12,
+  "distinct_CPP_scenarios": 7,
+  "compiler_repetitions_not_additive": true,
+  "all_original_processes_returned": true,
+  "phases": [
+    {
+      "name": "synthetic-generator",
+      "pid": 21576,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-generator.stdout",
+        "bytes": 54,
+        "sha256": "674bc6e13c69b382b56a8f06bdd6c38fe24813eb204e842eb4855a290933cdfd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\synthetic-generator.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "msvc-c",
+      "pid": 25468,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-c.stdout",
+        "bytes": 818,
+        "sha256": "27ccf1dde1dc022aa6d2148bc792b18c1198727f762266fa9cb7e9a68c123b91"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-c.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "msvc-cpp",
+      "pid": 25504,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-cpp.stdout",
+        "bytes": 545,
+        "sha256": "6975458a355b0014c968a92c6f119a9b6fba63900bfd0a3f0bafb0a4876ca5fb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\msvc-cpp.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "clang-c",
+      "pid": 9980,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-c.stdout",
+        "bytes": 818,
+        "sha256": "27ccf1dde1dc022aa6d2148bc792b18c1198727f762266fa9cb7e9a68c123b91"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-c.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "clang-cpp",
+      "pid": 10056,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-cpp.stdout",
+        "bytes": 545,
+        "sha256": "6975458a355b0014c968a92c6f119a9b6fba63900bfd0a3f0bafb0a4876ca5fb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\clang-cpp.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "canonical_integrated": true,
+  "product_approval": false,
+  "shared_product_budget": false,
+  "fresh_native_watch_operations": 0,
+  "VM_calls": 0,
+  "Wasm": false,
+  "formal_UI": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

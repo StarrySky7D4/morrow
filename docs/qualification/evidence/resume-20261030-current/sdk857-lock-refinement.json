@@ -1,0 +1,537 @@
+{
+  "status": "ISOLATED_MSVC_LOCK_REFINEMENT_REVIEW_REQUIRED",
+  "exit_code": 0,
+  "canonical_source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "candidate_root": "D:\\build_cache\\s852",
+  "candidate_lock": {
+    "path": "D:\\build_cache\\s852\\companions\\morrow-codex\\session-exec-windows-v1\\Cargo.lock",
+    "bytes": 226266,
+    "sha256": "ea67a66b0c3aceed08884c0a524137c31e69114380d6c4a4bd27a5a823e9e3a7"
+  },
+  "canonical_lock": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\session-exec-windows-v1\\Cargo.lock",
+    "bytes": 225733,
+    "sha256": "d07697365a1217f9cbfcd4994f00ce2114635879288d37e2c26bf60216260691"
+  },
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-msvc-lock-refinement-857\\Cargo.lock.before",
+    "bytes": 226266,
+    "sha256": "a942bf93df8d89afc555d3226c1b73c00a60be0b7c98ee0c86304205a71008f6"
+  },
+  "after": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-msvc-lock-refinement-857\\Cargo.lock.after",
+    "bytes": 226266,
+    "sha256": "ea67a66b0c3aceed08884c0a524137c31e69114380d6c4a4bd27a5a823e9e3a7"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-msvc-lock-refinement-857\\canonical.diff",
+    "bytes": 4583,
+    "sha256": "96b39a3b685ba9cc9c097c762b433caf1f90c1aab2d73663a237bb5488ce9136"
+  },
+  "added_packages": [
+    {
+      "name": "cc",
+      "version": "1.4.5",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "005ec2760ca554fae18df7a11195552ec576cd665632a881bc011d5bb2fd4d80",
+      "dependencies": [
+        "find-msvc-tools",
+        "jobserver",
+        "libc",
+        "shlex 2.0.1"
+      ]
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.12",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "3e0f1c7c3a72c66fd80abe965175f7523475c0489a87d3ff9d6e8c87d87a9d2d"
+    },
+    {
+      "name": "morrow-blob-transfer-v1",
+      "version": "0.1.0",
+      "dependencies": [
+        "capnp",
+        "capnpc",
+        "sha2 0.10.9"
+      ]
+    },
+    {
+      "name": "morrow-blob-upload-proposal-v1",
+      "version": "0.1.0",
+      "dependencies": [
+        "capnp",
+        "capnpc",
+        "morrow-blob-transfer-v1",
+        "sha2 0.10.9"
+      ]
+    },
+    {
+      "name": "morrow-blob-upload-request-v1",
+      "version": "0.1.0",
+      "dependencies": [
+        "capnp",
+        "capnpc",
+        "morrow-blob-transfer-v1",
+        "sha2 0.10.9"
+      ]
+    }
+  ],
+  "removed_packages": [
+    {
+      "name": "cc",
+      "version": "1.4.7",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "54413ede23c2daf518f35156dfde027feb2374004d63bd497f983c8db9c0e313",
+      "dependencies": [
+        "find-msvc-tools",
+        "jobserver",
+        "libc",
+        "shlex 2.0.1"
+      ]
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.13",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "ef25905e51abafe4dcea6c15fec58c57b601cdbd0ee53d22ea1d3016c587d39b"
+    }
+  ],
+  "changed_packages": [
+    {
+      "before": {
+        "name": "anstyle-query",
+        "version": "1.1.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc",
+        "dependencies": [
+          "windows-sys 0.60.2"
+        ]
+      },
+      "after": {
+        "name": "anstyle-query",
+        "version": "1.1.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc",
+        "dependencies": [
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "anstyle-wincon",
+        "version": "3.0.11",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d",
+        "dependencies": [
+          "anstyle",
+          "once_cell_polyfill",
+          "windows-sys 0.60.2"
+        ]
+      },
+      "after": {
+        "name": "anstyle-wincon",
+        "version": "3.0.11",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d",
+        "dependencies": [
+          "anstyle",
+          "once_cell_polyfill",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "codex-windows-sandbox",
+        "version": "0.0.0",
+        "dependencies": [
+          "capnpc",
+          "capnp",
+          "anyhow",
+          "base64 0.22.1",
+          "chrono",
+          "codex-http-client",
+          "codex-otel",
+          "codex-protocol",
+          "codex-utils-absolute-path",
+          "codex-utils-pty",
+          "codex-utils-string",
+          "dirs-next",
+          "dunce",
+          "glob",
+          "rand 0.8.8",
+          "serde",
+          "serde_json",
+          "sha2 0.10.9",
+          "tempfile",
+          "tokio",
+          "tracing-appender",
+          "windows 0.58.0",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "codex-windows-sandbox",
+        "version": "0.0.0",
+        "dependencies": [
+          "anyhow",
+          "base64 0.22.1",
+          "capnp",
+          "capnpc",
+          "chrono",
+          "codex-http-client",
+          "codex-otel",
+          "codex-protocol",
+          "codex-utils-absolute-path",
+          "codex-utils-pty",
+          "codex-utils-string",
+          "dirs-next",
+          "dunce",
+          "glob",
+          "rand 0.8.8",
+          "serde",
+          "serde_json",
+          "sha2 0.10.9",
+          "tempfile",
+          "tokio",
+          "tracing-appender",
+          "windows 0.58.0",
+          "windows-sys 0.52.0"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "dirs-sys",
+        "version": "0.5.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab",
+        "dependencies": [
+          "libc",
+          "option-ext",
+          "redox_users 0.5.3",
+          "windows-sys 0.59.0"
+        ]
+      },
+      "after": {
+        "name": "dirs-sys",
+        "version": "0.5.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab",
+        "dependencies": [
+          "libc",
+          "option-ext",
+          "redox_users 0.5.3",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "errno",
+        "version": "0.3.14",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "dependencies": [
+          "libc",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "errno",
+        "version": "0.3.14",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+        "dependencies": [
+          "libc",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "fd-lock",
+        "version": "4.0.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0ce92ff622d6dadf7349484f42c93271a0d49b7cc4d466a936405bacbe10aa78",
+        "dependencies": [
+          "cfg-if",
+          "rustix",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "fd-lock",
+        "version": "4.0.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "0ce92ff622d6dadf7349484f42c93271a0d49b7cc4d466a936405bacbe10aa78",
+        "dependencies": [
+          "cfg-if",
+          "rustix",
+          "windows-sys 0.59.0"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "morrow-plugin-runtime",
+        "version": "0.1.9-test.50",
+        "dependencies": [
+          "getrandom 0.4.3",
+          "morrow-core",
+          "morrow-fs-directory-request-v1",
+          "morrow-fs-directory-v1",
+          "prost",
+          "sha2 0.10.9",
+          "wasmi",
+          "wasmparser",
+          "zeroize"
+        ]
+      },
+      "after": {
+        "name": "morrow-plugin-runtime",
+        "version": "0.1.9-test.50",
+        "dependencies": [
+          "cc",
+          "getrandom 0.4.3",
+          "morrow-blob-transfer-v1",
+          "morrow-blob-upload-proposal-v1",
+          "morrow-blob-upload-request-v1",
+          "morrow-core",
+          "morrow-fs-directory-request-v1",
+          "morrow-fs-directory-v1",
+          "prost",
+          "sha2 0.10.9",
+          "wasmi",
+          "wasmparser",
+          "zeroize"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "nu-ansi-term",
+        "version": "0.50.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5",
+        "dependencies": [
+          "windows-sys 0.59.0"
+        ]
+      },
+      "after": {
+        "name": "nu-ansi-term",
+        "version": "0.50.3",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5",
+        "dependencies": [
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "quinn-udp",
+        "version": "0.5.15",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "35a133f956daabe89a61a685c2649f13d82d5aa4bd5d12d1277e1072a21c0694",
+        "dependencies": [
+          "cfg_aliases 0.2.2",
+          "libc",
+          "once_cell",
+          "socket2",
+          "tracing",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "quinn-udp",
+        "version": "0.5.15",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "35a133f956daabe89a61a685c2649f13d82d5aa4bd5d12d1277e1072a21c0694",
+        "dependencies": [
+          "cfg_aliases 0.2.2",
+          "libc",
+          "once_cell",
+          "socket2",
+          "tracing",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "rustix",
+        "version": "1.1.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190",
+        "dependencies": [
+          "bitflags 2.13.2",
+          "errno",
+          "libc",
+          "linux-raw-sys",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "rustix",
+        "version": "1.1.4",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190",
+        "dependencies": [
+          "bitflags 2.13.2",
+          "errno",
+          "libc",
+          "linux-raw-sys",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "rustls-platform-verifier",
+        "version": "0.7.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "26d1e2536ce4f35f4846aa13bff16bd0ff40157cdb14cc056c7b14ba41233ba0",
+        "dependencies": [
+          "core-foundation 0.10.1",
+          "core-foundation-sys",
+          "jni",
+          "log",
+          "once_cell",
+          "rustls",
+          "rustls-native-certs",
+          "rustls-platform-verifier-android",
+          "rustls-webpki",
+          "security-framework",
+          "security-framework-sys",
+          "webpki-root-certs",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "rustls-platform-verifier",
+        "version": "0.7.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "26d1e2536ce4f35f4846aa13bff16bd0ff40157cdb14cc056c7b14ba41233ba0",
+        "dependencies": [
+          "core-foundation 0.10.1",
+          "core-foundation-sys",
+          "jni",
+          "log",
+          "once_cell",
+          "rustls",
+          "rustls-native-certs",
+          "rustls-platform-verifier-android",
+          "rustls-webpki",
+          "security-framework",
+          "security-framework-sys",
+          "webpki-root-certs",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "socket2",
+        "version": "0.6.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4",
+        "dependencies": [
+          "libc",
+          "windows-sys 0.60.2"
+        ]
+      },
+      "after": {
+        "name": "socket2",
+        "version": "0.6.5",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4",
+        "dependencies": [
+          "libc",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "tempfile",
+        "version": "3.27.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "dependencies": [
+          "fastrand",
+          "getrandom 0.4.3",
+          "once_cell",
+          "rustix",
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "tempfile",
+        "version": "3.27.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+        "dependencies": [
+          "fastrand",
+          "getrandom 0.4.3",
+          "once_cell",
+          "rustix",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "uds_windows",
+        "version": "1.2.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e",
+        "dependencies": [
+          "memoffset",
+          "tempfile",
+          "windows-sys 0.60.2"
+        ]
+      },
+      "after": {
+        "name": "uds_windows",
+        "version": "1.2.1",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e",
+        "dependencies": [
+          "memoffset",
+          "tempfile",
+          "windows-sys 0.61.2"
+        ]
+      }
+    },
+    {
+      "before": {
+        "name": "winapi-util",
+        "version": "0.1.11",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22",
+        "dependencies": [
+          "windows-sys 0.52.0"
+        ]
+      },
+      "after": {
+        "name": "winapi-util",
+        "version": "0.1.11",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22",
+        "dependencies": [
+          "windows-sys 0.61.2"
+        ]
+      }
+    }
+  ],
+  "incremental_change_only_find_msvc_tools": true,
+  "matches_already_built_production_version": true,
+  "original_process_returned": true,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

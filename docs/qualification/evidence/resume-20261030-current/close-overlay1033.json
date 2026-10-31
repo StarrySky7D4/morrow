@@ -1,0 +1,28 @@
+{
+  "status": "IDENTICAL_CURRENT_NATIVE_INPUTS_AND_REDERIVED_OVERLAY_NOT_RUNTIME",
+  "base": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_close_refusal_152.py",
+    "bytes": 5313,
+    "sha256": "4f624735d0b64ccca4c3fbf5efd2c93fe8603afb28f1ec064751eabeecf36f8a"
+  },
+  "prior_overlay": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-close-refusal-152\\result.json",
+    "bytes": 2799,
+    "sha256": "c8be63722b8e07b351aa0feb5f2dc4223770c444b43b32dd423ce34975b0c06e"
+  },
+  "current_overlay": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-close-refusal-1033\\result.json",
+    "bytes": 2802,
+    "sha256": "cc9334ee6090adeb9eb3b6324ee9fc46b5e0553d55fa3497ac0c394bbf9de8ac"
+  },
+  "native_and_live_inputs_unchanged": true,
+  "overlay_bytes_identical": true,
+  "canonical_edits": 0,
+  "build_driver_prepared": false,
+  "VM_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "current_source_P2_pass": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "next": "Bind fresh VM052 environment and then compile separate P/C/R/S outputs; no historical case155 outcome is relabelled."
+}

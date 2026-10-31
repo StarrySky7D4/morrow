@@ -1,0 +1,17 @@
+{
+  "status": "ORIGINAL_RESULT_LABEL_CORRECTED_BY_SEPARATE_REVIEW",
+  "original_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-watch-runtime-library-reclaim-1601\\result.json",
+    "bytes": 583,
+    "sha256": "078f8e22a841fa601441e903b8f99108d6da9ad8e8134e3df4f2eb40b29ad76b"
+  },
+  "original_plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-watch-runtime-library-reclaim-1601\\plan.json",
+    "bytes": 761066,
+    "sha256": "0856f196617c48d5cc4332d3fb8a798b8607fe24b8751ba78e87b86436e768e4"
+  },
+  "actual_roots": [
+    "D:\\build_cache\\qualification-targets\\watchworker1493-RUNTIME-0e854c5cda1233a9"
+  ],
+  "note": "The copied status label says1476. Immutable plan and removed file pins identify the closed1493 runtime target. Original result is preserved unchanged."
+}

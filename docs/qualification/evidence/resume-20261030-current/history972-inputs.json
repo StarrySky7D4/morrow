@@ -1,0 +1,47 @@
+{
+  "source_digest": "cbc79946c7de63db4f05df1f833d6a533be1d389bb1eed58920be3faca604c4d",
+  "previous_failed_build_inputs": {
+    "binding": {
+      "source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+      "manifest": {
+        "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+        "bytes": 4567,
+        "sha256": "cd23cee09f923be3735e9c786d73fa25c2119b24a9a72dee64fd09921cb51f16"
+      },
+      "lock": {
+        "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+        "bytes": 236224,
+        "sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3"
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "profile": "release",
+      "target_triple": "x86_64-pc-windows-msvc"
+    },
+    "source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+    "target": "D:\\build_cache\\qualification-targets\\sdk969-HISTORY-PRIVATE-96cbbb3ceb837aa2",
+    "initial_target_empty": true,
+    "dependencies_warm": false,
+    "lossless_NTFS_compression": true,
+    "observed_free_bytes": 7253385216,
+    "VM_calls": 0,
+    "window_actions": 0
+  },
+  "changed_files": [
+    "workbench_host/src/blob_history_delivery.rs",
+    "workbench_host/src/blob_history_delivery_protocol.rs",
+    "workbench_host/tests/blob_history_delivery.rs",
+    "workbench_host/tests/support/blob_history_delivery_private.rs"
+  ],
+  "dependencies_source_unchanged": true,
+  "guest_source_unchanged": true,
+  "completed_dependencies_rechecked": 878,
+  "previous_host_library_success": false,
+  "target": "D:\\build_cache\\qualification-targets\\sdk969-HISTORY-PRIVATE-96cbbb3ceb837aa2",
+  "cache_scope": "SAME_FEATURES_MANIFESTS_ALL_DEPENDENCY_INPUTS_OUTPUTS_PINNED_HOST_LIBRARY_FIRST_SUCCESS",
+  "current_whole_tree_fully_cold_claim": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

@@ -1,0 +1,82 @@
+{
+  "owner_contacts": 0,
+  "removed": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\parent\\clean-base.vhdx",
+  "original_disks_deleted": 0,
+  "status": "PASS_REDUNDANT_VM045_ARCHIVED_PARENT_REMOVED_ORIGINAL_CHAIN_AND_STATE_RETAINED",
+  "Unknown_outcomes_unchanged": true,
+  "utc": "2026-10-30T15:49:04.0094856Z",
+  "retained": [
+    {
+      "path": "C:\\MorrowQA\\isolated-candidate-20261021\\export\\Windows 11 开发环境\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+      "bytes": 62750982144,
+      "sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+      "modified_ns": 1792098605071051400,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261027-045\\acceptance.vhdx",
+      "bytes": 37618712576,
+      "sha256": "c829af2209f55d1a3c2264c2ded3e0245f97f707611c2023049a06883249ff41",
+      "modified_ns": 1793250029085402600,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\state\\4072A8D9-2F4F-4D02-98EE-AD436DD3342E.vmcx",
+      "bytes": 73728,
+      "sha256": "f2e73403c25979264be9d49d1def264ba24d9505984b0c271fefb715a7ec007d",
+      "modified_ns": 1793253063847121200,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\state\\4072A8D9-2F4F-4D02-98EE-AD436DD3342E.vmgs",
+      "bytes": 4194816,
+      "sha256": "55b0481e49b2345e84d913e2600721e061f8966d8f8fb368a594e86531fc8a19",
+      "modified_ns": 1793253197119778200,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\state\\4072A8D9-2F4F-4D02-98EE-AD436DD3342E.VMRS",
+      "bytes": 49152,
+      "sha256": "b7e1681b3588e1e2c516d71369e9ebd1787c021cd36ee1681553991eddcbb7ab",
+      "modified_ns": 1793253197150116300,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\manifest.json",
+      "bytes": 2973,
+      "sha256": "92b5e6f0c9d52424073d483968d5cc6865c3c60d0e3e55f0700376bcb1c2b188",
+      "modified_ns": 1793253197194943700,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\PRESERVE_BACKUPS.txt",
+      "bytes": 141,
+      "sha256": "eb2ab354dd7e56d168abd73e11b0e22da12572623f7aa5b37828699fd2ab9e43",
+      "modified_ns": 1793253197204617400,
+      "attributes": 32
+    },
+    {
+      "path": "C:\\MorrowQA\\retained-unknown-archives\\vm045\\CURRENT_STORAGE_LAYOUT_862.json",
+      "bytes": 2974,
+      "sha256": "ce94279fb7c5a2c7f7609c382a8611576914f5763e1a53c1cb660e82ac2378fb",
+      "modified_ns": 1793371085451475900,
+      "attributes": 32
+    }
+  ],
+  "restore_or_replay_authorized": false,
+  "logical_bytes": 62750982144,
+  "free_space_delta_nonisolated": true,
+  "unique_VM_state_deleted": 0,
+  "guest_contacts": 0,
+  "observed_free_delta": 62750982144,
+  "free_after": 99326087168,
+  "older_manifest_and_layout_are_historical": true,
+  "restore_requires_original_leaf_original_parent_and_archived_state": true,
+  "configuration_files_deleted": 0,
+  "archive_is_not_standalone": true,
+  "free_before": 36575105024,
+  "registered_vm_states_unchanged": true,
+  "registered_vm_count": 4,
+  "supersedes_storage_layout": "CURRENT_STORAGE_LAYOUT_862.json",
+  "memory_files_deleted": 0
+}

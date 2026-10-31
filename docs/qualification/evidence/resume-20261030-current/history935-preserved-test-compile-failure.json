@@ -1,0 +1,39 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "old_bounded_guest_fixtures_unchanged": true,
+  "guest_recompiled": false,
+  "current_guest_source_qualification": false,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 101,
+      "seconds": 2058.5,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-935\\build.stdout",
+        "bytes": 1012750,
+        "sha256": "5a99a9b02bcf3fb2aeb0fa279ef7db1a880ba5c4e4100ce6ff1f95cf3da7f2cc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-935\\build.stderr",
+        "bytes": 30266,
+        "sha256": "dd3f5ad6fde6fe6aa1c5a88e5db932ab9bd587dd15cd4d569817ce809e528f3d"
+      }
+    }
+  ],
+  "program": null,
+  "error": "RuntimeError: build failed; original records retained, no automatic replay",
+  "all_original_top_level_processes_returned": true,
+  "meaningful_methods": 0,
+  "explicit_helpers_ignored": 4,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "window_actions": 0,
+  "public_product_delivery": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,39 @@
+{
+  "status": "VERIFIED_REPORT_ONLY_CORRECTION_PENDING_POST_P2_CHECKPOINT",
+  "diagnostic1225_32KiB_baseline": 295159,
+  "paired_diagnostic1234_32KiB": {
+    "baseline": 295162,
+    "optimized": 37124
+  },
+  "paired_diagnostic1234_64KiB": {
+    "baseline": 590074,
+    "optimized": 73988
+  },
+  "inputs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1225\\baseline-run.stdout",
+      "bytes": 2300,
+      "sha256": "d4183b1ddedc83d1ae6b1948ced36bccf2ba4563efdfd784eb96cf4790d89776"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\baseline-run.stdout",
+      "bytes": 3141,
+      "sha256": "ad9dcadbe8588194d675f9975d12d14747b11a95244b16de075bc17c3aac944d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fuel-probe-1234\\equality-run.stdout",
+      "bytes": 3139,
+      "sha256": "0b38714893249f07bcd5ff06018cbaa1ead86d262822a4bbadd811e7ca564699"
+    }
+  ],
+  "affected_documents": [
+    "docs/qualification/SDK_CHANNEL_WORD_EQUALITY_WINDOWS.md",
+    "docs/qualification/RESUMED_WINDOWS_20261030.md"
+  ],
+  "correction": "The paired 1234 comparison uses 295162, not the separate 1225 baseline 295159. Original logs remain unchanged.",
+  "runtime_reexecuted": false,
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

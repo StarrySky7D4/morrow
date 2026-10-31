@@ -1,0 +1,44 @@
+{
+  "status": "SIX_REVIEWED_SDK_TEST_FILES_INTEGRATED_CANONICAL_BUILD_RUNTIME_PENDING",
+  "pre_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "post_source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "added_files": [
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_io.rs",
+      "bytes": 16366,
+      "sha256": "8a6208ae22f08678e312c009283796fdb455a53f059c4fa762e6484e03149e3e"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_channel.rs",
+      "bytes": 14158,
+      "sha256": "db3e112daa68a1a09bbd1068351263ab71a86f65c9a8b2c28b628fc8cd8e76ff"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_directory.rs",
+      "bytes": 14261,
+      "sha256": "06e19a5b03973277b55774809c7fcc99bb22f487edde04c31fab686812d537c1"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\sdk_default_service.rs",
+      "bytes": 6924,
+      "sha256": "67400a7fe42c8336ab4a93c095f114cdcc386d1149b840cdcdbe019486948619"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\sdk_default_service_http.rs",
+      "bytes": 24296,
+      "sha256": "73459ff2ec09b27f93da973d4ecd2b399a6eecdeae42dc33f1b76dee2ab4993a"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\support\\sdk_default_configured_http.rs",
+      "bytes": 23462,
+      "sha256": "4aea3fef3dcb9d675210505815879ac047185668cf8935f671e3808b037c76ce"
+    }
+  ],
+  "unchanged_existing_files": 53974,
+  "all_existing_product_code_unchanged": true,
+  "previous_P2_results_keep_original_source_digest": true,
+  "canonical_build_runtime_pending": true,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

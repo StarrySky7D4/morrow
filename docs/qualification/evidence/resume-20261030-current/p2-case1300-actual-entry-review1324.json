@@ -1,0 +1,36 @@
+{
+  "status": "PASS_SCOPED_ALIASED_OUTPUT_WITH_REPAIRED_ENTRY_PROVENANCE",
+  "exit_code": 0,
+  "original_reviewer_process_returned": true,
+  "original_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-summary.json",
+    "bytes": 3844,
+    "sha256": "0efdd051c330b4adb3092c4d0d1c7f6a946c42e25d82fc0ab412b9113e40a325"
+  },
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "tag": "5228f346f70f4556b180d07a2d364a26",
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "actual_entrypoint": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_1323.py",
+    "bytes": 6802,
+    "sha256": "301f1c767cc72d430f370fd762f46b07daa3070c980e45fc6b0d4bd9da403baa"
+  },
+  "actual_cold_dispatch_guard": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-cold-case-dispatch-after-entrypoint-repair-1323.json",
+    "bytes": 2699,
+    "sha256": "ee4c9e0dbcc85225a52ea4e310b7352a40bf729df6cc089a044913d8eb795c48"
+  },
+  "local_pre_effect_refusal_preserved": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\original-refusal.json",
+    "bytes": 2088,
+    "sha256": "50b243a604c3cca5af859624739c4f586e28bc62d50675269bd650a364c96a7b"
+  },
+  "first_product_dispatch_only": true,
+  "original_case_process_retained": true,
+  "all_original_semantic_checks_unchanged": true,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "automatic_runtime_replays": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

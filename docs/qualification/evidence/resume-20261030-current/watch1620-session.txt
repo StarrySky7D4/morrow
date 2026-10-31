@@ -1,0 +1,1 @@
+STAGED_WATCH_SESSION_CHECKS_PASS checks=45 native_calls=0 UI=false

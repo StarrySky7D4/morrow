@@ -1,0 +1,63 @@
+{
+  "status": "CORRECTED_COMPLETE_DISCOVERY_BEFORE_FIRST_RUNTIME_DISPATCH",
+  "original_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_standalone_sdk_services_1371.py",
+    "bytes": 5441,
+    "sha256": "1e6749adf9de78d8a89e5d0cb4c6e67254da810e7b3358ca8083b835755ccfc5"
+  },
+  "original_plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-service-runtime-1371\\plan.json",
+    "bytes": 2789,
+    "sha256": "a8a10c82b87d4d06ad214002731b4fbf8f6ec1677fc9900202e954a5a74f84ec"
+  },
+  "original_driver_exit_code": 1,
+  "original_failure": "AssertionError: listed HTTP tests include three existing configured tests omitted from driver expected set",
+  "original_lists": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-service-runtime-1371\\sdk_service_guest-list.stdout",
+      "bytes": 161,
+      "sha256": "af75c4f421a17fc775fec35ceb224f5db989ad03859d968593a135c1027c2b89"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-service-runtime-1371\\sdk_service_http-list.stdout",
+      "bytes": 518,
+      "sha256": "f111d9beb423c1548e9c5427da6024b30410278562d98b295acb88fd02b19d2b"
+    }
+  ],
+  "runtime_test_dispatches_in_1371": 0,
+  "configured_source": {
+    "path": "C:\\ms1020\\network_node\\tests\\support\\sdk_configured_http.rs",
+    "bytes": 23019,
+    "sha256": "363c26f970cb34a9cd7f0b430df0263c340e40bcd1f374df0d6b83bf44ab96ca"
+  },
+  "expected_methods": {
+    "sdk_service_guest": [
+      "generated_original_packages_serve_seven_methods_and_enforce_grants",
+      "generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend"
+    ],
+    "sdk_service_http": [
+      "configured::configured_originals_cached_results_obey_selected_endpoint_and_credential_revocation",
+      "configured::configured_originals_waiting_revocation_or_stop_never_redelivers_or_resends",
+      "configured::configured_selection_rejects_stale_or_foreign_wiring_and_returns_original_worker",
+      "originals_forward_and_reopen_without_resending_observed_or_unknown",
+      "originals_reject_missing_directory_method_and_body_limit_without_io",
+      "originals_stop_or_revoke_during_wait_preserve_unknown_without_resend"
+    ]
+  },
+  "derived_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_standalone_sdk_services_1391.py",
+    "bytes": 5842,
+    "sha256": "69ae1517515a0418dfa068f8d8e91d53d86cc97c147729a33613a5acc6b04491"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-service-discovery-correction-1390\\runtime.diff",
+    "bytes": 4343,
+    "sha256": "777977407de3f2fec960e6b3a0a2a40229f3fab6cfb348cfc0f0f3fef59b7b64"
+  },
+  "runtime_predicates_or_budgets_changed": false,
+  "original_archives_repacked": false,
+  "VM_calls": 0,
+  "source_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

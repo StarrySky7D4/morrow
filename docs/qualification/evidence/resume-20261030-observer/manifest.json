@@ -1,0 +1,340 @@
+{
+  "schema": "PUBLIC_OBSERVER_REPAIR_EVIDENCE_V1",
+  "utc": "2026-10-30T11:37:31.824664+00:00",
+  "original_copies": [
+    {
+      "file": "case773-retained.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case773-retained-review-783\\result.json",
+        "bytes": 9736,
+        "sha256": "a825b01ff638f54351543c25496b6b4c82bfc2944951cb82e902153a92dff619"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\case773-retained.json",
+        "bytes": 9736,
+        "sha256": "a825b01ff638f54351543c25496b6b4c82bfc2944951cb82e902153a92dff619"
+      }
+    },
+    {
+      "file": "begin-shell784-reproduction.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\result.json",
+        "bytes": 3076,
+        "sha256": "f3567f193d19d70a35b5dcd8ac62a33369bd8d42f85cea6f82c5ca0c9a35b079"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\begin-shell784-reproduction.json",
+        "bytes": 3076,
+        "sha256": "f3567f193d19d70a35b5dcd8ac62a33369bd8d42f85cea6f82c5ca0c9a35b079"
+      }
+    },
+    {
+      "file": "observer789-integration.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\observer-source-integration789\\result.json",
+        "bytes": 5676,
+        "sha256": "0da437f68d4ba3b9c42009e6ecd92eb255887177bf02a8eba50083a37ed3b55e"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\observer789-integration.json",
+        "bytes": 5676,
+        "sha256": "0da437f68d4ba3b9c42009e6ecd92eb255887177bf02a8eba50083a37ed3b55e"
+      }
+    },
+    {
+      "file": "observer790-pure.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-observers-790\\result.json",
+        "bytes": 9845,
+        "sha256": "bb79cdab58298f5e9723a4251cdf625d623b9d63a121cefdd76ca05de2cedc7a"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\observer790-pure.json",
+        "bytes": 9845,
+        "sha256": "bb79cdab58298f5e9723a4251cdf625d623b9d63a121cefdd76ca05de2cedc7a"
+      }
+    },
+    {
+      "file": "diagnostic797-bound.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\combined-diagnostic-bound-797\\result.json",
+        "bytes": 5702,
+        "sha256": "bb12fdba03c9eeb302a0b3c1a0f397b13d7c9a604b93bc4bdabd53fe3b657292"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\diagnostic797-bound.json",
+        "bytes": 5702,
+        "sha256": "bb12fdba03c9eeb302a0b3c1a0f397b13d7c9a604b93bc4bdabd53fe3b657292"
+      }
+    },
+    {
+      "file": "roles053-cold.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-053\\result.json",
+        "bytes": 2136,
+        "sha256": "ba11926ee16a39695c39badc3ecfe8ae86514595dec16f65eacedbf67284af7d"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\roles053-cold.json",
+        "bytes": 2136,
+        "sha256": "ba11926ee16a39695c39badc3ecfe8ae86514595dec16f65eacedbf67284af7d"
+      }
+    },
+    {
+      "file": "sdk776-default-hosts.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-776\\result.json",
+        "bytes": 2635,
+        "sha256": "312b49cd8aff9dee89c49a0cdd8db74618f753e84dbbddbaa59784cc326fd752"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\sdk776-default-hosts.json",
+        "bytes": 2635,
+        "sha256": "312b49cd8aff9dee89c49a0cdd8db74618f753e84dbbddbaa59784cc326fd752"
+      }
+    },
+    {
+      "file": "sdk777-main-kernel.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-kernel-777\\kernel-result.json",
+        "bytes": 1130,
+        "sha256": "5af78add2970783d71f100bf828efe20af7abbeed310504c5a20dcbaf28435fb"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\sdk777-main-kernel.json",
+        "bytes": 1130,
+        "sha256": "5af78add2970783d71f100bf828efe20af7abbeed310504c5a20dcbaf28435fb"
+      }
+    },
+    {
+      "file": "sdk778-builtin.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-778\\result.json",
+        "bytes": 2122,
+        "sha256": "89a28a391454ce21f9bbdc0748b58ac85e580669f72ac04c70b2626e32acf1d8"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\sdk778-builtin.json",
+        "bytes": 2122,
+        "sha256": "89a28a391454ce21f9bbdc0748b58ac85e580669f72ac04c70b2626e32acf1d8"
+      }
+    },
+    {
+      "file": "vm048-archive788.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm048-offline-verified-788\\result.json",
+        "bytes": 745,
+        "sha256": "c53dec3513e0c964a40fb84c7e7efff142efdc3f1edd86611845aa30207d1518"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm048-archive788.json",
+        "bytes": 745,
+        "sha256": "c53dec3513e0c964a40fb84c7e7efff142efdc3f1edd86611845aa30207d1518"
+      }
+    },
+    {
+      "file": "archive785-redundant-copies.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\redundant-archive-disks-785\\result.json",
+        "bytes": 5576,
+        "sha256": "6ae9552ee8f3405bd9b1c0c5eaec090e4a2b98787a0950d9bccccc682ddbe128"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\archive785-redundant-copies.json",
+        "bytes": 5576,
+        "sha256": "6ae9552ee8f3405bd9b1c0c5eaec090e4a2b98787a0950d9bccccc682ddbe128"
+      }
+    },
+    {
+      "file": "cache796-closed-libraries.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\superseded-roles-cache-796\\result.json",
+        "bytes": 690,
+        "sha256": "064e4f962528f02caa48d71b6d52fca05ebff2158c470f8eb5e06c17c798b80a"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\cache796-closed-libraries.json",
+        "bytes": 690,
+        "sha256": "064e4f962528f02caa48d71b6d52fca05ebff2158c470f8eb5e06c17c798b80a"
+      }
+    },
+    {
+      "file": "vm049-environment795.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-environment-795\\environment.json",
+        "bytes": 21470,
+        "sha256": "697c866b24e3a6ea9d655330c63f836e9221cc7b1fdf1f967d8e6915ec90078f"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-environment795.json",
+        "bytes": 21470,
+        "sha256": "697c866b24e3a6ea9d655330c63f836e9221cc7b1fdf1f967d8e6915ec90078f"
+      }
+    },
+    {
+      "file": "vm049-environment795-closed.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-environment-795\\result.json",
+        "bytes": 468,
+        "sha256": "735b54bf854804146d9696ef6862ee565d1becae9c0e6c25b35e75de205dec8e"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-environment795-closed.json",
+        "bytes": 468,
+        "sha256": "735b54bf854804146d9696ef6862ee565d1becae9c0e6c25b35e75de205dec8e"
+      }
+    },
+    {
+      "file": "vm049-runtime798.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-runtime-prerequisite-798\\result.json",
+        "bytes": 454,
+        "sha256": "1b1ae43ae768fd7990317b773452a71ec983efe771f972175280c156850c5ff0"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-runtime798.json",
+        "bytes": 454,
+        "sha256": "1b1ae43ae768fd7990317b773452a71ec983efe771f972175280c156850c5ff0"
+      }
+    },
+    {
+      "file": "vm049-media799.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-install-media-retired-799\\result.json",
+        "bytes": 482,
+        "sha256": "9b7125902a8912a8f0c8bb466d7fef2eebef966d9f1557612bf5a8324e462d1b"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-media799.json",
+        "bytes": 482,
+        "sha256": "9b7125902a8912a8f0c8bb466d7fef2eebef966d9f1557612bf5a8324e462d1b"
+      }
+    },
+    {
+      "file": "vm049-readiness800.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-readiness-prepared-800\\isolated-vm-probe-800\\result.json",
+        "bytes": 491,
+        "sha256": "cf6d97d932d821a3aa7b48b82bf63055012890c7741d629157931769301efbb2"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-readiness800.json",
+        "bytes": 491,
+        "sha256": "cf6d97d932d821a3aa7b48b82bf63055012890c7741d629157931769301efbb2"
+      }
+    },
+    {
+      "file": "vm049-fixture801.json",
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\new-vm-fixture-rebind-801\\result.json",
+        "bytes": 936,
+        "sha256": "90036b9bb9335f1a8b62463930101298bdbcee0c408294f6c6642356c2dfc8c7"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261030-observer\\vm049-fixture801.json",
+        "bytes": 936,
+        "sha256": "90036b9bb9335f1a8b62463930101298bdbcee0c408294f6c6642356c2dfc8c7"
+      }
+    }
+  ],
+  "files": [
+    {
+      "file": "archive785-redundant-copies.json",
+      "bytes": 5576,
+      "sha256": "6ae9552ee8f3405bd9b1c0c5eaec090e4a2b98787a0950d9bccccc682ddbe128"
+    },
+    {
+      "file": "begin-shell784-reproduction.json",
+      "bytes": 3076,
+      "sha256": "f3567f193d19d70a35b5dcd8ac62a33369bd8d42f85cea6f82c5ca0c9a35b079"
+    },
+    {
+      "file": "cache796-closed-libraries.json",
+      "bytes": 690,
+      "sha256": "064e4f962528f02caa48d71b6d52fca05ebff2158c470f8eb5e06c17c798b80a"
+    },
+    {
+      "file": "case773-retained.json",
+      "bytes": 9736,
+      "sha256": "a825b01ff638f54351543c25496b6b4c82bfc2944951cb82e902153a92dff619"
+    },
+    {
+      "file": "checkpoint805.json",
+      "bytes": 2863,
+      "sha256": "beb77d5f10fbae4855ddaab17920cad7af58e287a337294b814804255e6228be"
+    },
+    {
+      "file": "diagnostic797-bound.json",
+      "bytes": 5702,
+      "sha256": "bb12fdba03c9eeb302a0b3c1a0f397b13d7c9a604b93bc4bdabd53fe3b657292"
+    },
+    {
+      "file": "observer789-integration.json",
+      "bytes": 5676,
+      "sha256": "0da437f68d4ba3b9c42009e6ecd92eb255887177bf02a8eba50083a37ed3b55e"
+    },
+    {
+      "file": "observer790-pure.json",
+      "bytes": 9845,
+      "sha256": "bb79cdab58298f5e9723a4251cdf625d623b9d63a121cefdd76ca05de2cedc7a"
+    },
+    {
+      "file": "roles053-cold.json",
+      "bytes": 2136,
+      "sha256": "ba11926ee16a39695c39badc3ecfe8ae86514595dec16f65eacedbf67284af7d"
+    },
+    {
+      "file": "sdk776-default-hosts.json",
+      "bytes": 2635,
+      "sha256": "312b49cd8aff9dee89c49a0cdd8db74618f753e84dbbddbaa59784cc326fd752"
+    },
+    {
+      "file": "sdk777-main-kernel.json",
+      "bytes": 1130,
+      "sha256": "5af78add2970783d71f100bf828efe20af7abbeed310504c5a20dcbaf28435fb"
+    },
+    {
+      "file": "sdk778-builtin.json",
+      "bytes": 2122,
+      "sha256": "89a28a391454ce21f9bbdc0748b58ac85e580669f72ac04c70b2626e32acf1d8"
+    },
+    {
+      "file": "vm048-archive788.json",
+      "bytes": 745,
+      "sha256": "c53dec3513e0c964a40fb84c7e7efff142efdc3f1edd86611845aa30207d1518"
+    },
+    {
+      "file": "vm049-environment795-closed.json",
+      "bytes": 468,
+      "sha256": "735b54bf854804146d9696ef6862ee565d1becae9c0e6c25b35e75de205dec8e"
+    },
+    {
+      "file": "vm049-environment795.json",
+      "bytes": 21470,
+      "sha256": "697c866b24e3a6ea9d655330c63f836e9221cc7b1fdf1f967d8e6915ec90078f"
+    },
+    {
+      "file": "vm049-fixture801.json",
+      "bytes": 936,
+      "sha256": "90036b9bb9335f1a8b62463930101298bdbcee0c408294f6c6642356c2dfc8c7"
+    },
+    {
+      "file": "vm049-media799.json",
+      "bytes": 482,
+      "sha256": "9b7125902a8912a8f0c8bb466d7fef2eebef966d9f1557612bf5a8324e462d1b"
+    },
+    {
+      "file": "vm049-readiness800.json",
+      "bytes": 491,
+      "sha256": "cf6d97d932d821a3aa7b48b82bf63055012890c7741d629157931769301efbb2"
+    },
+    {
+      "file": "vm049-runtime798.json",
+      "bytes": 454,
+      "sha256": "1b1ae43ae768fd7990317b773452a71ec983efe771f972175280c156850c5ff0"
+    }
+  ],
+  "no_credentials_or_VM_disks": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

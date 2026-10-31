@@ -1,0 +1,31 @@
+{
+  "status": "CLOSED_HOST_ENTRY_REFUSAL_BEFORE_FIRST_PRODUCT_CASE_EFFECT",
+  "original_tool_chunk": "f25da0",
+  "original_exec_exit_code": 1,
+  "original_error": "KeyError: 'original_case_outcome'",
+  "original_line": 18,
+  "old_entry": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_1300.py",
+    "bytes": 6260,
+    "sha256": "1dd632ef70fb6d20ed4b9f58dbb1d048ea72587fb94e6337dd7003c978068ce0"
+  },
+  "old_cold_guard_record": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-cold-case-dispatch-guard.json",
+    "bytes": 2437,
+    "sha256": "798c58a25881e89b1d769f3dfc8a8b5aaac6c020b86f9573f3acbb71d1697f1d"
+  },
+  "absent_effect_markers": [
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-authorization.json",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-invocation.reserved",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-command.json",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-started.json",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-5228f346f70f4556b180d07a2d364a26\\case-process-result.json",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-5228f346f70f4556b180d07a2d364a26-case",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-5228f346f70f4556b180d07a2d364a26-case.reservation"
+  ],
+  "prior_stage_and_bind_completed": true,
+  "product_case_invocations": 0,
+  "policy_owner_invocations": 0,
+  "case_credentials_consumed_by_refused_entry": 0,
+  "old_attempt_not_replayed": true
+}

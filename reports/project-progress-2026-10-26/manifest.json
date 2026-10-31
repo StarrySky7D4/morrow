@@ -2,24 +2,59 @@
   "files": [
     {
       "path": "index.html",
-      "bytes": 34369,
-      "sha256": "7268ca0cb885ca07369e17ed5b77f1d837f329579bcb3aef719ad47ca1e784d3"
+      "bytes": 11071,
+      "sha256": "f49e5a5f770737b818ade715c03ddd6029956e3f5228d6d73a9eb284e0b23e1a"
     },
     {
       "path": "report-data.json",
-      "bytes": 231582,
-      "sha256": "02741b3a73e3bbd6df5162b73c39cc450b94ddda872c5b5fa675ebd6abaa0627"
+      "bytes": 354883,
+      "sha256": "7d1b12af8b3264639425c22875f103a85c90baca4697cf4587cc0101b522a5b8"
     },
     {
       "path": "verification.json",
-      "bytes": 886,
-      "sha256": "88dbab978ffd3aa6fb790d6b51333eb6936410143eacc7d57bb251ecfa60ea57"
+      "bytes": 712,
+      "sha256": "1073601808c0da5b00d79072331711443567518ab6f4dc3d5a2545a0a21feec7"
+    },
+    {
+      "path": "history-checkpoint-1348.html",
+      "bytes": 43898,
+      "sha256": "429c42f0eb1cbfd9d9c8dc242c78f8f3b8fbe30560cfefc51ee2f37f4b6995be"
+    },
+    {
+      "path": "history-checkpoint-1412.html",
+      "bytes": 9817,
+      "sha256": "c90bd21e01f686743bcd82542f951a8846b50360f8e8c8177d544bb97cd29771"
+    },
+    {
+      "path": "history-checkpoint-1467.html",
+      "bytes": 10326,
+      "sha256": "430c9cfc82fb38e209a1567b3fd0f82e5bbc3d033c798f85a4d9142ce883f194"
+    },
+    {
+      "path": "history-checkpoint-1489.html",
+      "bytes": 11153,
+      "sha256": "37dcdca332f74e40a7a277ff91b1606ae94b84ed31628b2e93cebbe0e1121991"
+    },
+    {
+      "path": "history-checkpoint-1499.html",
+      "bytes": 11081,
+      "sha256": "6dc6e9e496e93a8e91cb06eb2680759645d251a23f3be2697297033e087d75f7"
+    },
+    {
+      "path": "history-checkpoint-1514.html",
+      "bytes": 11105,
+      "sha256": "58cfe2c94902b4af0c8dd01c68d9e369b5448fefba2525eadca6badf269ddcfe"
+    },
+    {
+      "path": "history-checkpoint-1527.html",
+      "bytes": 11276,
+      "sha256": "f728f2077a5017bcb54dcf6c551fe54932c52bf58c248be560537ea06c921d62"
     }
   ],
   "evidence": {
-    "path": "../../docs/qualification/evidence/pause-20261030/manifest.json",
-    "bytes": 16096,
-    "sha256": "3bf8c369e4668860a2409b8bede6a9595e924a50a8dd7aa9e65dd06af76c7544"
+    "path": "../../docs/qualification/evidence/resume-20261030-current/manifest.json",
+    "bytes": 312956,
+    "sha256": "a20065056baaf790dfaf666912553558ad7124cc7d0b277e67155f85b18afe55"
   },
-  "scope": "Paused public progress snapshot, not product qualification"
+  "scope": "Source-bound P2 token failure and SDK backend results; full original Windows and SDK gates remain open"
 }

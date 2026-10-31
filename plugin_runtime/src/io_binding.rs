@@ -74,6 +74,8 @@ struct State {
     last_tick: u64,
     service_run: Option<ServiceRun>,
     mutation_bound: bool,
+    #[cfg(all(feature = "packages", windows))]
+    watch_claimed: bool,
 }
 struct ServiceRun {
     jobs: u64,
@@ -144,6 +146,39 @@ pub struct IoBinding {
     expires: u64,
 }
 impl IoBinding {
+    #[cfg(all(feature = "packages", windows))]
+    pub(crate) fn watch_job_ceiling(&self) -> u64 {
+        self.budget().max_job_bytes
+    }
+    /// Claim one observation window on this original instance. Dropping an
+    /// approval cannot recreate its window, and no new accounting context is made.
+    #[cfg(all(feature = "packages", windows))]
+    pub(crate) fn claim_fs_watch(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        window_ms: u64,
+        now: u64,
+    ) -> Result<Self> {
+        self.validate_identity(manager, host, instance)?;
+        self.require_capability(IoCapability::FileList)?;
+        if self.mutation_budget.is_some() || self.mutation_history || self.context.max_run_ms.is_some() {
+            return Err(Error::Denied);
+        }
+        let end = now.checked_add(window_ms).ok_or(Error::Limit)?;
+        if window_ms == 0 || end > self.expires {
+            return Err(Error::Limit);
+        }
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&mut state, now)?;
+        if state.watch_claimed || !self.control.upgrade().is_some_and(|control| control.active()) {
+            return Err(Error::Denied);
+        }
+        state.watch_claimed = true;
+        state.last_tick = now;
+        Ok(self.duplicate())
+    }
     fn budget(&self) -> IoBudget {
         let mut budget = self.context.budget;
         if let Some(approved) = self.mutation_budget {

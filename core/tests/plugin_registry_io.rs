@@ -85,6 +85,7 @@ fn legacy(d: &TempDir, p: &Package, revision: u64) -> Vec<u8> {
                 approved_capabilities: vec![1, 7],
                 approved_io_capabilities: vec![],
                 approved_blob_upload: false,
+                approved_fs_watch: false,
             }],
             dependency_locks: vec![],
         },

@@ -1,0 +1,78 @@
+{
+    "source_disks_changed":  0,
+    "source_accepted":  false,
+    "observed_free_delta":  -13254455296,
+    "owner_contacts":  0,
+    "original_uncompressed_disks_retained":  true,
+    "files_deleted":  0,
+    "saved_memory_preserved":  true,
+    "free_before":  69248163840,
+    "guest_contacts":  0,
+    "files":  [
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm046\\disk\\acceptance-original.vhdx",
+                      "sha256":  "5bb757561ce30bd4c45babd7df98a51cde709003b24cd5faa7d3a0fe469dfe30",
+                      "bytes":  16546529280,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmcx",
+                      "sha256":  "eb168389d045a6e6115de4d431d20c38fc0aa72e23b30c5b0708ba303d1a2763",
+                      "bytes":  73728,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmgs",
+                      "sha256":  "3cd6b16e8251ffec4aa5e73b01f94d8dba2c58bc14d71a68cbac0acc4fe2e882",
+                      "bytes":  4194816,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.VMRS",
+                      "sha256":  "694f62860311c004233225a0f4dde1fef8ba229eb09624be8f75f41d87bfa07e",
+                      "bytes":  2140938240,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm047\\disk\\acceptance-original.vhdx",
+                      "sha256":  "ea24ce58f73669c84f1d9120417fcedde647b73163b08493215ef7c91c8ae9ef",
+                      "bytes":  20472397824,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm047\\state\\75CA0A13-40F1-4AED-BE6F-E15A946C14BB.vmcx",
+                      "sha256":  "0a65905cc7f544ab4a6a09ace0df1869d388271227bb40658a60e5ab518cf1e1",
+                      "bytes":  73728,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm047\\state\\75CA0A13-40F1-4AED-BE6F-E15A946C14BB.vmgs",
+                      "sha256":  "37d26a77576665af4f313460a47b54ccbd54deb6d608f6eecfb7757bbfd519d7",
+                      "bytes":  4194816,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm047\\state\\75CA0A13-40F1-4AED-BE6F-E15A946C14BB.VMRS",
+                      "sha256":  "6d9827db7a2a143095c69012fccb8341f5cf596e7282913f05dd1f17cd2491e6",
+                      "bytes":  2276098048,
+                      "compressed":  true
+                  }
+              ],
+    "VM_starts":  0,
+    "concurrent_free_space_changes_not_attributed":  true,
+    "free_after":  55993708544,
+    "VM_saves":  0,
+    "all_original_hashes_preserved":  true,
+    "restore_note":  "Copy to a normal uncompressed restore location, or decompress the archive copy, before attaching its virtual disk; no restoration executed.",
+    "registered_vms":  4,
+    "status":  "PASS_BYTE_IDENTICAL_OFFLINE_ARCHIVE_NTFS_COMPRESSION",
+    "release_eligible":  false
+}

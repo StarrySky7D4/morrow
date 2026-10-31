@@ -1,0 +1,232 @@
+{
+  "status": "PASS_CURRENT_SHARED17_CLOSED_REVIEWED_AND_SAVED",
+  "tag": "fc399ee9cd3d411bbda0c6af3d21fa2a",
+  "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1385-summary.json",
+    "bytes": 1333,
+    "sha256": "867414711d0aa28f9be52b3adf7d1efe458c55c1e19da56c1bab6b996b448eae"
+  },
+  "saved_state": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm055-case1385-saved-state\\result.json",
+    "bytes": 816,
+    "sha256": "7dcfb1174292960ea97700513454149bd3ba49e9f8f9cc0209ec1197c666b349"
+  },
+  "completed": [
+    {
+      "phase": "resume-known-clean-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\01-resume-known-clean-vm.stdout",
+        "bytes": 46,
+        "sha256": "5518e39ff81a42ccabf38af9566f98a9bd44f85c8e6d06c9636a2ae69b35746a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\01-resume-known-clean-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\02-authorized-protected-login-input.stdout",
+        "bytes": 56,
+        "sha256": "6bc88051e006f11c585282962acd6537afc427cb491dbab03d35766e3eaa9e98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\02-authorized-protected-login-input.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "fresh-readiness",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\03-fresh-readiness.stdout",
+        "bytes": 616,
+        "sha256": "6ce49af34a1217cadc88b9b57dcf2c3c7cd750b35fa6ceaaa12dbc6b75077c5e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\03-fresh-readiness.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\04-prepare-current-stage.stdout",
+        "bytes": 555,
+        "sha256": "11ee6e197ce18ae4beb07fe0be5dd6ec3eb9fa742bf345718de2f76b24f7c36b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\04-prepare-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\05-review-current-stage.stdout",
+        "bytes": 247,
+        "sha256": "e05311a1688faac4440cfb33cbaa6947107729e45cb72ceccb0413ee3b275e3c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\05-review-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "pure-shared-round-reader",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\06-pure-shared-round-reader.stdout",
+        "bytes": 65,
+        "sha256": "f886f85cf3a1deb7bbed156a57aff4384544c0baf9bb1be62e8b3acdfd691440"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\06-pure-shared-round-reader.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "stage-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\07-stage-once.stdout",
+        "bytes": 336,
+        "sha256": "c79dd5ccbe5b1485280e88c04dfa26ba29de3e0ceb6858ca8f921b47a1e215a7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\07-stage-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-reviewed-binding",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\08-prepare-reviewed-binding.stdout",
+        "bytes": 371,
+        "sha256": "da3da6d17d1970a4e3c269c36496f90a331ee7639d8eccdddf2ba5cffb04fb58"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\08-prepare-reviewed-binding.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "bind-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\09-bind-once.stdout",
+        "bytes": 212,
+        "sha256": "acce65670026446178a424f3ef515cfda42b37cee2e93fa709bae8278ff10311"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\09-bind-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-shared17",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\10-prepare-shared17.stdout",
+        "bytes": 655,
+        "sha256": "344e40416816bddde0a4807b6c88a7dc1408a8279a3ba88f18b9dbf6db7b5944"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\10-prepare-shared17.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "shared17-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\11-shared17-once.stdout",
+        "bytes": 648,
+        "sha256": "6957cd021a3eabfe1a555247bcf41b7f9177ad346d5a08e325321f470148f378"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\11-shared17-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-closed-evidence-readback",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\12-prepare-closed-evidence-readback.stdout",
+        "bytes": 329,
+        "sha256": "8897aac2a73447b61a2235cfc3841b6a4db091ac19da863784359da2c978bcb4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\12-prepare-closed-evidence-readback.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "closed-case-evidence-readback",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\13-closed-case-evidence-readback.stdout",
+        "bytes": 274,
+        "sha256": "4b9f3c1dea40dbc2e3cb37eb46a105f1c4320c95786ec90e23aef4f12a23d290"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\13-closed-case-evidence-readback.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "independent-shared17-review",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\14-independent-shared17-review.stdout",
+        "bytes": 250,
+        "sha256": "d177a90d085414c93554f0fe1e3867483a4fda878ed27ec46ff9241d48b970bb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\14-independent-shared17-review.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "save-closed-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\15-save-closed-vm.stdout",
+        "bytes": 675,
+        "sha256": "6ee4df480bb7b3b5282852b0070975c465955628ee01d2c93892283177891746"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\15-save-closed-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_pipeline_processes_returned": true,
+  "old_unknown_owner_contacts": 0,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

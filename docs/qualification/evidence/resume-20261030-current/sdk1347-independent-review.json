@@ -1,0 +1,61 @@
+{
+  "status": "PASS_SCOPED_CURRENT_THREE_LANGUAGE_STANDALONE_SDK_EVIDENCE_REVIEW",
+  "source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "original_receipts": {
+    "admission": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-distribution-1330\\result.json",
+      "bytes": 44668,
+      "sha256": "d18accc0b6846d43d358cb7846f0172368f8f1244fedf1ad935bb21abc23c8c4"
+    },
+    "guest_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\result.json",
+      "bytes": 34438,
+      "sha256": "e3a13eef23abe8107c9536010068d861371b1ce872897fc1f91036154e12a2dd"
+    },
+    "host_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-host-tools-1336\\result.json",
+      "bytes": 3515,
+      "sha256": "77da9413f8509ee88874034101aad9ac1e61fc3f87b847b9c2e29e6602f6bdc2"
+    },
+    "runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-runtime-1337\\result.json",
+      "bytes": 73784,
+      "sha256": "3f1a2ec0850729e998f8aca107c6bbe6a510868c0e357854f6df84b1f676e931"
+    },
+    "IO": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-io-1344\\result.json",
+      "bytes": 4034,
+      "sha256": "ae394b691ac5c1c65db52a15d4b3a5621f26a918b2be21c004c4fe374de916e1"
+    }
+  },
+  "independent_projects": 27,
+  "actual_compiled_Wasm_modules": 27,
+  "prepared_original_packages": 27,
+  "executed_original_packages": 12,
+  "executed_original_package_kinds": [
+    "content",
+    "transform",
+    "ui",
+    "dependency"
+  ],
+  "additional_original_IO_modules": 3,
+  "IO_methods": 5,
+  "IO_uses_qualification_manifests_not_original_archive_execution": true,
+  "remaining_original_15_packages": "PREPARED_ONLY",
+  "binary_CLI_no_clobber_and_business_failure_verified": true,
+  "all_original_compilers_and_runners_returned": true,
+  "selected_current_host_tools_freshly_compiled": true,
+  "IO_harness_same_source_warm_dependencies_explicit": true,
+  "all_57_frozen_inputs_unchanged": true,
+  "source_and_exported_SDK_unchanged": true,
+  "old_observer1329_failed_result_preserved": true,
+  "semantic_counts_not_combined": true,
+  "network_or_credential_authority_added": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

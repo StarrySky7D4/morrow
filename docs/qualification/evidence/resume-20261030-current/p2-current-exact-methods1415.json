@@ -1,0 +1,2940 @@
+{
+  "status": "PASS_SCOPED_CURRENT_P2_NATIVE_LEDGER_AND_SDK_FACTORY_REGRESSIONS",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_VM_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "selected_methods": 153,
+  "actual_methods": 153,
+  "passed": 153,
+  "methods": [
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::competing_closes_discharge_exactly_once_without_erasing_the_spent_identity",
+      "pid": 25384,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\001.stdout",
+        "bytes": 260,
+        "sha256": "1777dfbbfde2ba018246250e6f0053a472968309d81f918ff13c5136dc0772b8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\001.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::concurrent_reservations_enforce_the_original_active_limit",
+      "pid": 15564,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\002.stdout",
+        "bytes": 243,
+        "sha256": "e72b237e871730cfc42365a5e51c043d75bf6ae8f98d2b71f599aef5498b6c4b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\002.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::foreign_owner_wrong_reservation_and_late_close_never_release_unknown_charge",
+      "pid": 19748,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\003.stdout",
+        "bytes": 261,
+        "sha256": "b8efa4d43f5da1cb4f411b71c149955244052bb391cf4c6c279ddf0fe83476ba"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\003.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::lifetime_history_is_never_deleted_to_make_room",
+      "pid": 9144,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\004.stdout",
+        "bytes": 232,
+        "sha256": "8fbfd202a0707477b0f713ccf9f2204642e7b19d5dedad246060adf60b796ebd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\004.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::more_than_limit_closed_attempts_keep_history_then_unknowns_fill_the_same_ledger",
+      "pid": 24432,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\005.stdout",
+        "bytes": 265,
+        "sha256": "ffe20d6d6c2bd4a7417a355e6765f5af089b6a758170614b73ea099f2bf22f39"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\005.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::session_admission::tests::preinstalled_reservations_and_unknown_owners_cannot_be_dropped_to_recover_capacity",
+      "pid": 8496,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\006.stdout",
+        "bytes": 268,
+        "sha256": "1796f5585ea8a7ce358683699435116ba859cb4bd443c69130e2f260820c668a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\006.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::equal_public_metadata_cannot_substitute_a_different_original_parent",
+      "pid": 8656,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\007.stdout",
+        "bytes": 234,
+        "sha256": "44e4e62b099fe7f18ae365863e4d427439b5b72889a8346092019e603019b4c6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\007.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::fresh_session_attempt_cannot_borrow_or_claim_before_its_own_preflight",
+      "pid": 21772,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\008.stdout",
+        "bytes": 236,
+        "sha256": "1a2fb311fdb04cb30fdfae766b42e3a9e9b87c5413a5ce9d59e8d8c8be85cd8a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\008.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::independent_compiled_parent_anchor_is_required_before_any_native_import",
+      "pid": 9980,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\009.stdout",
+        "bytes": 238,
+        "sha256": "e817415461d952f366eba7e2735c0d039b6785f5701ea2d2f03ba15c4629f6cc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\009.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::native_c_zero_cannot_discharge_open_failed_uncertain_or_unobserved_parent_aliases",
+      "pid": 23208,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\010.stdout",
+        "bytes": 248,
+        "sha256": "42287a92605b4d4ad54fefa162699df196140e14b80e96eb33ce0a1cc55fbb70"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\010.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::one_original_parent_origin_cannot_issue_two_native_generations_or_hide_busy_first_error",
+      "pid": 19836,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\011.stdout",
+        "bytes": 254,
+        "sha256": "f26fc156d9ddbc0a92ff81b72f9f2ad2a13f85d23400a6a6ce0e5a84a2ece61b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\011.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::parent_normal_proof_requires_original_both_signals_dwords_job_and_completed_delivery",
+      "pid": 21856,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\012.stdout",
+        "bytes": 251,
+        "sha256": "af84f30b4ae56c9a6015224e871ef01ff4d0cbd9150a04a8ce6f9448c4e62b8a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\012.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::parent_native::tests::public_selection_cannot_swap_roles_expand_paths_commands_or_reuse_zero_binding",
+      "pid": 21728,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\013.stdout",
+        "bytes": 245,
+        "sha256": "a46fa584fad06a56e7ea2b1457ab2e55b65b07e194714d04da857b2cda927d38"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\013.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::actual_directory_remains_pinned_until_checked_close",
+      "pid": 23340,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\014.stdout",
+        "bytes": 202,
+        "sha256": "d11497fbd2476be8fd194cc76c91ee85d974f2fbfeafe7c5a58f5316dc0f58f6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\014.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::actual_failed_second_open_retains_first_pin_until_explicit_close",
+      "pid": 24116,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\015.stdout",
+        "bytes": 215,
+        "sha256": "fd423a1d0e285f5afef69379a3a10ec4f7f5254b2594319c4bfc2bdbaa388310"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\015.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::close_failure_preserves_exact_originals_and_never_retries",
+      "pid": 24184,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\016.stdout",
+        "bytes": 208,
+        "sha256": "15f95b288cf09d05dbdc6b60c518223f872cea50b248c5d2a701acf248574103"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\016.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::late_close_never_becomes_completed_or_releases_remaining_pins",
+      "pid": 24268,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\017.stdout",
+        "bytes": 212,
+        "sha256": "ab12a3cf4519f800635d56b9156bc225254ba21f2e5d5dc342a4155c6e34add3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\017.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::successful_checked_close_consumes_each_original_once_in_reverse_order",
+      "pid": 25532,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\018.stdout",
+        "bytes": 220,
+        "sha256": "629336d450c31dbcde042e64534c7b6b949530430827eaca59dd08302f3da019"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\018.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_cwd_pins::tests::unwind_keeps_closing_slot_and_cannot_be_retried",
+      "pid": 25076,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\019.stdout",
+        "bytes": 198,
+        "sha256": "d2fe059b2d924169f19a3d9c3b3f995cab3e02bbdbbf3be3dd5df299366c6980"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\019.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::source_policy_refusal::tests::no_admission_or_native_observations_cannot_authorize_source_policy_retirement",
+      "pid": 22724,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\020.stdout",
+        "bytes": 252,
+        "sha256": "811867b98fe32c37400547f73a40daa2fd995abac6c5e2f8d22c3b901c70a306"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\020.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::account_privileges_are_source_only_and_must_be_deleted_before_launch",
+      "pid": 16676,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\021.stdout",
+        "bytes": 220,
+        "sha256": "da8793bc2c03af4e05af8ac88e506fac6ab3e43132181daa9d138cb86b19d1ed"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\021.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::created_runner_context_requires_its_actual_read_only_query_and_same_fresh_logon",
+      "pid": 24188,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\022.stdout",
+        "bytes": 231,
+        "sha256": "1746e1256888672ea7b484777342fd5daf8944cd6eb4abc4e83ad66620de9924"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\022.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::diagnostic_mirror_is_ordered_and_not_an_admission_or_runner_query_alias",
+      "pid": 14372,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\023.stdout",
+        "bytes": 223,
+        "sha256": "5c44aec72f275d1761b0fb1b22336c7a3541a64cf60ada321b21d045b86621e0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\023.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::diagnostic_mirror_names_every_original_reject_without_changing_error_or_policy",
+      "pid": 23836,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\024.stdout",
+        "bytes": 230,
+        "sha256": "cfd08a62b02c8ce6406e8f36dbc6ae0cce630e11458ce9960e4d9e847e410f8d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\024.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::exact_original_grant_still_rejects_security_right_loss_or_extra_rights",
+      "pid": 2104,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\025.stdout",
+        "bytes": 222,
+        "sha256": "c8c89b18ab255ebd370ebd479d99dda07bcfd4172f572668c8ade53db87c9d27"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\025.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::explicit_default_change_has_a_new_stable_modified_window_but_no_other_policy_drift",
+      "pid": 10000,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\026.stdout",
+        "bytes": 234,
+        "sha256": "92fd06f58ec9e850718ae9f8a1cdce08153ad1ef1bc6356557a0e098e1e8248c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\026.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::filtered_launch_identity_is_retained_through_runner_readback",
+      "pid": 25036,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\027.stdout",
+        "bytes": 212,
+        "sha256": "f0c65bcccf9f2766d4a9d27ec8aaa5ff61741ffa1f75b688b5627b1d0c115f98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\027.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::independent_observed_logon_sid_and_authentication_id_are_not_arithmetic_aliases",
+      "pid": 24980,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\028.stdout",
+        "bytes": 231,
+        "sha256": "831e5a1a70bb6911d2ce956618720b72157abef92aa1260dc2afd18b553bcc17"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\028.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::qualification_managed_equals_caller_policy_is_denial_only",
+      "pid": 7056,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\029.stdout",
+        "bytes": 209,
+        "sha256": "640a33bfaa4281d340b735eb9f681182997fdecae3c3766be17ee723a50334ad"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\029.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::runner_initialization_requires_distinct_primary_and_exact_private_creator_grant",
+      "pid": 25500,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\030.stdout",
+        "bytes": 231,
+        "sha256": "da47f1bcba8a1c8f81eecb77d0c87f824941b3a30490e1d0328e97258abde1f7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\030.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::target_identity_is_fresh_enabled_logon_not_stable_user_or_caller_restriction",
+      "pid": 3776,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\031.stdout",
+        "bytes": 228,
+        "sha256": "5410eb2f36bd9b2d621accf4ea7e0295dc82a7d1884fd7b1ff137fc66b635b06"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\031.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_target::tests::target_policy_rejects_partial_grant_aba_privilege_and_wrong_integrity",
+      "pid": 16024,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\032.stdout",
+        "bytes": 221,
+        "sha256": "9a36c1ce0d49368cf71b9405000517e1a87d73583491d770da5bdeb21f4257d9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\032.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::logon_refusal::tests::diagnostic_preserves_original_logon_refusal_ahead_of_later_close_failure",
+      "pid": 18300,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\033.stdout",
+        "bytes": 239,
+        "sha256": "baeea901d16a95471cc634a9c73ff2769b73cb5d9159c873e733cfdc5a0b6a90"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\033.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::logon_refusal::tests::expired_refusal_close_budget_is_sticky_resource_uncertainty",
+      "pid": 24692,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\034.stdout",
+        "bytes": 226,
+        "sha256": "04c72d7f6d6e1cf9d4f39c097767376d8743ea8101dfb35e00997777876dab81"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\034.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::logon_refusal::tests::only_exact_false_nonzero_error_null_output_is_a_logon_rejection",
+      "pid": 24992,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\035.stdout",
+        "bytes": 230,
+        "sha256": "a84d6d86e27826a369e0d136290c2d948f393c36b9db3b77a8ab914b26f47864"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\035.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::logon_refusal::tests::original_login_result_cannot_be_recaptured_or_promote_existing_unknown",
+      "pid": 16508,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\036.stdout",
+        "bytes": 237,
+        "sha256": "de0bdab5c87899ff13994fa40394578d8f1dba91ca21585f51eabee64b1e8a34"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\036.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::logon_refusal::tests::uncertain_partial_login_output_keeps_original_raw_and_no_refusal",
+      "pid": 9652,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\037.stdout",
+        "bytes": 231,
+        "sha256": "8e0c13412f6a7ea9f52f9618dfb2ac91d1a7a350d81634de3aab82db286025bd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\037.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::producer_default_tests::helper_partial_pi_and_unwind_keep_both_outputs_in_the_preinstalled_originals",
+      "pid": 24324,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\038.stdout",
+        "bytes": 245,
+        "sha256": "2b742ad993af2b53c2f107a825021ef3e7a6f36b617cfb7fd533f5a565c89adc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\038.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_helper::producer_default_tests::trusted_producer_defaults_remain_distinct_from_private_t_and_deny_managed_nonadmins",
+      "pid": 2480,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\039.stdout",
+        "bytes": 252,
+        "sha256": "0cf48d1f35f43bcafcdee2ca79da7d5e0b80d5dc35d93c17e8cff305e40784db"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\039.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::after_helper_fault_guard_rejects_every_partial_runner_output",
+      "pid": 9720,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\040.stdout",
+        "bytes": 212,
+        "sha256": "cbcdf173c1d757ac5af2dc04d8979166d9c46deeac6aeb3625be492fddb2853b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\040.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::after_helper_fault_guard_rejects_missing_or_uncertain_original_transport",
+      "pid": 22544,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\041.stdout",
+        "bytes": 224,
+        "sha256": "b58cfd85e763b190280b3787126e86fb2ee167ded514634d3c99c2fcac756317"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\041.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::after_helper_fault_keeps_unknown_first_error_and_original_resources",
+      "pid": 10628,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\042.stdout",
+        "bytes": 219,
+        "sha256": "44f55f80e16d9298da07254a08fd1165f69d9bdf31e9dcd55ac4751c3e5a1898"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\042.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::busy_cell_cannot_report_clean_and_unstarted_cannot_retire_or_fake_native_adoption",
+      "pid": 24744,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\043.stdout",
+        "bytes": 233,
+        "sha256": "892e786dd1a2580de084b90c94410011a0e60be6092bcf77a5c68b2efa0cb369"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\043.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::checkpoint_deadline_retains_resources_even_before_dispatch",
+      "pid": 20880,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\044.stdout",
+        "bytes": 210,
+        "sha256": "bea92e4ff74aa72fd3bcf106e088ad5952e40a1b978da6441873326eb101abff"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\044.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::default_initialization_uses_actual_adjust_default_only_for_one_required_mutation",
+      "pid": 23736,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\045.stdout",
+        "bytes": 232,
+        "sha256": "f1b51aa1b729d246702aa07ec06351cdbad8c3da50e6c0681937e78eaf5d19bf"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\045.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::failed_outputs_are_retained_unless_actual_rejection_has_canonical_null_output",
+      "pid": 22100,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\046.stdout",
+        "bytes": 229,
+        "sha256": "0f12b236cb7ca807c60152c1f8c546fed6ab812f280dbc2771309ec6bb95a6d3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\046.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::original_transfer_failure_and_unwind_keep_both_originals_and_first_error_no_replay",
+      "pid": 24432,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\047.stdout",
+        "bytes": 234,
+        "sha256": "1ccb932bb94ceb52873fb06705c3c28bdb95e16c22b0ee83694834e8cf84a067"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\047.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::runner_initialization_cannot_publish_until_its_original_write_handle_is_checked_closed",
+      "pid": 24584,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\048.stdout",
+        "bytes": 238,
+        "sha256": "c0a939f3a4dc93bb39ab72e25c7836c35c101c42dda02b49707d56ed46da56b1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\048.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::token_derivation_and_default_initialization_have_independent_one_shot_budgets",
+      "pid": 8656,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\049.stdout",
+        "bytes": 229,
+        "sha256": "8e1b97f1b3f70dd1c7d94d8eb99a036e289add3750d0f23ca855aa7abcec2698"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\049.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::tests::uncertain_runner_initialization_keeps_original_owner_and_forbids_retry",
+      "pid": 21772,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\050.stdout",
+        "bytes": 222,
+        "sha256": "e3306fc07ea1b34b99be66af4cc804f3e72d34402296ceffc0d3c7f464329595"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\050.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::caller_window_tests::actual_unrestored_policy_or_foreign_primary_token_never_becomes_normal_completion",
+      "pid": 9980,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\051.stdout",
+        "bytes": 247,
+        "sha256": "0046f32ebc48b323c90c867a870d9384a4c6b744695d848c0a2a22c592ea6ced"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\051.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::caller_window_tests::caller_sampling_windows_do_not_presume_modified_id_across_temporary_enable",
+      "pid": 23208,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\052.stdout",
+        "bytes": 240,
+        "sha256": "37d5e1e2d2a8226dcd7a12b625aa3719c4f8aec7801c531739d99f5144eb190c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\052.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::first_failure_projection_tests2659::busy_original_cell_does_not_call_callback_or_fabricate_first_failure",
+      "pid": 19836,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\053.stdout",
+        "bytes": 249,
+        "sha256": "4a4c8da297926023460289d7e0a80be18f156fa4f7adf97291f253c711d1b418"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\053.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::first_failure_projection_tests2659::original_raw_first_error_survives_later_error_and_ignored_error_return_paths",
+      "pid": 21856,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\054.stdout",
+        "bytes": 257,
+        "sha256": "9b3c8cb8501af277d1f5fa97abf5bc2a5985fc7406ad378dc8c57af85dceb3e2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\054.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::first_failure_projection_tests2659::same_original_internal_denial_is_recorded_once_without_inventing_os_access_denied",
+      "pid": 21728,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\055.stdout",
+        "bytes": 262,
+        "sha256": "4b035555f54d1b249aa68c2d2f9cffbec4eeb332418c5f183f8068991a6b590a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\055.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::first_failure_projection_tests2659::saved_signed_ntstatus_is_preserved_without_win32_substitution_or_native_query",
+      "pid": 15792,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\056.stdout",
+        "bytes": 258,
+        "sha256": "fccedce70b84593fb8113937316de470e9139f6380082d76dea5f9da9bbeb6b1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\056.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::first_failure_projection_tests2659::unwind_preserves_original_slots_and_first_stage_without_closing_or_replaying",
+      "pid": 3140,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\057.stdout",
+        "bytes": 257,
+        "sha256": "3d047f073baa8f42b7bef0cd80485aa5a8a5bb3bc44f2aeb5f9c9465f9ca3c45"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\057.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::target_policy_observation_tests2740::accepted_facts_do_not_manufacture_a_rejection_or_native_success",
+      "pid": 21784,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\058.stdout",
+        "bytes": 245,
+        "sha256": "7472c3efd44a0af9e1f0797f5ea6464930cf14a997f2a8da38ab9be2388597e5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\058.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::target_policy_observation_tests2740::later_target_classification_cannot_relabel_an_earlier_first_failure",
+      "pid": 24488,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\059.stdout",
+        "bytes": 249,
+        "sha256": "4e0f448ff0dae5f3533ea0ab78715e1791092d20df0c10d0aeb803a2447af238"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\059.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::target_policy_observation_tests2740::same_original_guard_err_has_one_reason_no_raw_os_code_or_resource_operation",
+      "pid": 24888,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\060.stdout",
+        "bytes": 257,
+        "sha256": "dbc090d1d41a7609add08fca101045c3698d7e2d9e734bbdb2b8a27b4c790ce9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\060.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_01_initial_is_not_observed_and_not_returned_ok",
+      "pid": 25472,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\061.stdout",
+        "bytes": 212,
+        "sha256": "241f348c87698bdfb26b3b9e9f64407c8e546ffded9f47b0e03d97e658c3b77c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\061.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_02_entered_is_not_completed_or_native_success",
+      "pid": 23192,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\062.stdout",
+        "bytes": 211,
+        "sha256": "ffbb478aa74ba353f56ccd7a067b3932432492085acef2b19890df56b61022d4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\062.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_03_returned_native_error_keeps_exact_bits_and_first_error",
+      "pid": 16768,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\063.stdout",
+        "bytes": 223,
+        "sha256": "584b12323028d3f10157ec9159d065a8b07a1f8f56b395ed380c79911522d571"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\063.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_04_success_does_not_invent_a_last_error_zero",
+      "pid": 8440,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\064.stdout",
+        "bytes": 210,
+        "sha256": "8ee85ea7ccda4178188f0dba38475fa6e6c2250866b50b73046cd170b53f54d6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\064.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_05_pending_native_false_is_not_a_business_failure",
+      "pid": 21040,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\065.stdout",
+        "bytes": 215,
+        "sha256": "91ee3dbe1962800d56f0d8b14df4d95956d046337244a94441926e3b855c21a6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\065.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_06_first_error_and_whole_snapshot_freeze_without_late_queries",
+      "pid": 19064,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\066.stdout",
+        "bytes": 227,
+        "sha256": "072768f0b3d2918aece25909eb067f236da0700b4958d1031c19b964832a9a0d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\066.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_07_unwind_has_no_fabricated_io_code_or_payload",
+      "pid": 19180,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\067.stdout",
+        "bytes": 212,
+        "sha256": "c8937086ab0ed36a2770ffbe349f2ea25478353e6f6fbbf5edbacb4e3fc3f423"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\067.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_08_same_scope_required_and_wrong_completion_cannot_encode",
+      "pid": 8428,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\068.stdout",
+        "bytes": 223,
+        "sha256": "e96ab55f2f21ca43d9a3a19f8aeafd412cd483694290d1f9d5b31bcf3b3c618a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\068.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_09_bounded_history_reports_truncation_and_retains_first",
+      "pid": 9972,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\069.stdout",
+        "bytes": 221,
+        "sha256": "dcd1758ffaa205547f0b8ef9b23ec7f87858277862fe17f622a3313dc8c9782a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\069.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_10_counter_saturation_is_explicit_and_does_not_wrap",
+      "pid": 23604,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\070.stdout",
+        "bytes": 217,
+        "sha256": "2c96df381a9905ea53f5a6b2e8083c54fb95364d97971a761ae5b9695cae636e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\070.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_11_exact_length_magic_version_and_reserved_bits_required",
+      "pid": 14184,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\071.stdout",
+        "bytes": 222,
+        "sha256": "16f938cca9fc85aa6394cee6758a619f6e1808f6566013c3f3dd2f9490c417b4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\071.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_12_invalid_enum_bool_history_count_and_scope_are_rejected",
+      "pid": 2944,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\072.stdout",
+        "bytes": 223,
+        "sha256": "27fb47ef678e76d1a961487e6488bcd1cad6e4a5f8fa6cbf5c53f41836aef94f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\072.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_13_absent_fields_and_unused_history_are_canonical_zero",
+      "pid": 2552,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\073.stdout",
+        "bytes": 220,
+        "sha256": "2d290ce12d3aa2db4edc6604523d3c4c7ffde1889474c3847ec2fa5ea0a91690"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\073.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_14_event_sequences_must_be_consecutive_and_match_header",
+      "pid": 22168,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\074.stdout",
+        "bytes": 221,
+        "sha256": "6e197fb8d9da0b0bf1a462f2c62e151f8cd45f4ab443db74cb7d9202fbada3c2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\074.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_15_logical_success_cannot_erase_error_or_become_native_exit",
+      "pid": 22032,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\075.stdout",
+        "bytes": 225,
+        "sha256": "5cab7b398e712b48ceb15d3c9f4b68519bdb307887548c464977d0aa22b2680d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\075.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_16_prior_native_result_is_not_promoted_to_current_failure_cause",
+      "pid": 25300,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\076.stdout",
+        "bytes": 229,
+        "sha256": "d35dc986564eec029e48cb2045ac4599e98df772e62c1f84657cc797d7920110"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\076.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_17_native_capture_requires_an_entered_original_operation",
+      "pid": 24984,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\077.stdout",
+        "bytes": 222,
+        "sha256": "eefa9a9c265f20cbbb88541880346107d97058047b7fb2885c4868843956ea83"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\077.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_18_unwind_and_io_error_kinds_are_not_interchangeable",
+      "pid": 23440,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\078.stdout",
+        "bytes": 218,
+        "sha256": "d3aec157733f27079f2335e495578be61c7805dae64a7b5f60b1ea37333ade56"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\078.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_19_sealed_copy_does_not_borrow_or_follow_a_different_owner",
+      "pid": 22760,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\079.stdout",
+        "bytes": 224,
+        "sha256": "07b82b8b29c2b30932652690b269aaa893340943bd720610385b889e1088ddbb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\079.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_20_encoder_never_serializes_free_error_strings",
+      "pid": 21988,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\080.stdout",
+        "bytes": 212,
+        "sha256": "329bfa132ad4749015bc443ffc574e7f347918e995fc2f0bef615bc4b95e64ac"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\080.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_21_cached_header_cannot_claim_unrecorded_completion",
+      "pid": 20152,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\081.stdout",
+        "bytes": 217,
+        "sha256": "dc271f47584191ba10302b41238aa7e5ca4f6a4de80ed13942f0b2becfc03044"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\081.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::d2103_22_retained_history_cannot_invent_overlapping_operations",
+      "pid": 5848,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\082.stdout",
+        "bytes": 222,
+        "sha256": "710bbd9b8799218db1dd87c2f44853b2cf06de0c0896d04a9dafc0644873d787"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\082.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::exit_diagnostic_keeps_v1_readable_and_rejects_unobserved_or_wrong_scope_predicates",
+      "pid": 21492,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\083.stdout",
+        "bytes": 242,
+        "sha256": "93dd91559944ff5648adb32ee10fa7d6ca9105d2404fade12ca97c9a7f8aecfd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\083.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_parent_diagnostic::tests::exit_diagnostic_v2_roundtrips_each_actual_predicate_and_freezes_without_queries",
+      "pid": 13360,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\084.stdout",
+        "bytes": 239,
+        "sha256": "36c35f29b97e0f7a04729c48297ec530bf9ec61703402271f72426ae61e40cc8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\084.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::diagnostic_never_contains_untrusted_text",
+      "pid": 9228,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\085.stdout",
+        "bytes": 187,
+        "sha256": "0ed00fcb634c4d8fb03370c674348777dad5626f9c8ccbd782fd44934c9acf58"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\085.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::encoder_enforces_text_list_and_aggregate_bounds",
+      "pid": 19888,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\086.stdout",
+        "bytes": 194,
+        "sha256": "59c5535cf3f384ad97cf7c7b0b768b983240e81cd21bc15724bb91673625d2f9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\086.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::environment_order_does_not_change_authenticated_payload",
+      "pid": 22996,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\087.stdout",
+        "bytes": 202,
+        "sha256": "7080e5da9e82271de5283382ce9b19ba5a42031b06b55e6d2a8d4946da2b53f6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\087.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::every_runner_message_uses_pinned_binary_transport",
+      "pid": 25428,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\088.stdout",
+        "bytes": 196,
+        "sha256": "e0b3fdcf9bddf39e214d8baad9dbd466381b9e455cc17e321a1c84cb8a8b6da1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\088.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::json_trailing_truncated_and_oversized_input_is_never_eof_or_dispatch",
+      "pid": 12252,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\089.stdout",
+        "bytes": 215,
+        "sha256": "dc93b05868d3c857bc36ebdbdf023d432f2cb60856b5145f6a188879dade4200"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\089.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::permission_variants_and_path_semantics_roundtrip_without_json",
+      "pid": 23312,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\090.stdout",
+        "bytes": 208,
+        "sha256": "8e61ae904f78d8c5d528bb99c880ba4431ef19aa7892da9e6a6f3bc847117c2f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\090.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "runner_wire::tests::schema_version_magic_and_unknown_union_cannot_be_accepted",
+      "pid": 12144,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\091.stdout",
+        "bytes": 204,
+        "sha256": "1eb8c0e2309b41e0ffcc81c9f1a60f714bf4abd2e73bd8c441edb47b6fb20b99"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\091.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::tests::error_payload_serializes_stage_and_windows_error_code",
+      "pid": 24760,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\092.stdout",
+        "bytes": 209,
+        "sha256": "2cd437bda9665a1bf3b917267f6086dfd72dd0ca36f0a0dea91980c3270fac10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\092.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::tests::framed_round_trip",
+      "pid": 6380,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\093.stdout",
+        "bytes": 173,
+        "sha256": "fe4f8b68c6ba8e1d5e06cfc9ae7ce2a4968219c501de7bdf60d9c62b7a599fc9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\093.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::tests::spawn_request_serializes_permission_profile",
+      "pid": 21568,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\094.stdout",
+        "bytes": 199,
+        "sha256": "7b62229b9ef550468d8a3aec79cc5b95c68cd9eb343358b6224009341126409b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\094.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::legacy_compatibility_tests::old_spawn_ready_defaults_to_no_checked_controls",
+      "pid": 16680,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\095.stdout",
+        "bytes": 224,
+        "sha256": "169818d0dd1bd31f2f15927e0156efe4543fba3fd0eea568ccf6eee169d8e31f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\095.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::checked_protocol::tests::bound_never_evicts_unknown_or_accepts_more_ids",
+      "pid": 20592,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\096.stdout",
+        "bytes": 220,
+        "sha256": "9f6d35b7e18164390e291ee8069f3f64d22a6f6a835674ea7a5563ee6b6cac3e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\096.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::checked_protocol::tests::duplicate_unknown_never_reapplies_and_mismatch_is_zero_effect",
+      "pid": 25592,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\097.stdout",
+        "bytes": 235,
+        "sha256": "c8bb0292aaf6a45be5ffa6eec5946c26e7359551494629b58ad097339765446e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\097.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::checked_protocol::tests::hello_requires_fixed_schema_and_nonzero_nonce",
+      "pid": 408,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\098.stdout",
+        "bytes": 219,
+        "sha256": "2ab77d3552b622f35d96f1ff6ce8cb605b3984bfec57e3a5c742545ab8f8bd21"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\098.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::ipc_framed::checked_protocol::tests::request_digest_and_arguments_are_checked",
+      "pid": 19296,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\099.stdout",
+        "bytes": 214,
+        "sha256": "1ef2c1506d3cbfba026013b97f4c86fc24478736d94439277ac020d58a506d3a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\099.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::every_native_frame_and_runtime_content_roundtrips_as_canonical_binary",
+      "pid": 22256,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\100.stdout",
+        "bytes": 256,
+        "sha256": "43fbbbeb5cb44d1fdc23bb04832dfa15a585c4275dc03e6a153d9667eef7c702"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\100.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::exact_frame_limit_and_recursive_runtime_event_are_rejected_without_fallback",
+      "pid": 18864,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.062,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\101.stdout",
+        "bytes": 262,
+        "sha256": "ef7ccc62e82a1195b51532bb21620f36265d935d90be7a25a4b11241acb244ba"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\101.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::hostile_deep_pointer_chain_and_all_legacy_json_are_bounded_and_redacted",
+      "pid": 25472,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\102.stdout",
+        "bytes": 258,
+        "sha256": "26083c68aecbf1e8be515388973697f02005bc12744a96c20dea034bc051d155"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\102.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::packet_authentication_covers_all_fields_except_its_own_tag",
+      "pid": 23192,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\103.stdout",
+        "bytes": 245,
+        "sha256": "957cdceb412265144b919a278cf8b29cfdcf8043497b4565750a52a5072b882e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\103.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::rejects_noncanonical_unknown_fields_truncation_and_invalid_pointers",
+      "pid": 23156,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\104.stdout",
+        "bytes": 254,
+        "sha256": "52b83594fd2d7061cb69c695a511f6fd49e1e8a3649c14707894ca1bf545730c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\104.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::rejects_unredacted_embedded_nonce_on_both_encoding_and_decoding",
+      "pid": 22692,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\105.stdout",
+        "bytes": 250,
+        "sha256": "c84675f0afc67b313e2b14e6693a38b8ddbf202e202413ef4a530a7114577ecc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\105.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::rejects_wrong_envelope_identity_and_unknown_enum_or_union_tags",
+      "pid": 4820,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\106.stdout",
+        "bytes": 249,
+        "sha256": "43fb040c35260c9a35a51a43300fccae75d9de00e898fbdd9cf441188b69bac1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\106.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::native_close_codec::tests::seven_fact_domains_and_unknown_debt_states_survive_and_change_authentication_bytes",
+      "pid": 16180,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\107.stdout",
+        "bytes": 269,
+        "sha256": "b81bcd8773e5aa6e47e393a1621a6fe0ddbe5f6d2ca3fdfb066a07107cfe3f79"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\107.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::bounded_roundtrip_and_ordered_lifecycle_progression",
+      "pid": 11740,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\108.stdout",
+        "bytes": 218,
+        "sha256": "312b46ec2e7114ebd4b3ffa56bc497fab3a07853dc77f04c47e2fd9134f7c9ab"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\108.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::codec_errors_redact_untrusted_field_variant_duplicate_and_value_markers_in_debug_and_display",
+      "pid": 5540,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\109.stdout",
+        "bytes": 259,
+        "sha256": "201b8f869c61f63bb823dcfa7dfb444d41b74600952bdc03ee5e4e0f1c7f7c0e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\109.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::enforces_runner_vs_host_lease_scope_split_and_extra_job_member_origin_gate",
+      "pid": 2496,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\110.stdout",
+        "bytes": 241,
+        "sha256": "cdd1d9958b5c991a34195491f014a294455d9e63cca57d3000b9145b38199c0c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\110.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::existing_v6_and_v7_protocol_constants_and_frames_remain_unchanged",
+      "pid": 19496,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\111.stdout",
+        "bytes": 232,
+        "sha256": "762a6254ec2e7b3e5f749403085541d6b917b694509a2ebc93d1e1300de23fe2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\111.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::preserves_legitimate_259_after_positive_original_exit_proof_and_rejects_unproven_or_timed_out_259",
+      "pid": 16976,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\112.stdout",
+        "bytes": 264,
+        "sha256": "24b1055d6969abcedced7052b54f8873f4ff0abb5646ab579a2ad94d44cc7384"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\112.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::rejects_incomplete_io_job_leases_sender_writer_joined_claim_and_preserves_sticky_error",
+      "pid": 16032,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\113.stdout",
+        "bytes": 253,
+        "sha256": "475ebae072dd1c9d17d07147f6811d76a6518bbd4b8ea17f64699972effb55e6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\113.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::rejects_missing_capability_out_of_order_duplicate_and_missing_receipt_at_eof",
+      "pid": 25224,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\114.stdout",
+        "bytes": 243,
+        "sha256": "c67eeecd4066c74a48f05101c79978a2cabe2240fbc83d42cb2d6b2266e9751e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\114.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::rejects_unknown_duplicate_trailing_malformed_and_oversize_wire_frames",
+      "pid": 21844,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\115.stdout",
+        "bytes": 236,
+        "sha256": "1f240933de7b1c87d61336a3ab92ca343a9fa0fe412ed3e403f80726162ffe4c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\115.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_protocol::tests::rejects_version_schema_nonce_attempt_and_child_identity_mismatches",
+      "pid": 8640,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\116.stdout",
+        "bytes": 233,
+        "sha256": "1a51d5116ff18af3a66491c6a7d8bf924ee063086bcb4738aa71b4925527eaea"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\116.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::authenticated_packets_reject_tamper_replay_and_wrong_attempt_without_resuming",
+      "pid": 22056,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\117.stdout",
+        "bytes": 243,
+        "sha256": "dc9a16953f648df9525315b2e92f63ee231f90db35579e6eb5d705d5e957c540"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\117.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::busy_or_poisoned_protocol_observation_never_returns_clean_defaults",
+      "pid": 816,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\118.stdout",
+        "bytes": 232,
+        "sha256": "b28e71178f6d158b187dbad58b3e092ff58a66b3d0cd24cd7d284ecc2af9164c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\118.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::control_versions_use_capnp_and_v7_hello_cannot_negotiate_v8",
+      "pid": 18936,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\119.stdout",
+        "bytes": 225,
+        "sha256": "6365f747699cbf7c6863e2da5630d07974f82d93be6ef51af4ff7e3d78f6df9f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\119.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::explicit_bootstrap_rejects_wrong_version_schema_attempt_nonce_runner_and_missing_capability",
+      "pid": 11460,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\120.stdout",
+        "bytes": 257,
+        "sha256": "42dadecdfc23bc6097d6883ebf6e35cbb0fafa3fe1d66af2e98c3aafd72ada00"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\120.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::independent_runner_identity_and_native_dword_are_required_after_receipt_and_eof",
+      "pid": 22888,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\121.stdout",
+        "bytes": 245,
+        "sha256": "ef3c99c88d221177777c126b43a6d89e03254c576180743e6c47544da048590d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\121.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::live_data_control_exit_receipt_and_eof_preserve_full_dword_with_outer_scope_pending",
+      "pid": 22824,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\122.stdout",
+        "bytes": 249,
+        "sha256": "d4c98e47eb6abc9963fe52f9d0009510a96bd4a98ca2a49fb3105a436227ca0e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\122.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::missing_or_duplicate_receipt_and_post_exit_output_remain_sticky_not_eof_success",
+      "pid": 14556,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\123.stdout",
+        "bytes": 245,
+        "sha256": "c449049edebc9587895d31bb2aa21b1a0af11065ff5eef7119dcec036971437e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\123.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::terminal_ack_binds_attempt_child_full_dword_schema_direction_sequence_and_authentication",
+      "pid": 24752,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\124.stdout",
+        "bytes": 254,
+        "sha256": "9c009c963f806235e68672c8cb47c37ff6e0a2efb69237ac049912ee807cb7e4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\124.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::terminal_ack_missing_early_duplicate_replayed_and_late_are_not_eof_or_receipt_success",
+      "pid": 2488,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\125.stdout",
+        "bytes": 251,
+        "sha256": "277dd69821127d9878c113fb6eae4ccf28240f4c0023c1f76fc3b9e981619594"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\125.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::native_close_runtime::tests::terminal_ack_receipt_binds_actual_observed_ack_and_failed_write_is_not_replayed",
+      "pid": 23048,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\126.stdout",
+        "bytes": 245,
+        "sha256": "766afca5ad0d1ee8ab1a4879fd961164523b518b9e29a958b662ac47961138ad"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\126.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_a1_native::launch_object_tests::intermediate_unknown_and_partial_final_output_keep_the_original_charge",
+      "pid": 9144,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\127.stdout",
+        "bytes": 236,
+        "sha256": "88fe9be279d69a2b3c2c75fe28b882f9a4aee1e41012d361ca116d56952fba99"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\127.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::assign_absence_unknown_close_and_expiry_cannot_be_consumed_for_asuser",
+      "pid": 21672,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\128.stdout",
+        "bytes": 239,
+        "sha256": "f5b77cf02c058b4b1bddf71492a7e8c69d98d38413c38b7662ea8da544453ed7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\128.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::asuser_contract_consumes_actual_closed_attempt_without_changing_046_eligibility",
+      "pid": 24064,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\129.stdout",
+        "bytes": 249,
+        "sha256": "c740910be0175373a6fa1406b0bdf5311e54222f664e74f10ba251d04bcbdfa1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\129.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_cannot_be_minted_by_a_foreign_thread",
+      "pid": 15668,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\130.stdout",
+        "bytes": 227,
+        "sha256": "0df9b003502b66ecc997d01fff026a149e2c560e0783934e94149937e6f41586"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\130.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_consumes_exact_closed_observation_without_launch_authority",
+      "pid": 19696,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\131.stdout",
+        "bytes": 249,
+        "sha256": "0fe9fb241c0cfb8576c8c7764e816acc8b95ddf7055387a99ff74ac9837103fc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\131.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_never_accepts_unknown_live_handle_or_failed_close",
+      "pid": 23392,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\132.stdout",
+        "bytes": 240,
+        "sha256": "f2a98d1fd609c8b2cff2fa39fe8a6dc6d0172eb7526d0cf6de850e747c012eab"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\132.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_requires_complete_timely_missing_privilege_evidence",
+      "pid": 22572,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\133.stdout",
+        "bytes": 242,
+        "sha256": "176ffd24a3ef50e390698821478d0ae0537028c78a74c9a4a0c12b96e57171fb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\133.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "caller_prerequisites::asuser_policy_tests::consumed_asuser_caller_cannot_authorize_a_different_launch_thread",
+      "pid": 4876,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\134.stdout",
+        "bytes": 235,
+        "sha256": "4a46b6b7758253302c2c3cc3123c9b0c33e9d950521b0bd49d073cc7bcf4a356"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\134.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_attempt_outcome::tests::os_rejection_and_completed_native_ownership_are_distinct",
+      "pid": 18296,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\135.stdout",
+        "bytes": 214,
+        "sha256": "3ff17f7f0b32f0bebaa0c72101a2682e80cf346fb6d9d22f7a1cdb0431ad0a12"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\135.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_attempt_outcome::tests::predispatch_denial_does_not_claim_resources_are_closed",
+      "pid": 13324,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\136.stdout",
+        "bytes": 212,
+        "sha256": "f126385405e9192f46eb14ac1fe560676550f2f5b980529b8adaca57456ee0d5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\136.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "asuser_attempt_outcome::tests::unknown_is_not_rewritten_by_late_rejection_or_close",
+      "pid": 12980,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\137.stdout",
+        "bytes": 209,
+        "sha256": "8117bb2305ba70fce4a6b148daaaefab33ecb9c17d263ffd2542996c41c3081c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\137.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex_windows_sandbox",
+      "method": "elevated::checked_owner::caller_refusal::tests::readonly_native_seventeen_refusals_reuse_original_registry_and_retain_uncertainty",
+      "pid": 20948,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.187,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\138.stdout",
+        "bytes": 256,
+        "sha256": "92d244b2af7801993ab84c8e6e532c5eb861c04b6fca8d1363acbf99ac741a97"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\138.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "codex-command-runner",
+      "method": "win::checked_lifecycle_tests::checked_input_capnp_reader_rejects_json_and_partial_boundaries_without_native_resources",
+      "pid": 20592,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\139.stdout",
+        "bytes": 243,
+        "sha256": "a058e18b8250224c5d9110be1704733335d6fafef1f1f2d9ea62813daa02cfb0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\139.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "native_completion::identity_tests::acknowledged_refusal_lane_cannot_receive_a_normal_native_completion",
+      "pid": 25592,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\140.stdout",
+        "bytes": 228,
+        "sha256": "97c2fb6e768b7c8f7505c872a09ed0106121dc65030c13cd94133b492068ad8e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\140.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "native_completion::identity_tests::consumed_failed_and_unbound_identity_states_cannot_receive_a_new_native_capability",
+      "pid": 23116,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\141.stdout",
+        "bytes": 243,
+        "sha256": "e168cea0597589224f1072c855c6245bd2c72da3954c7a367f29e28fb340d6ca"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\141.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "native_completion::identity_tests::native_capability_lane_requires_full_original_operation_generation_and_issuer",
+      "pid": 21784,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\142.stdout",
+        "bytes": 238,
+        "sha256": "8da2896269f9c5dad0021b1fc5b18ed2b8f13022833fef8405c1251c4c4ed558"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\142.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "native_factory::tests::owner_finish_accepts_only_its_staged_live_runtime_without_minting_shutdown",
+      "pid": 24488,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\143.stdout",
+        "bytes": 223,
+        "sha256": "054da9a28aed0f20cf19c42abc8fe4b56e59864ff1724b0021cf801f97ee0dc8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\143.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "native_factory::tests::unstarted_or_failed_factory_attempt_cannot_mint_shutdown_from_absent_weak_values",
+      "pid": 13920,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\144.stdout",
+        "bytes": 229,
+        "sha256": "590c8673d4468ad66b38a17d9dad7a939246ad68e6479f642b8900c7fabf9320"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\144.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::dropping_external_owners_keeps_unknown_occupancy_and_resource",
+      "pid": 20448,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\145.stdout",
+        "bytes": 204,
+        "sha256": "ee4fc5c6818cf2496b7a740b8cc6c4b196af20a4bb979ea258c3298ddf41df32"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\145.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_keepalive_lock_is_poisoned",
+      "pid": 24468,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\146.stdout",
+        "bytes": 236,
+        "sha256": "6eb01bb05e4a8041f23425a5a9c169a50d7e2faaed88260304614857d73ce85a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\146.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_process_lock_is_poisoned",
+      "pid": 12076,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\147.stdout",
+        "bytes": 234,
+        "sha256": "9a5cb71f564b7c2e62c0d0740300e6d7860f1236b46858fa58155dca6d3b4a76"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\147.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::normal_terminal_and_unstarted_metadata_cannot_satisfy_native_refusal_retirement",
+      "pid": 8440,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\148.stdout",
+        "bytes": 222,
+        "sha256": "ebc3fdc2c4daa15e4bef1cc7c0c3a8f389eb286f8f26bbf2a0f20d17f5487f27"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\148.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::shared_registry_bounds_pending_and_unknown_work",
+      "pid": 21712,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\149.stdout",
+        "bytes": 190,
+        "sha256": "a56ac92950483fc90cf7c7e7ab92f23bb2f4df626a188e8e1f12ccd876b76211"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\149.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::terminal_evidence_does_not_release_live_provider_or_pending_job",
+      "pid": 15340,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\150.stdout",
+        "bytes": 206,
+        "sha256": "2fe8bc6a1086315995cab2451349e6039ec22a15eef8935a7d7a0e7c28aee24d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\150.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "registry::tests::unknown_refusal_metadata_cannot_release_original_registry_or_keepalive",
+      "pid": 22424,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\151.stdout",
+        "bytes": 213,
+        "sha256": "cf4a8ac6e1e63ba6c98c3b994c9786b4fe88baac16e815040d2e8072b3083aaf"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\151.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "windows_runner::tests::completed_native_factory_owner_finish_requires_same_original_thread_close_capability",
+      "pid": 8428,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 6.157,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\152.stdout",
+        "bytes": 233,
+        "sha256": "4f83b079652c866342150212889f5927bc27e55445547f1ac6164755ba8fa18f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\152.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    },
+    {
+      "program": "morrow_codex_session_exec_windows_v1",
+      "method": "windows_runner::tests::explicit_v8_production_factory_constructs_same_pin_environment_and_retires_original_scheduler",
+      "pid": 16976,
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\153.stdout",
+        "bytes": 242,
+        "sha256": "658b356c40307ced2280c9d4ca32c4f0f48f5ae830ff9d78e98e786911132f62"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\153.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_process_returned": true
+    }
+  ],
+  "failure": null,
+  "all_selected_original_processes_returned": true,
+  "native_original_report": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\native-original-refusals.json",
+    "bytes": 76178,
+    "sha256": "d155073e907e8369db7b495dcc6995e15015aca18e2b2446a5fc17d608a93d5b"
+  },
+  "actual_readonly_native_refusals": 17,
+  "actual_checked_token_closes": 34,
+  "Unknown_negative_controls": 7,
+  "same_original_registry_never_reset": true,
+  "concurrent_admission_methods": 6,
+  "actual_original_local_scheduler_shutdown_methods": 2,
+  "original_deadlines_unchanged": true,
+  "host_legacy_provisioning": false,
+  "VM_calls": 0,
+  "Runner_Start_calls": 0,
+  "host_account_mutations": 0,
+  "host_policy_mutations": 0,
+  "full_end_to_end_P2_fault_matrix": false,
+  "SDK26": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

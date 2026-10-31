@@ -1,0 +1,41 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 130.235,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-runtime-946\\build.stdout",
+        "bytes": 1012838,
+        "sha256": "df05a386ceed079299f11af79bb17a8f11a59f47508e339419aa1e7cbc3a8732"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-runtime-946\\build.stderr",
+        "bytes": 386,
+        "sha256": "54159d2d3f01e18600f074a795a42d5008c4a73bcbd1e46d00a588a3abbf9dc5"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": null,
+  "error": "AssertionError: ",
+  "meaningful_methods": 0,
+  "actual_task_cases": 0,
+  "unapproved_and_disabled_packages_refused": null,
+  "original_pools_closed": null,
+  "content_host_calls": null,
+  "fixture_scope": "FIXED_SYNTHETIC_SELECTION_AND_KEYLESS_LOCAL_STORE",
+  "current_product_disclosure_approval": false,
+  "protected_store_reading": false,
+  "full_SDK_accepted": false,
+  "VM_calls": 0,
+  "window_actions": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -837,5 +837,53 @@
     }
   },
   "pluginsDirectoryNativePickerStart": "Choose folder and run plugin",
-  "pluginsDirectoryNativePickerIntro": "Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task."
+  "pluginsDirectoryNativePickerIntro": "Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task.",
+  "pluginsWatchTitle": "Directory changes",
+  "pluginsWatchIntro": "Observe only the folder confirmed for this run. Stop at the time, record or data limit. Windows asks you to confirm the folder when starting.",
+  "pluginsWatchAllow": "Allow this plugin to observe directory changes",
+  "pluginsWatchAllowNotice": "Also approve List files, then confirm the folder for each run.",
+  "pluginsWatchNoPlugins": "No enabled plugin has both directory observation and List files approval.",
+  "pluginsWatchPath": "Folder to observe (full path)",
+  "pluginsWatchFrames": "Maximum records delivered",
+  "pluginsWatchBytes": "Delivery data limit (bytes)",
+  "pluginsWatchStart": "Confirm folder and start observing",
+  "pluginsWatchBounds": "Plugin limits: {frames} records, {bytes} bytes, {ms} milliseconds.",
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchNew": "Prepare a new observation",
+  "pluginsWatchIdle": "No directory observation has started.",
+  "pluginsWatchRunning": "This observation is running. Refresh its status or request cancellation.",
+  "pluginsWatchReady": "Observation has ended. Read its result once.",
+  "pluginsWatchReviewed": "Result read. Review it before confirming completion.",
+  "pluginsWatchAcknowledged": "This observation is confirmed complete.",
+  "pluginsWatchUnknown": "This operation could not be confirmed. Its record is retained. It will not retry or start a new task automatically.",
+  "pluginsWatchCancelled": "This observation was cancelled.",
+  "pluginsWatchExpired": "This observation reached its time limit.",
+  "pluginsWatchClosed": "The directory has been released and cleanup is complete.",
+  "pluginsWatchRecords": "Records received by the plugin: {frames}; data charged: {bytes} bytes.",
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchFormError": "Check the full folder path. Every limit must be positive and within the plugin limits.",
+  "pluginsWatchOtherPanel": "The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel."
 }

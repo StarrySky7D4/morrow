@@ -1,0 +1,74 @@
+{
+  "status": "PASS_COMPLETE_INDEPENDENT_ZIP64_BYTE_VERIFICATION",
+  "vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+  "archive": {
+    "path": "C:\\MorrowQA\\retained-unknown-archives\\vm046\\vm046-complete-saved-state-1216.zip",
+    "bytes": 17305600054,
+    "modified_ns": 1793428773652268500,
+    "sha256": "b2f8594b00a8323baafbd1ccab83a36d7e7844922c9215760c212e305196dd67"
+  },
+  "verified_members": [
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261029-046\\acceptance.vhdx",
+      "sha256": "5bb757561ce30bd4c45babd7df98a51cde709003b24cd5faa7d3a0fe469dfe30",
+      "modified_ticks": 639288608802280753,
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm046\\disk\\acceptance-original.vhdx",
+      "entry": "disk\\acceptance-original.vhdx",
+      "bytes": 16546529280,
+      "archive_entry": "disk/acceptance-original.vhdx",
+      "archive_modified_ns": 1793264280699828300,
+      "archive_attributes": 2080,
+      "compressed_bytes": 15420964558,
+      "crc32": 27821057
+    },
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261029-046\\vm\\Morrow Windows Acceptance 20261029 046\\Virtual Machines\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmcx",
+      "sha256": "eb168389d045a6e6115de4d431d20c38fc0aa72e23b30c5b0708ba303d1a2763",
+      "modified_ticks": 639288608803931405,
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmcx",
+      "entry": "state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmcx",
+      "bytes": 73728,
+      "archive_entry": "state/B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmcx",
+      "archive_modified_ns": 1793264281393138000,
+      "archive_attributes": 2080,
+      "compressed_bytes": 13887,
+      "crc32": 3593043466
+    },
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261029-046\\vm\\Morrow Windows Acceptance 20261029 046\\Virtual Machines\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmgs",
+      "sha256": "3cd6b16e8251ffec4aa5e73b01f94d8dba2c58bc14d71a68cbac0acc4fe2e882",
+      "modified_ticks": 639288608802575284,
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmgs",
+      "entry": "state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmgs",
+      "bytes": 4194816,
+      "archive_entry": "state/B077176B-5C7D-4549-AA93-5AA09B4A8E85.vmgs",
+      "archive_modified_ns": 1793264281520429300,
+      "archive_attributes": 2080,
+      "compressed_bytes": 113651,
+      "crc32": 1374301771
+    },
+    {
+      "path": "C:\\MorrowQA\\windows-acceptance-20261029-046\\vm\\Morrow Windows Acceptance 20261029 046\\Virtual Machines\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.VMRS",
+      "sha256": "694f62860311c004233225a0f4dde1fef8ba229eb09624be8f75f41d87bfa07e",
+      "modified_ticks": 639288608802605343,
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm046\\state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.VMRS",
+      "entry": "state\\B077176B-5C7D-4549-AA93-5AA09B4A8E85.VMRS",
+      "bytes": 2140938240,
+      "archive_entry": "state/B077176B-5C7D-4549-AA93-5AA09B4A8E85.VMRS",
+      "archive_modified_ns": 1793264284586123900,
+      "archive_attributes": 2080,
+      "compressed_bytes": 1884505979,
+      "crc32": 640511916
+    }
+  ],
+  "exact_membership": true,
+  "disk_chain_byte_identical": true,
+  "saved_memory_byte_identical": true,
+  "configuration_byte_identical": true,
+  "prior_original_manifest_sha256": "c3bbeae6d0030c28e694a101fca5ae338d7f950be091bf9c764e4aa8623a08d1",
+  "pack_receipt_sha256": "58ef64b4814bdd43f11333ad7c49a37ee023d92c8aacfdadc7a5bac4a0049974",
+  "files_deleted": 0,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "restore_executed": false
+}

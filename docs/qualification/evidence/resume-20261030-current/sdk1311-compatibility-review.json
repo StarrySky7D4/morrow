@@ -1,0 +1,62 @@
+{
+  "status": "PASS_SCOPED_CURRENT_WINDOWS_FROZEN_COMPATIBILITY_AND_LOOPBACK_REVIEW",
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "runs": [
+    {
+      "build": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-1301\\result.json",
+        "bytes": 1494,
+        "sha256": "947b423a7aa6a2200516fceedb60b83b20e4cdeb63a9a34b64e8581c02d40453"
+      },
+      "runtime": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-1302\\result.json",
+        "bytes": 6291,
+        "sha256": "7c4a221333838c0bb24bf91b1b1d7ef4e53a64dd17e32193d614a6051991b90a"
+      },
+      "actual_methods": 13,
+      "frozen_inputs": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-1301\\frozen-inputs.json",
+        "bytes": 11322,
+        "sha256": "e342a2fa92a13b4bdfb02cc2964b62b5a506f6bae510244aed6ae0629e0bef31"
+      }
+    },
+    {
+      "build": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\result.json",
+        "bytes": 1181,
+        "sha256": "d5a151a3913c7f630fec8fbc96a3fcb4d052d77d55cc0c6deb4c3d86efc2f0bb"
+      },
+      "runtime": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-runtime-1307\\result.json",
+        "bytes": 8298,
+        "sha256": "920bdd21690a63f6c3e97fbfac6cfd8c28ae9397757d7c6f34fd87734323cb8b"
+      },
+      "actual_methods": 9,
+      "frozen_inputs": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\frozen-inputs.json",
+        "bytes": 11322,
+        "sha256": "e342a2fa92a13b4bdfb02cc2964b62b5a506f6bae510244aed6ae0629e0bef31"
+      }
+    }
+  ],
+  "compatibility_methods": 13,
+  "transport_methods": 6,
+  "tls_dpapi_methods": 3,
+  "counts_not_combined_with_prior_native_or_historical_runs": true,
+  "all_57_frozen_inputs_unchanged": true,
+  "all_original_processes_returned": true,
+  "native_run1282_original_execution_source": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "native_sdk344_and_current_core_schema_bytes_unchanged": true,
+  "native_execution_not_relabelled": true,
+  "loopback_only": true,
+  "synthetic_credentials_only": true,
+  "guest_rebuilt": false,
+  "runtime_replayed": false,
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

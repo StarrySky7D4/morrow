@@ -1,0 +1,77 @@
+{
+  "status": "RUNNING_TYPED_SUPERVISION_COMPILE_AND_INTERCHANGE_PASS_NATIVE_RUNTIME_PENDING",
+  "utc": "2026-10-31T02:39:05.625315+00:00",
+  "source_digest": "732e01aae4115cea045f58c6c955305ed3aa0b077a62fd3cac6785aeb1bae005",
+  "previous_checkpoint": "continuation1051.json",
+  "case736": "FIXED_AND_PRIOR_NORMAL806_SCOPED_PASS_RETAINED",
+  "case1062_status": "PASS_SCOPED_V6_HANDLE_CLOSE_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+  "case1062_source": "ce6593a1c164b51323bd8f009927855153027e952cd63eff8d66fc2ef68dbe06",
+  "case1062_checks": 5131,
+  "case1062_policy_clean": true,
+  "case1062_case_clean": false,
+  "case1062_original_owner": "UNKNOWN_RETAINED_NO_REPLAY",
+  "supervision_internal_protocol": "CapnProto",
+  "supervision_durable_protocol": "Protobuf plus LZ4",
+  "supervision_full_native_targets": "COMPILE_ONLY_PASS_1111",
+  "supervision_binary_interchange": {
+    "native_methods": 8,
+    "Rust_to_Dart_checks": 55,
+    "source": "ce5856c9c8ca9eba816de2ea4e25e0b15c48d83b832ea509742aa29013f8e98e",
+    "production_runtime": false
+  },
+  "supervision_Dart_methods": 49,
+  "supervision_Dart_scope": "Pure client observations and model logic only; evidence1105 retains its own input pins",
+  "prior_three_language_real_sessions": "PASS_SCOPED_1076_AND_1078_WITH_PRIOR_DEFAULT_NATIVE1020_JSON_SUPERVISION_NOT_REBOUND",
+  "formal_UI1072": "UNKNOWN_RETAINED_NO_REPLAY",
+  "legacy_v1_owner_migration": "OPEN_LEGACY_REFUSED_PRESERVE_ORIGINAL",
+  "current_protocol_runtime": "NOT_RUN",
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "98edd953-ddaa-45f3-ba72-2bc90497acb4",
+      "name": "Morrow Windows Acceptance 20261031 053",
+      "state": "Running"
+    }
+  ],
+  "registered_vms": 4,
+  "vm052": "FULL_OFFLINE_ARCHIVE_VERIFIED_UNREGISTERED_ORIGINAL_DISK_RETAINED",
+  "vm053": "OFFLINE_INSTALLATION_IN_PROGRESS_NOT_ENVIRONMENT_OR_P2_ACCEPTED",
+  "cache_root": "D:\\build_cache",
+  "retired_source_copy_archive": {
+    "files": 320834,
+    "logical_bytes": 4801859813,
+    "all_original_bytes_preserved": true
+  },
+  "closed_failed_check_cache": {
+    "files": 1174,
+    "logical_bytes": 1291261114
+  },
+  "free_bytes_sample": {
+    "C": 33014579200,
+    "D": 3436732416
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "P2": "OPEN",
+  "full_P2": false,
+  "formal_current_P3": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Complete VM053 installation and strict readiness; freeze deployment and report inputs before fresh default/native and P2 builds. Validate current binary supervision actual owner closure, management recovery, legacy upgrade and formal history delivery UI."
+}

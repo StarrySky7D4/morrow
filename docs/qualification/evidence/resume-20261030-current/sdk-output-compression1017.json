@@ -1,0 +1,17 @@
+{
+  "status": "PASS_BYTE_IDENTICAL_CLOSED_SDK_OUTPUT_COMPRESSION",
+  "files": 636,
+  "logical_bytes_preserved": 2021211648,
+  "all_hashes_unchanged": true,
+  "all_original_compact_processes_returned": true,
+  "free_before": 7467819008,
+  "free_after": 8141336576,
+  "observed_free_delta": 673517568,
+  "concurrent_free_space_changes_not_attributed": true,
+  "files_deleted": 0,
+  "source_changed": 0,
+  "VM_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

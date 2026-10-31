@@ -1,0 +1,17 @@
+{
+  "plan_sha256": "c2c5ae9c2ffeac105aca004bea599101d43e78a3f3d5f80fc380e1198280ea25",
+  "old_owner_contacts": 0,
+  "status": "PASS_CLOSED_PARENT062_ORIGINAL_COMPILER_LIBRARIES_RECLAIMED",
+  "preserved_files": 6246,
+  "free_after": 4594495488,
+  "removed_files": 1449,
+  "release_eligible": false,
+  "logical_bytes_removed": 2662814540,
+  "concurrent_space_changes_not_attributed": true,
+  "protected_artifacts_equal": true,
+  "source_accepted": false,
+  "observed_free_delta": 1302671360,
+  "VM_calls": 0,
+  "free_before": 3291824128,
+  "source_and_executable_removals": 0
+}

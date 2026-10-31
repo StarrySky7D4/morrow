@@ -3584,6 +3584,92 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pluginsViewFailed => 'Impossible d’ouvrir la vue de l’extension';
 
   @override
+  String get pluginsWatchAcknowledged =>
+      'La fin de cette observation est confirmée.';
+
+  @override
+  String get pluginsWatchAllow =>
+      'Autoriser ce plugin à observer les modifications du dossier';
+
+  @override
+  String get pluginsWatchAllowNotice =>
+      'Autorisez aussi la liste des fichiers, puis confirmez le dossier à chaque exécution.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'Limites du plugin : $frames enregistrements, $bytes octets, $ms millisecondes.';
+  }
+
+  @override
+  String get pluginsWatchBytes => 'Limite de données transmises (octets)';
+
+  @override
+  String get pluginsWatchCancelled => 'Cette observation a été annulée.';
+
+  @override
+  String get pluginsWatchClosed =>
+      'Le dossier a été libéré et le nettoyage est terminé.';
+
+  @override
+  String get pluginsWatchExpired =>
+      'Cette observation a atteint sa limite de durée.';
+
+  @override
+  String get pluginsWatchFormError =>
+      'Vérifiez le chemin complet. Chaque limite doit être positive et respecter les plafonds du plugin.';
+
+  @override
+  String get pluginsWatchFrames => 'Nombre maximal d’enregistrements transmis';
+
+  @override
+  String get pluginsWatchIdle => 'Aucune observation de dossier n’a commencé.';
+
+  @override
+  String get pluginsWatchIntro =>
+      'Seul le dossier confirmé pour cette exécution est observé. L’observation s’arrête à la limite de durée, d’enregistrements ou de données. Windows demande de confirmer le dossier au démarrage.';
+
+  @override
+  String get pluginsWatchNew => 'Préparer une nouvelle observation';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'Aucun plugin activé ne dispose des autorisations d’observation et de liste des fichiers.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'La fin de l’observation n’est pas encore confirmée. Vérifiez la tâche d’origine dans le panneau des modifications du dossier.';
+
+  @override
+  String get pluginsWatchPath => 'Dossier à observer (chemin complet)';
+
+  @override
+  String get pluginsWatchReady =>
+      'Observation terminée. Lisez son résultat une seule fois.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'Enregistrements reçus par le plugin : $frames ; données comptabilisées : $bytes octets.';
+  }
+
+  @override
+  String get pluginsWatchReviewed =>
+      'Résultat lu. Vérifiez-le avant de confirmer la fin.';
+
+  @override
+  String get pluginsWatchRunning =>
+      'Observation en cours. Actualisez son état ou demandez son annulation.';
+
+  @override
+  String get pluginsWatchStart => 'Confirmer le dossier et commencer';
+
+  @override
+  String get pluginsWatchTitle => 'Modifications du dossier';
+
+  @override
+  String get pluginsWatchUnknown =>
+      'Cette opération n’a pas pu être confirmée. Sa trace est conservée. Aucune relance ni nouvelle tâche automatique.';
+
+  @override
   String get pluginsWorkbench => 'Extension de l’espace de travail';
 
   @override

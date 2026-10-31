@@ -1,0 +1,13 @@
+{
+  "private_hashes_computed": 0,
+  "release_eligible": false,
+  "removed_packages": 6,
+  "original_user_input_file_mutated": false,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "case": "1270",
+  "status": "ALL_SIX_UNUSED_PRE_VM_SINGLE_USE_PACKAGES_INVALIDATED",
+  "private_values_read": 0,
+  "VM_calls": 0,
+  "original_failed_pipeline_replayed": false
+}

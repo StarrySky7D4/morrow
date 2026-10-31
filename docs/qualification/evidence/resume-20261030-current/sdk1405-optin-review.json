@@ -1,0 +1,57 @@
+{
+  "status": "PASS_SCOPED_NEW_THREE_LANGUAGE_SERVICE_RUN_PROFILE_EVIDENCE",
+  "canonical_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "actual_exported_SDK_source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "new_optin_original_archives": 6,
+  "actual_methods": 8,
+  "commands_returned_zero": 30,
+  "all_original_processes_returned": true,
+  "original_compiled_service_test_programs_unchanged": true,
+  "declared_run_duration_ms": 120000,
+  "declared_echo_job_budget": 16,
+  "declared_HTTP_job_budget": 64,
+  "declared_total_byte_budget": 4194304,
+  "cumulative_renewal_and_observed_unknown_reopen_verified": true,
+  "configured_revocation_and_foreign_worker_refusal_verified": true,
+  "original_27_default_archives_unchanged": true,
+  "all_57_frozen_inputs_unchanged": true,
+  "original_receipts": {
+    "projects": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\optin-service-projects-1396\\result.json",
+      "bytes": 37888,
+      "sha256": "26e9c92476c073aedf00e6f6cf3df025a55aeff2e4725ddac05ca3e03ca264a3"
+    },
+    "runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\optin-service-runtime-1399\\result.json",
+      "bytes": 9267,
+      "sha256": "804fe247f820661cc49b89c25b7f6d62a69fbd5693df1a15a4916af56aa465a5"
+    },
+    "harnesses": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-service-build-1370\\result.json",
+      "bytes": 2611,
+      "sha256": "f2a709c92486c132788bbcbc9204128197eac0c662a4a393c1001eb6e561aeab"
+    },
+    "default_matrix": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\default-sdk-matrix-review-1397\\result.json",
+      "bytes": 26126,
+      "sha256": "18ac43b6d2444c13f34f66bf4faae33a9c39447d8da4d1e461945e7dae783668"
+    },
+    "original_profile_mismatch": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-service-runtime-1391\\result.json",
+      "bytes": 3392,
+      "sha256": "cd34d7d77f541524e422273e13f766400a41842f870e81d22afe4aba129d4008"
+    }
+  },
+  "loopback_only": true,
+  "synthetic_credentials_only": true,
+  "Windows_DPAPI_qualified_here": false,
+  "public_TLS_qualified_here": false,
+  "formal_UI_qualified": false,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

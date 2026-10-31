@@ -1,0 +1,95 @@
+{
+  "status": "NEW_PROBE_SEEDED_FROM_CANONICAL_LOCK_METADATA_NOT_RUN",
+  "canonical_source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "original_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1521\\failure.json",
+    "bytes": 806,
+    "sha256": "9c59e10bf99d1b51ff3eea8279d2f6e8920862ad3765061680fb9dcd42c9c1a3"
+  },
+  "original_probe_inputs": {
+    "Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-probe-1520\\Cargo.toml",
+      "bytes": 356,
+      "sha256": "e0d1dcb66df0f096979d758f76c459befba0bcc77270ba9bfac15b66f49cf9ba"
+    },
+    "Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-probe-1520\\Cargo.lock",
+      "bytes": 28503,
+      "sha256": "877a1fd5ca96b339f8365e025f97120318fa3c805ebe2c22eb68bf07f95d2130"
+    },
+    "src/main.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-probe-1520\\src\\main.rs",
+      "bytes": 8489,
+      "sha256": "4f6ac00e6e6217d025a78d4fab18994cd90e315805c706d59f4d51b5d901fafb"
+    }
+  },
+  "original_drift": [
+    [
+      "cfg-if",
+      "1.0.5",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "cpufeatures",
+      "0.3.1",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "find-msvc-tools",
+      "0.1.14",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "hybrid-array",
+      "0.4.15",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "rustix",
+      "1.1.5",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "smallvec",
+      "1.16.2",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "syn",
+      "3.0.6",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "thiserror",
+      "2.0.21",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "thiserror-impl",
+      "2.0.21",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ],
+    [
+      "unicode-ident",
+      "1.0.26",
+      "registry+https://github.com/rust-lang/crates.io-index"
+    ]
+  ],
+  "seed": {
+    "path": "C:\\ms1020\\plugin_runtime\\Cargo.lock",
+    "bytes": 36808,
+    "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+  },
+  "seed_copy": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-probe-1523\\Cargo.lock",
+    "bytes": 36808,
+    "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+  },
+  "no_original_target_reserved": true,
+  "old_process_closed": true,
+  "product_source_unchanged": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,21 @@
+{
+  "status": "TEST_ONLY_PRIVATE_ENCODER_USE_REPAIRED",
+  "source_before": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+  "source_after": "ce0ea30705570d54f1456b70f5013cca1f769f10782be98c458c7082dd39ee85",
+  "changed_files": [
+    "workbench_host/tests/blob_history_delivery.rs"
+  ],
+  "completed_compiler_records": 889,
+  "production_source_unchanged": true,
+  "no_test_execution_in_case955": true,
+  "old_test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-test-repair-962\\test-before.rs",
+    "bytes": 12841,
+    "sha256": "554b3067323f9736af0d4bfa0fd6a0d710d93ff3078bfd6127aaf3da5308e399"
+  },
+  "new_test": {
+    "path": "C:\\ms1020\\workbench_host\\tests\\blob_history_delivery.rs",
+    "bytes": 12818,
+    "sha256": "38574f78ed0bc7306e1d0f1041ee297697183d05d627093934ea0beaeaf70647"
+  }
+}

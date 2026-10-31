@@ -1,0 +1,58 @@
+{
+  "status": "PASS_CURRENT_WINDOWS_LOCK_CLOSURES",
+  "rows": [
+    {
+      "label": "host",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "lock_before": {
+        "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+        "bytes": 236224,
+        "sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3"
+      },
+      "lock_unchanged": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-locks-936\\host.stdout",
+        "bytes": 3968246,
+        "sha256": "4a0aca43ae3fead08fb5d191ca5ecb56b57b77d924a191c86ee03190f1716dce"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-locks-936\\host.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "packages": 786,
+      "current_history_direct_host_dependency": true
+    },
+    {
+      "label": "p2-harness",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "lock_before": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+        "bytes": 234887,
+        "sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d"
+      },
+      "lock_unchanged": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-locks-936\\p2-harness.stdout",
+        "bytes": 3951874,
+        "sha256": "ab697b2aad2bbc8f86e0d272b9a794d6e0b01733fee9910b97fbedd5481922e3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-locks-936\\p2-harness.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "packages": 779,
+      "current_history_direct_host_dependency": true
+    }
+  ],
+  "locked": true,
+  "offline": true,
+  "compiled": false,
+  "runtime": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

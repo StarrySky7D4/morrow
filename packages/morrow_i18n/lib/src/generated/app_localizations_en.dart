@@ -3517,6 +3517,91 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsViewFailed => 'The plugin view could not be opened';
 
   @override
+  String get pluginsWatchAcknowledged =>
+      'This observation is confirmed complete.';
+
+  @override
+  String get pluginsWatchAllow =>
+      'Allow this plugin to observe directory changes';
+
+  @override
+  String get pluginsWatchAllowNotice =>
+      'Also approve List files, then confirm the folder for each run.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'Plugin limits: $frames records, $bytes bytes, $ms milliseconds.';
+  }
+
+  @override
+  String get pluginsWatchBytes => 'Delivery data limit (bytes)';
+
+  @override
+  String get pluginsWatchCancelled => 'This observation was cancelled.';
+
+  @override
+  String get pluginsWatchClosed =>
+      'The directory has been released and cleanup is complete.';
+
+  @override
+  String get pluginsWatchExpired => 'This observation reached its time limit.';
+
+  @override
+  String get pluginsWatchFormError =>
+      'Check the full folder path. Every limit must be positive and within the plugin limits.';
+
+  @override
+  String get pluginsWatchFrames => 'Maximum records delivered';
+
+  @override
+  String get pluginsWatchIdle => 'No directory observation has started.';
+
+  @override
+  String get pluginsWatchIntro =>
+      'Observe only the folder confirmed for this run. Stop at the time, record or data limit. Windows asks you to confirm the folder when starting.';
+
+  @override
+  String get pluginsWatchNew => 'Prepare a new observation';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'No enabled plugin has both directory observation and List files approval.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel.';
+
+  @override
+  String get pluginsWatchPath => 'Folder to observe (full path)';
+
+  @override
+  String get pluginsWatchReady =>
+      'Observation has ended. Read its result once.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'Records received by the plugin: $frames; data charged: $bytes bytes.';
+  }
+
+  @override
+  String get pluginsWatchReviewed =>
+      'Result read. Review it before confirming completion.';
+
+  @override
+  String get pluginsWatchRunning =>
+      'This observation is running. Refresh its status or request cancellation.';
+
+  @override
+  String get pluginsWatchStart => 'Confirm folder and start observing';
+
+  @override
+  String get pluginsWatchTitle => 'Directory changes';
+
+  @override
+  String get pluginsWatchUnknown =>
+      'This operation could not be confirmed. Its record is retained. It will not retry or start a new task automatically.';
+
+  @override
   String get pluginsWorkbench => 'Workbench plugin';
 
   @override

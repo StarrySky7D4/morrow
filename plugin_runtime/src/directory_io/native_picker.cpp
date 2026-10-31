@@ -154,8 +154,13 @@ static void CALLBACK tick(HWND, UINT, UINT_PTR timer, DWORD) {
 
 // Result: 0 accepted, 1 cancelled, 2 unavailable/native failure. Unknown native
 // retirement deliberately does not return across the borrowed Rust callback.
-extern "C" int __cdecl morrow_directory_picker(Callback callback, void* context) {
+extern "C" int __cdecl morrow_directory_picker(Callback callback, void* context,
+    const std::uint16_t* nomination, std::size_t count) {
     if (!callback || !context || active_picker) return 2;
+    if (nomination) {
+        if (count < 3 || count > 4096 || nomination[count] != 0) return 2;
+        for (std::size_t n = 0; n < count; ++n) if (nomination[n] == 0) return 2;
+    } else if (count != 0) return 2;
     Picker picker{callback, context};
     if (picker.call(0) != 0) return 1;
     const HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -177,6 +182,12 @@ extern "C" int __cdecl morrow_directory_picker(Callback callback, void* context)
         FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST |
         FOS_DONTADDTORECENT | FOS_NOCHANGEDIR | FOS_NODEREFERENCELINKS);
     if (result == S_OK) result = picker.dialog->SetTitle(L"Morrow - select directory");
+    // Display the immutable host nomination without resolving it or accepting
+    // it. The original OnFileOk still checks the exact selected spelling and
+    // captures every original object before it can accept the user's click.
+    static_assert(sizeof(wchar_t) == sizeof(std::uint16_t));
+    if (result == S_OK && nomination) result = picker.dialog->SetFileName(
+        reinterpret_cast<const wchar_t*>(nomination));
     if (result == S_OK) {
         events = new (std::nothrow) Events(picker);
         if (!events) result = E_OUTOFMEMORY;

@@ -1,0 +1,194 @@
+{
+  "status": "PASS_SCOPED_PROTECTED_RUST_C_AND_CANCEL_CPP_OPEN",
+  "source_digest": "474842ae7fc13db4061f3eabdca0ddb33fecdc6ff4fd00f9706114d61fca8143",
+  "build_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-review-1548\\result.json",
+    "bytes": 7049,
+    "sha256": "cbbba994627ede518c5dfdfa3499bb94c460dfed1476598acc5037fecde37870"
+  },
+  "passed": [
+    {
+      "case": 1535,
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1535\\result.json",
+        "bytes": 2026,
+        "sha256": "6cd2831fedaa552bc25c2c34c6039a85cce828af17ea882d771ebe6c5efc7cde"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1535\\ui-tool-observation.json",
+        "bytes": 713,
+        "sha256": "56149c8f34c99e697ba355d90e61113abddcda6ef7083d928d47dc69cc72238d"
+      },
+      "frames": 2,
+      "native_handles_closed": 6
+    },
+    {
+      "case": 1536,
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1536\\result.json",
+        "bytes": 2017,
+        "sha256": "69e70095c5652f488fb0abdd8e15fe8247265c9c9a53312ea899a8b51d322f43"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1536\\ui-tool-observation.json",
+        "bytes": 712,
+        "sha256": "60621ac4ce7270df8d4459adc8ac56a4952c491d6805c2aea75b28cf436d8ed5"
+      },
+      "frames": 2,
+      "native_handles_closed": 6
+    },
+    {
+      "case": 1538,
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1538\\result.json",
+        "bytes": 2031,
+        "sha256": "a818f299a7baccc7ef1900f466886068a687220d55681647391508a1ce857ff3"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1538\\ui-tool-observation.json",
+        "bytes": 712,
+        "sha256": "aa16fc4a5ce805ffea1a740da65652503d9a908979c586a135c587ddfa633248"
+      },
+      "frames": 1,
+      "native_handles_closed": 6
+    }
+  ],
+  "failed": [
+    {
+      "case": 1537,
+      "failure": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1537\\failure.json",
+        "bytes": 205,
+        "sha256": "5b4613e1457458198fd4b0da8312171fc35d007eed392024ebb5f2d56945968d"
+      },
+      "process": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1537\\original-process-result.json",
+        "bytes": 560,
+        "sha256": "ab7459bea8889f609b10e6fc7538206714a7e49e1ab64d12a15505f48c33dca3"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1537\\ui-tool-observation.json",
+        "bytes": 627,
+        "sha256": "ac9b5fe35c1ae95110bc23eb9b5aab0b342e23548485cfb503c533126e06aada"
+      },
+      "inferred_chooser_deadline": true,
+      "native_capture_not_reached": true,
+      "full_result_receipt_missing": true,
+      "explicit_ack_not_completed": true
+    },
+    {
+      "case": 1551,
+      "failure": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1551\\failure.json",
+        "bytes": 205,
+        "sha256": "5b4613e1457458198fd4b0da8312171fc35d007eed392024ebb5f2d56945968d"
+      },
+      "process": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1551\\original-process-result.json",
+        "bytes": 560,
+        "sha256": "49ae581919e69b825fa66f15d122b7c6d8703805f3fab790db19e0db6f4a453a"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1551\\ui-tool-observation.json",
+        "bytes": 602,
+        "sha256": "af9949800e2f1dfbccd564f596590ea2c953bd3c14c538f7a4d8b1526412a8e5"
+      },
+      "inferred_chooser_deadline": true,
+      "native_capture_not_reached": true,
+      "full_result_receipt_missing": true,
+      "explicit_ack_not_completed": true
+    },
+    {
+      "case": 1553,
+      "failure": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1553\\failure.json",
+        "bytes": 205,
+        "sha256": "5b4613e1457458198fd4b0da8312171fc35d007eed392024ebb5f2d56945968d"
+      },
+      "process": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1553\\original-process-result.json",
+        "bytes": 560,
+        "sha256": "694432d34373d6fb46261f8012a30afbff45c4fe6772ecc5661208c740e02cfe"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1553\\ui-tool-observation.json",
+        "bytes": 752,
+        "sha256": "75d78416b5d200c1310acfd7c5d659ded87c63c1e4e534882d6fd45a479399f4"
+      },
+      "inferred_chooser_deadline": true,
+      "native_capture_not_reached": true,
+      "full_result_receipt_missing": true,
+      "explicit_ack_not_completed": true
+    },
+    {
+      "case": 1555,
+      "failure": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1555\\failure.json",
+        "bytes": 205,
+        "sha256": "5b4613e1457458198fd4b0da8312171fc35d007eed392024ebb5f2d56945968d"
+      },
+      "process": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1555\\original-process-result.json",
+        "bytes": 560,
+        "sha256": "795be4413e71ebc2560d42d157518fb01ffff53114f2d4f30849868c02b3e293"
+      },
+      "ui": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1555\\ui-tool-observation.json",
+        "bytes": 892,
+        "sha256": "7fc2c056f39839c10483b14a7a60dd8c84ec4d35fe75e5aab0e65f095cae2d23"
+      },
+      "inferred_chooser_deadline": true,
+      "native_capture_not_reached": true,
+      "full_result_receipt_missing": true,
+      "explicit_ack_not_completed": true
+    }
+  ],
+  "delivery_digests": [
+    {
+      "case": 1535,
+      "sequence": 1,
+      "digest": "49e0ef233221742a0b158fda32e4579d79188fa17b3447bc681e222036f63f7a",
+      "fuel_remaining": 19692945
+    },
+    {
+      "case": 1535,
+      "sequence": 2,
+      "digest": "b2f757e5f7102232f640701e667b00e4580bbd3d3100e0ba53a44d453bf0e636",
+      "fuel_remaining": 19672953
+    },
+    {
+      "case": 1536,
+      "sequence": 1,
+      "digest": "458695ac7494ba3c3bfbb8cfe01c4621b58b3ba2039bf78c2ebe29302e657d9f",
+      "fuel_remaining": 19663603
+    },
+    {
+      "case": 1536,
+      "sequence": 2,
+      "digest": "1c81e3b98447872d3805716ddeb9fbaa22537e1987632dbf122063692edc6fe6",
+      "fuel_remaining": 19641349
+    },
+    {
+      "case": 1538,
+      "sequence": 1,
+      "digest": "29fe5f4aee7085765b8aad980da1ea4be7572debefb7219cd0a00222412335f7",
+      "fuel_remaining": 19692945
+    }
+  ],
+  "protected_owner_threads_joined": 3,
+  "actual_native_handles_confirmed_closed": 18,
+  "frames_delivered": 5,
+  "protected_existing_integrity_checks": 3,
+  "preflight_methods_passed": 2,
+  "frozen_inputs_unchanged": 57,
+  "Cpp_protected_acceptance": "OPEN",
+  "rendered_product_approval_UI": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "original_driver_failure_preserved": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

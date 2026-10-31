@@ -47,6 +47,10 @@ namespace C28.RootP1682 {
  }
  internal static class Rules {
   internal static bool Budget(long elapsed,long limit) { return elapsed>=0&&limit>=1&&limit<=5500000&&elapsed<limit; }
+  internal static bool FixedWindowsRoot(uint returnedLength,string path) {
+   return returnedLength>0&&returnedLength<260&&path!=null&&returnedLength==(uint)path.Length
+    &&String.Equals(path,@"C:\Windows",StringComparison.OrdinalIgnoreCase);
+  }
   internal static bool Pi(bool returned,IntPtr process,IntPtr thread,uint pid,uint tid) {
    return returned&&process!=IntPtr.Zero&&thread!=IntPtr.Zero&&process!=new IntPtr(-1)
     &&thread!=new IntPtr(-1)&&process!=thread&&pid!=0&&tid!=0;

@@ -24,6 +24,8 @@ unsafe extern "C" {
     fn morrow_directory_picker(
         callback: unsafe extern "C" fn(*mut c_void, u32, *const u16, usize) -> i32,
         context: *mut c_void,
+        nomination: *const u16,
+        count: usize,
     ) -> i32;
 }
 unsafe extern "C" fn dispatch<F: FnMut(Event<'_>) -> Result<(), Error>>(
@@ -68,6 +70,30 @@ pub(crate) fn show<F: FnMut(Event<'_>) -> Result<(), Error>>(
     ledger: &Ledger,
     callback: F,
 ) -> Result<(), Error> {
+    show_impl(ledger, None, callback)
+}
+
+/// A display-only hint from the existing watch approval. Ordinary directory
+/// selection keeps its original API and has no pre-existing nomination.
+pub(crate) fn show_nominated<F: FnMut(Event<'_>) -> Result<(), Error>>(
+    ledger: &Ledger,
+    nomination: &[u16],
+    callback: F,
+) -> Result<(), Error> {
+    if !(4..=4097).contains(&nomination.len())
+        || nomination.last() != Some(&0)
+        || nomination[..nomination.len() - 1].contains(&0)
+    {
+        return Err(Error::InvalidNativeRecord);
+    }
+    show_impl(ledger, Some(nomination), callback)
+}
+
+fn show_impl<F: FnMut(Event<'_>) -> Result<(), Error>>(
+    ledger: &Ledger,
+    nomination: Option<&[u16]>,
+    callback: F,
+) -> Result<(), Error> {
     ledger.begin_picker()?;
     let mut context = Context {
         callback: UnsafeCell::new(callback),
@@ -76,7 +102,12 @@ pub(crate) fn show<F: FnMut(Event<'_>) -> Result<(), Error>>(
         ledger,
     };
     let status = unsafe {
-        morrow_directory_picker(dispatch::<F>, (&mut context as *mut Context<'_, F>).cast())
+        morrow_directory_picker(
+            dispatch::<F>,
+            (&mut context as *mut Context<'_, F>).cast(),
+            nomination.map_or(std::ptr::null(), |v| v.as_ptr()),
+            nomination.map_or(0, |v| v.len() - 1),
+        )
     };
     // Native return means all owned callbacks/timer/COM references retired on
     // the original worker. This says nothing about its File close or join.
@@ -122,6 +153,43 @@ mod tests {
         assert_eq!(observation.objects, 0);
         assert!(observation.picker_started && observation.picker_closed);
         assert!(observation.all_closed());
+    }
+
+    #[test]
+    fn nominated_bridge_preflight_cancel_keeps_original_callback_and_no_dialog() {
+        let ledger = Ledger::new();
+        ledger.bind_worker();
+        let calls = Cell::new(0);
+        assert_eq!(
+            show_nominated(&ledger, &[68, 58, 92, 0], |event| {
+                assert!(matches!(event, Event::Check));
+                calls.set(calls.get() + 1);
+                Err(Error::Cancelled)
+            }),
+            Err(Error::Cancelled)
+        );
+        assert_eq!(calls.get(), 1);
+        let observation = ledger.snapshot();
+        assert!(observation.picker_started && observation.picker_closed);
+        assert!(observation.all_closed() && observation.objects == 0);
+    }
+
+    #[test]
+    fn invalid_prefill_is_refused_before_native_picker_or_callback() {
+        for value in [
+            vec![],
+            vec![68, 58, 92],
+            vec![68, 58, 92, 0, 0],
+            vec![1; 4098],
+        ] {
+            let ledger = Ledger::new();
+            ledger.bind_worker();
+            assert_eq!(
+                show_nominated(&ledger, &value, |_| panic!("no callback")),
+                Err(Error::InvalidNativeRecord)
+            );
+            assert!(!ledger.snapshot().picker_started);
+        }
     }
 
     #[test]

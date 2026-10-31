@@ -1,0 +1,64 @@
+{
+  "status": "PASS_COLD_OUTPUT_GUARD_BEFORE_ORIGINAL_DISPATCH",
+  "phase": "case",
+  "tag": "5228f346f70f4556b180d07a2d364a26",
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "checkout_source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_1323.py",
+    "bytes": 6802,
+    "sha256": "301f1c767cc72d430f370fd762f46b07daa3070c980e45fc6b0d4bd9da403baa"
+  },
+  "cold_proofs": [
+    {
+      "role": "P",
+      "target": "D:\\build_cache\\qualification-targets\\roles061-P-7bbcf0ee4370a249",
+      "compiler_artifacts": 880,
+      "proof": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\P\\compiler-output-proof.json",
+        "bytes": 785617,
+        "sha256": "d5ce4ad734c72fcddf08a7da52df7ec449afd9854cd53aad180d3f72ffa90503"
+      }
+    },
+    {
+      "role": "C",
+      "target": "D:\\build_cache\\qualification-targets\\roles061-C-72d9b796362a2b38",
+      "compiler_artifacts": 881,
+      "proof": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\C\\compiler-output-proof.json",
+        "bytes": 786739,
+        "sha256": "a05c47252e1b43efd54f08535ce5d4ae993c35514fa437b9359d82f1895cbc5a"
+      }
+    },
+    {
+      "role": "R",
+      "target": "D:\\build_cache\\qualification-targets\\roles061-R-1b2da57a9e1ea8c7",
+      "compiler_artifacts": 620,
+      "proof": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\R\\compiler-output-proof.json",
+        "bytes": 553130,
+        "sha256": "1a0e917268c744821a1d266c0f53ebed6a8589412de8dd48888bcfaa9df3a623"
+      }
+    },
+    {
+      "role": "S",
+      "target": "D:\\build_cache\\qualification-targets\\roles061-S-ff6e612295e43399",
+      "compiler_artifacts": 620,
+      "proof": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-061\\S\\compiler-output-proof.json",
+        "bytes": 552539,
+        "sha256": "0cdf0dedac883a26ae1c9f6466104e60d3cb3cb7de8324b8ea51361650c91ebc"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false,
+  "credentials_inspected": 0,
+  "owner_contacts": 0,
+  "entrypoint_repair": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1300-entrypoint-repair-1322\\result.json",
+    "bytes": 3818,
+    "sha256": "aacc04a650ed55b9c51dd7f0ba6ddbde9d23e4bfe5573d3e02a6900c3cd36c5a"
+  }
+}

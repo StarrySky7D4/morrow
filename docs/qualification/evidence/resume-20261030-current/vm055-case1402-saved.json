@@ -1,0 +1,18 @@
+﻿{
+    "guest_owner_contacts":  0,
+    "disk":  "C:\\MorrowQA\\windows-acceptance-20261031-055\\acceptance.vhdx",
+    "registered_vms":  4,
+    "state":  "Saved",
+    "release_eligible":  false,
+    "source_accepted":  false,
+    "automatic_resume":  false,
+    "nine_gate_review":  "NOT_THIS_PROFILE",
+    "distinct_logon_refusal_returned":  true,
+    "status":  "TASK_VM_SAVED_MEMORY_AND_DISK_RETAINED",
+    "other_vms_unchanged":  true,
+    "disk_bytes":  20505952256,
+    "vm_id":  "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+    "stop_vm_calls":  0,
+    "runtime_state_bytes":  1910087680,
+    "runtime_state_path":  "C:\\MorrowQA\\windows-acceptance-20261031-055\\vm\\Morrow Windows Acceptance 20261031 055\\Virtual Machines\\BA69BAE0-32F6-4C58-95F8-462EDB67B9B0.VMRS"
+}

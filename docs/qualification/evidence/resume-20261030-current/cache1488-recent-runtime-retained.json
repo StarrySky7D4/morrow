@@ -1,0 +1,12 @@
+{
+  "status": "NO_ELIGIBLE_ORIGINAL_RLIB_OLDER_THAN_60_MINUTES",
+  "phase": "Prepare",
+  "exit_code": 1,
+  "original_process_returned": true,
+  "deleted_files": 0,
+  "target": "D:\\build_cache\\qualification-targets\\watchauth1472-RUNTIME-c3f125ede13291ca",
+  "minimum_age_minutes": 60,
+  "all_current_target_files_retained": true,
+  "script_sha256": "863047c5496ed1ab9d5085cc8abff6de105a1592c928dfb7f117f58e23ba107e",
+  "utc": "2026-10-31T16:55:20.5943209Z"
+}

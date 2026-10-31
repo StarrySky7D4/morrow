@@ -1,0 +1,39 @@
+{
+  "status": "MANAGED_TERMINAL_GAP_AND_UNIT_ONLY_NATIVE_CLOSE_REFUSAL_READY_NOT_RUN",
+  "old_source_digest": "f76a8d020f5937a659b5ce8fbc6caee55dacac24bb626ac4f28ccd7df13e1c05",
+  "new_source_digest": "366dbc348177d17f37695c6c4cec357b62ec290a29b2bed069fad4af02aed525",
+  "changed_files": {
+    "plugin_runtime/src/fs_watch_worker.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_worker.rs",
+      "bytes": 18305,
+      "sha256": "c593a18b3a139f368e1a321458050c877f781c54e7ed12ec32f7858e8f1390f4"
+    },
+    "plugin_runtime/tests/fs_watch_worker.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\fs_watch_worker.rs",
+      "bytes": 20741,
+      "sha256": "ee0aa4ab9a13fde1038312d94beb6343f98ef3277861ef434fd35c7262b4a325"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 20943,
+      "sha256": "7cdad288c5db5b83e68e5b1b57f6ce0eab98d372a000e8c2c3f7c4cc99ff6480"
+    },
+    "plugin_runtime/src/directory_io/watch/native.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch\\native.rs",
+      "bytes": 6327,
+      "sha256": "1f16489eb480ba790082569dbdaec455b27816f9207a67bc6a3728cfafe66fd8"
+    },
+    "plugin_runtime/src/fs_watch_worker/close_refusal_tests.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_worker\\close_refusal_tests.rs",
+      "bytes": 8063,
+      "sha256": "70b7ddd5d40ee93afac6f05b67565d9ddc8e76c73ce79512b666f6e325db40b1"
+    }
+  },
+  "all_other_source_bytes_unchanged": true,
+  "unit_close_fixture_not_in_production": true,
+  "actual_gap_uses_original_bounded_clock_and_real_filesystem_burst": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

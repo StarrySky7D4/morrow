@@ -1,0 +1,24 @@
+{
+  "status": "PASS_CLOSED_LOGON829_AFTER_OFFLINE_BRANCH_READER_CORRECTION_NO_REPLAY",
+  "tag": "5040537386c44eeebf37c65a9fef4a6c",
+  "source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "original_pipeline_failure_preserved": true,
+  "original_case_and_12_preceding_phases_closed_zero": true,
+  "corrected_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case829-summary.json",
+    "bytes": 1341,
+    "sha256": "fb7d8f1db0101b74d3aac0102a2a052c7508ad38c1abb7e582c8e0ee5f681225"
+  },
+  "saved_state": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-case829-saved-state\\result.json",
+    "bytes": 793,
+    "sha256": "43e666ab2f3dbbc25bf6a12189052c982a86bdf2a797bae640ef3dc3c901d436"
+  },
+  "original_compiled_logon_input_byte_unchanged": true,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "replayed_cases": 0,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

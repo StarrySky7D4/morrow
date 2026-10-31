@@ -1,0 +1,18 @@
+{
+  "status": "ONLY_NEW_HISTORY_PACKAGE_AND_HOST_DEPENDENCY",
+  "rows": [
+    {
+      "path": "workbench_host/Cargo.lock",
+      "only_new_history_package_and_host_dependency": true,
+      "before_sha256": "52d64b548619683be0936656078efeb27c53bbfc219b4080826e8a76b5938a3b",
+      "after_sha256": "d99e31c6a0550f8a55cd0de7a12026eb60496da494ccbd7a9224bcda16a37445"
+    },
+    {
+      "path": "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock",
+      "only_new_history_package_and_host_dependency": true,
+      "before_sha256": "66f9c32830b91ee51df9c59c3168e6f7d08cd36993842741ac136cdc7b3dc7ad",
+      "after_sha256": "e0cd5c41796b750ecb76249570edc00405f3dd45abc11ee69645c55091770881"
+    }
+  ],
+  "non_windows_locks": "Earlier incomplete lock closures retained; no non-Windows qualification attempted"
+}

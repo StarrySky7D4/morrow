@@ -1,0 +1,226 @@
+{
+  "status": "PASS_SCOPED_WINDOWS_WASMI_WORD_EQUALITY_MATRIX",
+  "source_digest": "1a107628876dc3e437a44c5b2aafb5ea5e47fb27e11bd6d0603b2ce793d50a34",
+  "source_unchanged": true,
+  "canonical_sdk_inputs_unchanged": 344,
+  "copied_fixture_locks_refreshed": 4,
+  "actual_methods": 8,
+  "passed": 8,
+  "failed": 0,
+  "methods": [
+    {
+      "name": "matched_fresh_oneshot_control_records_real_outcomes_without_claiming_old_case_failed",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 1.297,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-01.stdout",
+        "bytes": 209,
+        "sha256": "139ef9081c033843421bfeebb0e2165567134dbd714b15e2e3939b60f76e23b6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-01.stderr",
+        "bytes": 6548,
+        "sha256": "4007a2fac20f6e202ab24e27d6944771e4424aabad861dccc62eacb779a655cd"
+      }
+    },
+    {
+      "name": "matched_fresh_standard_oneshot_control_records_original_five_frame_outcomes",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.422,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-02.stdout",
+        "bytes": 200,
+        "sha256": "4a47e4e0a09c7686bc20d7aa020964bec37ad3b4f3a3e12c178e9122b2b5a3a8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-02.stderr",
+        "bytes": 2457,
+        "sha256": "14923f85dbd066d4a922806596536dd2b883061c909e9c2c63d3a21f9122e501"
+      }
+    },
+    {
+      "name": "reusable_four_full_frames_preserve_original_limits_fault_revoke_and_actual_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.391,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-03.stdout",
+        "bytes": 204,
+        "sha256": "f6d461a7930e03463f62426be4a3d501e9f6fde0e0ce0f27fc10197561d78483"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-03.stderr",
+        "bytes": 1773,
+        "sha256": "e462c532b5c97dd31c378fd4df27490cbcbebe1354c8b262d573cd38c74026df"
+      }
+    },
+    {
+      "name": "reusable_full_64kib_boundary_bytes_and_events_ack_original_frame_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.296,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-04.stdout",
+        "bytes": 198,
+        "sha256": "3433337c20091d74324cd9e148fdaf5888d6c1b2185d41bfd53bd367c8956be6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-04.stderr",
+        "bytes": 1562,
+        "sha256": "4b719d310f7cdd4155ffe12e5cc5b91c21ba902a5a5818eec1e92a3bff91c08c"
+      }
+    },
+    {
+      "name": "reusable_repeated_full_64kib_frames_bytes_and_events_keep_default_limits",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.328,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-05.stdout",
+        "bytes": 197,
+        "sha256": "769d76b4b2e8d6c2b9d9ab83264e11debe73ac4889fe2c0773afdd6e962564c1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-05.stderr",
+        "bytes": 1787,
+        "sha256": "93b4d14a97b3f9e3a3c21f1efa1e2f6d2601a934ad7ed0514942a2938ee90fa0"
+      }
+    },
+    {
+      "name": "reusable_small_frames_bytes_and_events_preserve_owned_responses_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.578,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-06.stdout",
+        "bytes": 197,
+        "sha256": "2e1c3116b7433cb64b37f475eb56bea6b28dcc3d638299b70d6d568e84cff7c9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-06.stderr",
+        "bytes": 2225,
+        "sha256": "2de8352fb6cb2db601796cc331866d8681d15c9b8d163bb424fe04237cd70708"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_byte_frames_use_all_sixteen_calls_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.421,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-07.stdout",
+        "bytes": 196,
+        "sha256": "5f5e4350f365bc3d551da3d4f9f3092915f48cf24b60ae0d22b99503b119268d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-07.stderr",
+        "bytes": 807,
+        "sha256": "2edde50850fcf1f514a13357653cdfa8ae0f506105ca27eb0783f1fc932eaac1"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_event_frames_persist_exact_acks_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.422,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-08.stdout",
+        "bytes": 194,
+        "sha256": "4a3d9ebe09ef2cf4d205c03cd874481c26c2a75547fe9a5f2e7e4c83462d44a3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\test-08.stderr",
+        "bytes": 1918,
+        "sha256": "de577fc713f6d175099c94a000800068604e30a17ad3bbc72be0548e3e7d421e"
+      }
+    }
+  ],
+  "artifacts": {
+    "bounded-reusable-001": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\build\\plugin.wasm",
+        "bytes": 270089,
+        "sha256": "cf89e91763b5dc59fe2d900fd483c052334c939f809b716bafc2c19c1a189c7d"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\dist\\a064815bc0e92375c0b689cd679afd0131e906968316a820692b53322464ab88.mplugin",
+        "bytes": 138163,
+        "sha256": "a064815bc0e92375c0b689cd679afd0131e906968316a820692b53322464ab88"
+      },
+      "copied_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      }
+    },
+    "bounded-oneshot-001": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\build\\plugin.wasm",
+        "bytes": 269886,
+        "sha256": "cdc71991513221270c3097f83b788351fa0e289e0c57b2f6efda99c78922fbf9"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\dist\\3087d689e60cb16f029ea25cefb28ac7cbdb271d88123fb850cdbfc5def8bcbb.mplugin",
+        "bytes": 138125,
+        "sha256": "3087d689e60cb16f029ea25cefb28ac7cbdb271d88123fb850cdbfc5def8bcbb"
+      },
+      "copied_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      }
+    },
+    "standard-reusable-002": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-reusable-002\\build\\plugin.wasm",
+        "bytes": 270089,
+        "sha256": "b933e9196f0ea9c66ab8acc6239e4f4a0eb380047661d308d79c18a71120a23b"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-reusable-002\\dist\\f651b7e4e04855a491ea991c529eb69bacb92228451ab6944cdf00454ac68e47.mplugin",
+        "bytes": 138168,
+        "sha256": "f651b7e4e04855a491ea991c529eb69bacb92228451ab6944cdf00454ac68e47"
+      },
+      "copied_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-reusable-002\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      }
+    },
+    "standard-oneshot-002": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\build\\plugin.wasm",
+        "bytes": 269886,
+        "sha256": "07ddafdc4306eb39668ae2c0c92d850f0868911a1c7315aa755f88ee702c8812"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\dist\\465c75a1fd4fb0751d99a9000350306acf787e7d78c88135a75778fbaa070bf7.mplugin",
+        "bytes": 138129,
+        "sha256": "465c75a1fd4fb0751d99a9000350306acf787e7d78c88135a75778fbaa070bf7"
+      },
+      "copied_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-words1242\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      }
+    }
+  },
+  "all_original_processes_returned": true,
+  "budgets_unchanged": true,
+  "old_fixture_pins_not_rewritten": true,
+  "VM_calls": 0,
+  "full_SDK26_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

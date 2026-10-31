@@ -1,0 +1,201 @@
+{
+  "status": "OFFLINE_METADATA_LOCK_DIAGNOSIS_ONLY",
+  "originals": [
+    {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.toml",
+      "bytes": 2271,
+      "sha256": "d9bf324df3620450853c29c7e48469164f7d8dc47b15b9fdaefa73c515b7ba22"
+    },
+    {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+      "bytes": 234887,
+      "sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d"
+    },
+    {
+      "path": "D:\\build_cache\\m1147s\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.toml",
+      "bytes": 2271,
+      "sha256": "d9bf324df3620450853c29c7e48469164f7d8dc47b15b9fdaefa73c515b7ba22"
+    },
+    {
+      "path": "D:\\build_cache\\m1147s\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+      "bytes": 234887,
+      "sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d"
+    }
+  ],
+  "processes": [
+    {
+      "label": "canonical-locked",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\canonical-locked.json",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\canonical-locked.stderr",
+        "bytes": 271,
+        "sha256": "f6d533794f49f526aa36e6708858aac1ed99bdd1e15f35f28d6b3fb2fa02919a"
+      }
+    },
+    {
+      "label": "frozen-copy-locked",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\frozen-copy-locked.json",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\frozen-copy-locked.stderr",
+        "bytes": 283,
+        "sha256": "656a3e5a7030f3261e195abcdf6cfe45608c750719651b31bcb97ac636a9cec5"
+      }
+    },
+    {
+      "label": "isolated-candidate-offline",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\isolated-candidate-offline.json",
+        "bytes": 3945190,
+        "sha256": "a6bc79dabb24b24bec214f72400d3d8fdec4313dc683d6b8f7a390452b523623"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\isolated-candidate-offline.stderr",
+        "bytes": 794,
+        "sha256": "1698684cdb9a9206aca50fe585933360f0f4b20dff03beb183cb688dd39a0514"
+      }
+    },
+    {
+      "label": "isolated-candidate-locked",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\isolated-candidate-locked.json",
+        "bytes": 3945190,
+        "sha256": "a6bc79dabb24b24bec214f72400d3d8fdec4313dc683d6b8f7a390452b523623"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\isolated-candidate-locked.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "added": [],
+  "removed": [],
+  "changed_existing": [
+    {
+      "package": [
+        "morrow-workbench-host",
+        "0.1.9-test.50",
+        ""
+      ],
+      "before": {
+        "name": "morrow-workbench-host",
+        "version": "0.1.9-test.50",
+        "dependencies": [
+          "capnp",
+          "capnpc",
+          "getrandom 0.4.3",
+          "js-sys",
+          "morrow-agent-catalog-admin-v1",
+          "morrow-agent-catalog-owner-v1",
+          "morrow-agent-process-control-v1",
+          "morrow-agent-session-exec-v1-r2",
+          "morrow-agent-session-process-v1-host",
+          "morrow-audit",
+          "morrow-blob-transfer-v1",
+          "morrow-blob-upload-history-v1",
+          "morrow-blob-upload-proposal-v1",
+          "morrow-blob-upload-request-v1",
+          "morrow-codex-session-exec-windows-v1",
+          "morrow-core",
+          "morrow-fs-directory-request-v1",
+          "morrow-native-pipe-win",
+          "morrow-network-node",
+          "morrow-plugin-runtime",
+          "morrow-workbench-plugin",
+          "prost",
+          "prost-build",
+          "protoc-bin-vendored",
+          "rusqlite",
+          "rustls-pki-types",
+          "semver",
+          "serde_json",
+          "sha2 0.10.9",
+          "tempfile",
+          "tokio",
+          "url",
+          "wasm-bindgen",
+          "x509-parser",
+          "zeroize"
+        ]
+      },
+      "after": {
+        "name": "morrow-workbench-host",
+        "version": "0.1.9-test.50",
+        "dependencies": [
+          "capnp",
+          "capnpc",
+          "getrandom 0.4.3",
+          "js-sys",
+          "lz4_flex",
+          "morrow-agent-catalog-admin-v1",
+          "morrow-agent-catalog-owner-v1",
+          "morrow-agent-process-control-v1",
+          "morrow-agent-session-exec-v1-r2",
+          "morrow-agent-session-process-v1-host",
+          "morrow-audit",
+          "morrow-blob-transfer-v1",
+          "morrow-blob-upload-history-v1",
+          "morrow-blob-upload-proposal-v1",
+          "morrow-blob-upload-request-v1",
+          "morrow-codex-session-exec-windows-v1",
+          "morrow-core",
+          "morrow-fs-directory-request-v1",
+          "morrow-native-pipe-win",
+          "morrow-network-node",
+          "morrow-plugin-runtime",
+          "morrow-workbench-plugin",
+          "prost",
+          "prost-build",
+          "protoc-bin-vendored",
+          "rusqlite",
+          "rustls-pki-types",
+          "semver",
+          "serde_json",
+          "sha2 0.10.9",
+          "tempfile",
+          "tokio",
+          "url",
+          "wasm-bindgen",
+          "x509-parser",
+          "zeroize"
+        ]
+      }
+    }
+  ],
+  "candidate_lock": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\candidate\\Cargo.lock",
+    "bytes": 234900,
+    "sha256": "75d08fbe59dd1c76506edb7d02928a87cc690c4b46be287d53d4698a93158592"
+  },
+  "candidate_manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\candidate\\Cargo.toml",
+    "bytes": 2566,
+    "sha256": "26113dd0d9f041fb345663662ad38eae3808c28215e01a6f59ec8abf4f9bc012"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-diagnosis-1175\\candidate-lock.diff",
+    "bytes": 256,
+    "sha256": "fca60fee1d119678b91fc1937d994103afcaf066ed3eab74afd43c44bf78a98f"
+  },
+  "canonical_files_changed": 0,
+  "frozen_copy_files_changed": 0,
+  "compiler_invocations": 0,
+  "product_starts": 0,
+  "VM_calls": 0
+}

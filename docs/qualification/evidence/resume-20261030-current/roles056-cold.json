@@ -1,0 +1,68 @@
+{
+  "status": "ALL_FOUR_ROLES056_COLD_COMPILED_NOT_RUNTIME_ACCEPTED",
+  "completed": [
+    {
+      "phase": "P",
+      "exit_code": 0,
+      "original_process_returned": true
+    },
+    {
+      "phase": "C",
+      "exit_code": 0,
+      "original_process_returned": true
+    },
+    {
+      "phase": "RS",
+      "exit_code": 0,
+      "original_process_returned": true
+    }
+  ],
+  "exit_code": 0,
+  "original_process_returned": true,
+  "roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-056\\result.json",
+    "bytes": 2171,
+    "sha256": "d82820e26ad016e4180bbfd6d60c877c913a8ccf93454f148057dde6b11521ae"
+  },
+  "all_compiler_builds_originally_cold": true,
+  "source_accepted": false,
+  "release_eligible": false,
+  "source_digest": "7c531a3b8b05e4b7455ded47b3a37e1e53099e946ac1cbd0335f08c02a0ff660",
+  "original_P_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles056-build-driver-985\\result.json",
+    "bytes": 306,
+    "sha256": "564d428a87b3278d0011343d5127353765564bd18f3ed678d3acad9101be3e9e"
+  },
+  "original_C_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles056-build-driver-991\\result.json",
+    "bytes": 1050,
+    "sha256": "4e78ed3f87cd7f59537c416692cea96a0aa8ff5fc13862e8503e644bde07a2d5"
+  },
+  "original_completed_P": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-056\\P\\result.json",
+    "bytes": 952,
+    "sha256": "edd372eb4ce60e342b705b2b9493b5674c3e8e4915b86ac3c62faedd54d5ef2d"
+  },
+  "original_completed_C": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-056\\C\\result.json",
+    "bytes": 1806,
+    "sha256": "920e4eb79b734452a93f1368c87cc439648ec16ce119ff3e5a0066d8f2cc8822"
+  },
+  "prior_prebuild_space_refusals": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-build-rebase-983\\space-COPY.json",
+      "bytes": 633,
+      "sha256": "08ec8bc19125556bab4fa718814625574daf7047cebb8fea04739409a55cbfcc"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-crs-admission-990\\space-R.json",
+      "bytes": 622,
+      "sha256": "c73ea53f880c21a383783daf92214006dc056eed80ed45ef2d5ef7526d6989f2"
+    }
+  ],
+  "P_recompiled": false,
+  "C_recompiled": false,
+  "source_copy_replayed": false,
+  "prior_driver_replayed": false,
+  "VM_calls": 0
+}

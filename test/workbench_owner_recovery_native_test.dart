@@ -147,6 +147,9 @@ void main() {
       supervisor.isNotEmpty &&
       package.isNotEmpty &&
       evidence.isNotEmpty;
+  Future<ProcessResult> ownerCommand(List<String> arguments) => Process.run(
+    supervisor, arguments, stdoutEncoding: null,
+  );
   Future<RustWorkbench> open(Directory dir) => RustWorkbench.open(
     executable: host,
     supervisorExecutable: supervisor,
@@ -183,7 +186,7 @@ void main() {
       final preview = await control.preview();
       expect(preview.eligible, isFalse);
       expect(preview.reason, 'original_resource_proof_missing');
-      final refusal = await Process.run(supervisor, [
+      final refusal = await ownerCommand([
         '--owner-recover',
         dir.path,
         host,
@@ -255,7 +258,7 @@ void main() {
         package,
       ]);
       expect(direct.exitCode, isNot(0));
-      final oldToken = await Process.run(supervisor, [
+      final oldToken = await ownerCommand([
         '--owner-recover',
         dir.path,
         host,
@@ -322,7 +325,7 @@ void main() {
       final preview = await control.preview();
       expect(preview.eligible, isFalse);
       expect(preview.reason, 'original_resource_proof_missing');
-      final refused = await Process.run(supervisor, [
+      final refused = await ownerCommand([
         '--owner-recover',
         dir.path,
         host,
@@ -385,8 +388,8 @@ void main() {
         '--acknowledge-unknown',
       ];
       final results = await Future.wait([
-        Process.run(supervisor, args),
-        Process.run(supervisor, args),
+        ownerCommand(args),
+        ownerCommand(args),
       ]);
       expect(results.map((r) => r.exitCode).where((c) => c == 0).length, 1);
       expect(results.map((r) => r.exitCode).where((c) => c == 2).length, 1);

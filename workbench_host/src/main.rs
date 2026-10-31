@@ -194,7 +194,8 @@ fn run() -> morrow_workbench_host::Result<()> {
             .read_to_end(&mut package_bytes)?;
         #[cfg(target_os = "windows")]
         if expected_binding.as_ref().is_some_and(|r| {
-            r["package_sha256"] != morrow_workbench_host::workbench_supervision::sha(&package_bytes)
+            r.identity.as_ref().is_none_or(|id| id.package_sha256 !=
+                morrow_workbench_host::workbench_supervision::sha_bytes(&package_bytes))
         }) {
             return Err("Supervisor package artifact differs from owner binding".into());
         }

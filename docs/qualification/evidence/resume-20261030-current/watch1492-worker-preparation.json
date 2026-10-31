@@ -1,0 +1,34 @@
+{
+  "status": "SOURCE_BOUND_MANAGED_WATCH_PREPARATION_ONLY",
+  "source_digest": "877a9b6a15dbf39aaa4e843cc9d7eba993d06c66afaf440e125dafda133a2f0a",
+  "files": {
+    "plugin_runtime/src/lib.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\lib.rs",
+      "bytes": 40895,
+      "sha256": "5a2655949015ec19e678e92b565dcab368fe6bbcb8842bd44363cb165539a05e"
+    },
+    "plugin_runtime/src/continuation.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\continuation.rs",
+      "bytes": 10872,
+      "sha256": "7888bbfd78e85e6e1d6c06ffe0c148edd6a45712f18019106dbe362aa739c647"
+    },
+    "plugin_runtime/src/package.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\package.rs",
+      "bytes": 14743,
+      "sha256": "af2fcb4c2092e785ef5940b355f76399f893502414dfa31c50565fba47c54b33"
+    },
+    "plugin_runtime/src/fs_watch_binding.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 6930,
+      "sha256": "3612536e109efea27da68f6536583d65368c304508ec1c0983760443e18592c4"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 19805,
+      "sha256": "bc4390438bf05ed685b54b8d076e38de8c39bad389b7d1e554acb5744a60162a"
+    }
+  },
+  "goal": "Original owned Windows worker, exact Capnp batch guest completion, cumulative fuel and task calls, separate native closure and original join",
+  "source_accepted": false,
+  "release_eligible": false
+}

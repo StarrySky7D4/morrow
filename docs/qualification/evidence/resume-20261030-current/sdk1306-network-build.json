@@ -1,0 +1,28 @@
+{
+  "status": "COMPILED_CURRENT_FROZEN_NETWORK_READERS_NOT_RUNTIME",
+  "exit_code": 0,
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "binaries": {
+    "managed_http": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\managed_http-87581f07e03ce39b.exe",
+      "bytes": 14354944,
+      "sha256": "654f117e0d0c459834884b215c5147be16725e54df929ecb9139dc72a6bdc60d"
+    },
+    "sdk_service_guest": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-network-build-1306\\sdk_service_guest-8edabd40735989e9.exe",
+      "bytes": 10171392,
+      "sha256": "4057ea9a3bd72b3ae4099f7865a8f4520563956904a4beebe9edd61ad10ea5f0"
+    }
+  },
+  "frozen_inputs_unchanged": 57,
+  "source_unchanged": true,
+  "selected_programs_freshly_compiled": true,
+  "all_original_compiler_processes_returned": true,
+  "dependencies_warm_after_first_program_only": true,
+  "first_program_empty_target": true,
+  "cold_whole_suite_claim": false,
+  "guest_rebuilt": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -3559,6 +3559,93 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível abrir a visualização do plugin';
 
   @override
+  String get pluginsWatchAcknowledged =>
+      'A conclusão desta observação foi confirmada.';
+
+  @override
+  String get pluginsWatchAllow =>
+      'Permitir que este plugin observe alterações no diretório';
+
+  @override
+  String get pluginsWatchAllowNotice =>
+      'Autorize também a listagem de arquivos e confirme a pasta a cada execução.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'Limites do plugin: $frames registros, $bytes bytes, $ms milissegundos.';
+  }
+
+  @override
+  String get pluginsWatchBytes => 'Limite de dados entregues (bytes)';
+
+  @override
+  String get pluginsWatchCancelled => 'Esta observação foi cancelada.';
+
+  @override
+  String get pluginsWatchClosed =>
+      'O diretório foi liberado e a limpeza foi concluída.';
+
+  @override
+  String get pluginsWatchExpired =>
+      'Esta observação atingiu o limite de tempo.';
+
+  @override
+  String get pluginsWatchFormError =>
+      'Verifique o caminho completo da pasta. Todos os limites devem ser positivos e respeitar os máximos do plugin.';
+
+  @override
+  String get pluginsWatchFrames => 'Máximo de registros entregues';
+
+  @override
+  String get pluginsWatchIdle =>
+      'Nenhuma observação de diretório foi iniciada.';
+
+  @override
+  String get pluginsWatchIntro =>
+      'Observe apenas a pasta confirmada para esta execução. A observação para ao atingir o limite de tempo, registros ou dados. O Windows pede a confirmação da pasta ao iniciar.';
+
+  @override
+  String get pluginsWatchNew => 'Preparar nova observação';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'Nenhum plugin ativado tem permissão para observar diretórios e listar arquivos.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'A conclusão da observação ainda não foi confirmada. Revise a tarefa original no painel de alterações do diretório.';
+
+  @override
+  String get pluginsWatchPath => 'Pasta a observar (caminho completo)';
+
+  @override
+  String get pluginsWatchReady =>
+      'A observação terminou. Leia o resultado uma única vez.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'Registros recebidos pelo plugin: $frames; dados contabilizados: $bytes bytes.';
+  }
+
+  @override
+  String get pluginsWatchReviewed =>
+      'Resultado lido. Revise antes de confirmar a conclusão.';
+
+  @override
+  String get pluginsWatchRunning =>
+      'A observação está em andamento. Atualize o estado ou solicite o cancelamento.';
+
+  @override
+  String get pluginsWatchStart => 'Confirmar pasta e iniciar observação';
+
+  @override
+  String get pluginsWatchTitle => 'Alterações no diretório';
+
+  @override
+  String get pluginsWatchUnknown =>
+      'Não foi possível confirmar esta operação. Seu registro foi mantido. Não haverá nova tentativa nem nova tarefa automática.';
+
+  @override
   String get pluginsWorkbench => 'Plugin da área de trabalho';
 
   @override

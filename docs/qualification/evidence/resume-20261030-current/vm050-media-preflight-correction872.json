@@ -1,0 +1,109 @@
+{
+  "status": "PUBLIC_MEDIA_REGENERATION_PREPARED_NOT_RUN",
+  "initial_create869_closed_exit_code": 1,
+  "initial_failure": "Previously retired public ISO absent; Get-FileHash rejected before reservation or allocation",
+  "initial_creation_reservation_absent": true,
+  "new_VM_root_absent": true,
+  "prior_media_retirement": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-install-media-retired-799\\result.json",
+    "bytes": 482,
+    "sha256": "9b7125902a8912a8f0c8bb466d7fef2eebef966d9f1557612bf5a8324e462d1b"
+  },
+  "rows": [
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-autoboot-792\\efisys.bin",
+        "bytes": 1474560,
+        "sha256": "52f407452257e3b9ce5f1ffb55c5c9ad8272532e014c22b7563e9b4a80bac7b0"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-autoboot-872\\efisys.bin",
+        "bytes": 1474560,
+        "sha256": "52f407452257e3b9ce5f1ffb55c5c9ad8272532e014c22b7563e9b4a80bac7b0"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm049-autoboot-792\\efisys_noprompt.bin",
+        "bytes": 1474560,
+        "sha256": "bc1df11a9148b4e3b60b32095ca3dc5d400ca0d16e2b43d3a8a0282a9e66c4d5"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-autoboot-872\\efisys_noprompt.bin",
+        "bytes": 1474560,
+        "sha256": "bc1df11a9148b4e3b60b32095ca3dc5d400ca0d16e2b43d3a8a0282a9e66c4d5"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\patch_vm049_boot_catalog_792.py",
+        "bytes": 3464,
+        "sha256": "bdf2291627e7e1e14993a59bc2ee3ba64c829777b795dad69c65d4c027ab2a18"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\patch_vm050_boot_catalog_872.py",
+        "bytes": 3464,
+        "sha256": "e8e28151507a58a3f1e0b842594052aa5912cc27520cd6b7167b334fc0b34b57"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-boot-preparation-872\\patch_vm050_boot_catalog_872.py.diff",
+        "bytes": 604,
+        "sha256": "835e3782d1500b9c65ee2fb3c458750e835ba2982aca3c67a3f022f10da2db5e"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\create_vm050_869.ps1",
+        "bytes": 4966,
+        "sha256": "51bbd7a24c8a2ac1f7ea59a92d055da610b7e14c9496f2032c40881e3b40c824"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\create_vm050_873.ps1",
+        "bytes": 4966,
+        "sha256": "15535b0e5a6159b90306850484c57ebf2b67007fb682e6a21df165f6e5781dc0"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-boot-preparation-872\\create_vm050_873.ps1.diff",
+        "bytes": 1793,
+        "sha256": "186657a96b8383b6713fc15ce99e7e93a75e672909e9ae017266a7645fd53de6"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\start_vm050_installation_870.ps1",
+        "bytes": 1920,
+        "sha256": "d20fd2368c80900fa322ba5ab418f07e3fc3573a569201dd96747aa3a61cc6d5"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\start_vm050_installation_874.ps1",
+        "bytes": 1920,
+        "sha256": "248e4c4f65dd6e3589fce59a57224031762141aa8fb7964d6fe470a39acf3923"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-boot-preparation-872\\start_vm050_installation_874.ps1.diff",
+        "bytes": 2079,
+        "sha256": "e6534d48c7c95531da3c0c0214d4a1e746f798cc2a1997c8f6b7fe7b58f6d10d"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\inspect_vm050_environment_871.ps1",
+        "bytes": 9426,
+        "sha256": "3ce20a7a9d9d2ad707ec052ae41f5eee7781fcd7e3e876ca4c90288a5ef36089"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\inspect_vm050_environment_875.ps1",
+        "bytes": 9426,
+        "sha256": "5d6a5f59f59e99018d270c1ed13b51e030f7075ed03d1f916f91315816fc7e25"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm050-boot-preparation-872\\inspect_vm050_environment_875.ps1.diff",
+        "bytes": 1943,
+        "sha256": "01f6e4e3188089afcd9114f7d56d70734a1974fb8ba7b2a086ed173018bd435a"
+      }
+    }
+  ],
+  "private_media_reused_only_for_same_new_VM050": true,
+  "VM_calls": 0,
+  "automatic_case_replay": false
+}

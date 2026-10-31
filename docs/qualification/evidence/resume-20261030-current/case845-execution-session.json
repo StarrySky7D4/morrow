@@ -1,0 +1,13 @@
+{
+  "exec_session_id": 41555,
+  "tag": "f4e0ed2d97084cedbea87c893342d03b",
+  "original_host_pid": 9976,
+  "original_exec_not_polled_after_unknown": true,
+  "original_exec_not_terminated": true,
+  "independent_diagnostic_transport_closed": true,
+  "case_summary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case845-summary.json",
+    "bytes": 1480,
+    "sha256": "6c5fb40d653a2ae6df4aa1806eda36273dda8d624629ebf29867d805217b3928"
+  }
+}

@@ -165,9 +165,15 @@ namespace C28.RootP1682 {
      &&owner.Input.Ledger.ReviewAllowed(outSeen,errSeen)
      &&InputProtocol1701.Prompt(owner.Out.Evidence,(int)owner.Input.Ledger.OutputBaseline(),(int)outSeen,owner.Input.Ledger.DeliveredCount()))
      current=new ReviewTicket1701(this,owner.Input.Ledger.DeliveredCount(),outSeen,errSeen);
-    CaptureObservation capture=owner.Snapshot(closed?"CLOSED_ORIGINAL_P_AND_OUTER_IO_ONLY":Volatile.Read(ref owner.Unknown)!=0?"UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY":"CONTROLLED_INPUT_PENDING");capture.Input=null; // one history copy in this transport view
+    CaptureObservation capture=owner.Snapshot(closed?"CLOSED_ORIGINAL_P_AND_OUTER_IO_ONLY":Volatile.Read(ref owner.Unknown)!=0?"UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY":"CONTROLLED_INPUT_PENDING");
+#if P2_SHARED_PARENT_REFUSAL_SESSION
+    InputObservation1701 input=capture.Input;capture.Input=null; // reuse this exact captured history; no second snapshot
+#else
+    capture.Input=null;
+    InputObservation1701 input=owner.InputSnapshot();
+#endif
     return new ControlledObservation1701{Capture=capture,
-     Input=owner.InputSnapshot(),Stdout=output,Stderr=error,StdoutThrough=outSeen,StderrThrough=errSeen,Review=current,
+     Input=input,Stdout=output,Stderr=error,StdoutThrough=outSeen,StderrThrough=errSeen,Review=current,
      NextLineOrdinal=owner.Input.Ledger.DeliveredCount()+1,NextStepOrdinal=InputProtocol1701.Step(owner.Input.Ledger.DeliveredCount()),ExpectedLine=InputProtocol1701.Text(owner.Input.Ledger.DeliveredCount()),NextLineKind=InputProtocol1701.Kind(owner.Input.Ledger.DeliveredCount())};
    }
    // One ROOT reviewed line only. No list/script callback, no automatic confirm,

@@ -1,0 +1,126 @@
+{
+  "status": "RUNNING_WINDOWS_SDK_WORD_EQUALITY_SCOPED_PASS_P2_PARTIAL_SCOPED_PASS_VM054_READY",
+  "utc": "2026-10-31T08:06:35.547927+00:00",
+  "source_digest": "1a107628876dc3e437a44c5b2aafb5ea5e47fb27e11bd6d0603b2ce793d50a34",
+  "tested_sdk_source_digest": "1a107628876dc3e437a44c5b2aafb5ea5e47fb27e11bd6d0603b2ce793d50a34",
+  "tested_partial_P2_source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+  "previous_checkpoint": "continuation1177.json",
+  "case736": "FIXED_PRIOR_NORMAL806_SCOPED_PASS_RETAINED",
+  "case080": "COLD_OUTPUT_ISOLATION_AND_ACTUAL_SETUP_VERIFIED_NO_OLD_CASE_REWRITE",
+  "P2_partial_output": "PASS_SCOPED_CASE1190_ORIGINAL_RESOURCES_RETAINED",
+  "P2_partial_scope": {
+    "steps": 39,
+    "expected_failure_step": 40,
+    "native_trace_records": 154,
+    "original_observation_lost": true,
+    "policy_clean": true,
+    "case_clean": false,
+    "resource_cleanup_accepted": false,
+    "natural_malformed_OS_output_claim": false
+  },
+  "P2_next": "Fresh roles060 for ALIASED_THREAD_OUTPUT_V7 in pristine VM054; no historical owner replay.",
+  "formal_history_UI": "PRIOR_SCOPED_1166_REOPEN_REVIEW1174_SOURCE_EF5_RETAINED",
+  "formal_UI1161": "UNKNOWN_RETAINED_NO_REPLAY",
+  "formal_UI1072": "UNKNOWN_RETAINED_NO_REPLAY",
+  "late_manual_feedback1215": "UNBOUND_NOT_ADDED_TO_CURRENT_RUNTIME_EVIDENCE",
+  "SDK_current_word_profile": {
+    "run": 1242,
+    "methods_passed": 8,
+    "methods_failed": 0,
+    "all_original_processes_returned": true,
+    "fuel_limit": 20000000,
+    "memory_bytes": 16777216,
+    "host_calls_limit": 16,
+    "five_32KiB_byte_fuel_used": 15273429,
+    "five_32KiB_event_fuel_used": 15285535,
+    "full_64KiB_negative_host_calls": 11,
+    "full_64KiB_negative_last_acked": 3
+  },
+  "SDK_current_native_Rust": {
+    "run": 1245,
+    "passed": 93,
+    "failed": 0,
+    "current_core_schemas": true
+  },
+  "SDK_prior_native_three_languages": {
+    "review": 1205,
+    "source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+    "Rust": 92,
+    "C_CPP_programs": 14,
+    "independent_consumers": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "newer_product_schemas_qualified": false
+  },
+  "SDK_prior_frozen_compatibility": {
+    "run": 1187,
+    "source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+    "methods": 13,
+    "frozen_inputs_unchanged": 57,
+    "old_guests_rebuilt": false,
+    "transport_metadata_only": true
+  },
+  "SDK_failure_history": {
+    "baseline1218": "6_PASS_2_FAIL",
+    "allocation1222": "6_PASS_2_FAIL_NOT_PROMOTED",
+    "isolated_word1233": "7_PASS_1_OLD_BOUNDARY_FAIL",
+    "diagnostic1234": "WASM_PROBES_PASSED_NATIVE_COMPILE_FAILED_MISSING_CORE_SCHEMA",
+    "corrected_native1239": "93_PASS",
+    "new_negative_boundary1240": "8_PASS"
+  },
+  "supervision_internal_protocol": "CapnProto",
+  "supervision_durable_protocol": "Protobuf plus LZ4",
+  "legacy_v1_owner_migration": "OPEN_LEGACY_REFUSED_PRESERVE_ORIGINAL",
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+      "name": "Morrow Windows Acceptance 20261031 054",
+      "state": "Running"
+    }
+  ],
+  "registered_vms": 4,
+  "vm054": "FRESH_DISCONNECTED_INSTALL_RUNTIME_AND_STRICT17_COM_PARENT_READY_NO_P2_DISPATCH",
+  "vm053": "COMPLETE_SAVED_STATE_ZIP_VERIFIED_UNREGISTERED_ORIGINAL_DISK_RETAINED_UNKNOWN_UNCHANGED",
+  "cache_root": "D:\\build_cache",
+  "storage": {
+    "C_old_build_copies": "12_ROOTS_633384_FILES_MOVED_TO_BYTE_VERIFIED_D_ARCHIVE_1221",
+    "D_old_source_copies": "5_ROOTS_265243_FILES_VERIFIED_ARCHIVE_AND_RECLAIM_COMPLETE_1165",
+    "VM053_archive": "ZIP64_FULL_DISK_MEMORY_CONFIG_HASHES_VERIFIED_1238",
+    "sdk1250_library_files": 888,
+    "sdk1250_logical_bytes": 1185363769,
+    "sdk1250_observed_free_delta": 628039680,
+    "vm054_install_cache_bytes_removed": 5069602816,
+    "net_storage_savings_not_inferred_from_gross_deletion": true
+  },
+  "free_bytes_sample": {
+    "C": 15078383616,
+    "D": 9591373824
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "P2": "OPEN",
+  "full_P2": false,
+  "formal_current_P3": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Freeze this report and the tested SDK implementation; cold-build four new roles060 and run the aliased-output P2 fault once in VM054. Full Windows P2/P3 and SDK26/G04/freeze remain open."
+}

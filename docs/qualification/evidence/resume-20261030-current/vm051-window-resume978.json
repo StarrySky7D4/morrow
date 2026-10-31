@@ -1,0 +1,15 @@
+{
+  "status": "USER_EXPLICITLY_RESUMED_VM051_INSTALLATION_WINDOW",
+  "utc": "2026-10-30T21:32:39.0101078Z",
+  "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+  "window_title": "localhost 上的 Morrow Windows Acceptance 20261031 051 - 虚拟机连接",
+  "user_instruction": "恢复 VM051 安装窗口操作",
+  "action": "Installer provided I do not have a product key",
+  "latest_observed_install_percent": 29,
+  "credentials_read_this_action": false,
+  "license_key_entered": false,
+  "activation_changes": 0,
+  "P2_dispatched": false,
+  "historical_VM_windows_operated": 0,
+  "registered_vms": 4
+}

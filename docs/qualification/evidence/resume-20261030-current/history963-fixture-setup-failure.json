@@ -1,0 +1,78 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "ce0ea30705570d54f1456b70f5013cca1f769f10782be98c458c7082dd39ee85",
+  "original_production_cold_source_digest": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+  "source_unchanged": true,
+  "production_source_unchanged_since_cold_build": true,
+  "guest_source_unchanged_since_build": true,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 40.828,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\build.stdout",
+        "bytes": 1020904,
+        "sha256": "00ba949046644fc9cfc15d4f35ee6fd0c4dacc8986a215d25f3bdbdc74c8c993"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\build.stderr",
+        "bytes": 386,
+        "sha256": "93dad239ed7d408a635be1e200e296b82f2146ad530690a3fd2d06b94200eda5"
+      }
+    },
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\discovery.stdout",
+        "bytes": 626,
+        "sha256": "c767af9936db42c1f26ea71e82a85119abae65271cabeaf8a496b94e4afa120a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "runtime",
+      "exit_code": 101,
+      "seconds": 0.812,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\runtime.stdout",
+        "bytes": 1420,
+        "sha256": "89b8e743f14323684a8c6896a6b912c42d7fcef71ea4ad04458f313e05d3e070"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\runtime.stderr",
+        "bytes": 1647,
+        "sha256": "da96a810005cb856f0bd78ba8cbda4852c9688dbc5bd11fca0a58ddd765b1020"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-963\\programs\\blob_history_delivery-1c8b194033fa9536.exe",
+    "bytes": 20550144,
+    "sha256": "05a69ec7f47ec6dd4cc67cf011c2628ec2e7eb5a7b089530be0fb17eb72da84d"
+  },
+  "error": "RuntimeError: runtime failed; original evidence retained",
+  "ordinary_methods": 0,
+  "explicit_close_refusal_methods": 0,
+  "explicit_close_refusal_scenarios": 0,
+  "protected_store": true,
+  "product_private_route": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

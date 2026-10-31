@@ -1,0 +1,64 @@
+{
+  "status": "COMPILED_CURRENT_DEFAULT_HISTORY_HOSTS_NOT_RUNTIME",
+  "exit_code": 0,
+  "source_digest": "ef5ba5d2317dd920fbcdd5f7e3b0e045729a905bd91e9d6d63d7b837be502eaf",
+  "programs": {
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\morrow-workbench-host.exe",
+      "bytes": 31499776,
+      "sha256": "8a43b15ff72fe4f4b14804d5cac5d10602fce5d4b65d211d5855bcb766ada7da"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\morrow-workbench-supervisor.exe",
+      "bytes": 13956608,
+      "sha256": "af7644b39c399be06db328e6f3f03ef7ea10a5268915fe229607b70a5a23ed5c"
+    },
+    "history-fixture": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\prepare_blob_history_fixture.exe",
+      "bytes": 18268160,
+      "sha256": "3a848840224a85476b8015949c83a03a3d7249864c6c2f703ed1ee8ac3e1be3f"
+    }
+  },
+  "commands": [
+    {
+      "label": "host",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\morrow-workbench-host.exe",
+        "bytes": 31499776,
+        "sha256": "8a43b15ff72fe4f4b14804d5cac5d10602fce5d4b65d211d5855bcb766ada7da"
+      }
+    },
+    {
+      "label": "supervisor",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\morrow-workbench-supervisor.exe",
+        "bytes": 13956608,
+        "sha256": "af7644b39c399be06db328e6f3f03ef7ea10a5268915fe229607b70a5a23ed5c"
+      }
+    },
+    {
+      "label": "history-fixture",
+      "exit_code": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-history-hosts-1120\\programs\\prepare_blob_history_fixture.exe",
+        "bytes": 18268160,
+        "sha256": "3a848840224a85476b8015949c83a03a3d7249864c6c2f703ed1ee8ac3e1be3f"
+      }
+    }
+  ],
+  "features": [],
+  "frozen_inputs_unchanged": 57,
+  "source_unchanged": true,
+  "selected_programs_freshly_compiled": true,
+  "all_original_compiler_processes_returned": true,
+  "dependencies_warm": false,
+  "host_cold_build_claim": true,
+  "subsequent_program_dependencies_same_run_only": true,
+  "original_SDK_guests_rebuilt": false,
+  "VM_calls": 0,
+  "product_starts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

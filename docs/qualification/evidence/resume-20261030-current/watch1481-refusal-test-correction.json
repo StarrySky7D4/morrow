@@ -1,0 +1,41 @@
+{
+  "status": "TEST_REFUSAL_LAYERS_AND_NATIVE_BATCHING_EXPECTATIONS_CORRECTED",
+  "prior_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1479\\failure.json",
+    "bytes": 3597,
+    "sha256": "29111f2ac634e08a2c47ea1064eec4ef902f56640eb63c296ed614c1757fb81d"
+  },
+  "prior_original_retirement": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1479\\native-evidence\\junction-parent-retire.txt",
+    "bytes": 880,
+    "sha256": "cc5b909368af4453a9714d4e21d2e5b8093413ac67c151ef43527c7249baa159"
+  },
+  "prior_test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-test-refusal-correction-1481\\before.rs",
+    "bytes": 24489,
+    "sha256": "5c5000d8fe8ec30ee18eae5bdb2743a1aebd05a56ca8d07cf82ba2537a494bf2"
+  },
+  "new_test": {
+    "path": "C:\\ms1020\\plugin_runtime\\tests\\fs_watch_native_owner.rs",
+    "bytes": 27181,
+    "sha256": "dca02a5eeca51f0b78204ef2da3501331beda063b04b2bbeb9c882f1a71ec550"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "old_source_digest": "cb8be9e08dd27dc4d79959709df97191a19e21b2047cea7375f11c7df0a73388",
+  "new_source_digest": "6f255ef881d15fd08488e948081228e44566d95bbcc3e56c2d138b96fe80b955",
+  "prior_actual_ancestor_closes": 5,
+  "prior_final_native_open_calls": 0,
+  "prior_frame_reads": 0,
+  "prior_unknown": false,
+  "original_processes_closed": true,
+  "requirements_preserved": [
+    "no traversal of reparse target",
+    "every original opened object closed",
+    "no read/frame on source refusal",
+    "all five change kinds and exact UTF16 names",
+    "bounded original frame limit",
+    "no extra charge or native work on rejected ACK"
+  ],
+  "reference": "https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-readdirectorychangesw",
+  "retry_uses_new_target_and_fixture_identity": true
+}

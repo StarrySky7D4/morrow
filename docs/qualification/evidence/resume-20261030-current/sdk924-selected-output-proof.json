@@ -1,0 +1,154 @@
+{
+  "compiler_artifacts": 893,
+  "cold_build_claim": false,
+  "current_test_freshly_compiled": true,
+  "current_host_dependencies_verified_from919": true,
+  "core_compiled_this_build": false,
+  "prior_core_artifacts_verified": [
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_core.rlib",
+      "bytes": 20145876,
+      "sha256": "2bf039622a456a6445d876dad86c3859776986420d4e14686f8ec7e2ee909d9a"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll",
+      "bytes": 4794880,
+      "sha256": "1aeb54dcbd3468ba58560c5dadb607bc1ba1b2e4ef57cc0d1571664a438f6322"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.lib",
+      "bytes": 5432,
+      "sha256": "027afff1668885d62e5337934e3b0c51d4b69ddd7592c3480a23a9d202e4582c"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.exp",
+      "bytes": 3155,
+      "sha256": "bd84d3919faae2f51d780f4103f6f8858a87453b3131e00a7e083332416b2ab8"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.pdb",
+      "bytes": 2568192,
+      "sha256": "ddc33a244daab2bcc7e6c9cb2e6782b0f65282dacd6db63b8bd443dc5ca47aa6"
+    }
+  ],
+  "current_919_core_inputs_unchanged": true,
+  "records": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/core#morrow-core@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\core\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "cdylib"
+        ],
+        "crate_types": [
+          "rlib",
+          "cdylib"
+        ],
+        "name": "morrow_core",
+        "src_path": "C:\\ms1020\\core\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_core.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.lib",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.exp",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.pdb"
+      ],
+      "executable": null,
+      "fresh": true
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "morrow_workbench_host",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-2a7950c7203fba4b.rlib",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-2a7950c7203fba4b.rmeta"
+      ],
+      "executable": null,
+      "fresh": true
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "blob_upload_protected",
+        "src_path": "C:\\ms1020\\workbench_host\\tests\\blob_upload_protected.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-be6dbb4a7bee7b4f.exe",
+        "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-be6dbb4a7bee7b4f.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\sdk904-DEFAULT-a03838632b03c8ae\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-be6dbb4a7bee7b4f.exe",
+      "fresh": false
+    }
+  ],
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-current-924\\programs\\blob_upload_protected-be6dbb4a7bee7b4f.exe",
+    "bytes": 31723520,
+    "sha256": "d42d8fea60738a175c341e772d54a4d092561b0fc39c47944670d0a8b28b03af"
+  }
+}

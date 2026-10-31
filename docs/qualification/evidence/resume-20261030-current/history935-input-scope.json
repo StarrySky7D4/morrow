@@ -1,0 +1,66 @@
+{
+  "binding": {
+    "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+    "manifest": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "bytes": 4567,
+      "sha256": "cd23cee09f923be3735e9c786d73fa25c2119b24a9a72dee64fd09921cb51f16"
+    },
+    "lock": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+      "bytes": 236224,
+      "sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3"
+    },
+    "features": [
+      "blob-upload-guest-qualification",
+      "fault-injection"
+    ],
+    "profile": "release",
+    "target_triple": "x86_64-pc-windows-msvc"
+  },
+  "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "target": "D:\\build_cache\\qualification-targets\\sdk935-HISTORY-HOST-02a4b1650fc6f224",
+  "initial_target_empty": true,
+  "lossless_NTFS_compression": true,
+  "observed_free_bytes": 11516391424,
+  "dependencies_warm": false,
+  "guest_pins": [
+    {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  ],
+  "guest_fixture_source_snapshot": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-guests-393\\source-before.json",
+    "bytes": 13242,
+    "sha256": "a04b51fc51a34be66f551117939653bd105a6520921ed4c07021b1163dab803f"
+  },
+  "guest_fixture_current_source_differences": [
+    "sdk/examples/blob-upload-common/sample.h",
+    "sdk/examples/cpp-blob-upload/plugin.cpp",
+    "sdk/wasm/blob-upload/src/lib.rs",
+    "sdk/wasm/blob-upload/Cargo.toml",
+    "sdk/wasm/blob-upload/Cargo.lock",
+    "sdk/examples/c-blob-upload/plugin.c",
+    "sdk/examples/rust-blob-upload/Cargo.lock",
+    "sdk/examples/rust-blob-upload/Cargo.toml",
+    "extensions/blob-upload-request-v1/README.md",
+    "sdk/examples/rust-blob-upload/src/lib.rs",
+    "tool/build_plugin_blob_upload_wasm.ps1"
+  ],
+  "old_bounded_guest_fixtures_not_current_SDK_guest_builds": true,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "window_actions": 0
+}

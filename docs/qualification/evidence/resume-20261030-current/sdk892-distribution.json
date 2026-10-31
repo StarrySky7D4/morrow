@@ -1,0 +1,28 @@
+{
+  "status": "PASS_SCOPED_CURRENT_SDK_DISTRIBUTION_AND_FROZEN_INTEGRITY",
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "source_unchanged": true,
+  "original_frozen_inputs_verified": 57,
+  "original_guest_rebuilt": false,
+  "original_guest_reexecuted": false,
+  "modules": [
+    "test_plugin_sdk_distribution",
+    "test_sdk_baseline",
+    "test_sdk_contract_sync",
+    "test_channel_payload_sdk_distribution"
+  ],
+  "tests": {
+    "tests": 64,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [],
+    "success": true
+  },
+  "exit_code": 0,
+  "seconds": 17.313,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

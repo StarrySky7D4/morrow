@@ -1,0 +1,114 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_WATCH_CODEC_NATIVE_RESOURCES_C_CPP_AND_WASM_REVIEW",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "receipts": {
+    "integration": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-source-integration-1456\\result.json",
+      "bytes": 3131,
+      "sha256": "df4535099a6b491613262bfeadff14420ce22b9ace162e151b56e9deae651c8e"
+    },
+    "codec": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-codec-1457\\result.json",
+      "bytes": 7351,
+      "sha256": "892d4fc1aa21a12c2309ffc5bb9508ccf92d85a1ce95ed12ac4cef2c5e9c849b"
+    },
+    "native_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-build-1458\\result.json",
+      "bytes": 7820,
+      "sha256": "157dd384f2857f0aca6f3aaface78772d70b5b60176c6e216c8bf118458f28a6"
+    },
+    "native_runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-runtime-1459\\result.json",
+      "bytes": 9654,
+      "sha256": "bb61617f9a61e7754c049243d15dd9a266244bcd7177cf7a3726cecc75e35fb9"
+    },
+    "native_review": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\result.json",
+      "bytes": 7488,
+      "sha256": "97675aca3a9887d682207efaff4ec0983ba00b00d96e81d94a7aaed85f87e938"
+    },
+    "C_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\result.json",
+      "bytes": 11781,
+      "sha256": "1f2193cde7eec4902560e51e448ab077ba0dab0909967283ab439c2cc60a8377"
+    },
+    "C_runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\result.json",
+      "bytes": 19573,
+      "sha256": "4b7fe60c527d6b17a054c004953ec8b2c99d92f00eb4b385494ef1342da9fa35"
+    },
+    "C_review": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-review-1463\\result.json",
+      "bytes": 2236,
+      "sha256": "b814543212dd708498b93012e249aeb609473a89cfdcdc17f5d099c72c5623c0"
+    },
+    "Wasm_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-build-1464\\result.json",
+      "bytes": 16777,
+      "sha256": "e12b7ac55115018a7b7d28e655731c52c8bf18b1b8310c906bba4a3e266a18d7"
+    },
+    "Wasm_runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-wasm-runtime-1465\\result.json",
+      "bytes": 11705,
+      "sha256": "1c137c85d777e242fc265aa5e03afa683b10901a0b4464c341e8b2c8a1096a3d"
+    }
+  },
+  "new_repository_files": 36,
+  "source_copy": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-canonical-review-1466\\source",
+  "codec_methods": 18,
+  "native_parser_methods": 8,
+  "actual_native_scenarios": 6,
+  "actual_original_handles_closed": 10,
+  "actual_native_payloads": 6,
+  "distinct_native_C_scenarios": 12,
+  "distinct_native_CPP_scenarios": 7,
+  "independent_native_compilers": [
+    "MSVC",
+    "Clang"
+  ],
+  "actual_Wasm_languages": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "distinct_Wasm_scenarios_per_language": 32,
+  "original_native_inputs": 6,
+  "synthetic_inputs": 7,
+  "repeated_input_matrices_not_full_product_count": true,
+  "default_runner": true,
+  "fuel_observations": {
+    "rust": {
+      "minimum": 16394,
+      "maximum": 306823,
+      "ceiling": 20000000
+    },
+    "c": {
+      "minimum": 18537,
+      "maximum": 336201,
+      "ceiling": 20000000
+    },
+    "cpp": {
+      "minimum": 21870,
+      "maximum": 347938,
+      "ceiling": 20000000
+    }
+  },
+  "all_original_processes_returned": true,
+  "canonical_source_integrated": true,
+  "production_watch_route": false,
+  "explicit_product_approval": false,
+  "protected_selection": false,
+  "shared_host_budget": false,
+  "managed_worker_join": false,
+  "actual_native_overflow": false,
+  "actual_native_close_failure": false,
+  "business_rename": false,
+  "formal_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

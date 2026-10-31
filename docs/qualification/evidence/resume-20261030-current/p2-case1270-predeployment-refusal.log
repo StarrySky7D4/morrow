@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "D:\build_cache\_audit\windows-restriction-lineage-20261022-019\verify_roles060_stage1270.py", line 125, in <module>
+    module=types.ModuleType('original_role_verifier118');exec(compile(text,str(destination),'exec'),module.__dict__);checked=module.verify(STAGE)
+                                                                                                                             ^^^^^^^^^^^^^^^^^^^^
+  File "D:\build_cache\_audit\windows-restriction-lineage-20261022-019\roles060-stage1270-binding-review\original_role_verifier_cold_format.py", line 75, in verify
+    raise ValueError("Original P harness UUID differs from selected VM firmware")
+ValueError: Original P harness UUID differs from selected VM firmware
+Traceback (most recent call last):
+  File "D:\build_cache\_audit\windows-restriction-lineage-20261022-019\prepare_vm_stage_1270.py", line 333, in <module>
+    subprocess.run([os.sys.executable,str(LOCAL/'verify_roles060_stage1270.py')],check=True)
+  File "C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe', 'D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\verify_roles060_stage1270.py']' returned non-zero exit status 1.

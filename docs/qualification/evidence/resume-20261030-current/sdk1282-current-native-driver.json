@@ -1,0 +1,26 @@
+{
+  "status": "PASS_SCOPED_CURRENT_NATIVE_SDK_RUST93_NATIVE14_INDEPENDENT3",
+  "source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "canonical_source_unchanged": true,
+  "command_count": 46,
+  "all_commands_returned": true,
+  "results": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\results.json",
+    "bytes": 3693,
+    "sha256": "9788128f0e63b88dddfd931ee9bed13683104e424d13bd5d0cf19b9f7882601b"
+  },
+  "provenance": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\provenance.json",
+    "bytes": 75742,
+    "sha256": "a6e3cbe2a508c6ecb22d96736f8483e912a137472001e083aef1aa35583ba919"
+  },
+  "current_core_schema_contract_tests": true,
+  "protected_host_or_UI_acceptance": false,
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "full_SDK26_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

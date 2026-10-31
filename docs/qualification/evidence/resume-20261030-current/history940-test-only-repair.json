@@ -1,0 +1,20 @@
+{
+  "status": "TEST_ONLY_IMMUTABLE_OBSERVER_REPAIR",
+  "before_source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "after_source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "changed_files": [
+    "workbench_host/tests/blob_upload_protected.rs"
+  ],
+  "all_other_source_files_byte_identical": true,
+  "source_files": 53651,
+  "production_source_files_changed": 0,
+  "completed_cold_library_artifacts_verified": 889,
+  "same_manifest_paths_and_features": true,
+  "reason": "io_status needs mutable Workbench and may reclaim a worker; helper now uses immutable reads and retained-owner refusal is checked after public read",
+  "original935_compiler_exit": 101,
+  "original935_runtime_started": false,
+  "allow_reuse": "Only the verified completed libraries in this same current build; selected test must compile with new metadata. No cold-program claim.",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

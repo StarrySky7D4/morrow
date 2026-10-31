@@ -1,0 +1,17 @@
+{
+  "source_accepted": false,
+  "plan_sha256": "6dc624089ccf6520a76f338db719b09775f03c7b6b2f799e84d8592c89dac289",
+  "free_before": 4278935552,
+  "release_eligible": false,
+  "protected_artifacts_equal": true,
+  "free_after": 4456579072,
+  "preserved_files": 737,
+  "logical_bytes_removed": 177241300,
+  "old_owner_contacts": 0,
+  "observed_free_delta": 177643520,
+  "source_and_executable_removals": 0,
+  "VM_calls": 0,
+  "removed_files": 184,
+  "status": "PASS_CLOSED_WATCH_CORE1470_COMPILER_LIBRARIES_RECLAIMED",
+  "concurrent_space_changes_not_attributed": true
+}

@@ -1,0 +1,116 @@
+{
+  "status": "FIVE_INTEGRATED_SDK_TEST_PROGRAMS_COMPILED_NOT_RUNTIME",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "binaries": {
+    "sdk_standalone_io": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_io.exe",
+      "bytes": 7230976,
+      "sha256": "26114b415246941889477393951c03ef6cd5b3fb6c0c58d5f94715be9e736916"
+    },
+    "sdk_standalone_channel": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_channel.exe",
+      "bytes": 7391232,
+      "sha256": "d2dab3eda4837682e2024dea78f4af317995a152f8a2d8748f786ca0694771b0"
+    },
+    "sdk_standalone_directory": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_directory.exe",
+      "bytes": 7400960,
+      "sha256": "20bf9a44d7197dc492ee9593368f96bd87930036a046e33f923361257bb5912c"
+    },
+    "sdk_default_service": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service.exe",
+      "bytes": 10123776,
+      "sha256": "f37fda0ec9c568c3c2e368b8435d4e44e27712cb7c9e83b39f4c3c245db5e03e"
+    },
+    "sdk_default_service_http": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service_http.exe",
+      "bytes": 12973568,
+      "sha256": "dca91f3e53afc9f824667edc0c29792ed45b9164b1f51b11ea167cda0b722093"
+    }
+  },
+  "commands": [
+    {
+      "name": "sdk_standalone_io",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_io.jsonl",
+        "bytes": 187681,
+        "sha256": "e9b4e39dc5b9c7211b0c012aaf0346057690479058f8964ff43b8f3f52e34d9c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_io.stderr",
+        "bytes": 197,
+        "sha256": "a3edb5398c0cb0b7828f352610fbe26b5c77270ead2ad7eb2fe8878e454f2821"
+      }
+    },
+    {
+      "name": "sdk_standalone_channel",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_channel.jsonl",
+        "bytes": 187701,
+        "sha256": "1bd031697e0e82e3c065c2bcd14275f9bb5ce90697af131f0b3523b3d1877cfc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_channel.stderr",
+        "bytes": 139,
+        "sha256": "a79cf3deb2c6816579bb1ede2e59a463b3f569834b2a511077ece8426635ccea"
+      }
+    },
+    {
+      "name": "sdk_standalone_directory",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_directory.jsonl",
+        "bytes": 187711,
+        "sha256": "f32bed41f1b8e618a210d2c298695774900c6922231427833cbda49bd07b24e6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_standalone_directory.stderr",
+        "bytes": 139,
+        "sha256": "db7afd087b5eed9ac65cc56840836ee08712646d6512bbe11acce79381fbaf53"
+      }
+    },
+    {
+      "name": "sdk_default_service",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service.jsonl",
+        "bytes": 256204,
+        "sha256": "ae32f9bb9994cd4c9bf5b5c4b95e38ef0dbe854a498e1a44b536fe4e85fd5fc2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service.stderr",
+        "bytes": 329,
+        "sha256": "b883db64c9a66d5523b7707ab1bf7ab6288c2269ac6dfb3be2571631d41bdc67"
+      }
+    },
+    {
+      "name": "sdk_default_service_http",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service_http.jsonl",
+        "bytes": 256224,
+        "sha256": "c4697d810395ee4ddb0f8c98425ce5a36fde8aee08d7eeec438ffc7060fa2564"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\sdk_default_service_http.stderr",
+        "bytes": 136,
+        "sha256": "a29cde140d7dc6abcf88dcfb30dd1d3d6882ec8ab1d7db159531a11af1a6794f"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "selected_test_programs_fresh": true,
+  "dependencies_warm_existing_product_sources_unchanged": true,
+  "whole_target_cold_claim": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

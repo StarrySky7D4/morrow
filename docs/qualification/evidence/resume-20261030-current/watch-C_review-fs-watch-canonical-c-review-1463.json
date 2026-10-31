@@ -1,0 +1,60 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_C_CPP_CONSUMER_AND_WIRE_BINDINGS_REVIEWED",
+  "candidate_source_digest": "26e7c985864c8eb74ff190e3dbc3deb616f548c0318aea8edec99cb0a7be1158",
+  "canonical_source_digest": "7c11a36a186e1dddd026faad3fcc73f8fd4fabb1d82e4b86a5523cc4b4e5dd21",
+  "build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-build-1461\\result.json",
+    "bytes": 11781,
+    "sha256": "1f2193cde7eec4902560e51e448ab077ba0dab0909967283ab439c2cc60a8377"
+  },
+  "runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-runtime-1462\\result.json",
+    "bytes": 19573,
+    "sha256": "4b7fe60c527d6b17a054c004953ec8b2c99d92f00eb4b385494ef1342da9fa35"
+  },
+  "native_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-native-review-1460\\result.json",
+    "bytes": 7488,
+    "sha256": "97675aca3a9887d682207efaff4ec0983ba00b00d96e81d94a7aaed85f87e938"
+  },
+  "original_native_payload_count": 6,
+  "synthetic_vector_count": 7,
+  "independent_compilers": [
+    "MSVC",
+    "Clang"
+  ],
+  "distinct_C_scenarios": 12,
+  "distinct_CPP_scenarios": 7,
+  "compiler_repetitions_not_additive": true,
+  "exported_C_ABI_functions": [
+    "mfw_frame_v1_change",
+    "mfw_frame_v1_decode",
+    "mfw_frame_v1_encode",
+    "mfw_frame_v1_free",
+    "mfw_frame_v1_info",
+    "mfw_schema_v1_digest",
+    "mfw_state_v1_ack",
+    "mfw_state_v1_free",
+    "mfw_state_v1_new",
+    "mfw_state_v1_receive",
+    "mfw_state_v1_snapshot",
+    "mfw_state_v1_transport_lost",
+    "mfw_wire_v1_digest"
+  ],
+  "source_copy": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fs-watch-canonical-c-review-1463\\source",
+  "all_original_processes_returned": true,
+  "review_reruns": 0,
+  "old_owners_contacted": 0,
+  "VM_calls": 0,
+  "canonical_integrated": true,
+  "host_approval": false,
+  "shared_host_budget": false,
+  "Wasm": false,
+  "formal_UI": false,
+  "CPP_exception_wrapper_native_only": true,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

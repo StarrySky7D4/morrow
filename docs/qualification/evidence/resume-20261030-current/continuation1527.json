@@ -1,0 +1,115 @@
+{
+  "status": "RUNNING_NATIVE_DIRECTORY_CONFIRMATION_AND_GUEST_PROVEN_WORKBENCH_ROUTE_OPEN",
+  "utc": "2026-10-31T19:49:31.738138+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "35357a7097f48ccf9148a0275a456886a285570f",
+  "source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "previous_checkpoint": "continuation1514.json",
+  "managed_watch": {
+    "review": 1519,
+    "methods": 62,
+    "original_processes_returned": 78,
+    "managed_integration_methods": 14,
+    "confirmation_callback_methods": 6,
+    "unit_close_failure_methods": 1,
+    "regression_methods": 41,
+    "original_managed_threads_joined": 14,
+    "managed_native_handles_closed": 72,
+    "managed_native_handles_retained_without_close_proof": 6,
+    "callback_native_handles_closed": 12,
+    "managed_unknown_isolated_processes_closed": 4,
+    "callback_unknown_isolated_processes_closed": 1,
+    "shown_native_picker": false,
+    "real_gap_terminal_without_rearm": true,
+    "first_native_close_failure_stops_further_closes": true,
+    "actual_SDK_languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "actual_frames_reference_decoded": 10,
+    "selected_integration_lint_diagnostics": 0,
+    "unit_clippy_not_run": true
+  },
+  "native_picker": {
+    "review": 1526,
+    "runtime": 1525,
+    "build": 1524,
+    "actual_shown_native_chooser": true,
+    "original_exact_nomination_confirmed": true,
+    "actual_Rust_guest_frames": 2,
+    "original_managed_worker_joined": true,
+    "actual_native_handles_confirmed_closed": 6,
+    "original_IO_resources_and_job_released": true,
+    "original_disconnect_and_maintenance_complete": true,
+    "original_29_second_window_not_extended": true,
+    "production_Workbench": false,
+    "synthetic_Store": true,
+    "counts_not_added_to_62_methods": true
+  },
+  "original_frozen_inputs_unchanged": 57,
+  "previous_P2": {
+    "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+    "normal_case": 1365,
+    "shared17_case": 1385,
+    "logon_case": 1402,
+    "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+    "guard_methods": 153,
+    "final_candidate_reseal": "OPEN",
+    "historical_Unknown_owners_untouched": true
+  },
+  "previous_SDK": {
+    "default_archive_projects": 27,
+    "optin_archives": 6,
+    "canonical_methods": 17,
+    "review": 1411,
+    "original_bindings_preserved": true
+  },
+  "corrections": {
+    "failed1521": "Fresh independent lock selected 10 newer cached dependency versions; refused before compilation or runtime.",
+    "corrected1523": "New probe seeded from canonical lock, resolved with metadata and compared versions plus checksums.",
+    "original_failure_preserved": true,
+    "product_Cargo_lock_unchanged": true
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "VM055_state": "Saved",
+  "VM_actions_this_stage": 0,
+  "old_owner_contacts": 0,
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 57283780608,
+    "D": 2468614144
+  },
+  "new_VM_disk_preserved": true,
+  "P2_complete": false,
+  "current_formal_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Integrate watch with the original protected Workbench owner, explicit product approval and result acknowledgement; continue remaining Windows P2/P3 and SDK gates."
+}

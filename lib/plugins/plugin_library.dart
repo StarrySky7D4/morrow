@@ -18,11 +18,15 @@ import 'guest_mutation_execution_session.dart';
 import 'guest_mutation_models.dart';
 import 'mutation_task_models.dart';
 import 'file_task_models.dart';
+import 'fs_watch_models.dart';
+import 'fs_watch_session.dart';
+import 'fs_watch_manager.dart';
 import 'blob_plan_models.dart';
 import 'blob_plan_manager.dart';
 import 'blob_upload_models.dart';
 import 'blob_upload_history_models.dart';
 import 'blob_upload_history_manager.dart';
+import 'blob_history_delivery_models.dart';
 import 'file_task_session.dart';
 import 'directory_task_models.dart';
 import 'directory_task_session.dart';
@@ -84,6 +88,10 @@ class PluginLibraryEntry {
     this.ioHandlers = const [],
     this.mutationSupported = false,
     this.directorySupported = false,
+    this.fsWatchSupported = false,
+    this.fsWatchApproved = false,
+    List<String> fsWatchHandlers = const [],
+    this.fsWatchLimits,
     this.blobUploadSupported = false,
     this.blobUploadApproved = false,
     this.blobUploadHandlers = const [],
@@ -94,13 +102,57 @@ class PluginLibraryEntry {
     this.channelHandlers = const [],
     this.channelKinds = const [],
     this.channelBudget,
-  }) {
-    if (blobPlanners.isNotEmpty && (!blobUploadSupported ||
-        blobPlanners.map((p) => p.handler).toSet().length != blobPlanners.length ||
-        blobPlanners.any((p) => !blobUploadHandlers.contains(p.uploadHandler) ||
-          blobUploadHandlers.contains(p.handler) ||
-          handlers.where((h) => h.name == p.handler && h.outputType == BlobPlanRequest.outputType &&
-            h.maxInputBytes <= 32768 && h.maxOutputBytes > 0 && h.maxOutputBytes <= 34816).length != 1))) {
+  }) : fsWatchHandlers = List.unmodifiable(fsWatchHandlers) {
+    if (fsWatchSupported) {
+      for (final handler in fsWatchHandlers) {
+        FsWatchValidation.handler(handler);
+      }
+      if (fsWatchLimits == null ||
+          fsWatchHandlers.isEmpty ||
+          fsWatchHandlers.length > 16 ||
+          fsWatchHandlers.toSet().length != fsWatchHandlers.length ||
+          ioHandlers.toSet().length != ioHandlers.length ||
+          ioHandlers.length != fsWatchHandlers.length ||
+          fsWatchHandlers.any((h) => !ioHandlers.contains(h)) ||
+          declaredIo.length != 1 ||
+          declaredIo.single != 'file-list' ||
+          handlers.isNotEmpty ||
+          declared.isNotEmpty ||
+          dependencies.isNotEmpty ||
+          channelSupported ||
+          blobUploadSupported ||
+          mutationSupported) {
+        throw const FormatException(
+          'Invalid directory observation declaration',
+        );
+      }
+    } else if (fsWatchApproved ||
+        fsWatchHandlers.isNotEmpty ||
+        fsWatchLimits != null) {
+      throw const FormatException(
+        'Directory observation metadata without support',
+      );
+    }
+    if (blobPlanners.isNotEmpty &&
+        (!blobUploadSupported ||
+            blobPlanners.map((p) => p.handler).toSet().length !=
+                blobPlanners.length ||
+            blobPlanners.any(
+              (p) =>
+                  !blobUploadHandlers.contains(p.uploadHandler) ||
+                  blobUploadHandlers.contains(p.handler) ||
+                  handlers
+                          .where(
+                            (h) =>
+                                h.name == p.handler &&
+                                h.outputType == BlobPlanRequest.outputType &&
+                                h.maxInputBytes <= 32768 &&
+                                h.maxOutputBytes > 0 &&
+                                h.maxOutputBytes <= 34816,
+                          )
+                          .length !=
+                      1,
+            ))) {
       throw const FormatException('Invalid package planning mapping');
     }
     if (mutationBudget != null && !mutationSupported) {
@@ -115,6 +167,9 @@ class PluginLibraryEntry {
   final List<String> ioHandlers;
   final bool mutationSupported;
   final bool directorySupported;
+  final bool fsWatchSupported, fsWatchApproved;
+  final List<String> fsWatchHandlers;
+  final FsWatchLimits? fsWatchLimits;
   final bool blobUploadSupported, blobUploadApproved;
   final List<String> blobUploadHandlers;
   final List<BlobPlannerMapping> blobPlanners;
@@ -250,10 +305,18 @@ String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
       e.ioHandlers,
       e.mutationSupported,
       e.directorySupported,
+      e.fsWatchSupported,
+      e.fsWatchApproved,
+      e.fsWatchHandlers,
+      e.fsWatchLimits?.frames,
+      e.fsWatchLimits?.wireBytes.toString(),
+      e.fsWatchLimits?.windowMs,
       e.blobUploadSupported,
       e.blobUploadApproved,
       e.blobUploadHandlers,
-      [for (final p in e.blobPlanners) [p.handler, p.uploadHandler]],
+      [
+        for (final p in e.blobPlanners) [p.handler, p.uploadHandler],
+      ],
       e.blobUploadMaxBytes?.toString(),
       e.channelSupported,
       e.channelHandlers,
@@ -708,8 +771,31 @@ class _PluginLibraryState extends State<PluginLibrary> {
         await _loadPages(backend, epoch);
         if (_current(backend, epoch)) widget.onChanged();
       }, (l) => l.pluginsApprovalUnknown);
-  bool get _blobControls => widget.backend is BlobPlanBackend &&
-      widget.backend is BlobUploadBackend && widget.backend is WorkbenchIoTaskControl;
+  bool get _watchControls =>
+      widget.backend is FsWatchBackend &&
+      widget.backend is FsWatchPlatformCapabilities &&
+      (widget.backend as FsWatchPlatformCapabilities).supportsFsWatch &&
+      widget.backend is WorkbenchIoTaskControl;
+  Future<void> _configureFsWatch(PluginLibraryEntry entry, bool approved) =>
+      _guard((backend, epoch) async {
+        if (!_watchControls) return;
+        final revision = _revision!;
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        await (backend as FsWatchBackend).approveFsWatch(
+          entry.id,
+          Uint8List.fromList(entry.digest),
+          revision,
+          approved,
+        );
+        if (!_current(backend, epoch)) return;
+        await _loadPages(backend, epoch);
+        if (_current(backend, epoch)) widget.onChanged();
+      }, (l) => l.pluginsApprovalUnknown);
+  bool get _blobControls =>
+      widget.backend is BlobPlanBackend &&
+      widget.backend is BlobUploadBackend &&
+      widget.backend is WorkbenchIoTaskControl;
   void _releaseBlobDialog() {
     final route = _blobRoute;
     _blobRoute = null;
@@ -723,6 +809,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
     });
     WidgetsBinding.instance.scheduleFrame();
   }
+
   String _blobText(String zh, String en) =>
       Localizations.localeOf(context).languageCode == 'zh' ? zh : en;
   Future<void> _configureBlob(PluginLibraryEntry entry, bool approved) =>
@@ -732,7 +819,11 @@ class _PluginLibraryState extends State<PluginLibrary> {
         await _closeForm(epoch);
         if (!_current(backend, epoch)) return;
         await (backend as BlobUploadBackend).approveBlobUpload(
-          entry.id, Uint8List.fromList(entry.digest), revision, approved);
+          entry.id,
+          Uint8List.fromList(entry.digest),
+          revision,
+          approved,
+        );
         if (!_current(backend, epoch)) return;
         await _loadPages(backend, epoch);
         if (_current(backend, epoch)) widget.onChanged();
@@ -746,12 +837,16 @@ class _PluginLibraryState extends State<PluginLibrary> {
         // Keep library actions locked, but a user-operated dialog is not a
         // pending background request and must not spin behind it.
         setState(() => _blobDialogOpen = true);
-        final route = DialogRoute<void>(context: context, builder: (_) => BlobPlanManager(
-          plans: backend as BlobPlanBackend,
-          uploads: backend as BlobUploadBackend,
-          io: backend as WorkbenchIoTaskControl,
-          entry: entry, registryRevision: revision,
-        ));
+        final route = DialogRoute<void>(
+          context: context,
+          builder: (_) => BlobPlanManager(
+            plans: backend as BlobPlanBackend,
+            uploads: backend as BlobUploadBackend,
+            io: backend as WorkbenchIoTaskControl,
+            entry: entry,
+            registryRevision: revision,
+          ),
+        );
         _blobRoute = route;
         try {
           await Navigator.of(context, rootNavigator: true).push(route);
@@ -761,23 +856,30 @@ class _PluginLibraryState extends State<PluginLibrary> {
         }
         if (_current(backend, epoch)) await _loadPages(backend, epoch);
       }, (l) => l.pluginsApprovalUnknown);
-  Future<void> _openBlobHistory() =>
-      _guard((backend, epoch) async {
-        if (backend is! BlobUploadHistoryBackend) return;
-        await _closeForm(epoch);
-        if (!mounted || !_current(backend, epoch)) return;
-        setState(() => _blobDialogOpen = true);
-        final route = DialogRoute<void>(context: context, builder: (_) => BlobUploadHistoryManager(
-          backend: backend as BlobUploadHistoryBackend,
-        ));
-        _blobRoute = route;
-        try {
-          await Navigator.of(context, rootNavigator: true).push(route);
-        } finally {
-          if (identical(_blobRoute, route)) _blobRoute = null;
-          if (_current(backend, epoch)) setState(() => _blobDialogOpen = false);
-        }
-      }, (l) => l.pluginsApprovalUnknown);
+  Future<void> _openBlobHistory() => _guard((backend, epoch) async {
+    if (backend is! BlobUploadHistoryBackend) return;
+    await _closeForm(epoch);
+    if (!mounted || !_current(backend, epoch)) return;
+    setState(() => _blobDialogOpen = true);
+    final route = DialogRoute<void>(
+      context: context,
+      builder: (_) => BlobUploadHistoryManager(
+        backend: backend as BlobUploadHistoryBackend,
+        delivery: backend is BlobHistoryDeliveryBackend
+            ? backend as BlobHistoryDeliveryBackend
+            : null,
+        plugins: _confirmed ? _entries : const [],
+        registryRevision: _confirmed ? _revision : null,
+      ),
+    );
+    _blobRoute = route;
+    try {
+      await Navigator.of(context, rootNavigator: true).push(route);
+    } finally {
+      if (identical(_blobRoute, route)) _blobRoute = null;
+      if (_current(backend, epoch)) setState(() => _blobDialogOpen = false);
+    }
+  }, (l) => l.pluginsApprovalUnknown);
   Future<void> _remove(PluginLibraryEntry entry) =>
       _guard((backend, epoch) async {
         final revision = _revision!;
@@ -1164,16 +1266,36 @@ class _PluginLibraryState extends State<PluginLibrary> {
                       }),
               ),
             ),
+            if (entry.fsWatchSupported && _watchControls)
+              CheckboxListTile(
+                key: ValueKey('plugin-watch-allow-${entry.id}'),
+                value: entry.fsWatchApproved,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(L10n.of(context).pluginsWatchAllow),
+                subtitle: Text(L10n.of(context).pluginsWatchAllowNotice),
+                onChanged:
+                    _busy || !_confirmed || !entry.enabled || !entry.available
+                    ? null
+                    : (value) => _configureFsWatch(entry, value == true),
+              ),
             if (entry.blobUploadSupported && _blobControls)
               CheckboxListTile(
                 key: ValueKey('plugin-blob-allow-${entry.id}'),
                 value: entry.blobUploadApproved,
                 controlAffinity: ListTileControlAffinity.leading,
-                title: Text(_blobText('允许此插件保存内容', 'Allow this plugin to save content')),
-                subtitle: Text(_blobText('每次保存仍需查看提案并单独批准。',
-                    'Each save still requires reviewing and approving its proposal.')),
-                onChanged: _busy || !_confirmed || !entry.enabled || !entry.available
-                    ? null : (value) => _configureBlob(entry, value == true),
+                title: Text(
+                  _blobText('允许此插件保存内容', 'Allow this plugin to save content'),
+                ),
+                subtitle: Text(
+                  _blobText(
+                    '每次保存仍需查看提案并单独批准。',
+                    'Each save still requires reviewing and approving its proposal.',
+                  ),
+                ),
+                onChanged:
+                    _busy || !_confirmed || !entry.enabled || !entry.available
+                    ? null
+                    : (value) => _configureBlob(entry, value == true),
               ),
             Wrap(
               spacing: 8,
@@ -1226,10 +1348,14 @@ class _PluginLibraryState extends State<PluginLibrary> {
                     icon: Icons.stream_outlined,
                   ),
                 if (entry.blobPlanners.isNotEmpty && _blobControls)
-                  _button(_blobText('保存内容', 'Save content'),
+                  _button(
+                    _blobText('保存内容', 'Save content'),
                     'plugin-blob-plan-${entry.id}',
-                    !usable || !entry.blobUploadApproved ? null : () => _openBlob(entry),
-                    icon: Icons.save_outlined),
+                    !usable || !entry.blobUploadApproved
+                        ? null
+                        : () => _openBlob(entry),
+                    icon: Icons.save_outlined,
+                  ),
                 if (!entry.isTheme && _transforms(entry).isNotEmpty)
                   _button(
                     L10n.of(context).pluginsUseTransform,
@@ -1418,11 +1544,19 @@ class _PluginLibraryState extends State<PluginLibrary> {
                     icon: Icons.refresh,
                   ),
                   if (_blobControls)
-                    _button(_blobText('查看原上传任务', 'Review original upload'),
-                      'plugin-blob-original', _openBlob, icon: Icons.history),
+                    _button(
+                      _blobText('查看原上传任务', 'Review original upload'),
+                      'plugin-blob-original',
+                      _openBlob,
+                      icon: Icons.history,
+                    ),
                   if (widget.backend is BlobUploadHistoryBackend)
-                    _button(_blobText('历史上传记录', 'Upload history'),
-                      'plugin-blob-history', _openBlobHistory, icon: Icons.manage_search),
+                    _button(
+                      _blobText('历史上传记录', 'Upload history'),
+                      'plugin-blob-history',
+                      _openBlobHistory,
+                      icon: Icons.manage_search,
+                    ),
                 ],
               ),
               if (_busy && !_blobDialogOpen)
@@ -1693,18 +1827,40 @@ class _PluginLibraryState extends State<PluginLibrary> {
                 onChanged: widget.onChanged,
               ),
             ),
+          if (_watchControls)
+            _ioGroup(
+              'FsWatchManager',
+              FsWatchManager(
+                backend: widget.backend as FsWatchBackend,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
           if (widget.backend is DirectoryTaskBackend &&
               widget.backend is DirectoryTaskPlatformCapabilities &&
-              (widget.backend as DirectoryTaskPlatformCapabilities).supportsSelectedDirectoryTasks &&
+              (widget.backend as DirectoryTaskPlatformCapabilities)
+                  .supportsSelectedDirectoryTasks &&
               widget.backend is WorkbenchIoTaskControl)
-            _ioGroup('DirectoryTaskManager', DirectoryTaskManager(
-              backend: widget.backend as DirectoryTaskBackend,
-              ioBackend: widget.backend as WorkbenchIoTaskControl,
-              plugins: _confirmed ? _entries : const [],
-              registryRevision: _confirmed ? _revision : null,
-              ink: widget.ink, muted: widget.muted, line: widget.line,
-              radius: widget.radius, onChanged: widget.onChanged,
-            )),
+            _ioGroup(
+              'DirectoryTaskManager',
+              DirectoryTaskManager(
+                backend: widget.backend as DirectoryTaskBackend,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
           if (widget.backend is FileTaskBackend &&
               widget.backend is FileTaskPlatformCapabilities &&
               (widget.backend as FileTaskPlatformCapabilities)
@@ -1729,9 +1885,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
             _ioGroup(
               'HttpTaskManager',
               HttpTaskManager(
+                watchSession: _watchControls
+                    ? FsWatchSession.forBackend(
+                        widget.backend as FsWatchBackend,
+                        widget.backend as WorkbenchIoTaskControl,
+                      )
+                    : null,
                 directorySession: widget.backend is DirectoryTaskBackend
-                    ? DirectoryTaskSession.forBackend(widget.backend as DirectoryTaskBackend,
-                        widget.backend as WorkbenchIoTaskControl) : null,
+                    ? DirectoryTaskSession.forBackend(
+                        widget.backend as DirectoryTaskBackend,
+                        widget.backend as WorkbenchIoTaskControl,
+                      )
+                    : null,
                 fileSession: widget.backend is FileTaskBackend
                     ? FileTaskSession.forBackend(
                         widget.backend as FileTaskBackend,

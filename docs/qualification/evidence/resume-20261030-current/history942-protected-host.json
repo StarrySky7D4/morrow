@@ -1,0 +1,66 @@
+{
+  "status": "PASS_SCOPED_PUBLIC_HISTORY_PROTECTED_OWNER",
+  "source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "old_bounded_guest_fixtures_unchanged": true,
+  "guest_recompiled": false,
+  "current_guest_source_qualification": false,
+  "commands": [
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "seconds": 0.11,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\discovery.stdout",
+        "bytes": 1052,
+        "sha256": "bb244bc223e7ed53b97d017cf6833faa3191f1f69db4385e1a03fa3ddd1e82dd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "protected-history",
+      "exit_code": 0,
+      "seconds": 36.562,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\protected-history.stdout",
+        "bytes": 1577,
+        "sha256": "891d72d5c0139a92d93cb5d715b3a769851405a454dd8e9ab57b5ea7d0a66e2b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\protected-history.stderr",
+        "bytes": 7598,
+        "sha256": "79700119885d26b57313580bb161098eaf4cf6263eb3ea4a010af6055503b8a6"
+      }
+    }
+  ],
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-host-942\\programs\\blob_upload_protected-d293924b59b45ced.exe",
+    "bytes": 31753216,
+    "sha256": "8bf954f4b99fc15ca08e908e00c3db7ef250a17abb38f88834a84ffaf25fcabd"
+  },
+  "error": null,
+  "all_original_top_level_processes_returned": true,
+  "meaningful_methods": 15,
+  "explicit_helpers_ignored": 4,
+  "dependencies_warm": true,
+  "cold_program_build_claim": false,
+  "same_build_completed_production_libraries": true,
+  "program_first_execution": true,
+  "original941_compile_reused_no_rebuild": true,
+  "program_outputs_unchanged": true,
+  "negative_fixture_debt_is_not_successful_product_retirement": true,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "window_actions": 0,
+  "public_product_delivery": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

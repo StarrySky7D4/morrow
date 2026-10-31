@@ -1,0 +1,73 @@
+{
+  "inputs": [
+    {
+      "path": "C:\\ms1020\\test\\workbench_supervision_test.dart",
+      "bytes": 4462,
+      "sha256": "c0b9aa06d332c6046dacf759331da23255935bf3f66639cccfb59af321c2ac7b"
+    },
+    {
+      "path": "C:\\ms1020\\test\\workbench_startup_observation_test.dart",
+      "bytes": 13426,
+      "sha256": "ebdc1b9aff94b6720ac9d7bb08eb80833b0ec34df98208798cc559d26fe9f2ff"
+    },
+    {
+      "path": "C:\\ms1020\\test\\workbench_startup_quarantine_test.dart",
+      "bytes": 24796,
+      "sha256": "82595f3b84b2b61905f25a341efeadc9a6f75e99a7949b94a2e218468949ed7d"
+    },
+    {
+      "path": "C:\\ms1020\\test\\workbench_startup_observation_json_test.dart",
+      "bytes": 1387,
+      "sha256": "3e24f40b916206a0b45745dfc356ef4e5b988b7fcd29f24c6baf2fd996b4f939"
+    },
+    {
+      "path": "C:\\ms1020\\test\\workbench_owner_recovery_test.dart",
+      "bytes": 17206,
+      "sha256": "7ff9b625b601fa700e649f1fe5d7f160ef1aff1a30ee1437fef45abe69808233"
+    },
+    {
+      "path": "C:\\ms1020\\test\\support\\workbench_supervision_fixture.dart",
+      "bytes": 5323,
+      "sha256": "832df0c7d3d1f2dad20994ac5c37cd3d58c9a39c0b5eae420b52966aa164a2ee"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_supervision_wire.dart",
+      "bytes": 14618,
+      "sha256": "a94cba1a3ab8728bbf9c954355012f44506c13fa69324bee19e488f145e77df5"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_supervision.dart",
+      "bytes": 14845,
+      "sha256": "7f055f82077af0d33d495232a7cfbb268e43cb1da54d94f21daa02c6abfbeba1"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_owner_management.dart",
+      "bytes": 9889,
+      "sha256": "007d63973191ed50bb8160de2587012b19b1fd15a2393a562b0a0d76036a9068"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\workbench_channel_supervised.dart",
+      "bytes": 15460,
+      "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.native.dart",
+      "bytes": 53123,
+      "sha256": "c6922c7d2b7cc7382f72e7b02ee475853d2dace6b4ddb1ac4dbb68e34fe27c9b"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision_identity.dart",
+      "bytes": 167,
+      "sha256": "d9ab9e93593d6abf10d533033deb7508fe14648cff97ae1740bed94f05fd2896"
+    }
+  ],
+  "status": "PASS_SCOPED_SUPERVISION_CLIENT_MEMORY_TESTS",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "seconds": 8.281,
+  "native_runtime_accepted": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

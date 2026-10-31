@@ -1,0 +1,50 @@
+{
+    "source_disks_changed":  0,
+    "source_accepted":  false,
+    "observed_free_delta":  -16909324288,
+    "owner_contacts":  0,
+    "original_uncompressed_disks_retained":  true,
+    "files_deleted":  0,
+    "saved_memory_preserved":  true,
+    "free_before":  67255914496,
+    "guest_contacts":  0,
+    "files":  [
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm048\\disk\\acceptance-original.vhdx",
+                      "sha256":  "2e6598878bb7e8878955e38db1176a773e4946574949436535fc040ff3f00f7d",
+                      "bytes":  21680357376,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm048\\state\\E1D386A2-7695-4DB8-83E3-09DC019A756C.vmcx",
+                      "sha256":  "5181b9a7ce731400e6d2fce29103bef016326d6fac918461bbcb23202f6a19d0",
+                      "bytes":  73728,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm048\\state\\E1D386A2-7695-4DB8-83E3-09DC019A756C.vmgs",
+                      "sha256":  "76d3d99a3f147fab58bb47fe7c0608d349fed8605152e43f34964dc3f5df2c8e",
+                      "bytes":  4194816,
+                      "compressed":  true
+                  },
+                  {
+                      "last_write_time_unchanged":  true,
+                      "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm048\\state\\E1D386A2-7695-4DB8-83E3-09DC019A756C.VMRS",
+                      "sha256":  "df9d6249f8ff9884321e28a19a9fffd082607612208389045a157b1b5999c40b",
+                      "bytes":  1896148992,
+                      "compressed":  true
+                  }
+              ],
+    "VM_starts":  0,
+    "concurrent_free_space_changes_not_attributed":  true,
+    "free_after":  50346590208,
+    "VM_saves":  0,
+    "all_original_hashes_preserved":  true,
+    "restore_note":  "Copy to a normal uncompressed restore location, or decompress the archive copy, before attaching its virtual disk; no restoration executed.",
+    "registered_vms":  4,
+    "status":  "PASS_BYTE_IDENTICAL_OFFLINE_ARCHIVE_NTFS_COMPRESSION",
+    "release_eligible":  false
+}

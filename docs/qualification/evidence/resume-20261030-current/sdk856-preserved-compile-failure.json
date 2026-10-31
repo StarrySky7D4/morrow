@@ -1,0 +1,16 @@
+{
+  "status": "CANDIDATE_COMPILER_REFUSAL_NO_RETRY",
+  "exit_code": 101,
+  "seconds": 68.14,
+  "canonical_source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "candidate_source_digest": "552f5394ba41e974b186c6c77ec3300f53cb3f1797ee6d4fd580467139132f55",
+  "source_unchanged": true,
+  "compiler_artifacts": 48,
+  "all_compiler_artifacts_fresh_false": true,
+  "all_original_compiler_processes_returned": true,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "tests_run": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

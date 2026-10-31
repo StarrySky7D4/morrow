@@ -1,0 +1,368 @@
+{
+  "status": "PASS_SCOPED_CURRENT_SOURCE_NATIVE_RUST_TO_DART_SUPERVISION_BINARY",
+  "source_digest": "ce5856c9c8ca9eba816de2ea4e25e0b15c48d83b832ea509742aa29013f8e98e",
+  "inputs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\workbench_host\\schemas\\workbench_supervision.capnp",
+      "bytes": 3671,
+      "sha256": "0fe01ff34841992e601491b51dd1d9364141981640dad7aa819cd1e04d29d947"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\workbench_host\\schemas\\workbench_supervision.proto",
+      "bytes": 2652,
+      "sha256": "39a24d14f04036a9a009aa396fd33e10d6c1104ddfc925fc41d3a0a7213a6b53"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\workbench_host\\src\\supervision_record_codec.rs",
+      "bytes": 8859,
+      "sha256": "6beb22e0ccd238563905d11c7589925e470c0a370ebbd67c19486f17786a14f2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\workbench_host\\src\\supervision_record_codec_tests.rs",
+      "bytes": 8844,
+      "sha256": "1ec053988e5da0103cdad41e1fea9a968903e69f43cec2d42f5080cfd6d74ef1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\workbench_host\\src\\supervision_wire.rs",
+      "bytes": 11840,
+      "sha256": "d7d3a60dd037fedb3658c20c87189f21b869fcf8d7a4c310c37d58e9e183b340"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\generated\\workbench_supervision.capnp.dart",
+      "bytes": 249,
+      "sha256": "06da6d887feb83cfaa21ef1579186351af3f5f8fd5d0bbad1dbb7d75c0ab44a3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\generated\\workbench_supervision.capnp.ids.dart",
+      "bytes": 1090,
+      "sha256": "2332d5d378657e13683ea71bf09113b2dc356332e35fddaaff843f2b8cda8577"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\generated\\workbench_supervision.capnp.native.dart",
+      "bytes": 53123,
+      "sha256": "c6922c7d2b7cc7382f72e7b02ee475853d2dace6b4ddb1ac4dbb68e34fe27c9b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\generated\\workbench_supervision.capnp.web.dart",
+      "bytes": 29984,
+      "sha256": "702d63c6dcf4da7c5837eb05fdaf192dc68e478c4b3f6404ade4243c30f571ff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\generated\\workbench_supervision_identity.dart",
+      "bytes": 167,
+      "sha256": "d9ab9e93593d6abf10d533033deb7508fe14648cff97ae1740bed94f05fd2896"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\lib\\plugins\\workbench_supervision_wire.dart",
+      "bytes": 14618,
+      "sha256": "a94cba1a3ab8728bbf9c954355012f44506c13fa69324bee19e488f145e77df5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\codec-qualification\\Cargo.toml",
+      "bytes": 465,
+      "sha256": "a859104122c5c8b956e1c72273d456d0344f345586b7018f90b1c1c480fd7875"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\codec-qualification\\Cargo.lock",
+      "bytes": 13815,
+      "sha256": "695bfddf0f02eb82500a16340c970ef2963a7354c3ef138689e06c8d0aeee5f1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\codec-qualification\\build.rs",
+      "bytes": 904,
+      "sha256": "38d550e5d72adf8879648c196974a54f6c71bc97cfaa939996180e994671c864"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\codec-qualification\\src\\lib.rs",
+      "bytes": 384,
+      "sha256": "110830b2712788c02342e0ce814cca8a81c6cf98323fb6e7b3afe2f76b2e40f9"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\codec-qualification\\examples\\wire_fixture.rs",
+      "bytes": 8990,
+      "sha256": "ab84c9532d51ec53d47a4ed86d0e7e11d1cc3a043b1b6c8eecfdc04716c33d7e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-contracts-1108\\test\\supervision_wire_interchange.dart",
+      "bytes": 5391,
+      "sha256": "ec1b1c935f3723c39e5b976082b065ac6e833aa4e13ab87159ccbc286ca92589"
+    }
+  ],
+  "results": [
+    {
+      "name": "metadata",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.171,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\metadata.stdout",
+        "bytes": 257237,
+        "sha256": "e21b322f798c0cf988abefa5789deadb9d3b1880c2e48bd9e51ba93f4713169b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "native-tests",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 27.172,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\native-tests.stdout",
+        "bytes": 988,
+        "sha256": "7f95e626aaf7d5fe1bca7de6cbc8ddf717079bf0a1eb946d6e27c05c9f798162"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\native-tests.stderr",
+        "bytes": 2208,
+        "sha256": "645a293e28d1dca77df96462f94bbb75c0f9be42ffd50c9b5a04cd18ad275abb"
+      }
+    },
+    {
+      "name": "fixture-build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 1.078,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixture-build.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixture-build.stderr",
+        "bytes": 234,
+        "sha256": "4a11bfd4ceb95d7426ed8e4c1fc88aec6e06f85bd80dd4b40aa01737bdcfc436"
+      }
+    },
+    {
+      "name": "native-fixtures",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.047,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\native-fixtures.stdout",
+        "bytes": 58,
+        "sha256": "395b84786f7251a03c00698716b693bfcbb21a184e588540198ff178090d1b48"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\native-fixtures.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "dart-analyze",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.656,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\dart-analyze.stdout",
+        "bytes": 97,
+        "sha256": "40addd3b8ab2335745a6c1b7855d7a7a40da3c6039ac900478d7537506ee89ea"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\dart-analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "dart-interchange",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.657,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\dart-interchange.stdout",
+        "bytes": 80,
+        "sha256": "c88bffef62aac0800d5f0ad09444faa4cf9989c10d0baf9b109b725a7b242e85"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\dart-interchange.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fixture_files": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\abnormal.bin",
+      "bytes": 760,
+      "sha256": "b91ddd00f586ee0ec375c63b5d3287cd5448b0ec91f789a6ad091db596e72bfd"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-business.bin",
+      "bytes": 400,
+      "sha256": "d8f2f470e1ce770cff48653655f148677d11134a11945372a0075c36e818cc52"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-child-id.bin",
+      "bytes": 400,
+      "sha256": "73826433b8a18b70e232a498f22711c85f1f93cda10dd2b532c4d5f3c74c173a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-durable.bin",
+      "bytes": 400,
+      "sha256": "fbbb2166bb6b702408b7932812214a327f2baac8991c933fb93798b2b9923999"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-owner-disposition.bin",
+      "bytes": 400,
+      "sha256": "85f8bb817a543833b7c55b5432f879f4a271604433a5f3a3796c1668c2623b97"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-owner-phase.bin",
+      "bytes": 400,
+      "sha256": "4b3b4fe87a4fe5a10e7cb0615422cf68e092762bbcfdc1d3b572d4682ecccc4f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-prepared-acceptance.bin",
+      "bytes": 760,
+      "sha256": "7a8be8b16cb6fcaf02308ca1451e5277b2e7aaab4fd3971fd35e4e45ade83f89"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-prepared-exit.bin",
+      "bytes": 760,
+      "sha256": "d16a996467dad8b681d4e3380b0539723ca15a1287d7a618904adee29532592a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-prepared-identity.bin",
+      "bytes": 760,
+      "sha256": "653b102dcf2ed74668677cac3cf69cd30fa6aa2539a46d0cb95e2bda1cb61782"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-prepared-join.bin",
+      "bytes": 760,
+      "sha256": "bb431eb6c8cbf2c937faff894066cdaf3df41670532a3970e321eae75ccdb4cb"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-protocol-ack.bin",
+      "bytes": 400,
+      "sha256": "5075141b033f33f4a36a78f8bd41776e5ad3ee241dd24be94e0bb1b428e79843"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-0.bin",
+      "bytes": 400,
+      "sha256": "7071753fe5fe02527b0080f6838688c0366871060b6aec5c86012e6a17aeb40e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-1.bin",
+      "bytes": 400,
+      "sha256": "ab04979432c16bcc108faf6aaa155baeaddf831ea2da541a681f9eea20c6072e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-2.bin",
+      "bytes": 400,
+      "sha256": "19775b2f38276e5fc1862b0dc0e90b0a9232edb090af8c59d01ac2a04aa245ec"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-3.bin",
+      "bytes": 400,
+      "sha256": "e83458f1a8c72b831d17faafe23421eec11b4807981575bcd2f7b907ae093859"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-4.bin",
+      "bytes": 400,
+      "sha256": "f19c190d3d2e0fc893609ce4f96029acbe684e53105212a2eae0958c387c9bde"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-5.bin",
+      "bytes": 400,
+      "sha256": "e0ff0f1cc07c3a11b15d609be05462e8a7aac5267a5a69e0e6e0f2c1fed99cde"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-6.bin",
+      "bytes": 400,
+      "sha256": "d45ab341f1a588e9437032f0c9ff9dcaa86152182fd5f11c4a85e133e1fe6750"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-7.bin",
+      "bytes": 400,
+      "sha256": "a35c36e1a5c14eb559067595695b4a317c479a86432fb0ca38ddb7916dda8744"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-8.bin",
+      "bytes": 400,
+      "sha256": "ad732a402cd8f3739c0cb0974a62cd80eb9b98f33adefa1073f020bb0a3ad440"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-release-9.bin",
+      "bytes": 400,
+      "sha256": "0b999daeba67e16fb5cc4a25b805162bf5e60c758c91640b223969264dc05582"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-schema.bin",
+      "bytes": 432,
+      "sha256": "78350b58743b152cd971a599be8496020f8b57d81efa7c8b672c85eeb0c78b97"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\bad-version.bin",
+      "bytes": 400,
+      "sha256": "f2d2731b74b675efaf4c6cdfc26f0c09542313c126cb7dd499968afe32451b21"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\confirmed-preview.bin",
+      "bytes": 768,
+      "sha256": "eaae602c26ea290d97db8619dc50ae11f96ebca1ad81cb57562d9ec413b50d04"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\failure.bin",
+      "bytes": 152,
+      "sha256": "53f5a75cbf3516f36bbdf583bc17df6b9e2caccf1faf89afe6bf90e5df5602af"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\pending-preview.bin",
+      "bytes": 568,
+      "sha256": "e740e3784dffe5d0faf74f4af45eca5dbe42cf3211d4dd34725a8eeb76e8bba9"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\preview.bin",
+      "bytes": 568,
+      "sha256": "5480a63ce70807a49c34176e44de9efc1e94a8220f173c283941746749b8c54b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\recovered.bin",
+      "bytes": 688,
+      "sha256": "fd24f6c97ed4a5df925fdf492ad5fc6baedd98d764fb5fba5d83c6cb0bbd3d63"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\released.bin",
+      "bytes": 400,
+      "sha256": "32717b148c9aa864abc57b4458c80b2454fae369b4fbff0736d703e1eb423a74"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\running.bin",
+      "bytes": 400,
+      "sha256": "050a7f82057ebf946357f117e44f2596821f544a3ef2dc7350eb908fb9394eca"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\unconfirmed-normal-commit.bin",
+      "bytes": 400,
+      "sha256": "42f0fcfb90c69a89ab6edf57286347fa7d6578aa82b40c9f78098a923372c4a5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-supervision-interchange-1109\\fixtures\\unconfirmed.bin",
+      "bytes": 400,
+      "sha256": "8f39b3b406799cce372c0c7755e956fe92b09c3819598c022544daaea24eea48"
+    }
+  ],
+  "native_durable_record_methods": 8,
+  "wire_checks": 55,
+  "all_original_processes_returned": true,
+  "protocols": {
+    "internal": "CapnProto",
+    "durable": "Protobuf plus LZ4"
+  },
+  "schema_digest_and_version_checked": true,
+  "exact_uint64_and_missing_observation_checked": true,
+  "production_modules_compiled": true,
+  "production_runtime_execution": false,
+  "product_protocol_gate": "OPEN",
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "canonical_source_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

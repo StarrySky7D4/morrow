@@ -1,0 +1,8 @@
+{
+  "status": "UNKNOWN_RETAINED_NO_REPLAY",
+  "phase": "run",
+  "reason": "('independent closed-library read failed', 1)",
+  "observed_original_processes": [],
+  "automatic_kill": false,
+  "automatic_retry": false
+}

@@ -36,7 +36,20 @@ namespace C28.RootP1682 {
   internal string Stage="NOT_STARTED";internal int TargetRole=-1;
   string NativeApi,NativeStage,FailureStage;int NativeRole=-1,FailureRole=-1;
   bool? NativeReturned;int? NativeError;uint? NativeValue;
-  Dictionary<string,object> FailureNative;
+  Dictionary<string,object> FailureNative,FailureProgress;
+  string FailureJournalGuard;
+  internal void CacheJournalFailure(string guard){
+   if(Unknown||FailureJournalGuard!=null)return;FailureJournalGuard=SafeLabel(guard,false);
+  }
+  bool ProgressAvailable;int ProgressRound,ProgressStep,ProgressDelivered,ProgressPolls,ProgressReads,ProgressStdout,ProgressStderr;
+  long ProgressReadBytes,ProgressElapsed,ProgressStageStart,ProgressCriticalStart,ProgressContextStart;
+  // Scalars copied before uncertainty. No native call, process/owner query or exception body.
+  internal void CacheSharedProgress(int round,int step,int delivered,int polls,int reads,long bytes,
+   int stdout,int stderr,long elapsed,long stageStart,long criticalStart,long contextStart){
+   if(Unknown)return;ProgressAvailable=true;ProgressRound=round;ProgressStep=step;ProgressDelivered=delivered;
+   ProgressPolls=polls;ProgressReads=reads;ProgressReadBytes=bytes;ProgressStdout=stdout;ProgressStderr=stderr;
+   ProgressElapsed=elapsed;ProgressStageStart=stageStart;ProgressCriticalStart=criticalStart;ProgressContextStart=contextStart;
+  }
   readonly List<object> ExceptionData=new List<object>(4);bool ExceptionCaptured,ExceptionTruncated;
   internal static string SafeLabel(string text,bool type){
    if(text==null)return null;if(text.Length<1||text.Length>120)return "REDACTED";
@@ -59,13 +72,34 @@ namespace C28.RootP1682 {
    }
    ExceptionTruncated=error!=null;
   }
-  internal Dictionary<string,object> DiagnosticData(string mode){
+  internal Dictionary<string,object> DiagnosticData(string mode){return DiagnosticData(mode,null);}
+  internal Dictionary<string,object> DiagnosticData(string mode,CaptureObservation capture){
    return new Dictionary<string,object>{{"schema","ROOT_CACHED_FAILURE1832_V1"},{"mode",mode=="gather"||mode=="run"?mode:"REDACTED"},
     {"unknown",Unknown},{"no_replay",true},{"first_guard",FirstError=="ROOT_CONTROLLER_UNCERTAINTY_RETAINED"?null:SafeLabel(FirstError,false)},
     {"retention_guard",FirstError=="ROOT_CONTROLLER_UNCERTAINTY_RETAINED"?FirstError:null},{"source_stage",SafeLabel(FailureStage,false)},
     {"target_role_index",FailureRole},{"last_native",FailureNative},{"exception_captured",ExceptionCaptured},
     {"exceptions",ExceptionData.ToArray()},{"exception_chain_truncated",ExceptionTruncated},{"exception_body","NOT_EXPORTED"},
-    {"resource_release_or_native_exit_proven",false}};
+    {"resource_release_or_native_exit_proven",false},{"cached_shared_progress",FailureProgress},{"helper_capture",CachedHelper(capture)},{"journal_first_guard",FailureJournalGuard}};
+  }
+  // Only the already-observed snapshot is projected. Do not query the retained
+  // session, touch a native handle, or infer an exit/cleanup from missing data.
+  internal static Dictionary<string,object> CachedHelper(CaptureObservation c){
+   if(c==null)return null;
+   var failures=new List<object>(4);int total=0;
+   if(c.Slots!=null)foreach(SlotObservation s in c.Slots){
+    if(s==null||(s.State!=ResourceState.Rejected&&s.State!=ResourceState.RetainedFailure
+     &&s.State!=ResourceState.InFlight&&s.State!=ResourceState.CloseInFlight&&s.State!=ResourceState.CloseFailed))continue;
+    total++;if(failures.Count==4)continue;
+    failures.Add(new Dictionary<string,object>{{"name",SafeLabel(s.Name,false)},{"state",s.State.ToString()},
+     {"value_captured",s.OriginalValueCaptured},{"returned",s.ApiReturned},{"error",s.ApiReturned.HasValue?(object)s.Error:null}});
+   }
+   return new Dictionary<string,object>{{"status",SafeLabel(c.Status,false)},{"first_guard",SafeLabel(c.FirstError,false)},
+    {"no_replay",c.NoReplay},{"create_attempted",c.CreateWasAttempted},
+    {"create_returned",c.CreateWasAttempted?(object)c.CreateReturned:null},
+    {"create_success",c.CreateReturned?(object)c.CreateSuccess:null},{"create_error",c.CreateReturned?(object)c.CreateError:null},
+    {"creation_filetime",c.CreationFileTime},{"resume_return",c.ResumeReturn},{"process_dword",c.ProcessDword},
+    {"primary_thread_dword",c.PrimaryThreadDword},{"observation_passes",c.ObservationPasses},
+    {"failed_slots",failures.ToArray()},{"failed_slots_truncated",total>failures.Count},{"cached_only",true}};
   }
   internal readonly Stopwatch Clock=new Stopwatch();internal uint Creator;internal string FirstError;internal bool Unknown;
   internal readonly FileImage1725 Root=new FileImage1725("C_ROOT"),Binding=new FileImage1725("BINDING"),Collector=new FileImage1725("COLLECTOR"),
@@ -82,6 +116,13 @@ namespace C28.RootP1682 {
   }
   internal void Fail(string code){
    Unknown=true;if(FirstError!=null)return;FirstError=code;
+   try{if(ProgressAvailable)FailureProgress=new Dictionary<string,object>{
+    {"schema","CACHED_SHARED_PROGRESS043_V1"},{"round_index_zero_based",ProgressRound},{"step_index_zero_based",ProgressStep},
+    {"delivered",ProgressDelivered},{"main_polls",ProgressPolls},{"journal_read_calls",ProgressReads},
+    {"journal_read_bytes",ProgressReadBytes},{"stdout_bytes",ProgressStdout},{"stderr_bytes",ProgressStderr},
+    {"elapsed_ms",ProgressElapsed},{"stage_start_ms",ProgressStageStart},{"critical_start_ms",ProgressCriticalStart},
+    {"context_start_ms",ProgressContextStart},{"event_records",EventRecords},{"event_bytes",EventBytes},
+    {"journal_open_attempts",OpenJournalAttempts},{"observation","LAST_CACHED_SCALARS_ONLY_NOT_OWNER_REOBSERVATION"}};}catch{}
    try{FailureStage=Stage;FailureRole=TargetRole;FailureNative=new Dictionary<string,object>{
     {"api",SafeLabel(NativeApi,false)},{"source_stage",SafeLabel(NativeStage,false)},{"target_role_index",NativeRole},
     {"returned",NativeReturned},{"value_returned",NativeValue},{"error",NativeError}};}catch{}

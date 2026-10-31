@@ -1,0 +1,12 @@
+{
+  "status": "PASS_CURRENT_SUPERVISION_ALL_TARGETS_COMPILE_ONLY",
+  "exit_code": 0,
+  "source_digest": "732e01aae4115cea045f58c6c955305ed3aa0b077a62fd3cac6785aeb1bae005",
+  "source_unchanged": true,
+  "compile_only": true,
+  "runtime_accepted": false,
+  "VM_calls": 0,
+  "owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

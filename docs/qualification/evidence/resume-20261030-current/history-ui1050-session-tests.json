@@ -1,0 +1,16 @@
+{
+  "name": "sessions",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "seconds": 5.875,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\sessions.stdout",
+    "bytes": 873,
+    "sha256": "c6f5ec52450b3e280cc6439c6d44d82f3454e8d3daa793454cf024326c954291"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\sessions.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

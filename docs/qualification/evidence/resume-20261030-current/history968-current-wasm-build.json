@@ -1,0 +1,338 @@
+{
+  "status": "FRESH_HISTORY_WASM_COMPILED_NOT_RUNTIME",
+  "source_digest": "70dc8f052a2db1b83f6b83e42fb798ca69ba6be361eb22ef816985f49b1737d7",
+  "source_unchanged": true,
+  "toolchain_and_sysroot_unchanged": true,
+  "commands": [
+    {
+      "name": "rust-build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 16.828,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\rust-build.stdout",
+        "bytes": 24215,
+        "sha256": "b4ad92a9330e520507a238fb3176deda375ad52304663cc7eb3d76866b22f2d2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\rust-build.stderr",
+        "bytes": 668,
+        "sha256": "ebf042af7fcd6bfc32419ca048a92f1399dbb21a433edb8717b205a8e56b3ec2"
+      }
+    },
+    {
+      "name": "ffi-build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 15.203,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\ffi-build.stdout",
+        "bytes": 24184,
+        "sha256": "a85dc11c20978947c752e233bc31a9c8cae631b54483ea885c25c3307ff65a64"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\ffi-build.stderr",
+        "bytes": 676,
+        "sha256": "aae048a6966ff6d3045b8b51b068bb3431cd52994bf5b8a1815ac95726df4b22"
+      }
+    },
+    {
+      "name": "morrow_plugin_wasm_libc",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.047,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\morrow_plugin_wasm_libc.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\morrow_plugin_wasm_libc.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "morrow_plugin_task",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\morrow_plugin_task.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\morrow_plugin_task.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-link",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.125,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\c-link.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\c-link.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\cpp-runtime.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\cpp-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-link",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.375,
+      "stdout": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\cpp-link.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\cpp-link.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "artifacts": {
+    "rust": {
+      "pin": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\rust_history.wasm",
+        "bytes": 328582,
+        "sha256": "7d1f7836b2f5b4e933931d0b08e7a4ace8d658bdbaf2bd33819a41b1634a5faa"
+      },
+      "interface": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "__data_end",
+          "__heap_base",
+          "mbh_packet_decode",
+          "mbh_packet_decode_task",
+          "mbh_packet_free",
+          "mbh_packet_view",
+          "mbh_task_id_write",
+          "memory",
+          "morrow_run",
+          "mp_channel_digest_finish",
+          "mp_channel_digest_free",
+          "mp_channel_digest_new",
+          "mp_channel_digest_update",
+          "mp_channel_directory_decode",
+          "mp_channel_directory_free",
+          "mp_channel_directory_get",
+          "mp_channel_request_encode",
+          "mp_channel_request_validate",
+          "mp_channel_response_decode",
+          "mp_channel_response_free",
+          "mp_channel_response_get",
+          "mp_channel_schema_digest",
+          "mp_content_reply_decode",
+          "mp_content_request_encode",
+          "mp_dependency_output_free",
+          "mp_dependency_output_get",
+          "mp_dependency_request_encode",
+          "mp_dependency_response_decode",
+          "mp_dependency_schema_digest",
+          "mp_io_request_encode",
+          "mp_io_request_validate",
+          "mp_io_response_decode",
+          "mp_io_response_free",
+          "mp_io_response_get",
+          "mp_io_schema_digest",
+          "mp_mutation_request_encode",
+          "mp_mutation_request_validate",
+          "mp_mutation_response_decode",
+          "mp_mutation_response_free",
+          "mp_mutation_response_get",
+          "mp_mutation_schema_digest",
+          "mp_reply_decode",
+          "mp_reply_free",
+          "mp_reply_get",
+          "mp_request_encode",
+          "mp_service_request_decode",
+          "mp_service_request_digest",
+          "mp_service_request_free",
+          "mp_service_request_get",
+          "mp_service_request_resources",
+          "mp_service_resources_free",
+          "mp_service_resources_get",
+          "mp_service_response_encode",
+          "mp_task_complete",
+          "mp_task_decode",
+          "mp_task_fail",
+          "mp_task_free",
+          "mp_task_get",
+          "mp_task_get_command",
+          "mp_task_get_content",
+          "mp_task_get_transform",
+          "mp_task_output",
+          "mp_ui_document_decode",
+          "mp_ui_document_encode",
+          "mp_ui_document_free",
+          "mp_ui_document_node",
+          "mp_ui_event_decode",
+          "mp_ui_event_free",
+          "mp_ui_event_get"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": null
+          }
+        ],
+        "function_type_refs_checked": 535,
+        "defined_functions": 533,
+        "code_bodies": 533
+      }
+    },
+    "c": {
+      "pin": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\c_history.wasm",
+        "bytes": 99590,
+        "sha256": "f107454d21f1ce5430f5e54f89a4d03c37f70958bf2af164345bc55ec0a7918e"
+      },
+      "interface": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "memory",
+          "morrow_run"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": 256
+          }
+        ],
+        "function_type_refs_checked": 252,
+        "defined_functions": 250,
+        "code_bodies": 250
+      }
+    },
+    "cpp": {
+      "pin": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk968-HISTORY-WASM\\cpp_history.wasm",
+        "bytes": 101035,
+        "sha256": "41463acbd9e96dce82b03e59acc1774476e194eec2d157dc840adf3011bab89d"
+      },
+      "interface": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "__wasm_call_ctors",
+          "memory",
+          "morrow_run"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": 256
+          }
+        ],
+        "function_type_refs_checked": 267,
+        "defined_functions": 265,
+        "code_bodies": 265
+      }
+    }
+  },
+  "error": null,
+  "cache_root": "D:\\build_cache",
+  "runtime": "NOT_RUN",
+  "public_product_delivery": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

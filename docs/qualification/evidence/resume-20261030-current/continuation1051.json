@@ -1,0 +1,54 @@
+{
+  "status": "RUNNING_RETAINED_HISTORY_UI_LOGIC_AND_WIDGETS_PASS_FORMAL_UI_OPEN",
+  "utc": "2026-10-31T00:15:06.102739+00:00",
+  "source_digest": "54b7ea62e5fb29e63150263ba67a7e21e2b123dbe7bcd390d9a79ea38d7ef27a",
+  "previous_checkpoint": "continuation1027.json",
+  "session_logic_tests": 10,
+  "new_widget_tests": 6,
+  "existing_history_widget_regressions": 4,
+  "all_original_check_processes_returned": true,
+  "production_route_integrated": true,
+  "widget_backend": "MOCKED",
+  "native_UI": "NOT_RUN",
+  "supervised_UI": "NOT_RUN",
+  "prior_real_native_pipe": "PASS_SCOPED_1022_SOURCE92E9466294",
+  "prior_P2": "PASS_SCOPED_CASE988_SOURCE7C531A3B",
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+      "name": "Morrow Windows Acceptance 20261031 052",
+      "state": "Running"
+    }
+  ],
+  "vm052": "INSTALLATION_RUNTIME_STRICT17_READY_P2_NOT_DISPATCHED",
+  "cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 33817403392,
+    "D": 6871982080
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "full_P2": false,
+  "formal_current_P3": false,
+  "commit_or_push_this_resume": false,
+  "next": "Bind VM052 observed firmware and cold-build HANDLE_CLOSE V6 companions; qualify the new history view through the supervised native desktop separately."
+}

@@ -1,0 +1,33 @@
+{
+  "status": "COMPILED_CURRENT_FROZEN_GUEST_READERS_NOT_RUNTIME",
+  "exit_code": 0,
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "binaries": {
+    "sdk_frozen_compat": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-1301\\sdk_frozen_compat-e63dd4fe92cfd368.exe",
+      "bytes": 7216128,
+      "sha256": "b39c4b6c658a49c5dba4533ecdda70614e283ad3274207eb724d1948f3b1c4b1"
+    },
+    "sdk_frozen_dependency": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-1301\\sdk_frozen_dependency-1f7efc71d8956811.exe",
+      "bytes": 7455232,
+      "sha256": "140c159303febf80a281a11719f6d41e7909ed94735a5eb8da0c9a30bd96a53c"
+    },
+    "sdk_transport_frozen": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-1301\\sdk_transport_frozen-5aeba8acbdd66c5a.exe",
+      "bytes": 3678208,
+      "sha256": "b4d9b82951e3c2baf1ce27240326bd41f135e2b08288baed6c7ab08c09bf6b8a"
+    }
+  },
+  "frozen_inputs_unchanged": 57,
+  "source_unchanged": true,
+  "selected_programs_freshly_compiled": true,
+  "all_original_compiler_processes_returned": true,
+  "dependencies_warm_after_first_program_only": true,
+  "first_program_empty_target": true,
+  "cold_whole_suite_claim": false,
+  "guest_rebuilt": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

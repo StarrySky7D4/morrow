@@ -1,0 +1,15 @@
+{
+  "state": "Saved",
+  "guest_commands": 0,
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "status": "UNKNOWN_VM054_MEMORY_SAVED_FOR_APPROVED_OFFLINE_ARCHIVE",
+  "registered_vms": 4,
+  "original_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+  "restore_or_replay": false,
+  "source_disks_retained": true,
+  "owner_contacts": 0,
+  "case_clean": false,
+  "policy_clean": true,
+  "utc": "2026-10-31T10:44:40.6479683Z",
+  "other_vms_unchanged": true
+}

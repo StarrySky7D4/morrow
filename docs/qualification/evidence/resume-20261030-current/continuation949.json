@@ -1,0 +1,313 @@
+{
+  "status": "RUNNING_HISTORY_WASM_AND_SOURCE_PACKAGE_SCOPED_PASS_VM051_INSTALLATION_PENDING",
+  "utc": "2026-10-30T18:42:58.382096+00:00",
+  "verified_host_build_and_test_source_digest": "6c3b532a62bef9f062e156e45bd8bf45f90a69277ec9b8101b2c04c78b149265",
+  "native_and_standalone_source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "production_inputs_identical_across_test_only_repair": true,
+  "documentation_update_does_not_relabel_runtime_source": true,
+  "previous_P2_and_backend_source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "case736_startup_defect": "FIXED_BY_NEW_CASE806_HISTORICAL736_REMAINS_UNKNOWN",
+  "sdk_history": {
+    "profile": "blob-upload-history-v1",
+    "contract": "CAPNP_READ_ONLY_SELECTED_HISTORY",
+    "Rust_methods": 8,
+    "independent_native_C_CPP_consumers": 2,
+    "protected_host_methods": 15,
+    "ignored_explicit_helpers": 4,
+    "counts_are_separate_scopes": true,
+    "compiler_artifacts": 895,
+    "cold_host_program_build": false,
+    "completed_cold_libraries_from935": 889,
+    "same_build_warm_dependencies_in941": 889,
+    "current_test_freshly_compiled_in941": true,
+    "first_test_execution_in942": true,
+    "associated_binaries_built_not_executed": 5,
+    "failed935_preserved_no_runtime": true,
+    "classification941_failure_preserved_no_test_execution": true,
+    "original_Unknown_not_promoted": true,
+    "known_closed_reopen": true,
+    "actual_crash_before_and_after_commit": true,
+    "gate_revocation_refused": true,
+    "retained_worker_not_reclaimed_by_read": true,
+    "frozen_inputs_unchanged": 57,
+    "old_bounded_guest_fixtures_not_current_SDK_guest_builds": true,
+    "public_product_delivery": false,
+    "negative_fixture_debt_is_not_successful_product_retirement": true,
+    "rendered_UI": false,
+    "standalone_distribution": true,
+    "standalone_scope": "EXPERIMENTAL_WINDOWS_NATIVE_SOURCE_PACKAGE",
+    "standalone_code_files": 14,
+    "standalone_delivery_files": 15,
+    "standalone_repeat_consumers_not_added_to_method_count": true,
+    "Wasm_consumers": false,
+    "source_archive": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-939\\morrow-blob-upload-history-v1-experimental-source.zip",
+      "bytes": 29200,
+      "sha256": "0b001fb5078a5b2d1d4e059225c22012329bb454823e7858a91ba7cb0d8329ca"
+    },
+    "full_SDK26": false
+  },
+  "current_Windows_lock_closures_verified": true,
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "a63ae90d-27e0-4049-988d-9c979033c448",
+      "name": "Morrow Windows Acceptance 20261031 051",
+      "state": "Running"
+    }
+  ],
+  "vm051": {
+    "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+    "state": "INSTALLATION_PENDING",
+    "P2_dispatched": false
+  },
+  "build_cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 75190472704,
+    "D": 8463446016
+  },
+  "window_control": "STOPPED_AFTER_PHYSICAL_ESC_PENDING_DIRECT_USER_REPLY",
+  "input_files": [
+    {
+      "path": "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock",
+      "bytes": 234887,
+      "sha256": "1ee0206a9dd56b844abea35fe6d0e4ca442e5fb33896b39d3497d26ceaa3299d"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/.gitattributes",
+      "bytes": 91,
+      "sha256": "047e7066a6593c00b8d75acc25cb32d106e4602b9a1c54de7de7174dbae8b0db"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/build.rs",
+      "bytes": 858,
+      "sha256": "a6c872ea07c8b4df9eb4fe6d6f50da425bcf2e2cb30bf2833803d194443f63cd"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/Cargo.lock",
+      "bytes": 3073,
+      "sha256": "056981515a8b129790a80e524517fea00fcdd65885b7be594c5d1cc6bf6af6af"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/Cargo.toml",
+      "bytes": 328,
+      "sha256": "f8a2718c4125eaeae473841cbbbdd27bedd85eba2c78987fcda38332986b0bb0"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/contracts/blob_upload_history.capnp",
+      "bytes": 1047,
+      "sha256": "00132fb24ddccabdd1ae73f131394c461e9deb2db49ebb3b3303ccdeab932dcf"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/contracts/schema.sha256",
+      "bytes": 65,
+      "sha256": "524722d6fea433e7d106b6844426ed91beae758a0fecbaeb8e5ff818ad620cb4"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_v1.h",
+      "bytes": 1792,
+      "sha256": "8b38049e46f2f29df23d71a7a78e72eb7d2850b5815a150b720abcf6244bd10a"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/include/morrow_blob_upload_history_v1.hpp",
+      "bytes": 1307,
+      "sha256": "a61a25fbeb4d24808f9861273ce17f78dc4ad5698ebe049995c4f16964efec29"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/README.md",
+      "bytes": 2697,
+      "sha256": "e070d47426504cad9e1d93397a9d72ada7fd24a7dd6cd2497f3a24c571a0c01c"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/ffi.rs",
+      "bytes": 7630,
+      "sha256": "5d0e252b00999196d8c33b39905adba44b3b6a1141eb69b2878edda68216872f"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/lib.rs",
+      "bytes": 14642,
+      "sha256": "220df60bc3cd0983e7ca2891e76c593ebe8efba055f0def7aa22e08ad316b588"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/src/tests.rs",
+      "bytes": 10272,
+      "sha256": "54e99681ea554cd170dc9b001d78ca39a0d2e7ed4fed32b78d704ad063951afb"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/tests/consumer.c",
+      "bytes": 2277,
+      "sha256": "81c2e578e83a858d517a92ef2e2f28ceba88783cf4f6fab584d2b6b88d64b122"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/tests/consumer.cpp",
+      "bytes": 1584,
+      "sha256": "dd82dee73380705253309eec7faee4490c6173d18eb71e39531a17b6065e6545"
+    },
+    {
+      "path": "workbench_host/Cargo.lock",
+      "bytes": 236224,
+      "sha256": "ed2a83fa40d13ba17dcb9f09e73a5fa7b6b55fdfb2faf98ca0e55c33f76b8cb3"
+    },
+    {
+      "path": "workbench_host/Cargo.toml",
+      "bytes": 4567,
+      "sha256": "cd23cee09f923be3735e9c786d73fa25c2119b24a9a72dee64fd09921cb51f16"
+    },
+    {
+      "path": "workbench_host/src/blob_upload_history.rs",
+      "bytes": 3682,
+      "sha256": "79261639c41f7f7f6027c6435b604b24d6f361bbb8fbd93a6d27ea6ebcd15608"
+    },
+    {
+      "path": "workbench_host/src/lib.rs",
+      "bytes": 39564,
+      "sha256": "3c137531c8d1b77a187d7b3edc0306463a114c91d3988ba175fbd2d0b5b812a6"
+    },
+    {
+      "path": "workbench_host/tests/blob_upload_protected.rs",
+      "bytes": 50095,
+      "sha256": "6728fc3b479d992912f1044066a1962889778956742f7f816bbd7171eaef344c"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/c/plugin.c",
+      "bytes": 1354,
+      "sha256": "73419b4be6e3cc43bd4ece324343f21bdc0c702dca6a3d83e89654a8a73dc652"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/common/fixture.h",
+      "bytes": 2103,
+      "sha256": "23174c8af6b54541bd0a748d26c4877b0a399e314fcb8c282d311005e1cf4517"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/cpp/plugin.cpp",
+      "bytes": 1282,
+      "sha256": "63d45163209caf27e9c0f387b0ae74bcbf56aaa05e966867d0ffbce5b8e88d12"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/Cargo.lock",
+      "bytes": 3333,
+      "sha256": "314ad28fad1393bf6fd641befdf6f780e434fea0f135da3d459bb327201fe498"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/Cargo.toml",
+      "bytes": 377,
+      "sha256": "12f61ebe460036c819fed997be4d9d90223d1534a95778ce052fc6f51a03863d"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/ffi-support/src/lib.rs",
+      "bytes": 162,
+      "sha256": "b0ec77974f147a19578fbdf189e1a723f3cfcd7db6afb43e804562d0e113761a"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/README.md",
+      "bytes": 1174,
+      "sha256": "12bb0939a627e2597db7f953a98c78280579b15c188228f6ec5dc4b599e94a4e"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/Cargo.lock",
+      "bytes": 3332,
+      "sha256": "f62735af868364680f69550d42ae842f7900d1c71733b4d7670dddb15fbe22c1"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/Cargo.toml",
+      "bytes": 377,
+      "sha256": "90779825fb0ced72abbf4963f9776ba938586474b6f19a101599facea84daaf3"
+    },
+    {
+      "path": "extensions/blob-upload-history-v1/guests/rust/src/lib.rs",
+      "bytes": 2303,
+      "sha256": "0a6c431892a95b647dab1badc8f91448c6405c5673ff9c10ad22a602114978d6"
+    },
+    {
+      "path": "workbench_host/tests/blob_upload_history_guest.rs",
+      "bytes": 6854,
+      "sha256": "b90b4ec9c1629e0dea221db55229964c09c3e5aecd91dc676e7dda9959979b90"
+    },
+    {
+      "path": "tool/build_upload_history_guests.py",
+      "bytes": 8315,
+      "sha256": "c1537304776e4e3704cbec9230271da9b70f59c0cc0fbb8291f835e9911ccc78"
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false,
+  "P2": "OPEN",
+  "P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "commit_or_push_this_resume": false,
+  "next": "Complete approved VM051 installation after direct window-control reply; then observe new environment before default-DACL case. Public history selection and disclosure approval, full SDK distribution, P3 and complete P2 remain open.",
+  "checkout_line_endings": {
+    "status": "ONLY_CHECKOUT_LINE_ENDING_RULES_ADDED_AFTER_RUNTIME",
+    "original": {
+      "path": "C:\\ms1020\\.gitattributes",
+      "bytes": 71850,
+      "sha256": "3ddf10072d1b7d44dadd15a0c4ecce6182724562c1a650a02f58e7b0dad1b66a"
+    },
+    "updated": {
+      "path": "C:\\ms1020\\.gitattributes",
+      "bytes": 72032,
+      "sha256": "e58629637ea30d8ce7a6bedf4775ab68fe6747e8a38a1e87a36e893825bdea5c"
+    },
+    "rules": [
+      "/workbench_host/src/blob_upload_history.rs text eol=lf",
+      "/workbench_host/tests/blob_upload_protected.rs text eol=lf"
+    ],
+    "qualified_code_files_unchanged": true,
+    "new_runtime_claim": false
+  },
+  "latest_wasm_task_source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+  "previous_checkpoint": "continuation937.json",
+  "sdk_history_wasm": {
+    "meaningful_methods": 3,
+    "actual_task_cases": 27,
+    "languages": [
+      "Rust",
+      "C",
+      "C++17"
+    ],
+    "original_pools_closed": true,
+    "unapproved_and_disabled_packages_refused": true,
+    "content_host_calls": 0,
+    "source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+    "imports": [
+      "morrow_task_v1.read_input",
+      "morrow_task_v1.complete"
+    ],
+    "fixed_synthetic_selection": true,
+    "keyless_local_store": true,
+    "protected_store_reading": false,
+    "current_product_disclosure_approval": false,
+    "source_distribution_verified": true,
+    "source_distribution_files": 104,
+    "source_archive": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\morrow-history-wasm-experimental-source.zip",
+      "bytes": 200851,
+      "sha256": "b13b347339c155f80fac9bab0b656ffbc47aecead7c3606ca529570f6ccf4f89"
+    },
+    "source_package_digest": "7d7dee99559127ef23e872d635053a645cf27955b955dcd159ca7aad22f2403e",
+    "package_repeat_not_additional_method_credit": true,
+    "fresh_host_units": 8,
+    "verified_warm_dependencies": 887,
+    "cold_full_host_build": false,
+    "original946_classification_failure_retained_no_test_execution": true,
+    "prior_native_and_protected_host_scopes_retain_original_source": true,
+    "full_SDK26": false
+  }
+}

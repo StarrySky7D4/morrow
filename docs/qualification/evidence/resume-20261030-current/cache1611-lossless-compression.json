@@ -1,0 +1,27 @@
+{
+  "free_after": 2147680256,
+  "concurrent_changes_not_attributed": true,
+  "deletions": 0,
+  "all_file_contents_unchanged": true,
+  "VM_calls": 0,
+  "observed_free_delta": 989425664,
+  "free_before": 1158254592,
+  "old_owner_contacts": 0,
+  "status": "PASS_CLOSED_RETAINED_COMPILER_ARTIFACTS_LOSSLESSLY_COMPRESSED",
+  "protected_files_verified": 33,
+  "files_verified": 34893,
+  "relocations": 0,
+  "roots": [
+    "D:\\build_cache\\qualification-targets\\watchowner1479-RUNTIME-cb8be9e08dd27dc4",
+    "D:\\build_cache\\qualification-targets\\watchowner1482-RUNTIME-6f255ef881d15fd0",
+    "D:\\build_cache\\qualification-targets\\protectedwatch1534-HOST-3955673cff8835fc",
+    "D:\\build_cache\\qualification-targets\\watchowner1476-RUNTIME-5c59d746648559b1",
+    "D:\\build_cache\\qualification-targets\\watchworker1508-RUNTIME-366dbc348177d17f",
+    "D:\\build_cache\\qualification-targets\\roles062-P-f7540d3c432fa9d6",
+    "D:\\build_cache\\qualification-targets\\watchowner1486-RUNTIME-f9fef0ba2b2f7b8a",
+    "D:\\build_cache\\qualification-targets\\watchauth1472-RUNTIME-c3f125ede13291ca",
+    "D:\\build_cache\\qualification-targets\\roles062-R-d618a4e80efc00cd",
+    "D:\\build_cache\\qualification-targets\\roles062-C-f7f68673229a2a24",
+    "D:\\build_cache\\qualification-targets\\roles062-S-21e6af94ebeadf77"
+  ]
+}

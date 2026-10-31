@@ -1,0 +1,24 @@
+{
+  "status": "FAILED_CLOSED_NO_RETRY",
+  "type": "AssertionError",
+  "error": "",
+  "commands": [
+    {
+      "name": "lock",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1521\\lock.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-picker-build-1521\\lock.stderr",
+        "bytes": 146,
+        "sha256": "8cc97a8069bfc0b8a9fa1af97fab7c0694738e3baec16790921061cde2ef92eb"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,32 @@
+﻿{
+    "P2_dispatched":  false,
+    "security_setting_changes":  0,
+    "vm_id":  "a63ae90d-27e0-4049-988d-9c979033c448",
+    "forced_restarts":  0,
+    "license_keys_supplied":  0,
+    "after":  [
+                  {
+                      "description":  "EFI SCSI Device",
+                      "type":  "Drive",
+                      "device":  "HardDiskDrive (Name = \u0027硬盘驱动器 on SCSI controller number 0 at location 0\u0027, VMName = \u0027Morrow Windows Acceptance 20261031 051\u0027) [Id = \u0027Microsoft:A63AE90D-27E0-4049-988D-9C979033C448\\9AF4D849-7ED9-4F41-9159-D8B088BBF055\\0\\0\\D\u0027, VMId = \u0027a63ae90d-27e0-4049-988d-9c979033c448\u0027]"
+                  },
+                  {
+                      "description":  "EFI SCSI Device",
+                      "type":  "Drive",
+                      "device":  "DvdDrive (Name = \u0027DVD 驱动器 on SCSI controller number 0 at location 1\u0027, VMName = \u0027Morrow Windows Acceptance 20261031 051\u0027) [Id = \u0027Microsoft:A63AE90D-27E0-4049-988D-9C979033C448\\9AF4D849-7ED9-4F41-9159-D8B088BBF055\\0\\1\\D\u0027, VMId = \u0027a63ae90d-27e0-4049-988d-9c979033c448\u0027]"
+                  },
+                  {
+                      "description":  "EFI Network",
+                      "type":  "Network",
+                      "device":  "VMNetworkAdapter (Name = \u0027Network Adapter\u0027, VMName = \u0027Morrow Windows Acceptance 20261031 051\u0027) [VMId = \u0027a63ae90d-27e0-4049-988d-9c979033c448\u0027]"
+                  },
+                  {
+                      "description":  "EFI SCSI Device",
+                      "type":  "Drive",
+                      "device":  "DvdDrive (Name = \u0027DVD 驱动器 on SCSI controller number 0 at location 2\u0027, VMName = \u0027Morrow Windows Acceptance 20261031 051\u0027) [Id = \u0027Microsoft:A63AE90D-27E0-4049-988D-9C979033C448\\9AF4D849-7ED9-4F41-9159-D8B088BBF055\\0\\2\\D\u0027, VMId = \u0027a63ae90d-27e0-4049-988d-9c979033c448\u0027]"
+                  }
+              ],
+    "old_VM_contacts":  0,
+    "status":  "NEW_INSTALLATION_DISK_FIRST_BOOT_ORDER_VERIFIED",
+    "guest_commands":  0
+}

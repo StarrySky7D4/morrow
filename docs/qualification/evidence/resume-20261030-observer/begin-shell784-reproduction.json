@@ -1,0 +1,70 @@
+{
+  "status": "REPRODUCED_CASE773_BEGIN_SHELL_CASE_MISMATCH_FIXED_IN_OFFLINE_CANDIDATE",
+  "source_digest": "2365a3f491bc10daf75d6db370acd2a0ba43abca22fdda32b7d364de5de6e5a3",
+  "original_snapshot": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-773\\04-journal.jsonl",
+    "bytes": 2555,
+    "sha256": "7ed569b315618ebe8cfbb3682a24bd60125b69f87f5c40a37daac913c3d43150"
+  },
+  "original_guard": "BEGIN_RESERVATION_SOURCE",
+  "first_rejected_sequence": 1,
+  "only_change": {
+    "file": "Root47Controller1725.Pure.cs",
+    "before": "Json1725.Str(Json1725.Get(review,\"shell\"))==RootPPrebirth.Shell",
+    "after": "FileMetadataRules1718.SystemShellPath(Json1725.Str(Json1725.Get(review,\"shell\")))",
+    "original": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-06ad72d1299c46d9883cca188d21341e\\controller-source\\Root47Controller1725.Pure.cs",
+      "bytes": 16037,
+      "sha256": "c76bce46020a7daf598559b4240fad9ec24ae45eca93797f89de44d795bad104"
+    },
+    "candidate": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\fixed-source\\Root47Controller1725.Pure.cs",
+      "bytes": 16055,
+      "sha256": "4f933fbaf048da6766a81c5ddef3d415bfe0c9ba0809904db1f2ff975ca03160"
+    }
+  },
+  "actual_five_records_accepted_by_candidate": true,
+  "first_step_only": true,
+  "case_variants": 4,
+  "negative_controls": 12,
+  "wrong_firmware_and_shell_hash_rejected": true,
+  "sticky_failure_preserved": true,
+  "original_paths_bytes_and_native_owners_unchanged": true,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "native_calls": 0,
+  "tests": [
+    {
+      "label": "original",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\original.exe",
+        "bytes": 173568,
+        "sha256": "f285babc6a1564021eef162583529cd4395b6afd75c5c315115c77ad7ffbc121"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\original.stdout",
+        "bytes": 60,
+        "sha256": "2ad231f76a1acc620b29c57914c1be4f021840138342b76063c1e609e24e587b"
+      }
+    },
+    {
+      "label": "fixed",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\fixed.exe",
+        "bytes": 173568,
+        "sha256": "8f4119457d5582425f60c2df82c1b4cbc9f235b4dbab21599f3ebc3414572492"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\begin-shell-case784\\fixed.stdout",
+        "bytes": 131,
+        "sha256": "1522a7e1c8cd0ec43fc9d1aaf0da89d8dea585e527e5d920543dda023d475362"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

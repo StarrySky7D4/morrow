@@ -28,6 +28,9 @@ pub mod service;
 pub mod service_commands;
 #[path = "blob_upload_tasks.rs"]
 pub mod blob_upload;
+#[cfg(windows)]
+#[path = "fs_watch_tasks.rs"]
+pub mod fs_watch;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AccessError {
@@ -170,11 +173,15 @@ enum Executor {
     Service(service::ServiceExecution),
     Upload(Box<morrow_plugin_runtime::blob_upload_worker::UploadWorker<WorkbenchState>>),
     #[cfg(windows)]
+    Watch(Box<morrow_plugin_runtime::fs_watch_worker::WatchWorker<WorkbenchState>>),
+    #[cfg(windows)]
     Agent(Box<crate::agent_tasks::AgentWorker<WorkbenchState>>),
 }
 enum Reclaimed {
     Original(Box<morrow_plugin_runtime::io_jobs::WorkerExit<WorkbenchState>>),
     Upload(Box<morrow_plugin_runtime::blob_upload_worker::Exit<WorkbenchState>>),
+    #[cfg(windows)]
+    Watch(Box<morrow_plugin_runtime::fs_watch_worker::Exit<WorkbenchState>>),
     #[cfg(windows)]
     Agent(Box<crate::agent_tasks::AgentExit<WorkbenchState>>),
 }
@@ -189,6 +196,8 @@ impl Executor {
             Self::Io(worker) => worker.stop(),
             Self::Service(worker) => worker.stop(),
             Self::Upload(worker) => worker.cancel(),
+            #[cfg(windows)]
+            Self::Watch(worker) => worker.cancel(),
             #[cfg(windows)]
             Self::Agent(worker) => worker.stop(),
         }
@@ -205,6 +214,10 @@ impl Executor {
                 .map(|exit| exit.map(|exit| Reclaimed::Upload(Box::new(exit))))
                 .map_err(|_| JobError::Unavailable),
             #[cfg(windows)]
+            Self::Watch(worker) => worker.try_join()
+                .map(|exit| exit.map(|exit| Reclaimed::Watch(Box::new(exit))))
+                .map_err(|_| JobError::Unavailable),
+            #[cfg(windows)]
             Self::Agent(worker) => worker
                 .try_reclaim()
                 .map(|e| e.map(|e| Reclaimed::Agent(Box::new(e))))
@@ -215,6 +228,8 @@ impl Executor {
         match self {
             Self::Io(_) => None,
             Self::Upload(_) => None,
+            #[cfg(windows)]
+            Self::Watch(_) => None,
             Self::Service(worker) => Some(worker.progress()),
             #[cfg(windows)]
             Self::Agent(_) => None,
@@ -237,6 +252,9 @@ pub(crate) struct StateSlot {
     #[cfg(windows)]
     agent_exit: Option<(TaskKey, crate::agent_tasks::AgentExitStatus)>,
     repair_needed: bool,
+    // The original history delivery owns its instance and close receipt. Store
+    // maintenance cannot clear this separate, conservative admission latch.
+    pub(crate) history_delivery_debt: bool,
     // Retain the original worker's unresolved native records. Ordinary storage
     // repair cannot clear this latch, acknowledge the task, or start a new one.
     native_retirement: Option<morrow_plugin_runtime::io_jobs::NativeRetirement>,
@@ -246,6 +264,10 @@ pub(crate) struct StateSlot {
     upload_submissions: BTreeSet<[u8; 32]>,
     upload_task: Option<blob_upload::UploadTask>,
     #[cfg(windows)]
+    watch_submissions: BTreeSet<[u8; 32]>,
+    #[cfg(windows)]
+    watch_task: Option<fs_watch::WatchTask>,
+    #[cfg(windows)]
     mutation_submissions: std::collections::BTreeMap<[u8; 32], ([u8; 32], Option<TaskKey>)>,
     #[cfg(windows)]
     mutation_checkpoints:
@@ -253,6 +275,13 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    pub(crate) fn require_history_idle(&self) -> Result<()> {
+        self.local()?;
+        if self.task.is_some() || self.upload_task.is_some() {
+            return Err(AccessError::Busy.into());
+        }
+        Ok(())
+    }
     pub(crate) fn require_upload_resolution(&self) -> Result<()> {
         if self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
             return Err(AccessError::RecoveryRequired.into());
@@ -445,12 +474,17 @@ impl StateSlot {
             #[cfg(windows)]
             agent_exit: None,
             repair_needed: false,
+            history_delivery_debt: false,
             native_retirement: None,
             lost: false,
             service_submissions: BTreeSet::new(),
             file_submissions: BTreeSet::new(),
             upload_submissions: BTreeSet::new(),
             upload_task: None,
+            #[cfg(windows)]
+            watch_submissions: BTreeSet::new(),
+            #[cfg(windows)]
+            watch_task: None,
             #[cfg(windows)]
             mutation_submissions: Default::default(),
             #[cfg(windows)]
@@ -459,6 +493,12 @@ impl StateSlot {
         }
     }
     pub(crate) fn local(&self) -> Result<&WorkbenchState> {
+        if self.history_delivery_debt { return Err(AccessError::RecoveryRequired.into()); }
+        self.history_delivery_owner()
+    }
+    /// Access only for the retained delivery owner to finish its original
+    /// dispatch/close and expose its receipt while ordinary access is fenced.
+    pub(crate) fn history_delivery_owner(&self) -> Result<&WorkbenchState> {
         if self.lost {
             return Err(AccessError::OwnerUnavailable.into());
         }
@@ -471,6 +511,10 @@ impl StateSlot {
         }
         Ok(owner)
     }
+    pub(crate) fn history_delivery_owner_mut(&mut self) -> Result<&mut WorkbenchState> {
+        self.history_delivery_owner()?;
+        self.owner.as_mut().ok_or_else(|| AccessError::Busy.into())
+    }
     pub(crate) fn local_mut(&mut self) -> Result<&mut WorkbenchState> {
         self.local()?;
         self.owner.as_mut().ok_or_else(|| AccessError::Busy.into())
@@ -478,6 +522,9 @@ impl StateSlot {
     pub(crate) fn require_writable(&self) -> Result<()> {
         self.product_gate.check()?;
         self.local()?;
+        #[cfg(windows)]
+        self.require_watch_resolution()?;
+        if self.history_delivery_debt { return Err(AccessError::RecoveryRequired.into()); }
         #[cfg(windows)]
         if self.agent_preparation_debt.is_some() || self.agent_contexts.needs_repair() {
             return Err(AccessError::RecoveryRequired.into());
@@ -493,6 +540,9 @@ impl StateSlot {
         Ok(())
     }
     pub(crate) fn warning(&self) -> Option<&str> {
+        if self.history_delivery_debt {
+            return Some("历史记录交付的原连接关闭结果无法确认，请保留当前现场；不会自动重试。");
+        }
         if self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
             return Some("上传结果尚未确认，请保留原内容库并核对记录；不会自动重试。");
         }
@@ -579,6 +629,34 @@ impl StateSlot {
                 }
             }
             #[cfg(windows)]
+            Ok(Some(Reclaimed::Watch(mut exit))) => {
+                // Restore only the exact owner returned by the original join.
+                // Unknown retains its owner on the original worker allocation.
+                self.owner = exit.owner.take();
+                self.lost |= exit.unknown || self.owner.is_none()
+                    || !exit.native_retirement.is_complete();
+                self.cleanup = exit.instance.take()
+                    .map(|instance| Cleanup::Original(Box::new(instance)));
+                self.repair_needed = exit.disconnect != Some(Ok(()))
+                    || exit.maintenance != Some(Ok(()));
+                task.exit = Some(ExitStatus {
+                    execution: exit.result.as_ref().map(|_| ())
+                        .map_err(|_| JobError::Unavailable),
+                    disconnect: exit.disconnect.unwrap_or(Err(JobError::Unavailable)),
+                    maintenance: exit.maintenance.unwrap_or(Err(JobError::Unavailable)),
+                });
+                task.worker = None;
+                if let Some(record) = &mut self.watch_task {
+                    record.record_exit(*exit);
+                    Ok(true)
+                } else {
+                    // Never discard native retirement evidence on a broken slot.
+                    let _ = Box::leak(exit);
+                    self.lost = true;
+                    Err(AccessError::OwnerUnavailable.into())
+                }
+            }
+            #[cfg(windows)]
             Ok(Some(Reclaimed::Agent(exit))) => {
                 // AgentExit exists only after native cleanup and actual thread join.
                 let status = crate::agent_tasks::AgentExitStatus {
@@ -619,7 +697,7 @@ impl StateSlot {
             } else {
                 StoragePhase::Running
             }
-        } else if self.repair_needed || self.cleanup.is_some()
+        } else if self.history_delivery_debt || self.repair_needed || self.cleanup.is_some()
             || self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
             StoragePhase::RecoveryRequired
         } else if self.task.is_some() {
@@ -713,11 +791,21 @@ impl Workbench {
         if self.state.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
+        #[cfg(windows)]
+        if let Some(watch) = &self.state.watch_task {
+            watch.check_acknowledgement()?;
+        }
         if self.state.upload_task.is_some() {
             self.state.acknowledge_upload_history()?;
             self.state.submission = None;
         }
         self.state.upload_task = None;
+        #[cfg(windows)]
+        {
+            if self.state.watch_task.take().is_some() {
+                self.state.submission = None;
+            }
+        }
         self.state.task = None;
         Ok(())
     }

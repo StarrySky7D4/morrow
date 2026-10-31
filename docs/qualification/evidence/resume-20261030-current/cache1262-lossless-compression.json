@@ -1,0 +1,15 @@
+{
+  "file_deletions": 0,
+  "concurrent_space_changes_not_attributed": true,
+  "all_files_byte_verified": 26996,
+  "source_accepted": false,
+  "observed_free_delta": 935612416,
+  "release_eligible": false,
+  "status": "PASS_INACTIVE_CACHE_LOSSLESS_COMPRESSION_ALL_BYTES_PRESERVED",
+  "VM_calls": 0,
+  "free_before": 7007039488,
+  "old_owner_contacts": 0,
+  "files_compressed": 1173,
+  "executable_or_dll_mutations": 0,
+  "free_after": 7942651904
+}

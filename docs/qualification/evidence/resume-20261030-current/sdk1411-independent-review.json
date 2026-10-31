@@ -1,0 +1,134 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_SDK_TESTS_AND_ORIGINAL_EVIDENCE_REVIEW",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "original_guest_source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "existing_files_byte_unchanged": 53974,
+  "six_new_test_files": [
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_io.rs",
+      "bytes": 16366,
+      "sha256": "8a6208ae22f08678e312c009283796fdb455a53f059c4fa762e6484e03149e3e"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_channel.rs",
+      "bytes": 14158,
+      "sha256": "db3e112daa68a1a09bbd1068351263ab71a86f65c9a8b2c28b628fc8cd8e76ff"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_standalone_directory.rs",
+      "bytes": 14261,
+      "sha256": "06e19a5b03973277b55774809c7fcc99bb22f487edde04c31fab686812d537c1"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\sdk_default_service.rs",
+      "bytes": 6924,
+      "sha256": "67400a7fe42c8336ab4a93c095f114cdcc386d1149b840cdcdbe019486948619"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\sdk_default_service_http.rs",
+      "bytes": 24296,
+      "sha256": "73459ff2ec09b27f93da973d4ecd2b399a6eecdeae42dc33f1b76dee2ab4993a"
+    },
+    {
+      "path": "C:\\ms1020\\network_node\\tests\\support\\sdk_default_configured_http.rs",
+      "bytes": 23462,
+      "sha256": "4aea3fef3dcb9d675210505815879ac047185668cf8935f671e3808b037c76ce"
+    }
+  ],
+  "canonical_methods": 17,
+  "canonical_original_archives": 15,
+  "prior_default_archive_matrix": 27,
+  "new_optin_archives": 6,
+  "optin_methods": 8,
+  "distinct_default_and_optin_profiles": true,
+  "all_57_frozen_inputs_unchanged": true,
+  "closed_P2_cases": [
+    {
+      "case": "1365",
+      "pipeline": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\result.json",
+        "bytes": 8295,
+        "sha256": "703672a696be6f6647d0cae331f5be963ab9ae9fc89ee44cdbd206ad8e2a4bcc"
+      },
+      "summary": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1365-summary.json",
+        "bytes": 1319,
+        "sha256": "34a62c7b6e63641fb9ce43b8d1453f48f02f154aebf5fefc80722e02a3feb3ad"
+      }
+    },
+    {
+      "case": "1385",
+      "pipeline": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared1385-pipeline-1385\\result.json",
+        "bytes": 10483,
+        "sha256": "b32e1914a8d5a27ddd8157dab7757aed426ee2e278ea10d7c306645b7e09d5fd"
+      },
+      "summary": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1385-summary.json",
+        "bytes": 1333,
+        "sha256": "867414711d0aa28f9be52b3adf7d1efe458c55c1e19da56c1bab6b996b448eae"
+      }
+    },
+    {
+      "case": "1402",
+      "pipeline": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\logon1402-pipeline-1402\\result.json",
+        "bytes": 8903,
+        "sha256": "57fdccc5b562120c949a9e141a92f36d6c45e464a8b4479198142d8788c7fd2c"
+      },
+      "summary": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1402-summary.json",
+        "bytes": 1338,
+        "sha256": "86e01b05e3d65b59bf00b90944de0e2c301e5353fe6142df86ca2c1d39836b22"
+      }
+    }
+  ],
+  "current_clean_VM_saved": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm055-case1402-saved-state\\result.json",
+    "bytes": 793,
+    "sha256": "27ed54b11a4e182934521de13b0df0091a855731d68d8bec81c0c03641a44266"
+  },
+  "original_receipts": {
+    "integration": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fixture-integration-1407\\result.json",
+      "bytes": 1776,
+      "sha256": "3debfb302b6a5b035be8d9644bd3a1d3dc7ff47d40e31f6acd0a912cad880772"
+    },
+    "build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-test-build-1408\\result.json",
+      "bytes": 5502,
+      "sha256": "c36432da6d67dc4bda18ef96840f8927a58d9b7a2a3a509a76fbc9fe95c3f773"
+    },
+    "runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\integrated-sdk-runtime-1409\\result.json",
+      "bytes": 18952,
+      "sha256": "cf4f2fa62d860f0520650d713362f9cd067b91d69879f94cca56c05959d6eeed"
+    },
+    "default_matrix": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\default-sdk-matrix-review-1397\\result.json",
+      "bytes": 26126,
+      "sha256": "18ac43b6d2444c13f34f66bf4faae33a9c39447d8da4d1e461945e7dae783668"
+    },
+    "optin_review": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\optin-service-evidence-review-1405\\result.json",
+      "bytes": 2579,
+      "sha256": "6a6d9b72ab8aee7dd0db17b95003429267c7d33a1298321012c84c04127fad0c"
+    }
+  },
+  "dependencies_warm": true,
+  "whole_build_cold_claim": false,
+  "old_results_not_relabelled": true,
+  "actual_HTTP_scope": "local TCP only; synthetic credentials",
+  "IO_HTTP_scope": "codec only",
+  "filesystem_directory_accepted": false,
+  "formal_UI_accepted": false,
+  "public_TLS_accepted": false,
+  "historical_unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

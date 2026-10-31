@@ -8,6 +8,10 @@ use crate::{
     Result,
     workbench_supervision::{Owner, root_for},
 };
+use crate::supervision_record_codec::{OwnerRecord, ReaderJoins};
+use crate::supervision_record_codec::proto::{OwnerPhase, ObservedTruth};
+use crate::supervision_wire as packet;
+use crate::workbench_supervision_capnp::{StatusPhase as Phase, OwnerDisposition as Disposition};
 use std::{
     collections::BTreeMap,
     io::Read,
@@ -204,8 +208,8 @@ pub async fn run() -> Result<u32> {
     let mut owner = Owner::claim(&root, &host, &package)?;
     let job = Job::new()?;
     let initial = owner.record();
-    let token = initial["incarnation"].as_str().unwrap();
-    let event = morrow_native_pipe_win::job::RevocationEvent::create(token)?;
+    let token = crate::workbench_supervision::hex(&initial.identity.as_ref().ok_or("owner identity")?.incarnation);
+    let event = morrow_native_pipe_win::job::RevocationEvent::create(&token)?;
     *revocation.lock().map_err(|_| "revocation binding poison")? = Some(event);
     let mut host_args = vec![
         "--supervised-owner".into(),
@@ -229,9 +233,9 @@ pub async fn run() -> Result<u32> {
     let mut child = job.spawn_suspended_prepared_host(&host, &host_args, &root,
         prepared_environment)?;
     let mut record = owner.record();
-    record["child_pid"] = child.pid().into();
-    record["child_creation_filetime"] = child.creation_filetime()?.into();
-    record["phase"] = "Active".into();
+    record.identity.as_mut().ok_or("owner identity")?.child_pid = child.pid();
+    record.identity.as_mut().ok_or("owner identity")?.child_creation_filetime = child.creation_filetime()?;
+    record.phase = OwnerPhase::Active as i32;
     owner.update(record.clone())?;
     {
         let _start = startup.lock().map_err(|_| "startup fence poison")?;
@@ -294,11 +298,7 @@ pub async fn run() -> Result<u32> {
         }
     });
     let mut output = tokio::io::stdout();
-    record["phase"] = "Running".into();
-    record["owner_phase"] = "Active".into();
-    // Optional capability only. Existing v1/v2 consumers retain their old path.
-    record["abnormal_resource_closure_protocol"] = 1.into();
-    emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
+    emit_status(&mut output, &signal, &record, Phase::Running, Disposition::Active, false, None).await?;
     let mut closing = false;
     let mut fault = false;
     let mut killed = false;
@@ -312,19 +312,16 @@ pub async fn run() -> Result<u32> {
             closing = true;
             gate.store(true, Ordering::Release);
             record = owner.record();
-            record["phase"] = "Closing".into();
-            record["business_gate_revoked"] = true.into();
-            record["gate_closed"] = true.into();
+            record.phase = OwnerPhase::Closing as i32;
+            record.resources.as_mut().ok_or("owner resource facts")?.business_gate_revoked = true;
+            record.resources.as_mut().ok_or("owner resource facts")?.gate_closed = true;
             let update = owner.update(record.clone());
             persisted_closing = update.is_ok();
             if let Some(writer) = stdin.take() {
                 writer.reclaim_bounded(Duration::from_millis(750));
             }
-            record["owner_phase"] = "Retained".into();
-            record["phase"] = "ClosingUnconfirmed".into();
             abnormal_closing.store(true, Ordering::Release);
-            record["abnormal_resource_closure_protocol"] = 1.into();
-            emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
+            emit_status(&mut output, &signal, &record, Phase::ClosingUnconfirmed, Disposition::Retained, false, None).await?;
         }
         if fault
             && !killed
@@ -347,16 +344,12 @@ pub async fn run() -> Result<u32> {
                     job.terminate()?;
                     killed = true;
                     record = owner.record();
-                    record["phase"] = "Closing".into();
-                    record["business_gate_revoked"] = true.into();
-                    record["gate_closed"] = true.into();
+                    record.phase = OwnerPhase::Closing as i32;
+                    record.resources.as_mut().ok_or("owner resource facts")?.business_gate_revoked = true;
+                    record.resources.as_mut().ok_or("owner resource facts")?.gate_closed = true;
                     persisted_closing = owner.update(record.clone()).is_ok();
                     abnormal_closing.store(true, Ordering::Release);
-                    let mut pending = record.clone();
-                    pending["phase"] = "ClosingUnconfirmed".into();
-                    pending["owner_phase"] = "Retained".into();
-                    pending["abnormal_resource_closure_protocol"] = 1.into();
-                    emit(&mut output, &signal, 2, pending.to_string().as_bytes()).await?;
+                    emit_status(&mut output, &signal, &record, Phase::ClosingUnconfirmed, Disposition::Retained, false, None).await?;
                 }
                 if let Some(writer) = stdin.take() {
                     writer.reclaim_bounded(Duration::from_millis(750));
@@ -393,8 +386,8 @@ pub async fn run() -> Result<u32> {
          command=commands.recv(),if !closing || (abnormal_closing.load(Ordering::Acquire) && !quarantine_requested)=>{match command{
           Some(Command::QuarantineClose) if closing && fault && abnormal_closing.load(Ordering::Acquire)=>{quarantine_requested=true;gate.store(true,Ordering::Release);},
           Some(Command::Data(bytes)) if !closing=>{if signal.lost()||gate.load(Ordering::Acquire){continue;}let writer=stdin.as_mut().ok_or("closed host input")?;let mut frame=zeroize::Zeroizing::new(Vec::with_capacity(bytes.len()+4));frame.extend_from_slice(&(bytes.len() as u32).to_le_bytes());frame.extend_from_slice(&bytes);tokio::select!{write=writer.write_all(&frame)=>{if write.is_err(){signal.disconnect();gate.store(true,Ordering::Release);}},_=async{while !signal.lost(){tokio::time::sleep(Duration::from_millis(5)).await;}}=>{}}},
-          Some(Command::Close) if !closing=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record["phase"]="Closing".into();record["gate_closed"]=true.into();persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}
-                    if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}record["owner_phase"]="Closing".into();emit(&mut output,&signal,2,record.to_string().as_bytes()).await?;},
+          Some(Command::Close) if !closing=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record.phase=OwnerPhase::Closing as i32;record.resources.as_mut().ok_or("owner resource facts")?.gate_closed=true;persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}
+                    if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}emit_status(&mut output,&signal,&record,Phase::Closing,Disposition::Closing,false,None).await?;},
           Some(_) | None=>signal.disconnect()
          }},
          _=tokio::time::sleep(Duration::from_millis(5))=>{}
@@ -426,25 +419,25 @@ pub async fn run() -> Result<u32> {
         // SQLite commit never owns the loss clock or delays the hard deadline.
         && signal.admit_normal_completion();
     record = owner.record();
-    record["resource_reclaimed"] = reclaimed.into();
-    record["tree_empty"] = (job.active_processes()? == 0).into();
-    record["child_exit"] = exit.is_some().into();
-    record["stdout_eof"] = outdone.load(Ordering::Acquire).into();
-    record["stderr_eof"] = errdone.load(Ordering::Acquire).into();
-    record["control_reaped"] = proof.closed_and_reaped().into();
-    record["gate_closed"] = true.into();
-    record["child_exit_code"] = exit.as_ref().and_then(|v| v.code()).into();
-    record["business_outcome"] = "Unknown".into();
-    record["normal_shutdown"] = normal.into();
-    record["phase"] = if normal { "Released" } else { "Closing" }.into();
+    let resources = record.resources.as_mut().ok_or("owner resource facts")?;
+    resources.resource_reclaimed = reclaimed;
+    resources.tree_empty = job.active_processes()? == 0;
+    resources.child_exit = exit.is_some();
+    resources.stdout_eof = outdone.load(Ordering::Acquire);
+    resources.stderr_eof = errdone.load(Ordering::Acquire);
+    resources.control_reaped = proof.closed_and_reaped();
+    resources.gate_closed = true;
+    resources.child_exit_code = exit.as_ref().and_then(|v| v.code());
+    resources.normal_shutdown = if normal { ObservedTruth::Yes } else { ObservedTruth::No } as i32;
+    record.phase = if normal { OwnerPhase::Released } else { OwnerPhase::Closing } as i32;
     let mut abnormal_prepared = None;
     let persisted = if !normal && fault && reclaimed && controller_joined
         && quarantine_requested && persisted_closing
     {
-        record["business_gate_revoked"] = true.into();
-        record["abnormal_resource_closure_proof"] = serde_json::json!({
-            "version": 1, "stdout_reader_joined": outjoined,
-            "stderr_reader_joined": errjoined, "controller_reader_joined": controller_joined,
+        record.resources.as_mut().ok_or("owner resource facts")?.business_gate_revoked = true;
+        record.reader_joins = Some(ReaderJoins {
+            version: 1, stdout_reader_joined: outjoined,
+            stderr_reader_joined: errjoined, controller_reader_joined: controller_joined,
         });
         match owner.prepare_abnormal_resource_closure(record.clone()) {
             Ok(prepared) => { abnormal_prepared = Some(prepared.into_extension()); true }
@@ -453,26 +446,21 @@ pub async fn run() -> Result<u32> {
     } else {
         owner.update(record.clone()).is_ok()
     };
-    record["owner_phase"] = if normal && persisted {
-        "Released"
-    } else {
-        "Retained"
-    }
-    .into();
-    record["phase"] = if normal && persisted {
-        "Released"
-    } else {
-        "ClosingUnconfirmed"
-    }
-    .into();
-    record["durable_proof"] = persisted.into();
-    record["normal_shutdown"] = normal.into();
-    if let Some(prepared) = abnormal_prepared {
-        record["abnormal_resource_closure_prepared"] = prepared;
-        record["abnormal_resource_closure_protocol"] = 1.into();
-    }
-    emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
+    emit_status(&mut output, &signal, &record,
+        if normal && persisted { Phase::Released } else { Phase::ClosingUnconfirmed },
+        if normal && persisted { Disposition::Released } else { Disposition::Retained },
+        persisted, abnormal_prepared).await?;
     Ok(if normal && persisted && !signal.lost() { 0 } else { 2 })
+}
+
+async fn emit_status(output:&mut tokio::io::Stdout, signal:&LeaseSignal, record:&OwnerRecord,
+    phase:Phase, disposition:Disposition, durable_proof:bool,
+    prepared:Option<packet::PreparedAbnormal>) -> Result<()> {
+    let bytes=packet::encode(packet::Message::Status(&packet::Status {
+        record:record.clone(), phase, disposition, durable_proof, abnormal_protocol:1, prepared,
+    }))?;
+    emit(output,signal,2,&bytes).await?;
+    Ok(())
 }
 
 /// Reuses this binary as a transient management command; no second supervisor or Job.
@@ -484,18 +472,22 @@ async fn management() -> Result<Option<u32>> {
         return Err("owner management arguments: mode root host package [preview-token --acknowledge-unknown]".into());
     }
     let root = std::path::Path::new(&args[1]); let host = std::path::Path::new(&args[2]); let package = std::path::Path::new(&args[3]);
-    let result = if mode=="--owner-preview" {
+    let result: Result<Vec<u8>> = if mode=="--owner-preview" {
         crate::workbench_supervision::recovery::preview(root,host,package)
+            .and_then(|value| packet::encode(packet::Message::Preview(&value)))
     } else {
         crate::workbench_supervision::recovery::recover(root,host,package,&args[4],true)
+            .and_then(|value| packet::encode(packet::Message::Recovery(&value)))
     };
-    let (code, value) = match result {
-        Ok(value)=>(0,value),
-        Err(error)=>(2,serde_json::json!({"version":1,"eligible":false,"recovered":false,"reason":"unconfirmed_or_invalid","detail":error.to_string(),"business_outcome":"Unknown"})),
+    let (code, bytes) = match result {
+        Ok(bytes)=>(0,bytes),
+        Err(error)=>(2,packet::encode(packet::Message::Failure {
+            reason:"unconfirmed_or_invalid", detail:&error.to_string() })?),
     };
-    let bytes = format!("{}\n", value);
     let mut output = tokio::io::stdout();
-    tokio::time::timeout(Duration::from_secs(2), async { output.write_all(bytes.as_bytes()).await?; output.flush().await }).await??;
+    tokio::time::timeout(Duration::from_secs(2), async {
+        output.write_all(&bytes).await?; output.flush().await
+    }).await??;
     Ok(Some(code))
 }
 

@@ -1,0 +1,428 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_MANAGED_WATCH_NATIVE_GUEST_AND_JOIN_REVIEW",
+  "source_digest": "6bdd867f3d507030a7020243521af535a1d7994dee324f4c65054b03e14ca75b",
+  "original_build_and_runtime": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\result.json",
+    "bytes": 50188,
+    "sha256": "ba1c0ba15764effab032938e67e9c05aca81f1b9e27759d2dd2e38a01f63fdaf"
+  },
+  "source_binding": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\source-binding.json",
+    "bytes": 13859,
+    "sha256": "c70bf653e3a0701bbac9396c32f285ee5b8c3aa6c0afa01e8e4b7adb9185abbd"
+  },
+  "source_copies": {
+    "plugin_runtime/src/lib.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\lib.rs",
+      "bytes": 41489,
+      "sha256": "f821dbdd922375deda90d280507a938f91dec259135bcd525d66cd74c52daa93"
+    },
+    "plugin_runtime/src/continuation.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\continuation.rs",
+      "bytes": 11865,
+      "sha256": "2df7605c66eaa9fd6b01047d2753f2c60040317d5e718441f9099308ab987644"
+    },
+    "plugin_runtime/src/package.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\package.rs",
+      "bytes": 15779,
+      "sha256": "9353eae0c0f19d082364514e5c220954b0bf4183b6be1b77f8152e7598ee89d2"
+    },
+    "plugin_runtime/src/fs_watch_worker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\fs_watch_worker.rs",
+      "bytes": 17829,
+      "sha256": "5174cfee11331e2262ffc84875f9b39f42e5e6ddef9f7e9f61ef67dd4d30c72e"
+    },
+    "plugin_runtime/src/fs_watch_binding.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 7011,
+      "sha256": "f717d79ce8a79e78365602c2544e3e114e2236ffd71620761544c9a94a9897b3"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 20724,
+      "sha256": "5b29f509b4ece9822338b0f49802435a6c333a405d03c0addfbad728496ab252"
+    },
+    "plugin_runtime/tests/fs_watch_worker.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\tests\\fs_watch_worker.rs",
+      "bytes": 17985,
+      "sha256": "abe9b2d9169b1ab5eab39d990cda6c3f063b6228dce928fec3a52dfcea584a84"
+    },
+    "plugin_runtime/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\Cargo.lock",
+      "bytes": 36808,
+      "sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+    },
+    "plugin_runtime/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\source\\plugin_runtime\\Cargo.toml",
+      "bytes": 4514,
+      "sha256": "60618d81718f9e232a4452da9faf52be589cdf2dc21dbab18af2e6a1bc2f2e90"
+    }
+  },
+  "methods": 54,
+  "managed_worker_methods": 13,
+  "original_managed_threads_joined": 12,
+  "known_native_closed_owners_returned": 9,
+  "isolated_unknown_negative_processes_closed": 3,
+  "counts": {
+    "ancestor_handles": 44,
+    "native_handles": 22,
+    "reads": 17,
+    "completions": 17,
+    "observed_frames": 13,
+    "delivered_frames": 10
+  },
+  "actual_native_handles_confirmed_closed": 66,
+  "original_threads_and_processes_closed": true,
+  "cases": [
+    {
+      "case": "bad-echo",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\bad-echo-exit.txt",
+        "bytes": 1177,
+        "sha256": "112892fc7cdb4c0bd85128f6ed23d2ecb4fb2ab0dab1b4b4f2852e30d6984cad"
+      },
+      "unknown_retained_until_isolated_test_process_exit": true,
+      "usage": [
+        6,
+        1,
+        315398
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "c",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\c-exit.txt",
+        "bytes": 1176,
+        "sha256": "6a55d12e28da9a9678d990bc804738000134f97c4fe660cd7ea92772ebb38c3e"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        538406
+      ],
+      "delivered": 2
+    },
+    {
+      "case": "calls",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\calls-exit.txt",
+        "bytes": 1187,
+        "sha256": "c0232699b4563ea702e33ec13bb5af557ec1853847413e941ec952209625f0ee"
+      },
+      "unknown_retained_until_isolated_test_process_exit": true,
+      "usage": [
+        6,
+        1,
+        538374
+      ],
+      "delivered": 1
+    },
+    {
+      "case": "cancel",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\cancel-exit.txt",
+        "bytes": 1115,
+        "sha256": "4cc06089271c3d1594476c5a508f9ec63c2b5ac441ab96bdbc85c858e67c92ed"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        314758
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "clock",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\clock-exit.txt",
+        "bytes": 1164,
+        "sha256": "490bd4658d7dac188220fbcd5a679d97c55d0c641ca2bc5903406b5d1aa654ea"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        314758
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "cpp",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\cpp-exit.txt",
+        "bytes": 1176,
+        "sha256": "477a38f6fcc6b18d6ee15aa010f670dc3d557daa26aa3dbf43803dc6a9cd2875"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        538406
+      ],
+      "delivered": 2
+    },
+    {
+      "case": "echo",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\echo-exit.txt",
+        "bytes": 1176,
+        "sha256": "17cd6abb40b0bfb1f6c0743544d582c1221b2c37a416cb1b6324875fa160fe07"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        538406
+      ],
+      "delivered": 2
+    },
+    {
+      "case": "expiry",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\expiry-exit.txt",
+        "bytes": 1151,
+        "sha256": "1fa10fb23a3199129651a48c0921e27b6695efd8af7761803b1ec93d14572560"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        317958
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "fuel",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\fuel-exit.txt",
+        "bytes": 1174,
+        "sha256": "cfa28f384410e56f6c724c576c10edef1937f4f19e0b8e78b9d08c2a57607490"
+      },
+      "unknown_retained_until_isolated_test_process_exit": true,
+      "usage": [
+        6,
+        1,
+        538374
+      ],
+      "delivered": 1
+    },
+    {
+      "case": "prepare",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\prepare-exit.txt",
+        "bytes": 336,
+        "sha256": "42118b458b6c5c258853088be6abf1fd3235649607e39cd11f2babc5a1f4e990"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        0
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "revoke",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\revoke-exit.txt",
+        "bytes": 1148,
+        "sha256": "9ddd6c1661405f0e9ca61e0e7ef66493ae52537ce3ae9038d7adf7892721e6c5"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        314758
+      ],
+      "delivered": 0
+    },
+    {
+      "case": "rust",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\rust-exit.txt",
+        "bytes": 1176,
+        "sha256": "d3799efb2035981e56ce78e98708d9ca68a212ec3634a1c46e1479c631976a05"
+      },
+      "unknown_retained_until_isolated_test_process_exit": false,
+      "usage": [
+        0,
+        0,
+        538406
+      ],
+      "delivered": 2
+    }
+  ],
+  "reference_decodes": [
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\c-frame1.capnp",
+        "bytes": 168,
+        "sha256": "501bedd4592a5b548caeeef499ba79a01348052cfdeefe9ca1f82c6077f0fd1c"
+      },
+      "sequence": 1,
+      "fuel_spent": 336397,
+      "fuel_remaining": 19663603,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\c-frame1.decoded",
+        "bytes": 394,
+        "sha256": "0ad088f5323167ffa2bfbbad471ed011e2db7b582bc6d8d76206392aa9ce9d00"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\c-frame2.capnp",
+        "bytes": 160,
+        "sha256": "2435f061eab1fca5e9caec9a876478e5067b2f1680a0774e7852499c4fb192a2"
+      },
+      "sequence": 2,
+      "fuel_spent": 22254,
+      "fuel_remaining": 19641349,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\c-frame2.decoded",
+        "bytes": 377,
+        "sha256": "0f54d8f2d1e12d1a9a37cba7c0e2f9520e31fb78551ec525bf219ec1e8d8fd87"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\cpp-frame1.capnp",
+        "bytes": 168,
+        "sha256": "5ab160bff3773ea89c8490f8dfb6e75c6fe30213f98b90639506ecd92e6e2990"
+      },
+      "sequence": 1,
+      "fuel_spent": 348201,
+      "fuel_remaining": 19651799,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\cpp-frame1.decoded",
+        "bytes": 405,
+        "sha256": "0fa88a8baa0e4d5d71ec0d7a01ccf98040af4d5fb689ab96253f608f2ff640f5"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\cpp-frame2.capnp",
+        "bytes": 160,
+        "sha256": "7071622b89d61bcd502092f2fbf5eab8db632dadeb70335ef5434b0066814fe3"
+      },
+      "sequence": 2,
+      "fuel_spent": 25656,
+      "fuel_remaining": 19626143,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\cpp-frame2.decoded",
+        "bytes": 388,
+        "sha256": "39aa8190c7e800ea9796b7b48346baa77ebc6b701f857ad9231ae0163afaccf0"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\echo-frame1.capnp",
+        "bytes": 168,
+        "sha256": "9a948ac698c7eab5140cd4bf56d663eb19231b1975d87908269410e0508c3298"
+      },
+      "sequence": 1,
+      "fuel_spent": 144,
+      "fuel_remaining": 19999856,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\echo-frame1.decoded",
+        "bytes": 376,
+        "sha256": "f56b3182a710b34d174d70043a7c5e2a607d4dfd09f2ae57b7bcd669f18d2939"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\echo-frame2.capnp",
+        "bytes": 160,
+        "sha256": "33be71ae37dd10b50603f79d33f63a1707afa25e94099fa490b8308397b658af"
+      },
+      "sequence": 2,
+      "fuel_spent": 4,
+      "fuel_remaining": 19999852,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\echo-frame2.decoded",
+        "bytes": 359,
+        "sha256": "6fae7922017ef1f13c689fc7ca2dd87e44c4f27401fa441fa6a1262d96a1a64d"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\rust-frame1.capnp",
+        "bytes": 168,
+        "sha256": "b96abc64c304fd3db15ba9a04d75ec949c3797befd7adf9577d5bde34cff0c0b"
+      },
+      "sequence": 1,
+      "fuel_spent": 307055,
+      "fuel_remaining": 19692945,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\rust-frame1.decoded",
+        "bytes": 395,
+        "sha256": "e68d22f0b9faa737a34915227fec5ad9b80af62f1adb7163b18d9f41ce1cdefd"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-managed-worker-1497\\worker-evidence\\rust-frame2.capnp",
+        "bytes": 160,
+        "sha256": "3525779de3428cc689fec2ce024b00cf07828283429c15b09ac3769bc54c5be6"
+      },
+      "sequence": 2,
+      "fuel_spent": 19992,
+      "fuel_remaining": 19672953,
+      "task_imports": 2,
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-worker-review-1498\\rust-frame2.decoded",
+        "bytes": 378,
+        "sha256": "6b31334ae814df36f48be090bb25bb77fcf05990bc7529666fc1edee87713aaf"
+      },
+      "original_process_returned": true,
+      "exit_code": 0
+    }
+  ],
+  "reference_decoder": {
+    "path": "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "bytes": 3926542,
+    "sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34"
+  },
+  "actual_SDK_languages": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "no_per_frame_fuel_or_task_import_refill": true,
+  "default_task_profile_regressions_unchanged": true,
+  "original_frozen_inputs_unchanged": 57,
+  "protected_picker_selection": false,
+  "production_UI": false,
+  "actual_native_overflow": false,
+  "actual_native_close_failure": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

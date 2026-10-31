@@ -1,0 +1,24 @@
+{
+  "status": "TEST_ONLY_REQUIRED_RETENTION_RESULT_RECORDED",
+  "prior_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1476\\failure.json",
+    "bytes": 808,
+    "sha256": "204de7a2a2b584007bcdf0545f55dd1e91b3cf62a8127268e884256dc02ff4e5"
+  },
+  "prior_test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-test-correction-1478\\before.rs",
+    "bytes": 24207,
+    "sha256": "f46ff82dad0e21d0ba2c85276cd0723d4bd25dd8935c886cc0193cb52eb6727d"
+  },
+  "new_test": {
+    "path": "C:\\ms1020\\plugin_runtime\\tests\\fs_watch_native_owner.rs",
+    "bytes": 24489,
+    "sha256": "5c5000d8fe8ec30ee18eae5bdb2743a1aebd05a56ca8d07cf82ba2537a494bf2"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "old_source_digest": "5c59d746648559b11b4924fa91716de4eb6052554cad7d1376c4d23137dacc22",
+  "new_source_digest": "cb8be9e08dd27dc4d79959709df97191a19e21b2047cea7375f11c7df0a73388",
+  "native_operations_in_failed_run": 0,
+  "original_compiler_closed": true,
+  "retry_uses_new_target_and_fixture_identity": true
+}

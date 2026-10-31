@@ -1,0 +1,24 @@
+{
+  "status": "FAILED_CLOSED_NO_RETRY",
+  "type": "AssertionError",
+  "error": "build",
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1476\\build.stdout",
+        "bytes": 192157,
+        "sha256": "ee3bfccbb5ea50cc6fbdb4f2e5671f7e305e40cbe3cc125262276d84bff00d4a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-owner-1476\\build.stderr",
+        "bytes": 5273,
+        "sha256": "29303da10c1bf10b483becaec5e8d418ad5e494c0ffbac9b83c3d31f38927140"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

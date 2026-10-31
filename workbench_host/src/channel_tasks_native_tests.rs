@@ -95,6 +95,7 @@ impl Fixture {
         Self {
             app: Workbench {
             upload_plans: Default::default(),
+            history_deliveries: Default::default(),
                 channel_tasks: Default::default(),
                 http_tasks: Default::default(),
                 state: crate::io_tasks::StateSlot::new(owner),

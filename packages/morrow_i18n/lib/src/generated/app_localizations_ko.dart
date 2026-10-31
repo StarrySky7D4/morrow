@@ -3362,6 +3362,84 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginsViewFailed => '플러그인 보기를 열지 못했습니다';
 
   @override
+  String get pluginsWatchAcknowledged => '이번 관찰의 종료를 확인했습니다.';
+
+  @override
+  String get pluginsWatchAllow => '이 플러그인이 디렉터리 변경을 관찰하도록 허용';
+
+  @override
+  String get pluginsWatchAllowNotice => '파일 목록 조회도 허용하고 실행할 때마다 폴더를 확인하세요.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return '플러그인 한도: 기록 $frames개, $bytes바이트, $ms밀리초.';
+  }
+
+  @override
+  String get pluginsWatchBytes => '전달 데이터 한도(바이트)';
+
+  @override
+  String get pluginsWatchCancelled => '이번 관찰을 취소했습니다.';
+
+  @override
+  String get pluginsWatchClosed => '디렉터리를 해제하고 정리를 마쳤습니다.';
+
+  @override
+  String get pluginsWatchExpired => '이번 관찰이 시간 한도에 도달했습니다.';
+
+  @override
+  String get pluginsWatchFormError =>
+      '전체 폴더 경로를 확인하세요. 모든 한도는 양수이고 플러그인 한도 이내여야 합니다.';
+
+  @override
+  String get pluginsWatchFrames => '전달할 최대 기록 수';
+
+  @override
+  String get pluginsWatchIdle => '아직 디렉터리 관찰을 시작하지 않았습니다.';
+
+  @override
+  String get pluginsWatchIntro =>
+      '이번 실행에서 확인한 폴더만 관찰합니다. 시간, 기록 수 또는 데이터 한도에 도달하면 중지합니다. 시작할 때 Windows 창에서 폴더를 확인합니다.';
+
+  @override
+  String get pluginsWatchNew => '새 관찰 준비';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      '디렉터리 관찰과 파일 목록 조회가 모두 허용된 활성 플러그인이 없습니다.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      '디렉터리 관찰의 종료가 아직 확인되지 않았습니다. 디렉터리 변경 패널에서 원래 작업을 확인하세요.';
+
+  @override
+  String get pluginsWatchPath => '관찰할 폴더(전체 경로)';
+
+  @override
+  String get pluginsWatchReady => '관찰이 끝났습니다. 결과를 한 번 읽을 수 있습니다.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return '플러그인이 받은 기록: $frames개, 집계된 데이터: $bytes바이트.';
+  }
+
+  @override
+  String get pluginsWatchReviewed => '결과를 읽었습니다. 검토한 후 종료를 확인하세요.';
+
+  @override
+  String get pluginsWatchRunning => '관찰 중입니다. 상태를 새로 고치거나 취소를 요청하세요.';
+
+  @override
+  String get pluginsWatchStart => '폴더 확인 후 관찰 시작';
+
+  @override
+  String get pluginsWatchTitle => '디렉터리 변경';
+
+  @override
+  String get pluginsWatchUnknown =>
+      '이 작업의 결과를 확인할 수 없습니다. 기록은 유지되며 자동 재시도나 새 작업 시작은 하지 않습니다.';
+
+  @override
   String get pluginsWorkbench => '작업 공간 플러그인';
 
   @override

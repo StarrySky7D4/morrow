@@ -14,6 +14,7 @@ rustls-pki-types = "=1.15.1"
 zeroize = "=1.9.0"
 semver = "=1.0.28"
 prost = "=0.14.4"
+lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
 morrow-core = {path = "../core"}
 morrow-plugin-runtime = {path = "../plugin_runtime"}
 morrow-workbench-plugin = {path = "../plugins/workbench", default-features = false}
@@ -22,6 +23,7 @@ sha2 = "=0.10.9"
 serde_json = "=1.0.151"
 url = "=2.5.8"
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+morrow-blob-upload-history-v1 = {path = "../extensions/blob-upload-history-v1"}
 morrow-blob-upload-proposal-v1 = {path = "../extensions/blob-upload-proposal-v1"}
 morrow-blob-upload-request-v1 = {path = "../extensions/blob-upload-request-v1"}
 morrow-blob-transfer-v1 = {path = "../extensions/blob-transfer-v1"}
@@ -38,6 +40,7 @@ js-sys = "=0.3.105"
 morrow-core = {path = "../core", features = ["web-storage"]}
 morrow-plugin-runtime = {path = "../plugin_runtime", features = ["web-packages"]}
 [build-dependencies]
+sha2 = "=0.10.9"
 prost-build = "=0.14.4"
 protoc-bin-vendored = "=3.2.0"
 capnpc = "=0.24.0"

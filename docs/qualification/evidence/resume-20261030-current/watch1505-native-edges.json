@@ -1,0 +1,329 @@
+{
+  "status": "PASS_SCOPED_REAL_WINDOWS_OVERFLOW_AND_EXPECTED_NATIVE_CLOSE_REFUSAL",
+  "scenarios": [
+    {
+      "scenario": "events",
+      "pid": 24212,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "reads": 5,
+        "completions": 5,
+        "frames": 5,
+        "cancel_called": 0,
+        "delivery_pending": 0,
+        "kind_mask": 62,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\events\\evidence\\frame-001.capnp",
+          "bytes": 160,
+          "sha256": "639b981ed749d2d80b10ae79a7f1a284ed2e45a73703af020cfc671bc75f4263"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\events\\evidence\\frame-002.capnp",
+          "bytes": 160,
+          "sha256": "05268419aa2e61e7e0e39f11a9a07ab7a605b4439de2ee860ed8282d1ba55ef6"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\events\\evidence\\frame-003.capnp",
+          "bytes": 160,
+          "sha256": "018b5d9de3487a64a97f05c2933ef8ba5c74bb7821fbf5a451169f83fd2ee3a2"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\events\\evidence\\frame-004.capnp",
+          "bytes": 208,
+          "sha256": "75e839e96aa8b94d790036cd65663a9cb15a4efc007ee1aaec0a224a4d4ae1b8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\events\\evidence\\frame-005.capnp",
+          "bytes": 176,
+          "sha256": "48d081eede865a8c25531faa97cca691230027ced8dd0c212726034ef1a87cb0"
+        }
+      ],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\events.stdout",
+        "bytes": 499,
+        "sha256": "0b9383f4a6414bd0d7f2828f0982995596dcd8115711e948f4dee800b4637a80"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\events.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "quiet",
+      "pid": 9468,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "reads": 1,
+        "completions": 1,
+        "frames": 0,
+        "cancel_called": 1,
+        "delivery_pending": 0,
+        "kind_mask": 0,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.094,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\quiet.stdout",
+        "bytes": 496,
+        "sha256": "cc1a3ea57a4e20d6402466a1f346a1ac267f978188f7704d536395422664e8e9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\quiet.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "stop",
+      "pid": 24780,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "reads": 1,
+        "completions": 1,
+        "frames": 0,
+        "cancel_called": 1,
+        "delivery_pending": 0,
+        "kind_mask": 0,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\stop.stdout",
+        "bytes": 495,
+        "sha256": "b38443a387e4246c315fd134d3d30a3bc45e2a0ec3f30f2168923349ca35393b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\stop.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "unacknowledged",
+      "pid": 18524,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "reads": 1,
+        "completions": 1,
+        "frames": 1,
+        "cancel_called": 0,
+        "delivery_pending": 1,
+        "kind_mask": 2,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\unacknowledged\\evidence\\frame-001.capnp",
+          "bytes": 168,
+          "sha256": "33d55cc326796470842ec8b275be4b7b94cc2024c46b726c91532690a26ae8c5"
+        }
+      ],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\unacknowledged.stdout",
+        "bytes": 505,
+        "sha256": "22649333e3f1b079aac2cd420f28d9777c5c23200ada6a6fdca93241ae989d6a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\unacknowledged.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "reject-file",
+      "pid": 4720,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 1,
+        "close_calls": 1,
+        "confirmed_closed": 1,
+        "reads": 0,
+        "completions": 0,
+        "frames": 0,
+        "cancel_called": 0,
+        "delivery_pending": 0,
+        "kind_mask": 0,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\reject-file.stdout",
+        "bytes": 515,
+        "sha256": "443be2ac4a020158dd00097d40e74fce32f629601f44dae31833a9a78bd3e253"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\reject-file.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "reject-sync",
+      "pid": 5456,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 1,
+        "close_calls": 1,
+        "confirmed_closed": 1,
+        "reads": 0,
+        "completions": 0,
+        "frames": 0,
+        "cancel_called": 0,
+        "delivery_pending": 0,
+        "kind_mask": 0,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\reject-sync.stdout",
+        "bytes": 523,
+        "sha256": "e43e7db38106dde86225b1b8d2a8150f2348372af481e39ea37591aeb88e13a0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\reject-sync.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "actual-overflow",
+      "pid": 25524,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 2,
+        "confirmed_closed": 2,
+        "reads": 2,
+        "completions": 2,
+        "frames": 2,
+        "cancel_called": 0,
+        "delivery_pending": 0,
+        "kind_mask": 2,
+        "discarded_completion_bytes": 0,
+        "original_source_closed": 1
+      },
+      "payloads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\actual-overflow\\evidence\\frame-001.capnp",
+          "bytes": 240,
+          "sha256": "13e1b632caf57226d0ca28c884bd691c5e8c61a98b4610aa202d34440ddf22fb"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\cases\\actual-overflow\\evidence\\frame-002.capnp",
+          "bytes": 128,
+          "sha256": "71c7f13a5e3e7bedbc3cd499208dc691816bf0895f97a21caaf298c00ec62159"
+        }
+      ],
+      "expected_negative_native_retirement_unproved": false,
+      "original_process_returned": true,
+      "seconds": 0.469,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\actual-overflow.stdout",
+        "bytes": 585,
+        "sha256": "ede54822987f6e294f4930ae036d086b885c877f8ad1dc42d942cb7e8e6af421"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\actual-overflow.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scenario": "actual-close-refusal",
+      "pid": 18440,
+      "exit_code": 0,
+      "passed": true,
+      "facts": {
+        "owned": 2,
+        "close_calls": 1,
+        "confirmed_closed": 0,
+        "reads": 1,
+        "completions": 1,
+        "actual_close_error": 6,
+        "native_retirement": false,
+        "automatic_retry": 0,
+        "whole_native_state_retained_until_process_exit": true
+      },
+      "payloads": [],
+      "expected_negative_native_retirement_unproved": true,
+      "original_process_returned": true,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\actual-close-refusal.stdout",
+        "bytes": 685,
+        "sha256": "30d88e2a95b4300f54ed18d6c377ca72146818d6235124b35851b9595c5a5e42"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edges-runtime-1505\\actual-close-refusal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "failure": null,
+  "canonical_source_digest": "f76a8d020f5937a659b5ce8fbc6caee55dacac24bb626ac4f28ccd7df13e1c05",
+  "all_original_processes_returned": true,
+  "actual_native_overflow": true,
+  "actual_native_close_refusal": true,
+  "close_refusal_is_not_native_retirement": true,
+  "refusal_automatic_retry": 0,
+  "production_library_source_changed_by_case1503": true,
+  "production_library_unchanged_during_runtime": true,
+  "managed_worker_gap_or_native_close_failure": false,
+  "product_UI": false,
+  "account_and_policy_mutations": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

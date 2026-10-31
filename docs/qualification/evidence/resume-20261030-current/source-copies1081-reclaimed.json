@@ -1,0 +1,37 @@
+{
+    "source_code_bytes_discarded":  0,
+    "build_copy_leaves_removed":  320834,
+    "observed_free_delta":  -3913297920,
+    "logical_bytes_represented":  4801859813,
+    "VM_calls":  0,
+    "restoration_instructions":  "Extract each top-level m597s, m632s, m682s, m701s, m767s, m803s directory to D:/build_cache only when absent; verify every archived file against plan.json. Exact original metadata is retained in that manifest. Do not replay any old qualification case.",
+    "canonical_source_files_removed":  0,
+    "historical_runtime_replay_authorized":  false,
+    "free_before":  7351689216,
+    "old_owner_contacts":  0,
+    "VM_archives_removed":  0,
+    "concurrent_space_changes_not_attributed":  true,
+    "free_after":  3438391296,
+    "source_accepted":  false,
+    "original_executables_removed":  0,
+    "archive":  {
+                    "path":  "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1081\\retired-compiler-source-copies.zip",
+                    "bytes":  1211347529,
+                    "sha256":  "5f61b38b39f38e37897872eaef95dfcc37a7567ec9b65aba4ba97d08f58491ee"
+                },
+    "retired_roots":  [
+                          "D:\\build_cache\\m597s",
+                          "D:\\build_cache\\m632s",
+                          "D:\\build_cache\\m682s",
+                          "D:\\build_cache\\m701s",
+                          "D:\\build_cache\\m767s",
+                          "D:\\build_cache\\m803s"
+                      ],
+    "plan":  {
+                 "path":  "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1081\\plan.json",
+                 "bytes":  189030724,
+                 "sha256":  "5d8b5c175fe8b96d2320aeca5ac1a30ba3f7cf30b84197e4545e11869ecc332c"
+             },
+    "status":  "PASS_RETIRED_COMPILER_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_ARCHIVE",
+    "release_eligible":  false
+}

@@ -1,0 +1,12 @@
+
+running 7 tests
+test tests::bounded_framing_rejects_every_truncation_and_trailing_data ... ok
+test tests::export_native_task_vectors ... ignored, Explicit vector export, not qualification credit
+test tests::ffi_refusal_preserves_existing_owner_and_view ... ok
+test tests::ffi_rejects_null_unaligned_overlapping_and_overflowing_ranges ... ok
+test tests::original_task_id_is_independent_of_packet_claims ... ok
+test tests::task_contract_kind_and_recipient_declarations_are_checked ... ok
+test tests::unaligned_task_bytes_are_supported_without_changing_correlation ... ok
+
+test result: ok. 6 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

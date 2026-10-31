@@ -1,0 +1,46 @@
+{
+  "status": "ORIGINAL_PICKER_STOP_CAUSE_RETAINED_READY_NOT_RUN",
+  "old_source_digest": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
+  "new_source_digest": "8700b50ce311b2265c72a5831f5de2028532089b6cf27fb6a6252da69feb7bd3",
+  "changed_files": {
+    "plugin_runtime/src/fs_watch_worker.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_worker.rs",
+      "bytes": 20940,
+      "sha256": "55f523af86f021faebb6cb34fc22d0db0c187eda59c028239cea7e862f9ab3ed"
+    },
+    "workbench_host/tests/fs_watch_protected.rs": {
+      "path": "C:\\ms1020\\workbench_host\\tests\\fs_watch_protected.rs",
+      "bytes": 12607,
+      "sha256": "4fb0871bc93e622a80d57b2ea4e9d683671886d09cd7df48ccd65bef2f4edc42"
+    }
+  },
+  "original_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1577\\failure.json",
+    "bytes": 4046,
+    "sha256": "c513145118818c57fc7f02e3ce7c2f5f583a399e2cb96823f7d68dff6eed0b3e"
+  },
+  "failed_expiry_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-expiry-review-1590\\result.json",
+    "bytes": 6633,
+    "sha256": "2efcb009b716db1125893f97243680a7711ba0180e8335b7642c4fa7c3d2efb3"
+  },
+  "independent_cpp_prefill": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-visible-1591\\result.json",
+    "bytes": 2120,
+    "sha256": "6e12f50342212b80dedb7fe3c02ac0e9876046e6464ab38b12ef4236e5cb3a22"
+  },
+  "all_other_source_bytes_unchanged": true,
+  "rustfmt": {
+    "pid": 15616,
+    "exit_code": 0,
+    "original_process_returned": true
+  },
+  "native_confirmation_always_required": true,
+  "window_not_extended": true,
+  "first_original_stop_not_resampled": true,
+  "unrelated_native_failure_not_reclassified": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

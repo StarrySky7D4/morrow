@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morrow · Windows 项目进度</title><style>
+:root{font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif;color:#192b3e;background:#f2f5f9}*{box-sizing:border-box}body{margin:0}main{max-width:1160px;margin:auto;padding:48px 26px 72px}a{color:#175daa}h1{font-size:38px;line-height:1.25;margin:12px 0}h2{font-size:24px;margin:0 0 16px}h3{font-size:18px}p{margin:10px 0}nav{display:flex;gap:18px;flex-wrap:wrap;margin:24px 0}.eyebrow{font-size:13px;letter-spacing:.13em;color:#4e677e}.badge{display:inline-block;border-radius:25px;padding:5px 12px;background:#e5efff;color:#215897}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}.card,section{background:white;border:1px solid #dce4ee;border-radius:16px;padding:24px;box-shadow:0 4px 18px #19324f05}.card strong{display:block;font-size:30px;line-height:1.3}.muted{color:#607489;font-size:14px}section{margin-top:22px;scroll-margin-top:20px}.pass{color:#137449}.open{color:#946010}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #e6ecf2;vertical-align:top}th{font-size:14px;color:#5d7288}code{overflow-wrap:anywhere;font-size:13px}.scroll{overflow-x:auto}.note{background:#fff6e4;border-left:4px solid #d9a340;padding:12px 16px;margin:20px 0}details{margin:18px 0}summary{cursor:pointer;font-weight:600}ul{padding-left:22px}li{margin:8px 0}footer{margin-top:28px;color:#607489;font-size:13px}@media(max-width:760px){.cards{grid-template-columns:1fr 1fr}main{padding:28px 16px}h1{font-size:29px}.card,section{padding:18px}table{min-width:580px}}@media(prefers-color-scheme:dark){:root{color:#e3edf7;background:#101a27}.card,section{background:#172535;border-color:#2c4054}a{color:#87bbff}.muted,th,footer{color:#a0b2c7}td,th{border-color:#2c4054}.note{background:#30291d}.pass{color:#81d9b4}.open{color:#e5bc68}.eyebrow{color:#a0b2c7}.badge{background:#233d59;color:#c0dcff}}
+</style></head><body><main>
+<div class="eyebrow">MORROW / WINDOWS QUALIFICATION</div>
+<h1>目录监听已接通后台与三语言插件，<br>继续完善正式入口和恢复边界</h1>
+<span class="badge">任务进行中 · 检查点 1499</span>
+<p>Windows 正常 47 步／九组门槛、17 轮实际拒绝和真实登录拒绝均完成，原进程与临时权限正常收尾。Rust、C、C++ 的 27 个默认独立示例包均已实际执行；完整故障矩阵、正式产品链路和 SDK 冻结继续推进。</p>
+<nav><a href="#progress">最新结果</a><a href="#p2">Windows P2</a><a href="#sdk">SDK 门槛</a><a href="#environment">环境与磁盘</a><a href="#next">剩余工作</a></nav>
+<div class="cards">
+<div class="card"><strong>47 步 / 9 组</strong><span>已验收的正常流程</span><div class="muted">case1365 · 原进程已结束</div></div>
+<div class="card"><strong>17 轮</strong><span>共享原父进程拒绝通过</span><div class="muted">case1385 · 另有登录拒绝1402</div></div>
+<div class="card"><strong>27 个包</strong><span>默认独立 SDK 示例已执行</span><div class="muted">三种语言 · 原包未改写</div></div>
+<div class="card"><strong>仍开放</strong><span>完整 P2 / SDK / 发布</span><div class="muted">专项通过不折算总体完成率</div></div></div>
+<section id="progress"><h2>最新确认的进度</h2><p>目录监听已接通原受管理工作线程和实际插件执行。本轮全新构建通过 54 项检查：13 项新增线程与交付场景，以及 41 项原生、批准、IO 和任务协议回归。代码检查零诊断。</p><p>Rust、C、C++ 三种 SDK 插件分别收到两批真实目录事件；加上原任务回显用例，共 8 帧 Cap’n Proto 经独立参照解码。连续序号、原始 UTF-16 文件名和独立观察身份均核对一致。整个窗口共用执行额度，每批事件不会重新获得燃料或调用次数。</p><p>12 个原工作线程完成实际 join，66 个实际打开的观察及路径句柄确认关闭。3 个隔离负向用例验证错误回显及预算耗尽后保留原 owner、不重试；相应测试进程均已结束。原生关闭、线程退出、连接断开和存储维护分别核对。</p><p><a href="../../docs/qualification/evidence/resume-20261030-current/continuation1499.json">完整范围与证据</a> · <a href="../../docs/qualification/evidence/resume-20261030-current/watch1498-managed-worker-review.json">工作线程与插件执行独立复核1498</a> · <a href="history-checkpoint-1489.html">此前检查点原报告</a></p><div class="note">本轮结果绑定源码 <code>6bdd867f3d507030a7020243521af535a1d7994dee324f4c65054b03e14ca75b</code>，使用受控临时目录和真实 SDK 程序。正式选择器与批准界面、原生溢出和关闭失败、恢复边界仍待完成；不支持直接监听卷根。既有 P2/P3 结果保持原源码身份，完整 P2 / P3 / SDK26 / G04 / SDK_FREEZE 及发布门槛仍开放。</div></section>
+<section id="p2"><h2>Windows P2</h2><div class="scroll"><table><thead><tr><th>范围</th><th>本轮结果</th><th>证据</th></tr></thead><tbody>
+<tr><td>正常派生、业务与关闭</td><td class="pass">47 步／九组通过；case 与策略均正常收尾</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/case1365-original47-nine.json">case1365</a></td></tr>
+<tr><td>同一原父进程连续拒绝</td><td class="pass">17 次真实原生拒绝；无原会话残留</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/case1385-shared17.json">case1385</a></td></tr>
+<tr><td>真实登录拒绝</td><td class="pass">拒绝路径、原资源退役和策略恢复通过</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/case1402-logon-refusal.json">case1402</a></td></tr>
+<tr><td>当前源码原生与 SDK 资源守卫</td><td class="pass">153 个指定方法通过；实际关闭 34 个只读令牌，7 个 Unknown 反例继续占用</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/p2-current-method-review1416.json">独立复核1416</a></td></tr>
+<tr><td>完整故障矩阵与最终候选</td><td class="open">开放；历史故障证据保留原源码和 Unknown</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/p2-current-matrix1413.json">十一组逐项核对</a></td></tr>
+</tbody></table></div><p>历史 case736 等失败或 Unknown 不被改写、不重跑。更早版本存在产品源文件差异，需逐项核对故障覆盖，不能直接继承通过结论。</p></section>
+<section id="sdk"><h2>SDK 验收</h2><div class="scroll"><table><thead><tr><th>范围</th><th>实际证据</th><th>边界</th></tr></thead><tbody>
+<tr><td>27 个默认独立项目</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/sdk1397-default-27-review.json">三语言全部原始归档实际执行</a></td><td>独立 SDK 示例；不是 SDK26 总体资格</td></tr>
+<tr><td>6 个持续服务示例</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/sdk1405-optin-review.json">新建并显式声明权限，8 项方法通过</a></td><td>与默认包分开；本机 TCP、合成凭据</td></tr>
+<tr><td>项目内回归测试</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/sdk1409-canonical-runtime.json">六个文件、五个程序、17 项方法通过</a></td><td>15 个原始包复核；依赖缓存明确复用</td></tr>
+<tr><td>冻结兼容输入</td><td>57 份原输入和 27 个原始示例归档保持不变</td><td>不重编或重包旧原件以适应测试</td></tr>
+<tr><td>目录监听后台与插件执行</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/watch1498-managed-worker-review.json">54 项检查；12 个原线程退出；66 个观察及路径句柄关闭</a></td><td>三语言真实事件交付、累计预算及已知关闭完成；正式选择器、产品批准与完整恢复继续推进</td></tr><tr><td>既有三语言监听组件</td><td><a href="../../docs/qualification/evidence/resume-20261030-current/watch1466-canonical-review.json">此前协议、原生生产者及 Rust/C/C++ 消费者验证保留</a></td><td>1466保持原源码与场景范围；本轮1498另行验证三语言受管理交付</td></tr>
+<tr><td>正式界面与完整能力</td><td class="open">SDK26 / G04 / SDK_FREEZE 仍开放</td><td>IO HTTP 仅编解码；有限目录通道不是文件系统目录；本轮无生产 TLS 或正式 UI 资格</td></tr>
+</tbody></table></div><p>原测试将未声明持续运行权限的默认服务包送入续期路径，真实返回拒绝。该失败保留；默认包现在验证普通运行与拒绝边界，续期另用新建的显式授权示例验证。产品权限规则未放宽。</p></section>
+<section id="environment"><h2>环境与磁盘</h2><p><b>4 台注册 VM；VM055 已保存。</b>构建、测试及临时目录保持在 <code>D:\build_cache</code>。“新建虚拟机”磁盘保留，历史 Unknown 现场不作为干净环境重用。</p>
+<div class="scroll"><table><thead><tr><th>虚拟机</th><th>状态</th></tr></thead><tbody><tr><td>Morrow Windows Acceptance 20261023 029</td><td>Saved</td></tr><tr><td>Morrow Windows Acceptance 20261023 030</td><td>Saved</td></tr><tr><td>Windows 11 开发环境</td><td>Running</td></tr><tr><td>Morrow Windows Acceptance 20261031 055</td><td>Saved</td></tr></tbody></table></div>
+<p>空间采样：C 53.41 GiB · D 3.50 GiB。时间：<code>2026-10-31T17:32:23.843114+00:00</code>。</p>
+<p class="muted">本轮1491与1496分别回收167个、1449个已结束构建的原编译库文件；逻辑大小分别296,706,834字节与2,662,814,540字节。保留文件及原程序摘要均一致，原始失败记录保留，未删除虚拟机或磁盘。空闲空间含并发变化，不等同于独占清理收益。安装激活状态未验收。</p></section>
+<section id="next"><h2>剩余工作</h2><ol>
+<li>根据当前产品源码核对并补齐 P2 故障、并发代次与资源退役矩阵，保留原错误和 Unknown 占用。</li>
+<li>推进监听的正式选择器与批准界面、事件缺口和关闭失败恢复；继续 Windows P2/P3、重命名、网络账户与流、异步依赖等完整能力。</li>
+<li>统一最终候选源码、产物、环境和实际证据后，再判断 SDK 冻结、源码整体验收与发布资格。</li>
+</ol><p>本轮未提交、推送或发布。<a href="../../docs/qualification/evidence/resume-20261030-current/continuation1499.json">机器可读检查点</a> · <a href="report-data.json">报告数据</a> · <a href="../../docs/qualification/RESUMED_WINDOWS_20261030.md">恢复交接</a></p></section>
+<footer>报告核对结构、链接与证据摘要；本轮未做浏览器视觉复核。所有专项结果保留实际范围，source_accepted=false，release_eligible=false。</footer>
+</main></body></html>

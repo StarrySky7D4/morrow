@@ -486,6 +486,31 @@
       }
     }
   },
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      }
+    }
+  },
   "@recoverySwitchUnconfirmed": {
     "placeholders": {
       "path": {
@@ -2006,6 +2031,29 @@
   "pluginsUseText": "Use text instead",
   "pluginsUseTransform": "Use transform",
   "pluginsViewFailed": "The plugin view could not be opened",
+  "pluginsWatchAcknowledged": "This observation is confirmed complete.",
+  "pluginsWatchAllow": "Allow this plugin to observe directory changes",
+  "pluginsWatchAllowNotice": "Also approve List files, then confirm the folder for each run.",
+  "pluginsWatchBounds": "Plugin limits: {frames} records, {bytes} bytes, {ms} milliseconds.",
+  "pluginsWatchBytes": "Delivery data limit (bytes)",
+  "pluginsWatchCancelled": "This observation was cancelled.",
+  "pluginsWatchClosed": "The directory has been released and cleanup is complete.",
+  "pluginsWatchExpired": "This observation reached its time limit.",
+  "pluginsWatchFormError": "Check the full folder path. Every limit must be positive and within the plugin limits.",
+  "pluginsWatchFrames": "Maximum records delivered",
+  "pluginsWatchIdle": "No directory observation has started.",
+  "pluginsWatchIntro": "Observe only the folder confirmed for this run. Stop at the time, record or data limit. Windows asks you to confirm the folder when starting.",
+  "pluginsWatchNew": "Prepare a new observation",
+  "pluginsWatchNoPlugins": "No enabled plugin has both directory observation and List files approval.",
+  "pluginsWatchOtherPanel": "The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel.",
+  "pluginsWatchPath": "Folder to observe (full path)",
+  "pluginsWatchReady": "Observation has ended. Read its result once.",
+  "pluginsWatchRecords": "Records received by the plugin: {frames}; data charged: {bytes} bytes.",
+  "pluginsWatchReviewed": "Result read. Review it before confirming completion.",
+  "pluginsWatchRunning": "This observation is running. Refresh its status or request cancellation.",
+  "pluginsWatchStart": "Confirm folder and start observing",
+  "pluginsWatchTitle": "Directory changes",
+  "pluginsWatchUnknown": "This operation could not be confirmed. Its record is retained. It will not retry or start a new task automatically.",
   "pluginsWorkbench": "Workbench plugin",
   "pluginsWorkbenchReadOnly": "The plugin is allowed, but this workbench is read-only. Resolve the library or plugin issue, then refresh its status.",
   "recoveryAllFiles": "All files",

@@ -17,12 +17,18 @@ mod blob_upload;
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "blob_plan_protocol.rs"]
 mod blob_plan;
+#[cfg(not(target_arch = "wasm32"))]
+#[path = "blob_history_delivery_protocol.rs"]
+mod blob_history_delivery;
 #[path = "file_task_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod file_task;
 #[cfg(windows)]
 #[path = "directory_task_protocol.rs"]
 mod directory_task;
+#[cfg(windows)]
+#[path = "fs_watch_protocol.rs"]
+mod fs_watch;
 #[cfg(windows)]
 #[path = "guest_mutation_protocol.rs"]
 mod guest_mutation;
@@ -282,7 +288,8 @@ pub(crate) fn is_service_admin_action(action: wire::Action) -> bool {
 mod directory_picker_tests;
 
 fn is_scheduler_action(action: wire::Action) -> bool {
-    is_service_run_action(action)
+    is_history_delivery_action(action) || is_service_run_action(action)
+        || matches!(action, wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead)
         || matches!(action, wire::Action::BlobPlanStart | wire::Action::BlobPlanStatus
             | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
             | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover)
@@ -388,6 +395,9 @@ impl ResponseTarget for Workbench {
         if is_command_frame(action) {
             return Err("frame staging requires the original owner command lane".into());
         }
+        if is_history_delivery_action(action) {
+            return blob_history_delivery::handle(self, r, out);
+        }
         // History reads must not poll, join or persist the current live task.
         if blob_upload::is_history_action(action) || blob_upload::is_metadata_action(action) {
             return blob_upload::handle(self, r, out);
@@ -411,6 +421,12 @@ impl ResponseTarget for Workbench {
             | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
             | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover) {
             return blob_plan::handle(self, r, out);
+        }
+        if matches!(action, wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead) {
+            #[cfg(windows)]
+            return fs_watch::handle(self, r, out);
+            #[cfg(not(windows))]
+            return Err("directory observation is unavailable on this platform".into());
         }
         if blob_upload::is_action(action) {
             return blob_upload::handle(self, r, out);
@@ -745,6 +761,12 @@ fn wipe_sensitive_reply(output: &mut Builder<capnp::message::HeapAllocator>) -> 
     out.reborrow().get_issued_token()?.zeroize();
     // A nested business response can itself carry a one-time credential.
     out.reborrow().get_payload()?.zeroize();
+    if out.has_blob_history_delivery_preview() {
+        out.reborrow().get_blob_history_delivery_preview()?.get_packet()?.zeroize();
+    }
+    if out.has_blob_history_delivery_receipt() {
+        out.reborrow().get_blob_history_delivery_receipt()?.get_output()?.zeroize();
+    }
     if out.has_file_result() {
         out.reborrow().get_file_result()?.get_bytes()?.zeroize();
     }
@@ -774,8 +796,25 @@ fn validated_request(
     if r.get_version() != 1 || r.get_digest()? != digest() {
         return Err("host contract mismatch".into());
     }
-    r.get_action()?;
+    let action = r.get_action()?;
+    let has_delivery = r.has_blob_history_delivery_request() || r.has_blob_history_delivery_approval()
+        || r.has_blob_history_delivery_key() || r.has_blob_history_delivery_request_id();
+    if !is_history_delivery_action(action) && has_delivery {
+        return Err("history delivery envelope on another action".into());
+    }
+    if is_history_delivery_action(action) {
+        #[cfg(not(target_arch = "wasm32"))]
+        blob_history_delivery::validate(r)?;
+        #[cfg(target_arch = "wasm32")]
+        return Err("history delivery requires the native original owner".into());
+    }
     Ok(message)
+}
+fn is_history_delivery_action(action: wire::Action) -> bool {
+    matches!(action, wire::Action::BlobHistoryDeliveryPrepare | wire::Action::BlobHistoryDeliveryPreview
+        | wire::Action::BlobHistoryDeliveryApprove | wire::Action::BlobHistoryDeliveryRead
+        | wire::Action::BlobHistoryDeliveryCancel | wire::Action::BlobHistoryDeliveryAcknowledge
+        | wire::Action::BlobHistoryDeliveryDiscover)
 }
 fn is_command_frame(action: wire::Action) -> bool {
     matches!(
@@ -986,6 +1025,9 @@ fn handle_business(
         | wire::Action::BlobPlanAcknowledge
         | wire::Action::BlobPlanApprove
         | wire::Action::BlobPlanDiscover
+        | wire::Action::FsWatchStart
+        | wire::Action::FsWatchStatus
+        | wire::Action::FsWatchRead
         | wire::Action::BlobUploadStart
         | wire::Action::BlobUploadStatus
         | wire::Action::BlobUploadRead
@@ -995,6 +1037,13 @@ fn handle_business(
         | wire::Action::BlobUploadHistoryInspect
         | wire::Action::BlobUploadMetadataReview
         | wire::Action::BlobUploadMetadataComplete
+        | wire::Action::BlobHistoryDeliveryPrepare
+        | wire::Action::BlobHistoryDeliveryPreview
+        | wire::Action::BlobHistoryDeliveryApprove
+        | wire::Action::BlobHistoryDeliveryRead
+        | wire::Action::BlobHistoryDeliveryCancel
+        | wire::Action::BlobHistoryDeliveryAcknowledge
+        | wire::Action::BlobHistoryDeliveryDiscover
         | wire::Action::CommandCancel => {
             return Err("scheduler actions require the outer application".into());
         }
@@ -1123,6 +1172,12 @@ fn handle_business(
                 &approved,
                 r.get_limit() == 1,
             )?;
+        }
+        wire::Action::PluginApproveFsWatch => {
+            #[cfg(windows)]
+            host.configure_external_fs_watch(&id, r.get_sha256()?, r.get_revision(), r.get_fs_watch_approved())?;
+            #[cfg(not(windows))]
+            return Err("directory observation is unavailable on this platform".into());
         }
         wire::Action::PluginApproveBlobUpload => {
             host.configure_external_blob_upload(&id, r.get_sha256()?, r.get_revision(), r.get_blob_upload_approved())?;
@@ -1818,6 +1873,15 @@ fn plugin_catalog_reply(
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
         row.set_directory_supported(entry.directory_supported);
+        row.set_fs_watch_supported(entry.fs_watch_supported);
+        row.set_fs_watch_approved(entry.fs_watch_approved);
+        row.set_fs_watch_max_frames(entry.fs_watch_max_frames);
+        row.set_fs_watch_max_wire_bytes(entry.fs_watch_max_wire_bytes);
+        row.set_fs_watch_max_window_ms(entry.fs_watch_max_window_ms);
+        {
+            let mut values = row.reborrow().init_fs_watch_handlers(entry.fs_watch_handlers.len() as u32);
+            for (i, handler) in entry.fs_watch_handlers.iter().enumerate() { values.set(i as u32, handler.as_str()); }
+        }
         row.set_blob_upload_supported(entry.blob_upload_supported);
         row.set_blob_upload_approved(entry.blob_upload_approved);
         row.set_blob_upload_max_bytes(entry.blob_upload_max_bytes);

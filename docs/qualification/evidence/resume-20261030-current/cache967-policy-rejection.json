@@ -1,0 +1,14 @@
+{
+  "status": "NOT_EXECUTED_AUTOMATIC_POLICY_REJECTION",
+  "action": "Delete manifest-listed SDK935 .rlib/.rmeta cache leaves",
+  "tool_returned_reason": "blocked by policy",
+  "delete_command_started": false,
+  "deleted_files": 0,
+  "deleted_bytes": 0,
+  "candidate_count": 1467,
+  "candidate_bytes": 2402385011,
+  "protected_count": 6410,
+  "all_inventoried_files_still_present_with_same_size": true,
+  "free_space_change_attributed_to_cleanup": false,
+  "alternative": "Proceed with separate cold build on available D drive space; no retry of rejected deletion"
+}

@@ -188,6 +188,17 @@ enum Action {
   blobUploadHistoryInspect,
   blobUploadMetadataReview,
   blobUploadMetadataComplete,
+  blobHistoryDeliveryPrepare,
+  blobHistoryDeliveryPreview,
+  blobHistoryDeliveryApprove,
+  blobHistoryDeliveryRead,
+  blobHistoryDeliveryCancel,
+  blobHistoryDeliveryAcknowledge,
+  blobHistoryDeliveryDiscover,
+  pluginApproveFsWatch,
+  fsWatchStart,
+  fsWatchStatus,
+  fsWatchRead,
 }
 
 Action? actionFromUint16(int v) =>
@@ -436,6 +447,31 @@ final class RequestReader extends StructReader {
       );
 
   Uint8List? get blobUploadMetadataPermit => getDataField(58);
+
+  BlobHistoryDeliveryRequestReader? get blobHistoryDeliveryRequest =>
+      getStructFieldWith(
+        59,
+        (r) =>
+            BlobHistoryDeliveryRequestReader(r, capabilities: capabilityTable),
+      );
+
+  BlobHistoryDeliveryApprovalReader? get blobHistoryDeliveryApproval =>
+      getStructFieldWith(
+        60,
+        (r) =>
+            BlobHistoryDeliveryApprovalReader(r, capabilities: capabilityTable),
+      );
+
+  Uint8List? get blobHistoryDeliveryKey => getDataField(61);
+
+  Uint8List? get blobHistoryDeliveryRequestId => getDataField(62);
+
+  bool get fsWatchApproved => getBoolField(258);
+
+  FsWatchStartReader? get fsWatchStart => getStructFieldWith(
+    63,
+    (r) => FsWatchStartReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -877,6 +913,46 @@ final class RequestBuilder extends StructBuilder {
   set blobUploadMetadataPermit(Uint8List? v) {
     setDataField(58, v);
   }
+
+  BlobHistoryDeliveryRequestBuilder initBlobHistoryDeliveryRequest() {
+    return initStructFieldWith(
+      59,
+      (r) => BlobHistoryDeliveryRequestBuilder(r),
+      2,
+      6,
+    );
+  }
+
+  bool hasBlobHistoryDeliveryRequest() => hasPointerField(59);
+
+  BlobHistoryDeliveryApprovalBuilder initBlobHistoryDeliveryApproval() {
+    return initStructFieldWith(
+      60,
+      (r) => BlobHistoryDeliveryApprovalBuilder(r),
+      1,
+      2,
+    );
+  }
+
+  bool hasBlobHistoryDeliveryApproval() => hasPointerField(60);
+
+  set blobHistoryDeliveryKey(Uint8List? v) {
+    setDataField(61, v);
+  }
+
+  set blobHistoryDeliveryRequestId(Uint8List? v) {
+    setDataField(62, v);
+  }
+
+  set fsWatchApproved(bool v) {
+    setBoolField(258, v);
+  }
+
+  FsWatchStartBuilder initFsWatchStart() {
+    return initStructFieldWith(63, (r) => FsWatchStartBuilder(r), 3, 5);
+  }
+
+  bool hasFsWatchStart() => hasPointerField(63);
 }
 
 final class _RequestFactory
@@ -884,7 +960,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 59;
+  int get ptrWords => 64;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1140,6 +1216,30 @@ final class ResponseReader extends StructReader {
   bool get blobUploadMetadataAcknowledged => getBoolField(22);
 
   Uint8List? get blobUploadMetadataCompletedPermit => getDataField(49);
+
+  BlobHistoryDeliveryPreviewReader? get blobHistoryDeliveryPreview =>
+      getStructFieldWith(
+        50,
+        (r) =>
+            BlobHistoryDeliveryPreviewReader(r, capabilities: capabilityTable),
+      );
+
+  BlobHistoryDeliveryReceiptReader? get blobHistoryDeliveryReceipt =>
+      getStructFieldWith(
+        51,
+        (r) =>
+            BlobHistoryDeliveryReceiptReader(r, capabilities: capabilityTable),
+      );
+
+  FsWatchStateReader? get fsWatchState => getStructFieldWith(
+    52,
+    (r) => FsWatchStateReader(r, capabilities: capabilityTable),
+  );
+
+  FsWatchResultReader? get fsWatchResult => getStructFieldWith(
+    53,
+    (r) => FsWatchResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1305,8 +1405,8 @@ final class ResponseBuilder extends StructBuilder {
       12,
       length,
       (r) => PluginEntryBuilder(r),
-      2,
-      18,
+      4,
+      19,
     );
   }
 
@@ -1576,6 +1676,40 @@ final class ResponseBuilder extends StructBuilder {
   set blobUploadMetadataCompletedPermit(Uint8List? v) {
     setDataField(49, v);
   }
+
+  BlobHistoryDeliveryPreviewBuilder initBlobHistoryDeliveryPreview() {
+    return initStructFieldWith(
+      50,
+      (r) => BlobHistoryDeliveryPreviewBuilder(r),
+      1,
+      5,
+    );
+  }
+
+  bool hasBlobHistoryDeliveryPreview() => hasPointerField(50);
+
+  BlobHistoryDeliveryReceiptBuilder initBlobHistoryDeliveryReceipt() {
+    return initStructFieldWith(
+      51,
+      (r) => BlobHistoryDeliveryReceiptBuilder(r),
+      4,
+      5,
+    );
+  }
+
+  bool hasBlobHistoryDeliveryReceipt() => hasPointerField(51);
+
+  FsWatchStateBuilder initFsWatchState() {
+    return initStructFieldWith(52, (r) => FsWatchStateBuilder(r), 1, 0);
+  }
+
+  bool hasFsWatchState() => hasPointerField(52);
+
+  FsWatchResultBuilder initFsWatchResult() {
+    return initStructFieldWith(53, (r) => FsWatchResultBuilder(r), 5, 2);
+  }
+
+  bool hasFsWatchResult() => hasPointerField(53);
 }
 
 final class _ResponseFactory
@@ -1583,7 +1717,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 50;
+  int get ptrWords => 54;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2852,6 +2986,24 @@ final class PluginEntryReader extends StructReader {
     17,
     (r) => BlobPlannerReader(r, capabilities: capabilityTable),
   );
+
+  bool get fsWatchSupported => getBoolField(8);
+
+  bool get fsWatchApproved => getBoolField(9);
+
+  ListReader<String?>? get fsWatchHandlers => getTextListField(18);
+
+  int get fsWatchMaxFrames => getUint32Field(4);
+
+  int get fsWatchMaxWireBytes => _checkedWireInt(fsWatchMaxWireBytesBigInt);
+  BigInt get fsWatchMaxWireBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get fsWatchMaxWindowMs => _checkedWireInt(fsWatchMaxWindowMsBigInt);
+  BigInt get fsWatchMaxWindowMsBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2995,14 +3147,62 @@ final class PluginEntryBuilder extends StructBuilder {
       2,
     );
   }
+
+  set fsWatchSupported(bool v) {
+    setBoolField(8, v);
+  }
+
+  set fsWatchApproved(bool v) {
+    setBoolField(9, v);
+  }
+
+  ListBuilder<String?> initFsWatchHandlers(int length) {
+    return initTextListField(18, length);
+  }
+
+  set fsWatchMaxFrames(int v) {
+    setUint32Field(4, v);
+  }
+
+  set fsWatchMaxWireBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    fsWatchMaxWireBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set fsWatchMaxWireBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field fsWatchMaxWireBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set fsWatchMaxWindowMs(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    fsWatchMaxWindowMsBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set fsWatchMaxWindowMsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field fsWatchMaxWindowMs');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
 }
 
 final class _PluginEntryFactory
     extends StructFactory<PluginEntryReader, PluginEntryBuilder> {
   @override
-  int get dataWords => 2;
+  int get dataWords => 4;
   @override
-  int get ptrWords => 18;
+  int get ptrWords => 19;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -8368,6 +8568,918 @@ final class _BlobPlanResultFactory
 }
 
 final blobPlanResultFactory = _BlobPlanResultFactory();
+
+final class BlobHistoryDeliveryRequestReader extends StructReader {
+  BlobHistoryDeliveryRequestReader(super.raw, {super.capabilities});
+
+  Uint8List? get requestId => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  String? get packageId => getTextField(2);
+
+  Uint8List? get packageDigest => getDataField(3);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(4);
+
+  String? get outputType => getTextField(5);
+
+  int get timeoutMs => getUint32Field(8);
+}
+
+final class BlobHistoryDeliveryRequestBuilder extends StructBuilder {
+  BlobHistoryDeliveryRequestBuilder(super.raw);
+
+  @override
+  BlobHistoryDeliveryRequestReader asReader() =>
+      BlobHistoryDeliveryRequestReader(rawToReader());
+
+  set requestId(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(2, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(4, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(5, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(8, v);
+  }
+}
+
+final class _BlobHistoryDeliveryRequestFactory
+    extends
+        StructFactory<
+          BlobHistoryDeliveryRequestReader,
+          BlobHistoryDeliveryRequestBuilder
+        > {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 6;
+  @override
+  BlobHistoryDeliveryRequestReader fromRawReader(RawStructReader r) =>
+      BlobHistoryDeliveryRequestReader(r);
+  @override
+  BlobHistoryDeliveryRequestReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobHistoryDeliveryRequestReader(r, capabilities: capabilities);
+  @override
+  BlobHistoryDeliveryRequestBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobHistoryDeliveryRequestBuilder(r);
+}
+
+final blobHistoryDeliveryRequestFactory = _BlobHistoryDeliveryRequestFactory();
+
+final class BlobHistoryDeliveryApprovalReader extends StructReader {
+  BlobHistoryDeliveryApprovalReader(super.raw, {super.capabilities});
+
+  Uint8List? get packetSha256 => getDataField(0);
+
+  Uint8List? get packageDigest => getDataField(1);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+}
+
+final class BlobHistoryDeliveryApprovalBuilder extends StructBuilder {
+  BlobHistoryDeliveryApprovalBuilder(super.raw);
+
+  @override
+  BlobHistoryDeliveryApprovalReader asReader() =>
+      BlobHistoryDeliveryApprovalReader(rawToReader());
+
+  set packetSha256(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+}
+
+final class _BlobHistoryDeliveryApprovalFactory
+    extends
+        StructFactory<
+          BlobHistoryDeliveryApprovalReader,
+          BlobHistoryDeliveryApprovalBuilder
+        > {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobHistoryDeliveryApprovalReader fromRawReader(RawStructReader r) =>
+      BlobHistoryDeliveryApprovalReader(r);
+  @override
+  BlobHistoryDeliveryApprovalReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobHistoryDeliveryApprovalReader(r, capabilities: capabilities);
+  @override
+  BlobHistoryDeliveryApprovalBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobHistoryDeliveryApprovalBuilder(r);
+}
+
+final blobHistoryDeliveryApprovalFactory =
+    _BlobHistoryDeliveryApprovalFactory();
+
+final class BlobHistoryDeliveryPreviewReader extends StructReader {
+  BlobHistoryDeliveryPreviewReader(super.raw, {super.capabilities});
+
+  bool get present => getBoolField(0);
+
+  Uint8List? get key => getDataField(0);
+
+  BlobHistoryDeliveryRequestReader? get request => getStructFieldWith(
+    1,
+    (r) => BlobHistoryDeliveryRequestReader(r, capabilities: capabilityTable),
+  );
+
+  String? get taskId => getTextField(2);
+
+  Uint8List? get packet => getDataField(3);
+
+  Uint8List? get packetSha256 => getDataField(4);
+}
+
+final class BlobHistoryDeliveryPreviewBuilder extends StructBuilder {
+  BlobHistoryDeliveryPreviewBuilder(super.raw);
+
+  @override
+  BlobHistoryDeliveryPreviewReader asReader() =>
+      BlobHistoryDeliveryPreviewReader(rawToReader());
+
+  set present(bool v) {
+    setBoolField(0, v);
+  }
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  BlobHistoryDeliveryRequestBuilder initRequest() {
+    return initStructFieldWith(
+      1,
+      (r) => BlobHistoryDeliveryRequestBuilder(r),
+      2,
+      6,
+    );
+  }
+
+  bool hasRequest() => hasPointerField(1);
+
+  set taskId(String? v) {
+    setTextField(2, v);
+  }
+
+  set packet(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set packetSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _BlobHistoryDeliveryPreviewFactory
+    extends
+        StructFactory<
+          BlobHistoryDeliveryPreviewReader,
+          BlobHistoryDeliveryPreviewBuilder
+        > {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 5;
+  @override
+  BlobHistoryDeliveryPreviewReader fromRawReader(RawStructReader r) =>
+      BlobHistoryDeliveryPreviewReader(r);
+  @override
+  BlobHistoryDeliveryPreviewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobHistoryDeliveryPreviewReader(r, capabilities: capabilities);
+  @override
+  BlobHistoryDeliveryPreviewBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobHistoryDeliveryPreviewBuilder(r);
+}
+
+final blobHistoryDeliveryPreviewFactory = _BlobHistoryDeliveryPreviewFactory();
+
+final class BlobHistoryDeliveryReceiptReader extends StructReader {
+  BlobHistoryDeliveryReceiptReader(super.raw, {super.capabilities});
+
+  bool get found => getBoolField(0);
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get requestId => getDataField(1);
+
+  bool get consumed => getBoolField(1);
+
+  bool get dispatched => getBoolField(2);
+
+  bool get finished => getBoolField(3);
+
+  bool get acknowledged => getBoolField(4);
+
+  int get close => getUint16Field(2);
+
+  int get error => getUint16Field(4);
+
+  int get deliveryError => getUint16Field(6);
+
+  bool get hasExecution => getBoolField(5);
+
+  int get executionFault => getUint16Field(8);
+
+  int get exitCode => getInt32Field(12).toSigned(32);
+
+  int get hostCalls => getUint32Field(16);
+
+  int get fuelRemaining => _checkedWireInt(fuelRemainingBigInt);
+  BigInt get fuelRemainingBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  bool get hasPluginFailure => getBoolField(6);
+
+  int get pluginFailureCode => getUint16Field(10);
+
+  bool get hasOutput => getBoolField(7);
+
+  String? get outputType => getTextField(2);
+
+  Uint8List? get output => getDataField(3);
+
+  int get closeFailureKind => getUint16Field(20);
+
+  int get closeCoreError => getUint16Field(22);
+
+  String? get closeDetail => getTextField(4);
+}
+
+final class BlobHistoryDeliveryReceiptBuilder extends StructBuilder {
+  BlobHistoryDeliveryReceiptBuilder(super.raw);
+
+  @override
+  BlobHistoryDeliveryReceiptReader asReader() =>
+      BlobHistoryDeliveryReceiptReader(rawToReader());
+
+  set found(bool v) {
+    setBoolField(0, v);
+  }
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set requestId(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set consumed(bool v) {
+    setBoolField(1, v);
+  }
+
+  set dispatched(bool v) {
+    setBoolField(2, v);
+  }
+
+  set finished(bool v) {
+    setBoolField(3, v);
+  }
+
+  set acknowledged(bool v) {
+    setBoolField(4, v);
+  }
+
+  set close(int v) {
+    setUint16Field(2, v);
+  }
+
+  set error(int v) {
+    setUint16Field(4, v);
+  }
+
+  set deliveryError(int v) {
+    setUint16Field(6, v);
+  }
+
+  set hasExecution(bool v) {
+    setBoolField(5, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(8, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(12, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(16, v);
+  }
+
+  set fuelRemaining(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    fuelRemainingBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set fuelRemainingBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field fuelRemaining');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set hasPluginFailure(bool v) {
+    setBoolField(6, v);
+  }
+
+  set pluginFailureCode(int v) {
+    setUint16Field(10, v);
+  }
+
+  set hasOutput(bool v) {
+    setBoolField(7, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(2, v);
+  }
+
+  set output(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set closeFailureKind(int v) {
+    setUint16Field(20, v);
+  }
+
+  set closeCoreError(int v) {
+    setUint16Field(22, v);
+  }
+
+  set closeDetail(String? v) {
+    setTextField(4, v);
+  }
+}
+
+final class _BlobHistoryDeliveryReceiptFactory
+    extends
+        StructFactory<
+          BlobHistoryDeliveryReceiptReader,
+          BlobHistoryDeliveryReceiptBuilder
+        > {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 5;
+  @override
+  BlobHistoryDeliveryReceiptReader fromRawReader(RawStructReader r) =>
+      BlobHistoryDeliveryReceiptReader(r);
+  @override
+  BlobHistoryDeliveryReceiptReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobHistoryDeliveryReceiptReader(r, capabilities: capabilities);
+  @override
+  BlobHistoryDeliveryReceiptBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobHistoryDeliveryReceiptBuilder(r);
+}
+
+final blobHistoryDeliveryReceiptFactory = _BlobHistoryDeliveryReceiptFactory();
+
+final class FsWatchStartReader extends StructReader {
+  FsWatchStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  Uint8List? get nominatedPathUtf16Le => getDataField(4);
+
+  int get maxFrames => getUint32Field(8);
+
+  int get maxWireBytes => _checkedWireInt(maxWireBytesBigInt);
+  BigInt get maxWireBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get windowMs => getUint32Field(12);
+}
+
+final class FsWatchStartBuilder extends StructBuilder {
+  FsWatchStartBuilder(super.raw);
+
+  @override
+  FsWatchStartReader asReader() => FsWatchStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set nominatedPathUtf16Le(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set maxFrames(int v) {
+    setUint32Field(8, v);
+  }
+
+  set maxWireBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxWireBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxWireBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxWireBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set windowMs(int v) {
+    setUint32Field(12, v);
+  }
+}
+
+final class _FsWatchStartFactory
+    extends StructFactory<FsWatchStartReader, FsWatchStartBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  FsWatchStartReader fromRawReader(RawStructReader r) => FsWatchStartReader(r);
+  @override
+  FsWatchStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FsWatchStartReader(r, capabilities: capabilities);
+  @override
+  FsWatchStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      FsWatchStartBuilder(r);
+}
+
+final fsWatchStartFactory = _FsWatchStartFactory();
+
+final class FsWatchStateReader extends StructReader {
+  FsWatchStateReader(super.raw, {super.capabilities});
+
+  bool get ready => getBoolField(0);
+
+  bool get delivered => getBoolField(1);
+
+  int get phase => getUint16Field(2);
+
+  int get frames => getUint32Field(4);
+}
+
+final class FsWatchStateBuilder extends StructBuilder {
+  FsWatchStateBuilder(super.raw);
+
+  @override
+  FsWatchStateReader asReader() => FsWatchStateReader(rawToReader());
+
+  set ready(bool v) {
+    setBoolField(0, v);
+  }
+
+  set delivered(bool v) {
+    setBoolField(1, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(2, v);
+  }
+
+  set frames(int v) {
+    setUint32Field(4, v);
+  }
+}
+
+final class _FsWatchStateFactory
+    extends StructFactory<FsWatchStateReader, FsWatchStateBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 0;
+  @override
+  FsWatchStateReader fromRawReader(RawStructReader r) => FsWatchStateReader(r);
+  @override
+  FsWatchStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FsWatchStateReader(r, capabilities: capabilities);
+  @override
+  FsWatchStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      FsWatchStateBuilder(r);
+}
+
+final fsWatchStateFactory = _FsWatchStateFactory();
+
+final class FsWatchDeliveryReader extends StructReader {
+  FsWatchDeliveryReader(super.raw, {super.capabilities});
+
+  int get sequence => _checkedWireInt(sequenceBigInt);
+  BigInt get sequenceBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get digest => getDataField(0);
+
+  int get executionFault => getUint16Field(8);
+
+  int get exitCode => getInt32Field(12).toSigned(32);
+
+  int get hostCalls => getUint32Field(16);
+
+  int get fuelRemaining => _checkedWireInt(fuelRemainingBigInt);
+  BigInt get fuelRemainingBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+}
+
+final class FsWatchDeliveryBuilder extends StructBuilder {
+  FsWatchDeliveryBuilder(super.raw);
+
+  @override
+  FsWatchDeliveryReader asReader() => FsWatchDeliveryReader(rawToReader());
+
+  set sequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    sequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set sequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(8, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(12, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(16, v);
+  }
+
+  set fuelRemaining(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    fuelRemainingBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set fuelRemainingBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field fuelRemaining');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+}
+
+final class _FsWatchDeliveryFactory
+    extends StructFactory<FsWatchDeliveryReader, FsWatchDeliveryBuilder> {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 1;
+  @override
+  FsWatchDeliveryReader fromRawReader(RawStructReader r) =>
+      FsWatchDeliveryReader(r);
+  @override
+  FsWatchDeliveryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FsWatchDeliveryReader(r, capabilities: capabilities);
+  @override
+  FsWatchDeliveryBuilder fromRawBuilder(RawStructBuilder r) =>
+      FsWatchDeliveryBuilder(r);
+}
+
+final fsWatchDeliveryFactory = _FsWatchDeliveryFactory();
+
+final class FsWatchResultReader extends StructReader {
+  FsWatchResultReader(super.raw, {super.capabilities});
+
+  bool get present => getBoolField(0);
+
+  bool get success => getBoolField(1);
+
+  int get error => getUint16Field(2);
+
+  String? get detail => getTextField(0);
+
+  bool get unknown => getBoolField(2);
+
+  bool get originalWorkerJoined => getBoolField(3);
+
+  bool get nativeRetirementComplete => getBoolField(4);
+
+  bool get hasDisconnect => getBoolField(5);
+
+  int get disconnect => getUint16Field(4);
+
+  bool get hasMaintenance => getBoolField(6);
+
+  int get maintenance => getUint16Field(6);
+
+  int get resources => getUint32Field(8);
+
+  int get jobs => getUint32Field(12);
+
+  int get chargedBytes => _checkedWireInt(chargedBytesBigInt);
+  BigInt get chargedBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  ListReader<FsWatchDeliveryReader>? get deliveries => getStructListFieldWith(
+    1,
+    (r) => FsWatchDeliveryReader(r, capabilities: capabilityTable),
+  );
+
+  bool get hasSnapshot => getBoolField(7);
+
+  bool get pickerStarted => getBoolField(8);
+
+  bool get pickerClosed => getBoolField(9);
+
+  int get ancestorObjects => getUint32Field(24);
+
+  int get ancestorClosed => getUint32Field(28);
+
+  bool get hasNative => getBoolField(10);
+
+  int get nativeHandles => getUint32Field(32);
+
+  int get nativeClosed => getUint32Field(36);
+
+  bool get cancelRequested => getBoolField(11);
+}
+
+final class FsWatchResultBuilder extends StructBuilder {
+  FsWatchResultBuilder(super.raw);
+
+  @override
+  FsWatchResultReader asReader() => FsWatchResultReader(rawToReader());
+
+  set present(bool v) {
+    setBoolField(0, v);
+  }
+
+  set success(bool v) {
+    setBoolField(1, v);
+  }
+
+  set error(int v) {
+    setUint16Field(2, v);
+  }
+
+  set detail(String? v) {
+    setTextField(0, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(2, v);
+  }
+
+  set originalWorkerJoined(bool v) {
+    setBoolField(3, v);
+  }
+
+  set nativeRetirementComplete(bool v) {
+    setBoolField(4, v);
+  }
+
+  set hasDisconnect(bool v) {
+    setBoolField(5, v);
+  }
+
+  set disconnect(int v) {
+    setUint16Field(4, v);
+  }
+
+  set hasMaintenance(bool v) {
+    setBoolField(6, v);
+  }
+
+  set maintenance(int v) {
+    setUint16Field(6, v);
+  }
+
+  set resources(int v) {
+    setUint32Field(8, v);
+  }
+
+  set jobs(int v) {
+    setUint32Field(12, v);
+  }
+
+  set chargedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    chargedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set chargedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field chargedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  ListBuilder<FsWatchDeliveryBuilder> initDeliveries(int length) {
+    return initStructListFieldWith(
+      1,
+      length,
+      (r) => FsWatchDeliveryBuilder(r),
+      4,
+      1,
+    );
+  }
+
+  set hasSnapshot(bool v) {
+    setBoolField(7, v);
+  }
+
+  set pickerStarted(bool v) {
+    setBoolField(8, v);
+  }
+
+  set pickerClosed(bool v) {
+    setBoolField(9, v);
+  }
+
+  set ancestorObjects(int v) {
+    setUint32Field(24, v);
+  }
+
+  set ancestorClosed(int v) {
+    setUint32Field(28, v);
+  }
+
+  set hasNative(bool v) {
+    setBoolField(10, v);
+  }
+
+  set nativeHandles(int v) {
+    setUint32Field(32, v);
+  }
+
+  set nativeClosed(int v) {
+    setUint32Field(36, v);
+  }
+
+  set cancelRequested(bool v) {
+    setBoolField(11, v);
+  }
+}
+
+final class _FsWatchResultFactory
+    extends StructFactory<FsWatchResultReader, FsWatchResultBuilder> {
+  @override
+  int get dataWords => 5;
+  @override
+  int get ptrWords => 2;
+  @override
+  FsWatchResultReader fromRawReader(RawStructReader r) =>
+      FsWatchResultReader(r);
+  @override
+  FsWatchResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FsWatchResultReader(r, capabilities: capabilities);
+  @override
+  FsWatchResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      FsWatchResultBuilder(r);
+}
+
+final fsWatchResultFactory = _FsWatchResultFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

@@ -1,0 +1,14 @@
+{
+  "status": "PREPARE_INTERRUPTED_BY_EXPLICIT_USER_PAUSE",
+  "first_prepare": "Guard rejected two non-deps example metadata files; no plan or deletion.",
+  "corrected_prepare": "Retains non-deps files; interrupted by Ctrl+C before any plan was published.",
+  "original_exec_session": 38294,
+  "original_process_returned": true,
+  "exit_code": 1,
+  "plan_exists": false,
+  "started_exists": false,
+  "result_exists": false,
+  "removed_files": 0,
+  "VM_actions": 0,
+  "old_owner_contacts": 0
+}

@@ -1,0 +1,35 @@
+{
+  "old_owner_contacts": 0,
+  "logical_bytes_preserved": 9494467718,
+  "historical_replay_authorized": false,
+  "retired_roots": [
+    "C:\\mr21c",
+    "C:\\mr21p",
+    "C:\\mr21s",
+    "C:\\mr22c",
+    "C:\\mr22p",
+    "C:\\mr22s",
+    "C:\\mr23c",
+    "C:\\mr23p",
+    "C:\\mr23s",
+    "C:\\mr24c",
+    "C:\\mr24p",
+    "C:\\mr24s"
+  ],
+  "source_data_discarded": 0,
+  "observed_free_delta": 10762203136,
+  "VM_calls": 0,
+  "free_delta_nonisolated": true,
+  "canonical_source_edits": 0,
+  "status": "PASS_TWELVE_C_BUILD_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_D_ARCHIVE",
+  "files_removed": 633384,
+  "free_before": 25369063424,
+  "free_after": 36131266560,
+  "build_cache_root": "D:\\build_cache",
+  "VM_files_removed": 0,
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c-short-source-copies-1220\\retired-c-build-source-copies.zip",
+    "bytes": 2384718854,
+    "sha256": "aced4c2b4273ef66442f1474589ca67396aebe13b07da7a7a2cf8dab8f32ed8e"
+  }
+}

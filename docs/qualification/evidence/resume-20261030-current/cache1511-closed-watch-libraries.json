@@ -1,0 +1,17 @@
+{
+  "source_and_executable_removals": 0,
+  "status": "PASS_CLOSED_WATCH_RUNTIME1486_ORIGINAL_LIBRARY_RECLAIMED",
+  "free_before": 2913439744,
+  "source_accepted": false,
+  "removed_files": 300,
+  "preserved_files": 1940,
+  "old_owner_contacts": 0,
+  "plan_sha256": "5607924f05006dcdb6c382031e9fb12c9c56fe778f80bfb04a0a583be23c127b",
+  "observed_free_delta": 397357056,
+  "concurrent_space_changes_not_attributed": true,
+  "free_after": 3310796800,
+  "protected_artifacts_equal": true,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "logical_bytes_removed": 396703568
+}

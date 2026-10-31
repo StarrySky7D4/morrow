@@ -1,0 +1,76 @@
+{
+  "status": "RUNNING_TOKEN900_ACCEPTED_SCOPED_SDK_BACKEND_CLOSED_VM051_INSTALLATION_PENDING",
+  "utc": "2026-10-30T16:57:42.728844+00:00",
+  "verified_build_and_test_source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "documentation_update_does_not_relabel_runtime_source": true,
+  "case736_startup_defect": "FIXED_WITH_NEW_CASE806_ORIGINAL47_NINE_EVIDENCE_HISTORICAL736_REMAINS_UNKNOWN",
+  "normal806_source": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "case900": {
+    "status": "PASS_SCOPED_V5_TOKEN_DERIVATION_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+    "checks": 947,
+    "native_error": 6,
+    "completed_steps": 39,
+    "reserved_failure_step": 40,
+    "case_clean": false,
+    "policy_clean": true,
+    "original_exec19191_retained": true,
+    "original_unknown_owner_contacts": 0
+  },
+  "sdk": {
+    "distribution_checks892": 64,
+    "frozen_guest_methods918": 13,
+    "frozen_inputs_unchanged": 57,
+    "protected_directory_methods920": 26,
+    "counts_are_different_scopes_not_added": true,
+    "rendered_UI": false,
+    "full_SDK26": false,
+    "original_native_upload_history_methods": 15,
+    "regular_run_ignored_explicit_helpers": 4,
+    "explicit_metadata_fault_scenarios": 18,
+    "metadata_faults_use_new_processes_and_synthetic_stores": true
+  },
+  "vm051": {
+    "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+    "state": "INSTALLATION_STARTED_NOT_ENVIRONMENT_ACCEPTED",
+    "P2_dispatched": false
+  },
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "a63ae90d-27e0-4049-988d-9c979033c448",
+      "name": "Morrow Windows Acceptance 20261031 051",
+      "state": "Running"
+    }
+  ],
+  "build_cache_root": "D:\\build_cache",
+  "free_bytes_sample": {
+    "C": 75200905216,
+    "D": 5619957760
+  },
+  "VM045_archive_current_layout": "Original disk and original parent plus archived saved state required; duplicate archived leaf and parent retired, archive not standalone.",
+  "window_control": "STOPPED_AFTER_PHYSICAL_ESC_PENDING_DIRECT_USER_REPLY",
+  "source_accepted": false,
+  "release_eligible": false,
+  "P2": "OPEN",
+  "P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "commit_or_push_this_resume": false,
+  "next": "Complete new VM051 installation after authorized window control resumes; bind observed environment before fresh default-DACL qualification. Continue formal Windows SDK/P3 and complete original matrices without relabelling historical evidence."
+}

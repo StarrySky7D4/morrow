@@ -88,6 +88,17 @@ namespace C28.RootP1682 {
  }
  internal static class Plan1725 {
   internal const string Firmware="b2dd7c5f-88ee-4d69-8aeb-d0290e60950e";
+#if P2_SHARED_PARENT_REFUSAL_SESSION
+  internal static Step1725[] NewSteps(int round){
+   if(round<1||round>17)throw new InvalidOperationException("SHARED_BASE_ROUND_RANGE");
+   Step1725[] steps=NewSteps();int offset=(round-1)*92;
+   for(int i=0;i<steps.Length;i++){
+    Step1725 s=steps[i];string command=i==0?"begin":i==46?"exit":InputProtocol1701.Text(offset+s.FirstLine);
+    steps[i]=new Step1725(s.Ordinal,s.FirstLine,s.LastLine,command);
+   }
+   return steps;
+  }
+#endif
   internal static Step1725[] NewSteps(){
    Step1725[] steps=new Step1725[47];int first=0;
    for(int ordinal=1;ordinal<=47;ordinal++){
@@ -141,6 +152,9 @@ namespace C28.RootP1682 {
   readonly RefusalGate039 Refusal=new RefusalGate039();
 #endif
   internal StepGate1725(string shell){ShellSha=shell;}
+#if P2_SHARED_PARENT_REFUSAL_SESSION
+  internal StepGate1725(string shell,int round){ShellSha=shell;Steps=Plan1725.NewSteps(round);}
+#endif
   void Need(bool b,string why){if(!b){Failed=true;if(First==null)First=why;throw new InvalidOperationException(why);}}
   internal void Expect(int index){
    Need(!Failed&&index==Completed&&index>=0&&index<47&&(Current==null||Current.Returned),"PENDING_NOT_CLOSED");
@@ -164,7 +178,7 @@ namespace C28.RootP1682 {
     Need(step==(Current.Command=="begin"?"guest-identity":Current.Command),"WRONG_RESERVATION");
     if(Current.Command=="begin"){
      Dictionary<string,object> review=Json1725.Obj(Json1725.Get(payload,"review"));
-     Need(Json1725.Str(Json1725.Get(review,"expected_uuid"))==Plan1725.Firmware&&Json1725.Str(Json1725.Get(review,"shell"))==RootPPrebirth.Shell
+     Need(Json1725.Str(Json1725.Get(review,"expected_uuid"))==Plan1725.Firmware&&FileMetadataRules1718.SystemShellPath(Json1725.Str(Json1725.Get(review,"shell")))
       &&Json1725.Str(Json1725.Get(review,"shell_sha256"))==ShellSha,"BEGIN_RESERVATION_SOURCE");
     }
     Current.ReservationSequence=record.Sequence;return;

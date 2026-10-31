@@ -1,0 +1,331 @@
+{
+  "status": "PASS_SCOPED_WATCH_PACKAGE_DECLARATION_AND_EXACT_APPROVAL_REGISTRY",
+  "source_digest": "6d0415de89d9006d534666a7dc4ddc86ad2d64ad94771eae3deaf3f2895d8127",
+  "all_original_processes_returned": true,
+  "all_compiler_outputs_fresh": true,
+  "binaries": {
+    "package_fs_watch": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_fs_watch.exe",
+      "bytes": 4073472,
+      "sha256": "05189002be9ad07e157e1d8bb43c9dcd39310556989dcb4756ea3fae13ed245b"
+    },
+    "package_io": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_io.exe",
+      "bytes": 3837952,
+      "sha256": "6e6d60764906a3e36026637256a7afbc7cf18869eb964db59dbbdb9ba755ca8d"
+    },
+    "plugin_registry_io": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry_io.exe",
+      "bytes": 4072960,
+      "sha256": "60ddc911a8dba6bb234c69f4c375c5066a150112d084fba5b03b1a4b00faba94"
+    },
+    "plugin_registry": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry.exe",
+      "bytes": 4010496,
+      "sha256": "674d12922938d5a102706e0fdd63820f5e4fb7844fc183ddfbe97c7d94972534"
+    },
+    "dependency_registry": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\dependency_registry.exe",
+      "bytes": 4146176,
+      "sha256": "9b906334efed719ce4b56e752cdccfc5cca79b0f0e3c978e94d1b16bcb0c812f"
+    },
+    "package_blob_upload": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_blob_upload.exe",
+      "bytes": 4079616,
+      "sha256": "54bc80632b691eca5638006558553826687e834edd5994b88ce6e2244008fc5c"
+    }
+  },
+  "methods": {
+    "package_fs_watch": [
+      "actual_native_registry_reopen_preserves_only_the_exact_package_ceiling",
+      "invalid_approval_is_readonly_and_revocation_survives_missing_package",
+      "list_approval_never_implies_watch_and_v4_restore_grants_no_live_object",
+      "old_registry_versions_cannot_smuggle_watch_or_silently_downgrade_v4",
+      "ordinary_list_package_cannot_receive_independent_watch_approval",
+      "uncertain_watch_approval_blocks_second_decision_and_noop",
+      "upgrade_removal_and_reselection_clear_watch_approval",
+      "watch_and_io_handler_sets_must_be_complete_unique_and_separate_from_transforms",
+      "watch_declaration_rejects_duplicate_unknown_and_noncanonical_privileged_wire",
+      "watch_limits_remain_subordinate_to_original_io_bytes_and_lifetime",
+      "watch_metadata_round_trip_preserves_exact_bytes_and_does_not_add_io_capability",
+      "watch_profile_refuses_missing_feature_hash_and_legacy_combinations"
+    ],
+    "package_io": [
+      "actual_pure_evidence_plan_rejects_io_even_for_a_disjoint_handler",
+      "budgets_are_required_and_bounded_before_any_execution",
+      "declaration_feature_abi_and_both_versions_must_match",
+      "declaration_roundtrips_without_content_grants_or_byte_rewriting",
+      "duplicate_declaration_and_unknown_nested_privilege_fields_reject",
+      "handler_identity_and_pure_namespace_are_checked",
+      "io_package_cannot_enter_pure_handler_or_evidence_validation",
+      "legacy_abi_one_and_two_have_no_io_declaration_or_approval",
+      "resource_directory_profile_requires_service_and_outbound_contracts",
+      "truncated_nested_declaration_rejects_before_protobuf_allocation",
+      "unknown_duplicate_empty_or_excessive_capabilities_reject"
+    ],
+    "plugin_registry_io": [
+      "all_ten_io_categories_roundtrip_without_touching_content_namespace",
+      "dependency_locks_never_inherit_caller_io_approval",
+      "io_approval_actual_publication_failure_preserves_memory_and_file",
+      "io_approval_is_independent_subset_cas_and_noop_does_not_republish",
+      "legacy_with_io_unknown_duplicate_out_of_order_and_excess_approvals_are_rejected_without_rewrite",
+      "migration_publication_failure_keeps_original_and_succeeds_after_delete_lock_released",
+      "migration_revision_overflow_and_invalid_old_package_preserve_original_bytes",
+      "missing_package_can_only_clear_io_approval_with_current_identity_and_revision",
+      "upgrade_intersects_io_and_disable_remove_preserve_user_data",
+      "v1_migration_is_durable_advances_once_and_never_infers_io_from_content"
+    ],
+    "plugin_registry": [
+      "build_metadata_does_not_make_an_upgrade",
+      "corrupt_and_oversized_state_fail_closed_without_overwrite",
+      "corrupt_selected_package_refuses_resolution_and_reopen",
+      "disable_remove_keep_package_and_content_and_reset_approvals",
+      "failed_publication_preserves_revision_and_selection",
+      "invalid_upgrade_and_approval_preserve_persisted_selection",
+      "one_cooperative_manager_per_directory_and_reopen_after_drop",
+      "persistence_upgrade_requires_enable_and_never_expands_approval",
+      "stale_approval_and_enable_cannot_confirm_another_digest",
+      "stale_revision_cannot_revive_revoked_approval_or_remove_new_selection",
+      "theme_slot_switch_is_one_snapshot_and_keeps_business_approvals"
+    ],
+    "dependency_registry": [
+      "approval_checks_exact_digests_slot_contract_and_version_without_mutation",
+      "canonical_lock_snapshot_rejects_unknown_tail_hash_duplicates_and_stale_identity",
+      "every_resolution_revalidates_root_and_required_provider_after_prior_success",
+      "failed_save_preserves_selections_locks_and_revision_together",
+      "forged_required_cycle_refuses_open_and_corrupt_catalog_does_not_hide_dependents",
+      "incomplete_required_configuration_can_reopen_but_cannot_resolve",
+      "maximum_lock_snapshot_opens_and_one_more_approval_preserves_it",
+      "old_snapshot_without_locks_remains_readable",
+      "required_cycles_reject_atomically_optional_and_mixed_cycles_do_not_recurse",
+      "shared_required_subgraph_and_unresolvable_optional_provider_are_distinct",
+      "stale_cas_cannot_restore_removed_lock_or_remove_replaced_lock",
+      "transitive_required_consumers_are_sorted_and_optional_failure_does_not_block_start",
+      "upgrade_and_remove_clear_all_incident_locks_in_same_snapshot"
+    ],
+    "package_blob_upload": [
+      "declaration_budgets_and_complete_unique_handler_set_are_bounded",
+      "declaration_requires_exact_feature_abi_and_both_schema_digests",
+      "declaration_round_trip_is_separate_from_content_io_and_pure_transform",
+      "dedicated_upload_handler_checks_types_and_bounds_without_enabling_pure_execution",
+      "duplicate_unknown_and_noncanonical_upload_fields_are_not_silently_discarded",
+      "exact_upload_approval_persists_v3_without_restoring_live_authority",
+      "independent_profile_refuses_every_legacy_permission_combination",
+      "independent_upload_fuel_ceiling_never_enlarges_legacy_budgets",
+      "invalid_approval_keeps_snapshot_and_revocation_survives_a_missing_package",
+      "older_registry_versions_cannot_smuggle_the_new_approval",
+      "ordinary_content_and_io_approval_cannot_approve_upload",
+      "unknown_approval_publication_does_not_allow_a_noop_or_second_decision",
+      "upgrade_and_reselection_never_inherit_the_old_upload_approval"
+    ]
+  },
+  "total_methods": 70,
+  "original_frozen_inputs_unchanged": 57,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\build.stdout",
+        "bytes": 110334,
+        "sha256": "7f13a34c4446b63413a3c503cd6ee8864130beeb1d550094f2011485d5258935"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\build.stderr",
+        "bytes": 2941,
+        "sha256": "134a91922a82cf8f103a26535538b519317e1e2cf1d2128a64a89c45d972be1a"
+      }
+    },
+    {
+      "name": "package_fs_watch-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_fs_watch-discovery.stdout",
+        "bytes": 893,
+        "sha256": "05798e2fa65fa30aac2afae38ca776eb8e994405b0cf436b7a17b83350009e58"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_fs_watch-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_fs_watch-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_fs_watch-runtime.stdout",
+        "bytes": 1080,
+        "sha256": "17f52e7a42e624a8613e3cbf8e21af00a805319d4d6d84973af6552b6ebfcf10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_fs_watch-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_io-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_io-discovery.stdout",
+        "bytes": 721,
+        "sha256": "1eadc8646b9b3ccdab63fbfd9663477c7ac8460063b8a7c8023e38dbaef77f7e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_io-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_io-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_io-runtime.stdout",
+        "bytes": 902,
+        "sha256": "7e92fb0a3c9889a017c476a3adfbf74e512cf6ca9a2219d5e64664eae96cb0fd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_io-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "plugin_registry_io-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry_io-discovery.stdout",
+        "bytes": 774,
+        "sha256": "67a39a21f518e0f7d2c779df4f725f2392e3ec1426f74cd5a82aec9a3a1dd5b5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry_io-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "plugin_registry_io-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry_io-runtime.stdout",
+        "bytes": 949,
+        "sha256": "9bdbac13187ffc9ecc6df103fdd1cd8a71242428f1ee2305911d1a0a24ab510e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry_io-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "plugin_registry-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry-discovery.stdout",
+        "bytes": 701,
+        "sha256": "1b8c7f49d41a2640f427dc1889a644295d5f82583ff53c1e07a0e956c33fba97"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "plugin_registry-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry-runtime.stdout",
+        "bytes": 882,
+        "sha256": "be63725aa43497b2259bc9adaaab9830a5cfdbf61bc5535e7b465daef3cd7255"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\plugin_registry-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "dependency_registry-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\dependency_registry-discovery.stdout",
+        "bytes": 973,
+        "sha256": "464a258fc33a68ddd19328d51c19e7b754569b51852a7efb1275b8004d4b7ed2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\dependency_registry-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "dependency_registry-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\dependency_registry-runtime.stdout",
+        "bytes": 1166,
+        "sha256": "9466d172c589f7ce45a5e36f5637190fb2a02a187b2d4529f565a074637c610d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\dependency_registry-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_blob_upload-discovery",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_blob_upload-discovery.stdout",
+        "bytes": 942,
+        "sha256": "775d20860c3a6f359f3627a2d5a22bfa03cf445e4a75f34c4471c2a6e4fcbc78"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_blob_upload-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "package_blob_upload-runtime",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_blob_upload-runtime.stdout",
+        "bytes": 1135,
+        "sha256": "02ba05850f3e631a3ad625fdbc0eb471afda416608c308ba7a64b5bc91967cce"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-declaration-1470\\package_blob_upload-runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "actual_native_registry_reopen": true,
+  "watch_native_execution": false,
+  "production_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

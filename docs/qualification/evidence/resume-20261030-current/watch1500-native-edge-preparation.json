@@ -1,0 +1,48 @@
+{
+  "status": "QUALIFICATION_PROBE_EDGES_ONLY_PRODUCTION_SOURCE_UNCHANGED",
+  "old_source_digest": "bf5602f3723e1272dace8af6475d6e5ae99db2d44b9c0305aa8bb690f550252a",
+  "new_source_digest": "0e273645a1889c98f31a01c74089bdcb28a5d807b76cfc647f47a6a3a2964e6a",
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\watch-native-edge-preparation-1500\\before.rs",
+    "bytes": 15666,
+    "sha256": "5caaf39f8582897e183006e2337d9d4d3acaba57071201dc2a5b9b2a229d9120"
+  },
+  "after": {
+    "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\src\\bin\\native_watch_probe.rs",
+    "bytes": 20344,
+    "sha256": "8f8204a1345f232720f60044ead2519276f3dbfd39fcd1e2907ff98e74da60b5"
+  },
+  "production": [
+    {
+      "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\src\\lib.rs",
+      "bytes": 137,
+      "sha256": "e65dc80f8aca454aa198f28ac263c0e3ba3b5d2cfcd15ccd26a3d040a58757fe"
+    },
+    {
+      "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\src\\notification.rs",
+      "bytes": 6895,
+      "sha256": "a5c25c2abbb820697c4eb26b4e35fb5175488902fc0c3d4575f3133f1dd4ce16"
+    },
+    {
+      "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\src\\windows.rs",
+      "bytes": 24902,
+      "sha256": "60277ae4588ed2dcbd3bfd07b3e23237aefd557a335cc52cc45c1c5073ae5465"
+    },
+    {
+      "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\Cargo.toml",
+      "bytes": 597,
+      "sha256": "5ed8bcd82cfe7ab4ab893faf2a97c6faa575d64cec132f5379a36890e9e1c3ae"
+    },
+    {
+      "path": "C:\\ms1020\\extensions\\fs-watch-native-v1\\Cargo.lock",
+      "bytes": 3614,
+      "sha256": "e0be61e8302d5439e3b083858cc7d0fb186bc1a87b7fc3b57ecb1a626e1382cf"
+    }
+  ],
+  "all_other_repository_inputs_unchanged": true,
+  "expected_negative_process_exit_is_not_native_retirement": true,
+  "actual_native_overflow": false,
+  "actual_native_close_refusal": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

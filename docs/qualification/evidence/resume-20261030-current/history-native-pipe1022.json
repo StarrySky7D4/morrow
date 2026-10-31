@@ -1,0 +1,193 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_DART_NATIVE_HISTORY_PIPE",
+  "source_digest": "92e94662944453d7a9a3aeb438cd9dd67d914be164052c409a0165866b090b70",
+  "source_unchanged": true,
+  "default_features": true,
+  "programs_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "all_original_harness_processes_returned": true,
+  "commands": [
+    {
+      "name": "analyze",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.953,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\analyze.stdout",
+        "bytes": 61,
+        "sha256": "295571cee3df73feed0cc1618831ee2debeb932dd10971ca5b8deeef118cdab4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rust-fixture",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.156,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\rust-fixture.stdout",
+        "bytes": 39,
+        "sha256": "a6146c1d1d2ad34ef0095b5668108a1f335588e8c299a68343fab32f72f90628"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\rust-fixture.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rust-pipe",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.953,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\rust-pipe.stdout",
+        "bytes": 43,
+        "sha256": "3afec46419c027f9f5707cd0ed4fdf0923f20a60734de5a7b200d4a20e9b88b4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\rust-pipe.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-fixture",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.14,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\c-fixture.stdout",
+        "bytes": 39,
+        "sha256": "a6146c1d1d2ad34ef0095b5668108a1f335588e8c299a68343fab32f72f90628"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\c-fixture.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "c-pipe",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.719,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\c-pipe.stdout",
+        "bytes": 43,
+        "sha256": "3afec46419c027f9f5707cd0ed4fdf0923f20a60734de5a7b200d4a20e9b88b4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\c-pipe.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-fixture",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.157,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\cpp-fixture.stdout",
+        "bytes": 39,
+        "sha256": "a6146c1d1d2ad34ef0095b5668108a1f335588e8c299a68343fab32f72f90628"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\cpp-fixture.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cpp-pipe",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.703,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\cpp-pipe.stdout",
+        "bytes": 43,
+        "sha256": "3afec46419c027f9f5707cd0ed4fdf0923f20a60734de5a7b200d4a20e9b88b4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\cpp-pipe.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "languages": [
+    {
+      "language": "rust",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\rust_history.wasm",
+        "bytes": 328582,
+        "sha256": "7d1f7836b2f5b4e933931d0b08e7a4ace8d658bdbaf2bd33819a41b1634a5faa"
+      },
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\receipts\\rust\\result.json",
+        "bytes": 3858,
+        "sha256": "cafa2b7e11ca0a3aae97f0c2fe08fb80aa116b70c9d3dc7f96c14eb9bfdd3d1a"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\stores\\rust\\fixture.json",
+        "bytes": 653,
+        "sha256": "e90d3a1db9f9e86fd482146a6ab8adc6ffb0ae4be3d200b27b6649988f7ad991"
+      }
+    },
+    {
+      "language": "c",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\c_history.wasm",
+        "bytes": 103344,
+        "sha256": "9c323b749fbfba8731f80760752b3b4904e2ab7301be7920eafbaae074637b16"
+      },
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\receipts\\c\\result.json",
+        "bytes": 3858,
+        "sha256": "1323055f14ceb5e350d58c688ceb0123a0bf2b7daabe68f4e8899e38c31b45e6"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\stores\\c\\fixture.json",
+        "bytes": 650,
+        "sha256": "2699d8cd3f4e5591c1f79e59a996c08294507c78d49cec873bb833d097450d53"
+      }
+    },
+    {
+      "language": "cpp",
+      "artifact": {
+        "path": "D:\\build_cache\\qualification-targets\\sdk975-HISTORY-WASM\\cpp_history.wasm",
+        "bytes": 104878,
+        "sha256": "78c29b79def7a1dfa2d2b978beda4dcf14fd96fdae54829caaeb43b93342cf3f"
+      },
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\receipts\\cpp\\result.json",
+        "bytes": 3858,
+        "sha256": "f83bb05555e2720680754a413aa249106550c0979b81067dd8302a27dbb6a075"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-process-pipe-1022\\stores\\cpp\\fixture.json",
+        "bytes": 652,
+        "sha256": "4a27902cddaacbeb5abc7b9829dcbe28ab66949071a78d9bf0eb0da06df62e28"
+      }
+    }
+  ],
+  "error": null,
+  "native_process_pipe": true,
+  "production_Dart_client": true,
+  "production_native_channel": true,
+  "guest_artifacts_from_original975_not_rebuilt": true,
+  "formal_UI": false,
+  "full_P2": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "old_unknown_owner_contacts": 0
+}

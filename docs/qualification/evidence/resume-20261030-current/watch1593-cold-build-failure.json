@@ -1,0 +1,39 @@
+{
+  "status": "FAILED_CLOSED_NO_RETRY",
+  "type": "AssertionError",
+  "error": "build",
+  "commands": [
+    {
+      "name": "lock",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1593\\lock.stdout",
+        "bytes": 3951099,
+        "sha256": "f90541ef1cb69cffdf1950e3738ed7667070f9291a88fce0ccbd5d31224dd7d6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1593\\lock.stderr",
+        "bytes": 794,
+        "sha256": "1698684cdb9a9206aca50fe585933360f0f4b20dff03beb183cb688dd39a0514"
+      }
+    },
+    {
+      "name": "build",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1593\\build.stdout",
+        "bytes": 735206,
+        "sha256": "d45c08e1e34fa5cafaccfc7dee9b7c26244bc46687b7c0936d25bfe5ec735e0e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\protected-watch-build-1593\\build.stderr",
+        "bytes": 21399,
+        "sha256": "a985a5f88f220c1f4f893a502c3257a0726093d7798adb36f82f13317bc64ce3"
+      }
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

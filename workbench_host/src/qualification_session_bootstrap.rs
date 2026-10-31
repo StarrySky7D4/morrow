@@ -218,15 +218,16 @@ impl Admission {
         self._pins.extend(hold_directories(&self.plan.root.join("preview-cache"))?);
         self.profile(false)
     }
-    pub fn pre_open(&self, binding: &Value) -> Result<()> {
+    pub fn pre_open(&self, binding: &morrow_workbench_host::supervision_record_codec::OwnerRecord) -> Result<()> {
         self.profile(true)?;
-        if binding["phase"] != "Active" || binding["generation"] != 1
-            || binding["host_sha256"] != hex(&self.plan.host.sha)
-            || binding["supervisor_sha256"] != hex(&self.plan.supervisor.sha)
-            || binding["package_sha256"] != hex(&self.plan.package.sha)
-            || binding["profile"] != morrow_workbench_host::workbench_supervision::profile(&self.plan.root)
-            || binding["child_pid"] != std::process::id() { return Err("qualification original active binding".into()); }
-        unhex::<32>(binding["incarnation"].as_str().ok_or("qualification incarnation")?)?;
+        let id=morrow_workbench_host::supervision_record_codec::identity(binding)?;
+        if binding.phase != morrow_workbench_host::supervision_record_codec::proto::OwnerPhase::Active as i32 || id.generation != 1
+            || id.host_sha256 != self.plan.host.sha
+            || id.supervisor_sha256 != self.plan.supervisor.sha
+            || id.package_sha256 != self.plan.package.sha
+            || hex(&id.profile) != morrow_workbench_host::workbench_supervision::profile(&self.plan.root)
+            || id.child_pid != std::process::id() { return Err("qualification original active binding".into()); }
+        unhex::<32>(&hex(&id.incarnation))?;
         Ok(())
     }
     pub fn pre_open_namespace(&self) -> Result<()> { self.profile(true) }
@@ -237,7 +238,7 @@ impl Admission {
         for item in std::fs::read_dir(&self.plan.root)? {
             let item = item?;
             let name = item.file_name().into_string().map_err(|_| "qualification profile filename")?;
-            let allowed = name == "preview-cache" || claimed && [".morrow-supervision-v1", "workbench-supervisor.sqlite", "workbench-supervisor.sqlite-wal", "workbench-supervisor.sqlite-shm"].contains(&name.as_str());
+            let allowed = name == "preview-cache" || claimed && [".morrow-supervision-v2", "workbench-supervisor.sqlite", "workbench-supervisor.sqlite-wal", "workbench-supervisor.sqlite-shm"].contains(&name.as_str());
             if !allowed || !seen.insert(name.clone()) { return Err("qualification unknown profile metadata".into()); }
             plain_ancestors(&item.path())?;
             let m = std::fs::symlink_metadata(item.path())?;
@@ -245,7 +246,7 @@ impl Admission {
                 if !m.is_dir() || std::fs::read_dir(item.path())?.next().is_some() { return Err("qualification preview must be empty".into()); }
             } else if !m.is_file() || m.len() > 1048576 { return Err("qualification metadata bound/type".into()); }
         }
-        if !seen.contains("preview-cache") || claimed && (!seen.contains(".morrow-supervision-v1") || !seen.contains("workbench-supervisor.sqlite")) {
+        if !seen.contains("preview-cache") || claimed && (!seen.contains(".morrow-supervision-v2") || !seen.contains("workbench-supervisor.sqlite")) {
             return Err("qualification required profile metadata".into());
         }
         Ok(())

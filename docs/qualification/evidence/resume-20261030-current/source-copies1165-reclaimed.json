@@ -1,0 +1,36 @@
+{
+  "canonical_source_files_removed": 0,
+  "historical_runtime_replay_authorized": false,
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1165\\retired-compiler-source-copies.zip",
+    "bytes": 999499320,
+    "sha256": "a084fb169ce3dc57a89bb2b7b5c22287739523032cdb5c0399feaa19eb12e116"
+  },
+  "logical_bytes_represented": 3974151713,
+  "retired_roots": [
+    "D:\\build_cache\\m114s",
+    "D:\\build_cache\\m146s",
+    "D:\\build_cache\\m154s",
+    "D:\\build_cache\\m176s",
+    "D:\\build_cache\\m200s"
+  ],
+  "old_owner_contacts": 0,
+  "free_before": 9210638336,
+  "VM_calls": 0,
+  "VM_archives_removed": 0,
+  "status": "PASS_RETIRED_COMPILER_SOURCE_COPIES_MOVED_TO_COMPLETE_VERIFIED_ARCHIVE",
+  "source_code_bytes_discarded": 0,
+  "restoration_instructions": "Extract each top-level m114s, m146s, m154s, m176s, m200s directory to D:/build_cache only when absent; verify every archived file against plan.json. Exact original metadata is retained in that manifest. Do not replay any old qualification case.",
+  "original_executables_removed": 0,
+  "source_accepted": false,
+  "build_copy_leaves_removed": 265243,
+  "concurrent_space_changes_not_attributed": true,
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-copies-1165\\plan.json",
+    "bytes": 155966116,
+    "sha256": "1a118a52f1afde9cc610c459f9bce55dd91a8a59b7f0d5607a8cc2e0a4bdedc9"
+  },
+  "free_after": 6491598848,
+  "release_eligible": false,
+  "observed_free_delta": -2719039488.0
+}

@@ -1,0 +1,837 @@
+{
+  "status": "PASS_COMPILED_27_STANDALONE_THREE_LANGUAGE_SDK_PROJECTS_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "aa44ec199735312c4e684eecd3c8981d19ed499d78d22f2d6c2580f81394c5ff",
+  "workspace": "D:\\build_cache\\s1331",
+  "original_export": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-distribution-1330\\result.json",
+    "bytes": 44668,
+    "sha256": "d18accc0b6846d43d358cb7846f0172368f8f1244fedf1ad935bb21abc23c8c4"
+  },
+  "commands": [
+    {
+      "key": "rust-content",
+      "exit_code": 0,
+      "seconds": 6.968,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-content.stdout",
+        "bytes": 60,
+        "sha256": "72400b10edfbf5d21cd0bfde43107453dff738f2fe168efb410767933b088295"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-content.stderr",
+        "bytes": 652,
+        "sha256": "e6489e3e8d47aae77dbc25d20b23f17289932aa7ecdfba74fea7ebd5518ff80d"
+      }
+    },
+    {
+      "key": "rust-transform",
+      "exit_code": 0,
+      "seconds": 6.344,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-transform.stdout",
+        "bytes": 62,
+        "sha256": "c99e4687a32afedb6346532a1d47a524b3a075b9a2b991eff85be0d25b03a850"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-transform.stderr",
+        "bytes": 654,
+        "sha256": "5748152b7762f2ff42584ba7207f0c84e5848a31f9a53dbe512d522ae6aa542a"
+      }
+    },
+    {
+      "key": "rust-ui",
+      "exit_code": 0,
+      "seconds": 6.438,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-ui.stdout",
+        "bytes": 55,
+        "sha256": "2a3c0daa2c4dec2b40072db2abefa0bd2ae679cd9761543ec409869f5e9807fe"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-ui.stderr",
+        "bytes": 647,
+        "sha256": "ab383484cf0ca1df0083cc12a5d0e05d9397db45ed4f384225c0ad7124d8c7c3"
+      }
+    },
+    {
+      "key": "rust-dependency",
+      "exit_code": 0,
+      "seconds": 6.578,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-dependency.stdout",
+        "bytes": 63,
+        "sha256": "6c9b09a648a7c7997d132586ed5b9b1e2ed510b933b21c54ecf5b9b74796f16e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-dependency.stderr",
+        "bytes": 655,
+        "sha256": "f6edd11df2acd9e28b6fc6cfd11fad813077a80f2ea8214d9eacf7b4c33fd196"
+      }
+    },
+    {
+      "key": "rust-io",
+      "exit_code": 0,
+      "seconds": 6.328,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-io.stdout",
+        "bytes": 55,
+        "sha256": "11cd02bb18a3f0f572ce59cc843eedb526f9db6788171064575b8b7d1479a25a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-io.stderr",
+        "bytes": 647,
+        "sha256": "0f82bdd7d589820cde6bd50911d834fb56ff66a963b07fb5f79c801753749972"
+      }
+    },
+    {
+      "key": "rust-service",
+      "exit_code": 0,
+      "seconds": 6.407,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-service.stdout",
+        "bytes": 60,
+        "sha256": "145bb0a692dbc6441763fa795b89178af23cd4ef5e06b3f18a91328155ace011"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-service.stderr",
+        "bytes": 652,
+        "sha256": "c309e0b3e8cfa32ebb1c15b7e0d79e1319829c8ddce910d70110bbea70dede59"
+      }
+    },
+    {
+      "key": "rust-service-http",
+      "exit_code": 0,
+      "seconds": 6.281,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-service-http.stdout",
+        "bytes": 65,
+        "sha256": "a335f736a411eef34c9f8068ccc6fbd630d250516f97a8a03398e9e6a294d811"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-service-http.stderr",
+        "bytes": 657,
+        "sha256": "6bf32cb8126e7a22fdb1daad5359b081e2fef70999111e32296f2dffdc5b9769"
+      }
+    },
+    {
+      "key": "rust-channel-exercise",
+      "exit_code": 0,
+      "seconds": 6.984,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-channel-exercise.stdout",
+        "bytes": 69,
+        "sha256": "a0b8004dae934cc3938ca2c75c3263733b159f07b33840ebbc176b88c51f284f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-channel-exercise.stderr",
+        "bytes": 661,
+        "sha256": "f469ad8c8b6935ae25a6eeb16b95d2ab21957e8da3aa49ff7ed4e283d23a8c40"
+      }
+    },
+    {
+      "key": "rust-channel-directory",
+      "exit_code": 0,
+      "seconds": 6.656,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-channel-directory.stdout",
+        "bytes": 70,
+        "sha256": "6783749598cd15c6b49caa054c22893840efeabca44cfb21f77d290aa39c258c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\rust-channel-directory.stderr",
+        "bytes": 662,
+        "sha256": "5437850d3d44ed66633d2b42a98452357a95582221bfb6ff6ee58202e2b122ea"
+      }
+    },
+    {
+      "key": "c-content",
+      "exit_code": 0,
+      "seconds": 6.484,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-content.stdout",
+        "bytes": 57,
+        "sha256": "28c67de02ac9b234db59f666fc58f538140a7325163b2f47827b4e3459f24c46"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-content.stderr",
+        "bytes": 565,
+        "sha256": "5b8a13f6e743b87b07ac3330f3fa1407a49b8faea74d4f94bd51aa39fe5c98dd"
+      }
+    },
+    {
+      "key": "c-transform",
+      "exit_code": 0,
+      "seconds": 6.156,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-transform.stdout",
+        "bytes": 59,
+        "sha256": "27b8c64c2334f3c781382c8028444f89c5607da86a60bebd03a84c8d602edd55"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-transform.stderr",
+        "bytes": 565,
+        "sha256": "62ba740149fc439ffc4660fb1fa14401836623e77a97318c610bdde98cdac861"
+      }
+    },
+    {
+      "key": "c-ui",
+      "exit_code": 0,
+      "seconds": 6.079,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-ui.stdout",
+        "bytes": 52,
+        "sha256": "0b3d78dbeec95b682e716b1e4c9ac2439df22410eb03cc14d1474245b8888b93"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-ui.stderr",
+        "bytes": 565,
+        "sha256": "da3508a1ee9cb9e346eff722231d009d061cc617acf6685eee60a98df47136c4"
+      }
+    },
+    {
+      "key": "c-dependency",
+      "exit_code": 0,
+      "seconds": 6.063,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-dependency.stdout",
+        "bytes": 60,
+        "sha256": "c5875dd789983d7feb5e18b1f45067651527fbaeb6ab4bb4fba774d9644461ba"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-dependency.stderr",
+        "bytes": 565,
+        "sha256": "65a70fbb1c966144f47d53cf61e05a49aeff2fd399a57184f3afec95a9fbe207"
+      }
+    },
+    {
+      "key": "c-io",
+      "exit_code": 0,
+      "seconds": 6.188,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-io.stdout",
+        "bytes": 52,
+        "sha256": "9caa6b0d57cbc04ccad3f5f27f9ebf835ee5399844ad2abc0a880ea18ca26df8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-io.stderr",
+        "bytes": 565,
+        "sha256": "96d5ae20b4f02cd1cc85993b3cfa6c01906664afffd1371d3e0a0eb1ead510aa"
+      }
+    },
+    {
+      "key": "c-service",
+      "exit_code": 0,
+      "seconds": 5.954,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-service.stdout",
+        "bytes": 57,
+        "sha256": "0d99d96ea12fd69ec41420fcd51871c33493b05c465dcbd557eb0bc4f95210e1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-service.stderr",
+        "bytes": 565,
+        "sha256": "65a70fbb1c966144f47d53cf61e05a49aeff2fd399a57184f3afec95a9fbe207"
+      }
+    },
+    {
+      "key": "c-service-http",
+      "exit_code": 0,
+      "seconds": 5.906,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-service-http.stdout",
+        "bytes": 62,
+        "sha256": "fd8a3faa084d69bff409cfb12cd8c9a50dc9fc3dae55948cc78a3a46769066c8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-service-http.stderr",
+        "bytes": 565,
+        "sha256": "08d66eb8746d30b5690f0bb092c46e5ba51a8f768e47bf4824acd75e76b98511"
+      }
+    },
+    {
+      "key": "c-channel-exercise",
+      "exit_code": 0,
+      "seconds": 6.032,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-channel-exercise.stdout",
+        "bytes": 66,
+        "sha256": "d405eed9635186727410ee61c919e7c2dcd7eaab4e5c1f5e0219f77d4fdff4c3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-channel-exercise.stderr",
+        "bytes": 565,
+        "sha256": "50762806e7568449452f438dd9ce1e061d7965548f9b79459a9aa63f56d06c43"
+      }
+    },
+    {
+      "key": "c-channel-directory",
+      "exit_code": 0,
+      "seconds": 5.875,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-channel-directory.stdout",
+        "bytes": 67,
+        "sha256": "7544f75a6c3be19ec99e025f27ede9261843b69e8efa5973c98170f784628a2e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\c-channel-directory.stderr",
+        "bytes": 565,
+        "sha256": "983d076d7d5202a29af9639b09fae00b544ffd8f52529a483bc07c4dd3beb650"
+      }
+    },
+    {
+      "key": "cpp-content",
+      "exit_code": 0,
+      "seconds": 6.469,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-content.stdout",
+        "bytes": 59,
+        "sha256": "03a64ed21b0c244ec813d37ccb2251d655b8c3239803c4533a1822e244f2e229"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-content.stderr",
+        "bytes": 565,
+        "sha256": "3653febcfc2c4b07aa41480a85f8ca5f12d90064d720c673b9eebdd4f2ecc633"
+      }
+    },
+    {
+      "key": "cpp-transform",
+      "exit_code": 0,
+      "seconds": 6.156,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-transform.stdout",
+        "bytes": 61,
+        "sha256": "b7a1ba05e17ac0a4dcba0fbb6bbe7c89051d7eb9a3bd24477258334488b00346"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-transform.stderr",
+        "bytes": 565,
+        "sha256": "93cb46fe5667488fb22f907fc5239ab388e098157c37153a10a4d4f2d680762b"
+      }
+    },
+    {
+      "key": "cpp-ui",
+      "exit_code": 0,
+      "seconds": 6.172,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-ui.stdout",
+        "bytes": 54,
+        "sha256": "f49db2d64c365aed7d9d04f7464f9cbc158d3b36b5a2cfd9607946d091108cf5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-ui.stderr",
+        "bytes": 565,
+        "sha256": "85ed99ad37c9c257501ecf3ad4284bc73206409478eadd65d36b20ef928d1d73"
+      }
+    },
+    {
+      "key": "cpp-dependency",
+      "exit_code": 0,
+      "seconds": 6.328,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-dependency.stdout",
+        "bytes": 62,
+        "sha256": "82fb0d49822c362cd69471a6e539f8aadd18c621992167686705e9f61803fd49"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-dependency.stderr",
+        "bytes": 565,
+        "sha256": "f23eee6cf25416cb94f4ad7bb6ec219eff0302d2c57430d35311942d8ba271e3"
+      }
+    },
+    {
+      "key": "cpp-io",
+      "exit_code": 0,
+      "seconds": 6.11,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-io.stdout",
+        "bytes": 54,
+        "sha256": "5b4652f87ba9f8e30bd0e9c3f909e7fd47bab0fcaf8f8a3ae08a627cd6e4871b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-io.stderr",
+        "bytes": 565,
+        "sha256": "78c49251ae75b9237b6776e381a82ce086de5573946d7c4d3911efb1a9acd512"
+      }
+    },
+    {
+      "key": "cpp-service",
+      "exit_code": 0,
+      "seconds": 6.047,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-service.stdout",
+        "bytes": 59,
+        "sha256": "9e3a9a6a5b2b6d628754ef761dd997bf0a11bcdc574e9ac42d5b36edd313ed79"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-service.stderr",
+        "bytes": 565,
+        "sha256": "37eea7dfc8af16cc27ed86d67c9573688e787063a17139b0276f2c0fdb02f7f6"
+      }
+    },
+    {
+      "key": "cpp-service-http",
+      "exit_code": 0,
+      "seconds": 6.14,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-service-http.stdout",
+        "bytes": 64,
+        "sha256": "40d0b7979093795cb674738eefd36812f039b824733644d01ba59d146a296956"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-service-http.stderr",
+        "bytes": 565,
+        "sha256": "1b28e050014bc17aafa9ccdf4180b153a6bce7e58b9b4cce2f9e457b68d9d750"
+      }
+    },
+    {
+      "key": "cpp-channel-exercise",
+      "exit_code": 0,
+      "seconds": 6.109,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-channel-exercise.stdout",
+        "bytes": 68,
+        "sha256": "7818f9740a6d97d7ac5e9ee50b18ee8672a7b022727749882b2d9cc7bf89afee"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-channel-exercise.stderr",
+        "bytes": 565,
+        "sha256": "b1bad2e0be7f634661a6f953b023b225d32545472c13f34ed1078c5cdf603b39"
+      }
+    },
+    {
+      "key": "cpp-channel-directory",
+      "exit_code": 0,
+      "seconds": 6.109,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-channel-directory.stdout",
+        "bytes": 69,
+        "sha256": "8e31783b445e400ed414cff75deffc7096427958bd9ae5653d4e608964956148"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\standalone-sdk-project-builds-1331\\cpp-channel-directory.stderr",
+        "bytes": 565,
+        "sha256": "42f762aa2b1acf2283f85a21d6f543543d111b7393649c27e46c09de08ed4c23"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "key": "rust-content",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-content\\build\\plugin.wasm",
+        "bytes": 259805,
+        "sha256": "74848823cdcfc322fb274a83134d7015e9400b62ac87d9c2ecb7db791151c34d"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-content\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-content"
+    },
+    {
+      "key": "rust-transform",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-transform\\build\\plugin.wasm",
+        "bytes": 259792,
+        "sha256": "bf60ec7dc2090e0ee9080e6370d86b6967144a4bc42e04509680ca77dfa38044"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-transform\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-transform"
+    },
+    {
+      "key": "rust-ui",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-ui\\build\\plugin.wasm",
+        "bytes": 261900,
+        "sha256": "61cc05e7651669428baea6964cdca8c8db546ae222b1c4abfddcefa969cc9422"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-ui\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-ui"
+    },
+    {
+      "key": "rust-dependency",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-dependency\\build\\plugin.wasm",
+        "bytes": 260261,
+        "sha256": "2b0bd5dd51675899feb4ab16cfe646abd5fc04f5cc201e823fd792a6cb538adc"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-dependency\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-dependency"
+    },
+    {
+      "key": "rust-io",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-io\\build\\plugin.wasm",
+        "bytes": 259252,
+        "sha256": "c337294297a82232fd558073a57d29b136dd14024a7e20947fe1afb0061a4959"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-io\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-io"
+    },
+    {
+      "key": "rust-service",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-service\\build\\plugin.wasm",
+        "bytes": 258829,
+        "sha256": "9bf54227261b2cf3c073066e57fc6c622652ca8fe885bc66751343926e442f48"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-service\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-service"
+    },
+    {
+      "key": "rust-service-http",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-service-http\\build\\plugin.wasm",
+        "bytes": 262428,
+        "sha256": "cc0b2276dd7865c896615d1f7e2476e19db4d4a390e8baedf184c57911fd5f52"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-service-http\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-service-http"
+    },
+    {
+      "key": "rust-channel-exercise",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-channel-exercise\\build\\plugin.wasm",
+        "bytes": 268163,
+        "sha256": "ff74f4ae892cf72b7dee62370f8ee3d3df00d6775a6468d4a17d08ab35335150"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-channel-exercise\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-channel-exercise"
+    },
+    {
+      "key": "rust-channel-directory",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\rust-channel-directory\\build\\plugin.wasm",
+        "bytes": 267873,
+        "sha256": "21b8e048ea11208abc1984c999d36169de58a0262cb8a5dc3b4d18360da5132a"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\rust-channel-directory\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\rust-channel-directory"
+    },
+    {
+      "key": "c-content",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-content\\build\\plugin.wasm",
+        "bytes": 96491,
+        "sha256": "e9497d188674072687489919bf27ccd9093e7ba3767ac58041c213186d3b1749"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-content\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-content"
+    },
+    {
+      "key": "c-transform",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-transform\\build\\plugin.wasm",
+        "bytes": 83306,
+        "sha256": "99b2a59a28c52efb2bf6a55d9400a1ef5d0ea1f74922033188e8eb0d670dd7da"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-transform\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-transform"
+    },
+    {
+      "key": "c-ui",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-ui\\build\\plugin.wasm",
+        "bytes": 99600,
+        "sha256": "f9175a9506290c4f3b2344ea5de1257c215e401eb9bdcb1fa612de8e022b3415"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-ui\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-ui"
+    },
+    {
+      "key": "c-dependency",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-dependency\\build\\plugin.wasm",
+        "bytes": 99819,
+        "sha256": "94610046fbbc574de6e293ce6647ef24bf299b69b946525fa0ba7756a79f0194"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-dependency\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-dependency"
+    },
+    {
+      "key": "c-io",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-io\\build\\plugin.wasm",
+        "bytes": 71194,
+        "sha256": "da203025058b02cb359e677319aa2609d2c04c98a63a8615d9b22145375ccf43"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-io\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-io"
+    },
+    {
+      "key": "c-service",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-service\\build\\plugin.wasm",
+        "bytes": 84860,
+        "sha256": "a1c8cb72ec2a2e38280816005f1fd41109d3636dae6986574ed3e5d4ed71d5dc"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-service\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-service"
+    },
+    {
+      "key": "c-service-http",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-service-http\\build\\plugin.wasm",
+        "bytes": 130925,
+        "sha256": "e9f2070b734b3d405acace39d10f6294acf0134be0a42b772c7c24fc17523c6c"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-service-http\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-service-http"
+    },
+    {
+      "key": "c-channel-exercise",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-channel-exercise\\build\\plugin.wasm",
+        "bytes": 106375,
+        "sha256": "5eaf7b3d1f64022e4581caae10b2ac041d3d84b9aea7ae582810be1a7b447fe0"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-channel-exercise\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-channel-exercise"
+    },
+    {
+      "key": "c-channel-directory",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\c-channel-directory\\build\\plugin.wasm",
+        "bytes": 121072,
+        "sha256": "31f189b30f4302b373382871a900ba9513359078eae43399eae2845e95143092"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\c-channel-directory\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\c-channel-directory"
+    },
+    {
+      "key": "cpp-content",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-content\\build\\plugin.wasm",
+        "bytes": 97456,
+        "sha256": "0b6fdac1b65c6c3e4a59c35dd8bd250f7f033badfa188e4f406dfe6ae4fbee48"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-content\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-content"
+    },
+    {
+      "key": "cpp-transform",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-transform\\build\\plugin.wasm",
+        "bytes": 85134,
+        "sha256": "b48d3e80e328052ea259c3da8fa7fe3902f16f7e5323254da48eb4dcca39348f"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-transform\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-transform"
+    },
+    {
+      "key": "cpp-ui",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-ui\\build\\plugin.wasm",
+        "bytes": 106778,
+        "sha256": "5eae5a3f2b328cbd954e9cbd340055d38369fa9684c11370b27935e9d9d552e9"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-ui\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-ui"
+    },
+    {
+      "key": "cpp-dependency",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-dependency\\build\\plugin.wasm",
+        "bytes": 103275,
+        "sha256": "7cbf7055d81b52e41191265a30c6e5ce5c2101846297da2055f29c198560c3db"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-dependency\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-dependency"
+    },
+    {
+      "key": "cpp-io",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-io\\build\\plugin.wasm",
+        "bytes": 71574,
+        "sha256": "462d2ed24558104af4093f209fd1028722f9f895e7f4fd246a839495e00a895c"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-io\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-io"
+    },
+    {
+      "key": "cpp-service",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-service\\build\\plugin.wasm",
+        "bytes": 84921,
+        "sha256": "07a8d3890f4af7919bd02a245d8e62027cf591b979b11a52c54124a370567f7f"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-service\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-service"
+    },
+    {
+      "key": "cpp-service-http",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-service-http\\build\\plugin.wasm",
+        "bytes": 135648,
+        "sha256": "da1152cc114feffbd1a1db09eabff32e8e27ff6d0f7ca169d4480621a1a02252"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-service-http\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-service-http"
+    },
+    {
+      "key": "cpp-channel-exercise",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-channel-exercise\\build\\plugin.wasm",
+        "bytes": 107851,
+        "sha256": "86364396fe42c01ecbd906708fc36e1f4e5a68547c4efaf15088c9c7084e1e29"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-channel-exercise\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-channel-exercise"
+    },
+    {
+      "key": "cpp-channel-directory",
+      "wasm": {
+        "path": "D:\\build_cache\\s1331\\cpp-channel-directory\\build\\plugin.wasm",
+        "bytes": 122732,
+        "sha256": "f13794eef3b844d7f5483c41587eef43aff00b67f034bc8c723b199c68cd6ff6"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\s1331\\cpp-channel-directory\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "a9c309c4d64f6b55061e5d5423367e6f026524cddb1d33d70d49067afb3adbf4"
+      },
+      "project": "D:\\build_cache\\s1331\\cpp-channel-directory"
+    }
+  ],
+  "all_original_processes_returned": true,
+  "all_project_source_and_locks_unchanged": true,
+  "exported_sdk_unchanged": true,
+  "toolchain_and_sysroot_unchanged": true,
+  "all_57_frozen_inputs_unchanged": true,
+  "guest_runtime_executed": false,
+  "host_runtime_executed": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

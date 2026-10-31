@@ -1,0 +1,54 @@
+{
+  "status": "COMPILED_AND_PACKAGED_CURRENT_FIRST_PARTY_BUILTIN_NOT_PRODUCT_RUNTIME",
+  "source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "programs": {
+    "packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-906\\package.exe",
+      "bytes": 3189248,
+      "sha256": "f12c1d7cb93c89ef59513d0e790dc38a714a546728ae11403c1589580d52fddd"
+    },
+    "builtin": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-906\\morrow_workbench_plugin.wasm",
+      "bytes": 1817013,
+      "sha256": "742a6e6c1bea50d6ee7155fc34dadf23f6d6f0e6a47c68f5c455126b26891fdd"
+    }
+  },
+  "package": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-906\\fixtures\\workbench.morrowplugin",
+    "bytes": 920273,
+    "sha256": "a374d596952a614f93c3f3a209db951005a5a0fa2764a7dc6ea1ea3869b9dc29"
+  },
+  "commands": [
+    {
+      "label": "packager",
+      "exit_code": 0,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-906\\package.exe",
+        "bytes": 3189248,
+        "sha256": "f12c1d7cb93c89ef59513d0e790dc38a714a546728ae11403c1589580d52fddd"
+      }
+    },
+    {
+      "label": "builtin",
+      "exit_code": 0,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-906\\morrow_workbench_plugin.wasm",
+        "bytes": 1817013,
+        "sha256": "742a6e6c1bea50d6ee7155fc34dadf23f6d6f0e6a47c68f5c455126b26891fdd"
+      }
+    }
+  ],
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": 57,
+  "all_original_processes_returned": true,
+  "first_party_workbench_rebuilt": true,
+  "frozen_SDK_guests_rebuilt": false,
+  "dependencies_warm": true,
+  "native_dependencies_same_current_run_only": true,
+  "wasm_fully_cold_compiled": true,
+  "cold_build_claim": false,
+  "VM_calls": 0,
+  "product_starts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

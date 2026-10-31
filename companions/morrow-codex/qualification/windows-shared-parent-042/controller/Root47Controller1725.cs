@@ -215,7 +215,7 @@ namespace C28.RootP1682 {
    }
    FilePin after=Io.Identity(Io.Journal,JournalPath,false);StableJournal(after);Io.Need(after.Bytes>=(ulong)length,"JOURNAL_SHRANK_DURING_READ");
    foreach(JournalRecord1725 record in Prefix.Commit(length)){
-    Gate.Accept(record);
+    try{Gate.Accept(record);}catch{Io.CacheJournalFailure(Gate.First);throw;}
     Io.Event(D("event","ACTUAL_JOURNAL_RECORD","sequence",record.Sequence,"kind",record.Kind,"start",record.Start,"through",record.End,"sha256",record.Sha256));
    }
   }
@@ -280,7 +280,7 @@ namespace C28.RootP1682 {
    if(Session!=null){try{Session.WithholdFurtherInput();}catch{}}
    if(!DiagnosticAttempted){
     DiagnosticAttempted=true;string body="{\"schema\":\"ROOT_CACHED_FAILURE1832_V1\",\"diagnostic\":\"UNAVAILABLE\"}";
-    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
+    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
     // JSON first, marker LAST: parent commits preceding bytes before it sees
     // the retention marker and stops its original reader. One write attempt.
     try{Console.Error.Write(body+"\nROOT_VM_OBSERVER_UNKNOWN_RETAINED_NO_REPLAY\n");Console.Error.Flush();}catch{}
@@ -354,7 +354,7 @@ namespace C28.RootP1682 {
     CurrentRound.Begin(Stdout,baseline);CriticalStart=-1;ContextStart=-1;
    for(StepIndex=0;StepIndex<47;StepIndex++){
     Gate.Expect(StepIndex);StageStart=Io.Clock.ElapsedMilliseconds;
-    if(StepIndex==19)CriticalStart=StageStart; // before native-review creates the actual30s intent
+    CriticalStart=NativeStartBudget044.Begin(CriticalStart,Gate.Current.Command,StageStart); // max_runtime_ms starts at invocation, not review
     if(StepIndex==34)ContextStart=StageStart; // before native-context, never extend its60s lease
     Step1725 step=Gate.Current;
     Io.Event(D("attempt",RoundIndex+1,"event","STEP_EXPECTED_NOT_APPLIED","ordinal",step.Ordinal,"command",step.Command));
@@ -455,12 +455,16 @@ namespace C28.RootP1682 {
    Io.Need(RootPPrebirth.Native.FlushFileBuffers(Io.Gather.Handle.Raw),"GATHER_FLUSH");
    Io.Event(D("attempt",RoundIndex+1,"event","GATHER_ONLY_NO_P_NO_APPROVAL","pins",pins.Length));
   }
+  void CacheProgress(){
+   Io.CacheSharedProgress(RoundIndex,StepIndex,Delivered,MainPolls,JournalReadCalls,JournalReadBytes,
+    OutLength,ErrLength,Io.Clock.ElapsedMilliseconds,StageStart,CriticalStart,ContextStart);
+  }
   void Tick(){
-   Io.Check();Io.Need(++MainPolls<=1200000,"MAIN_POLL_CAP");
+   CacheProgress();Io.Check();Io.Need(++MainPolls<=1200000,"MAIN_POLL_CAP");
    long elapsed=Io.Clock.ElapsedMilliseconds;
    long stageLimit=StepIndex==3?600000:120000;
    Io.Need(elapsed-StageStart<stageLimit,"STAGE_BUDGET");
-   if(CriticalStart>=0&&StepIndex<=40)Io.Need(elapsed-CriticalStart<29000,"NATIVE_INTENT_CONSERVATIVE29S");
+   if(StepIndex<=40)Io.Need(NativeStartBudget044.Within(elapsed,CriticalStart),"NATIVE_START_CONSERVATIVE29S");
    if(ContextStart>=0&&StepIndex<=40)Io.Need(elapsed-ContextStart<59000,"NATIVE_CONTEXT_CONSERVATIVE59S");
    Last=Session.Observe(512);
    Io.Need(Last.Capture.Status=="CONTROLLED_INPUT_PENDING"&&Last.Capture.FirstError==null&&Last.Capture.CreationFileTime.HasValue,"HELPER_UNKNOWN_OR_STARTUP");
@@ -499,12 +503,12 @@ namespace C28.RootP1682 {
    while(offset<length){
     Io.Need(++JournalReadCalls<=1000000,"JOURNAL_READ_CALL_CAP");
     int n=Io.Read(CurrentRound.Journal,Io.Scratch,Math.Min(Io.Scratch.Length,length-offset));Io.Need(n>0,"JOURNAL_SHORT_SNAPSHOT");
-    JournalReadBytes+=n;Io.Need(JournalReadBytes<=8589934592L,"JOURNAL_REREAD_BYTE_CAP");
+    JournalReadBytes+=n;CacheProgress();Io.Need(JournalReadBytes<=8589934592L,"JOURNAL_REREAD_BYTE_CAP");
     Prefix.CompareAndStore(offset,Io.Scratch,n,old);offset+=n;
    }
    FilePin after=Io.Identity(CurrentRound.Journal,JournalPath,false);StableJournal(after);Io.Need(after.Bytes>=(ulong)length,"JOURNAL_SHRANK_DURING_READ");
    foreach(JournalRecord1725 record in Prefix.Commit(length)){
-    Gate.Accept(record);CurrentRound.Accept(record);
+    try{Gate.Accept(record);}catch{Io.CacheJournalFailure(Gate.First);throw;}CurrentRound.Accept(record);
     Io.Event(D("attempt",RoundIndex+1,"event","ACTUAL_JOURNAL_RECORD","sequence",record.Sequence,"kind",record.Kind,"start",record.Start,"through",record.End,"sha256",record.Sha256));
    }
   }
@@ -544,7 +548,7 @@ namespace C28.RootP1682 {
    }
    string reportPath=CollectorPath+"\\attempt-"+(RoundIndex+1).ToString("D2")+".json";
    var body=D("schema","ORIGINAL_SHARED_PARENT_ROUND042_V1","attempt",RoundIndex+1,
-    "steps",RoundSteps(),"first_line",LineOffset+1,"last_line",LineOffset+92,"input_bytes",3557,"frames",frames,
+    "steps",RoundSteps(),"first_line",LineOffset+1,"last_line",LineOffset+92,"input_bytes",SharedBaseSelection046.RoundBytes(RoundIndex+1),"frames",frames,
     "journal_path",JournalPath,"journal_bytes",Prefix.Length,"journal_sha256",HashPrefix(Prefix.Bytes,Prefix.Length),"journal_records",Prefix.Records,
     "original_attempt_closed_sequence",CurrentRound.AttemptSequence,"original_common_owner_closed_sequence",CurrentRound.CommonSequence,
     "prompt_native_write_baseline",CurrentRound.PromptBaseline,"same_original_parent_pid",Last.Capture.Pid,
@@ -601,7 +605,7 @@ namespace C28.RootP1682 {
    if(Session!=null){try{Session.WithholdFurtherInput();}catch{}}
    if(!DiagnosticAttempted){
     DiagnosticAttempted=true;string body="{\"schema\":\"ROOT_CACHED_FAILURE1832_V1\",\"diagnostic\":\"UNAVAILABLE\"}";
-    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
+    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
     // JSON first, marker LAST: parent commits preceding bytes before it sees
     // the retention marker and stops its original reader. One write attempt.
     try{Console.Error.Write(body+"\nROOT_VM_OBSERVER_UNKNOWN_RETAINED_NO_REPLAY\n");Console.Error.Flush();}catch{}

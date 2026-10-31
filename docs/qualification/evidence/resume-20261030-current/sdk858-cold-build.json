@@ -1,0 +1,21 @@
+{
+  "status": "COLD_SDK_LOCK_CANDIDATE_COMPILED_NOT_RUNTIME",
+  "exit_code": 0,
+  "seconds": 754.719,
+  "canonical_source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "candidate_source_digest": "fc097a680f7804c70f4d938c0217f86703733696c260af9cacac34d0da8660e4",
+  "source_unchanged": true,
+  "compiler_artifacts": 864,
+  "all_compiler_artifacts_fresh_false": true,
+  "all_original_compiler_processes_returned": true,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "tests_run": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-lock-candidate-build-858\\morrow_codex_session_exec_windows_v1-e36df9a5f67bd186.exe",
+    "bytes": 69116416,
+    "sha256": "85c5b791eaa3cc0423efffd9cd0be483ac49e44f5812633e7fd2a73d203d79e6"
+  }
+}

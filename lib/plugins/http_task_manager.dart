@@ -10,6 +10,7 @@ import 'endpoint_control.dart';
 import 'io_task_control.dart';
 import 'file_task_session.dart';
 import 'directory_task_session.dart';
+import 'fs_watch_session.dart';
 import 'plugin_library.dart';
 import 'service_run_session.dart';
 import 'session_view_state.dart';
@@ -323,6 +324,7 @@ class HttpTaskManager extends StatefulWidget {
     this.serviceSession,
     this.fileSession,
     this.directorySession,
+    this.watchSession,
   });
   final WorkbenchIoTaskControl backend;
   final WorkbenchEndpointControl endpointBackend;
@@ -334,6 +336,7 @@ class HttpTaskManager extends StatefulWidget {
   final ServiceRunSession? serviceSession;
   final FileTaskSession? fileSession;
   final DirectoryTaskSession? directorySession;
+  final FsWatchSession? watchSession;
   @override
   State<HttpTaskManager> createState() => _HttpTaskManagerState();
 }
@@ -399,13 +402,20 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     }
   }
 
-  bool get _fileOwnsTask => widget.fileSession?.attempt != null || widget.directorySession?.attempt != null;
-  bool get _otherOwnsTask => _fileOwnsTask ||
+  bool get _fileOwnsTask =>
+      widget.fileSession?.attempt != null ||
+      widget.directorySession?.attempt != null;
+  bool get _watchOwnsTask =>
+      widget.watchSession?.attempt != null &&
+      widget.watchSession!.phase != FsWatchSessionPhase.acknowledged;
+  bool get _otherOwnsTask =>
+      _fileOwnsTask ||
+      _watchOwnsTask ||
       widget.serviceSession?.service != null &&
-      _equal(
-        widget.serviceSession!.service!.task.key,
-        widget.serviceSession!.task?.key,
-      );
+          _equal(
+            widget.serviceSession!.service!.task.key,
+            widget.serviceSession!.task?.key,
+          );
   void _serviceChanged() {
     if (!mounted) return;
     markSessionViewDirty();
@@ -455,7 +465,10 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!mounted) return;
     markSessionViewDirty();
     _schedule();
-    if (sessionViewActive && _refreshOnIdle && !_session.busy && !_otherOwnsTask) {
+    if (sessionViewActive &&
+        _refreshOnIdle &&
+        !_session.busy &&
+        !_otherOwnsTask) {
       _refreshOnIdle = false;
       unawaited(_session.refresh());
     }
@@ -471,7 +484,8 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
       if (mounted &&
           sessionViewActive &&
           epoch == _attachmentEpoch &&
-          identical(session, _session)) {
+          identical(session, _session) &&
+          !_otherOwnsTask) {
         unawaited(session.refresh(poll: true, silent: true));
       }
     });
@@ -485,6 +499,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     widget.serviceSession?.addListener(_serviceChanged);
     widget.fileSession?.addListener(_serviceChanged);
     widget.directorySession?.addListener(_serviceChanged);
+    widget.watchSession?.addListener(_serviceChanged);
     _attach();
     unawaited(_loadEndpoints());
   }
@@ -503,6 +518,10 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!identical(oldWidget.directorySession, widget.directorySession)) {
       oldWidget.directorySession?.removeListener(_serviceChanged);
       widget.directorySession?.addListener(_serviceChanged);
+    }
+    if (!identical(oldWidget.watchSession, widget.watchSession)) {
+      oldWidget.watchSession?.removeListener(_serviceChanged);
+      widget.watchSession?.addListener(_serviceChanged);
     }
     final changedBackend = !identical(oldWidget.backend, widget.backend);
     final directory = _fingerprint();
@@ -541,6 +560,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     widget.serviceSession?.removeListener(_serviceChanged);
     widget.fileSession?.removeListener(_serviceChanged);
     widget.directorySession?.removeListener(_serviceChanged);
+    widget.watchSession?.removeListener(_serviceChanged);
     _attachmentEpoch++;
     _endpointEpoch++;
     _timer?.cancel();
@@ -994,11 +1014,15 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
       return Padding(
         key: const ValueKey('http-task-service-active'),
         padding: const EdgeInsets.all(19),
-        child: _note(_fileOwnsTask
-            ? Localizations.localeOf(context).languageCode == 'zh'
-                ? '文件任务尚未结束，请在文件任务面板核对结果与退出状态。'
-                : 'A file attempt is still open. Use the file panel to inspect its result and exit.'
-            : l.pluginsServiceRunHttpPanel),
+        child: _note(
+          _watchOwnsTask
+              ? l.pluginsWatchOtherPanel
+              : _fileOwnsTask
+              ? Localizations.localeOf(context).languageCode == 'zh'
+                    ? '文件任务尚未结束，请在文件任务面板核对结果与退出状态。'
+                    : 'A file attempt is still open. Use the file panel to inspect its result and exit.'
+              : l.pluginsServiceRunHttpPanel,
+        ),
       );
     }
     final key = state?.key, active = key != null && !_session.busy;

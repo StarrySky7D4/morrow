@@ -1,7 +1,8 @@
 syntax = "proto3";
 package morrow.plugin.registry.v1;
 // Canonical snapshots: v1 has no IO approval; v2 adds an independent IO ceiling;
-// v3 adds an exact-package blob-upload ceiling. None restores a live object grant.
+// v3 adds an exact-package blob-upload ceiling; v4 adds filesystem watch.
+// None restores a live object grant.
 // Unknown/noncanonical fields are rejected, never dropped.
 message Selection {
   string package_id = 1;
@@ -12,6 +13,7 @@ message Selection {
   // Separate IO namespace; never interpret these values as content capabilities.
   repeated int32 approved_io_capabilities = 5;
   bool approved_blob_upload = 6;
+  bool approved_fs_watch = 7;
 }
 // Declarative exact-package approval. No scope, TTL, instance or live lease is persisted.
 message LockedDependency {

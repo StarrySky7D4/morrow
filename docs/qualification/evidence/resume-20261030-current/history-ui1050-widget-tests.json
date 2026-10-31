@@ -1,0 +1,16 @@
+{
+  "name": "widgets",
+  "exit_code": 0,
+  "original_process_returned": true,
+  "seconds": 4.406,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\widgets.stdout",
+    "bytes": 1492,
+    "sha256": "74a449d65c7482d03beaed8a8cff101c1be707274be94e8204851ab35f7831c7"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1050\\widgets.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

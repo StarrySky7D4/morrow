@@ -1,0 +1,86 @@
+{
+  "status": "PASS_SCOPED_PUBLIC_HISTORY_CODEC_AND_C_ABI_RUST_TESTS",
+  "source_digest": "48cf20fd9c16bbcd7563f54a2130edbd25700ab84d94a23af60dbb202765ba82",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "commands": [
+    {
+      "name": "library",
+      "exit_code": 0,
+      "seconds": 9.141,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\library.stdout",
+        "bytes": 14371,
+        "sha256": "007ae2a005491f6f43fe1f1ca2ba71ede08d39ac097ef817a0d017c929ae3035"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\library.stderr",
+        "bytes": 493,
+        "sha256": "52172566da2efcfa0d1b4474b4b4f6276bb8e21882eda29c9d92b1b3828e8213"
+      }
+    },
+    {
+      "name": "test-build",
+      "exit_code": 0,
+      "seconds": 1.141,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\test-build.stdout",
+        "bytes": 14558,
+        "sha256": "d28f8aa1ffcf57c128df72f0ca4af3c58e510e131f9ba336604c5f6d6ac96076"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\test-build.stderr",
+        "bytes": 158,
+        "sha256": "1b221ba6ecdb2775149810f995428af50ddb76aed24001d84804cdb6a0a3de85"
+      }
+    },
+    {
+      "name": "unit",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\unit.stdout",
+        "bytes": 828,
+        "sha256": "e65ac4c6f4ecafbe9e7fa4e47a64300e2a59cda09532b8c29ed2ca768b2e1e38"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\unit.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "vector-producer",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\vector-producer.stdout",
+        "bytes": 187,
+        "sha256": "aabb3ff4edb5cc5ec2ab3a06429b83e134037698ea59cefe34c778a0cbb945d6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\vector-producer.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-build-932\\morrow_blob_upload_history_v1-eeeb98fcad67da6e.exe",
+    "bytes": 793088,
+    "sha256": "a88bcad236738d19b29c3cc076c9236a3e040e59ccb4bc5eb3db8219a56d1b9e"
+  },
+  "error": null,
+  "meaningful_methods": 7,
+  "conformance_vector_helper_not_test_credit": true,
+  "VM_calls": 0,
+  "window_actions": 0,
+  "protected_store_runtime": false,
+  "external_C_CPP_consumers": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,37 @@
+{
+  "status": "NEW_VM053_STARTED_OFFLINE_INSTALLATION_NOT_YET_ACCEPTED",
+  "completed": [
+    {
+      "phase": "private-media",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.5
+    },
+    {
+      "phase": "boot-media",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 62.093
+    },
+    {
+      "phase": "create",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 13.547
+    },
+    {
+      "phase": "start",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 4.344
+    }
+  ],
+  "all_original_processes_returned": true,
+  "exit_code": 0,
+  "maximum_registered_vms": 4,
+  "window_actions": 0,
+  "old_owner_contacts": 0,
+  "guest_case_dispatches": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,50 @@
+{
+  "status": "LOCKED_METADATA_CHECK_FAILED_NO_BUILD",
+  "completed": [
+    {
+      "name": "harness",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\harness.json",
+        "bytes": 3945425,
+        "sha256": "9dd92883f9e4794f3050ce682f4078caaa8bd0b6bf2461c7ac80850a65f73858"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\harness.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "session-exec",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\session-exec.json",
+        "bytes": 3844666,
+        "sha256": "661a69395d6ef705b80d300fca0b8b71d39c0766181e2b8e4c6d236729675ce8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\session-exec.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "native-runner-setup",
+      "exit_code": 101,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\native-runner-setup.json",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-fix-1176\\native-runner-setup.stderr",
+        "bytes": 627,
+        "sha256": "5aa88741f59107f35fc857df12099da0cd092e66fdf015ab72948d6983b7aa3a"
+      }
+    }
+  ]
+}

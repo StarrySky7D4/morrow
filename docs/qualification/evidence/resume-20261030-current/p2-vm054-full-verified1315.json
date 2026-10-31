@@ -1,0 +1,18 @@
+{
+  "archive": "D:\\build_cache\\retained-unknown-archives\\vm054",
+  "case_clean": false,
+  "status": "SAVED_VM054_FULL_ARCHIVE_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISK_RETAINED",
+  "source_accepted": false,
+  "release_eligible": false,
+  "original_disk_sizes_times_unchanged_after_unregister": true,
+  "VM_starts": 0,
+  "full_original_state_and_disk_chain_byte_identical": true,
+  "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+  "source_disks_retained": true,
+  "policy_clean": true,
+  "owner_query_or_replay": 0,
+  "guest_contacts": 0,
+  "registered_vms": 3,
+  "full_file_hash_verification_before_unregister": true,
+  "original_case_outcome": "UNKNOWN_RETAINED_NO_REPLAY"
+}

@@ -1,0 +1,22 @@
+{
+  "status": "TYPED_QUALIFICATION_BINDING_ADAPTER_CORRECTED_PENDING_COMPILE",
+  "before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervision-qualification-adapter-fix-1110\\qualification_session.rs.before",
+    "bytes": 15511,
+    "sha256": "e2311459aec58e9e563e53ed25485a02dad845b44e4619fbf90cac6f37df39e5"
+  },
+  "after": {
+    "path": "C:\\ms1020\\workbench_host\\src\\qualification_session.rs",
+    "bytes": 15563,
+    "sha256": "c8d095f9db5537978777c3d7c9095a77215b5a446d0f7825197e0965a8fc0c1b"
+  },
+  "reason": "Pass the already checked typed original owner identity to the qualification slot; preserve exact 32-byte identity checks without JSON projection.",
+  "failed_compile_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\supervision-integration-check-1106\\result.json",
+    "bytes": 357,
+    "sha256": "a1824241e4970c53e18e4a65532752366440382eade338445e913e0ad8470bcb"
+  },
+  "prior_process_returned": true,
+  "VM_calls": 0,
+  "owner_contacts": 0
+}

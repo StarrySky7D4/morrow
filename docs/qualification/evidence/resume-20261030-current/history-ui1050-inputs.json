@@ -1,0 +1,44 @@
+{
+  "source_digest": "54b7ea62e5fb29e63150263ba67a7e21e2b123dbe7bcd390d9a79ea38d7ef27a",
+  "files": [
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_history_delivery_session.dart",
+      "bytes": 7806,
+      "sha256": "017740cc76a2854ccd72143495ddb4e9e478ef98a2366daaee9078d62951d7d8"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_history_delivery_manager.dart",
+      "bytes": 18908,
+      "sha256": "de5200fbfbe66759761a8a503a8e5d8524d65d6d42ada8b356ec7c64fc59c7c0"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\blob_upload_history_manager.dart",
+      "bytes": 13922,
+      "sha256": "4d60e2fb9fa7ad25bb35707c7bb2460b110c940ed9ab5dba197ec010e924bdc9"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\plugin_library.dart",
+      "bytes": 68850,
+      "sha256": "1a72f95b6b4df2907196b8530bb4b0292ae0c5a3d34780a9c4c6e7edbacec9b6"
+    },
+    {
+      "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\blob_history_delivery_session_test.dart",
+      "bytes": 7616,
+      "sha256": "c832183720059717740032a3c5ddac60963bc2e1aa1429681d36a1945c0befaa"
+    },
+    {
+      "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\support\\history_delivery_fixture.dart",
+      "bytes": 4536,
+      "sha256": "c6bf25476f8680c4e2637090edada9095b57b764c966c93f1705b615b6c30933"
+    },
+    {
+      "path": "C:\\ms1020\\test\\blob_history_delivery_manager_test.dart",
+      "bytes": 9211,
+      "sha256": "a280633a77a77840507395c9490414d8c33787784e1734a77775b69b887cb3ec"
+    }
+  ],
+  "VM_calls": 0,
+  "native_product_starts": 0,
+  "qualification": "mocked UI plus retained session logic; formal native UI remains NOT_RUN",
+  "cache_root": "D:/build_cache"
+}

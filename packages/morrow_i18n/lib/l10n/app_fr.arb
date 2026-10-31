@@ -477,6 +477,31 @@
       }
     }
   },
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "frames": {
+        "type": "String"
+      }
+    }
+  },
   "@recoverySwitchUnconfirmed": {
     "placeholders": {
       "path": {
@@ -1997,6 +2022,29 @@
   "pluginsUseText": "Utiliser du texte",
   "pluginsUseTransform": "Utiliser la transformation",
   "pluginsViewFailed": "Impossible d’ouvrir la vue de l’extension",
+  "pluginsWatchAcknowledged": "La fin de cette observation est confirmée.",
+  "pluginsWatchAllow": "Autoriser ce plugin à observer les modifications du dossier",
+  "pluginsWatchAllowNotice": "Autorisez aussi la liste des fichiers, puis confirmez le dossier à chaque exécution.",
+  "pluginsWatchBounds": "Limites du plugin : {frames} enregistrements, {bytes} octets, {ms} millisecondes.",
+  "pluginsWatchBytes": "Limite de données transmises (octets)",
+  "pluginsWatchCancelled": "Cette observation a été annulée.",
+  "pluginsWatchClosed": "Le dossier a été libéré et le nettoyage est terminé.",
+  "pluginsWatchExpired": "Cette observation a atteint sa limite de durée.",
+  "pluginsWatchFormError": "Vérifiez le chemin complet. Chaque limite doit être positive et respecter les plafonds du plugin.",
+  "pluginsWatchFrames": "Nombre maximal d’enregistrements transmis",
+  "pluginsWatchIdle": "Aucune observation de dossier n’a commencé.",
+  "pluginsWatchIntro": "Seul le dossier confirmé pour cette exécution est observé. L’observation s’arrête à la limite de durée, d’enregistrements ou de données. Windows demande de confirmer le dossier au démarrage.",
+  "pluginsWatchNew": "Préparer une nouvelle observation",
+  "pluginsWatchNoPlugins": "Aucun plugin activé ne dispose des autorisations d’observation et de liste des fichiers.",
+  "pluginsWatchOtherPanel": "La fin de l’observation n’est pas encore confirmée. Vérifiez la tâche d’origine dans le panneau des modifications du dossier.",
+  "pluginsWatchPath": "Dossier à observer (chemin complet)",
+  "pluginsWatchReady": "Observation terminée. Lisez son résultat une seule fois.",
+  "pluginsWatchRecords": "Enregistrements reçus par le plugin : {frames} ; données comptabilisées : {bytes} octets.",
+  "pluginsWatchReviewed": "Résultat lu. Vérifiez-le avant de confirmer la fin.",
+  "pluginsWatchRunning": "Observation en cours. Actualisez son état ou demandez son annulation.",
+  "pluginsWatchStart": "Confirmer le dossier et commencer",
+  "pluginsWatchTitle": "Modifications du dossier",
+  "pluginsWatchUnknown": "Cette opération n’a pas pu être confirmée. Sa trace est conservée. Aucune relance ni nouvelle tâche automatique.",
   "pluginsWorkbench": "Extension de l’espace de travail",
   "pluginsWorkbenchReadOnly": "L’extension est autorisée, mais l’espace est en lecture seule. Résolvez le problème de bibliothèque ou d’extension, puis actualisez son état.",
   "recoveryAllFiles": "Tous les fichiers",

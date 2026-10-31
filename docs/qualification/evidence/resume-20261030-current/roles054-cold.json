@@ -1,0 +1,53 @@
+{
+  "status": "COMPILED_BYTE_BOUND_NORMAL_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "e0cb6e4696f214394d492c8a3c31058b1e16f9c6daedb06d44fe7b7c08c08b36",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-054\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 27745280,
+      "sha256": "7975ae27efd4f175724cde53e00f5c3c66bd347675d306c3df684357598ea054"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-054\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 99914752,
+      "sha256": "c3e7683ae6c97d34a50aa0fdadbb51167fcb136db424c581cdef53017ad2f22c"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-054\\R\\codex-command-runner.exe",
+      "bytes": 24591360,
+      "sha256": "2512daed07b79d621a7e008006d46737574850fb028f0c10f3df2f49232db255"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-054\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37624832,
+      "sha256": "a18782de7c401082df2ee6ecf513ae22a4f90e10a5244d9154bbee6909275d91"
+    }
+  },
+  "s_table_hex": "43323841315441420100000001000000c3e7683ae6c97d34a50aa0fdadbb51167fcb136db424c581cdef53017ad2f22c2512daed07b79d621a7e008006d46737574850fb028f0c10f3df2f49232db255",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37479424,
+    "flags": 1073741888
+  },
+  "qualification_fault": null,
+  "cold_output_isolation": true,
+  "all_four_roles_freshly_compiled": true,
+  "compiler_artifacts": {
+    "P": 878,
+    "C": 879,
+    "R": 620,
+    "S": 620
+  },
+  "normal_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-054\\C-normal-derivation.json",
+    "bytes": 1939,
+    "sha256": "de7ea5563685901bcca5b73c8ac75d601604eb9e07f5f76b17fd794e630f58c3"
+  },
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "L1": "NOT_RUN",
+  "full47": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false
+}

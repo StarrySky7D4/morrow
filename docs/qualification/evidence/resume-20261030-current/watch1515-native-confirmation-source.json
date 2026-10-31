@@ -1,0 +1,51 @@
+{
+  "status": "ORIGINAL_NOMINATION_NATIVE_CONFIRMATION_SOURCE_READY_NOT_RUN",
+  "old_source_digest": "7db4dcf6db7249a26f3bc63a6fb4450dbfd77e9434ae0b140b5a95fb5cb36a4a",
+  "new_source_digest": "728b67aa66be1aafe5b408539bbeb7264a57ff1c14886af3e691774fac057ebf",
+  "changed_files": {
+    "plugin_runtime/src/fs_watch_binding.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_binding.rs",
+      "bytes": 7570,
+      "sha256": "6427cc41f1d27c53e489aa0e839d93c5a2ad767808cd0b967acb1502aec5ffe7"
+    },
+    "plugin_runtime/src/directory_io/watch.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch.rs",
+      "bytes": 21967,
+      "sha256": "5aef9d05c66691dd1157bc57067f128ecb7540562dfe1804bb4353aab8370722"
+    },
+    "plugin_runtime/src/fs_watch_worker.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\fs_watch_worker.rs",
+      "bytes": 18364,
+      "sha256": "c418fc6cdbf34255de580f67976ee4c753f1f811b031078179db7c8f26cfc012"
+    },
+    "plugin_runtime/src/directory_io/watch/picker.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch\\picker.rs",
+      "bytes": 4742,
+      "sha256": "5ce914c810071dd195a6b311c443d74092da7c4e270f68832a3aafad8f31d222"
+    },
+    "plugin_runtime/src/directory_io/watch/picker_tests.rs": {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\watch\\picker_tests.rs",
+      "bytes": 12253,
+      "sha256": "4ea0b4a45995cddff27fd828c7d5242a52f7ada5986e056af7648c93c1603ec1"
+    }
+  },
+  "all_other_source_bytes_unchanged": true,
+  "restriction_only_original_nomination": true,
+  "one_original_context_job_and_window": true,
+  "native_capture_before_confirmation_returns": true,
+  "panic_retains_original_owner": true,
+  "unit_methods": [
+    "directory_io::watch::picker::tests::cancellation_after_confirmation_retires_the_same_captured_objects",
+    "directory_io::watch::picker::tests::different_native_nomination_is_refused_before_open_and_is_sticky",
+    "directory_io::watch::picker::tests::exact_confirmation_holds_original_objects_and_duplicate_never_reopens",
+    "directory_io::watch::picker::tests::original_callback_panic_retains_whole_fixture_and_original_job",
+    "directory_io::watch::picker::tests::original_native_picker_cancel_preflight_closes_without_capture",
+    "directory_io::watch::picker::tests::original_revocation_refuses_confirmation_without_native_open"
+  ],
+  "shown_native_picker": false,
+  "production_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

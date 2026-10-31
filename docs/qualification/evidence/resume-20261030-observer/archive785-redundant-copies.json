@@ -1,0 +1,97 @@
+{
+    "owner_contacts":  0,
+    "free_after":  84413046784,
+    "retained":  [
+                     {
+                         "path":  "C:\\MorrowQA\\windows-acceptance-20261025-033\\acceptance.vhdx",
+                         "bytes":  36085694464,
+                         "sha256":  "93b16232281386a8197c320dff00da8caf325d0af9ffc4b9ea8b14751015595c",
+                         "modified_ns":  1792923562375477900,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm033\\original-state-byte-copy\\7BD3C4E3-8DED-42C4-BE9A-22921AD28775.vmcx",
+                         "bytes":  73728,
+                         "sha256":  "faa1f9d8a79b97685687ab22fdc8be64f0aab430f2788d26d72a43d42919a35a",
+                         "modified_ns":  1792925152530377300,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm033\\original-state-byte-copy\\7BD3C4E3-8DED-42C4-BE9A-22921AD28775.vmgs",
+                         "bytes":  4194816,
+                         "sha256":  "f99aaae0cc4fc80cab3aeb3d1f3cbc35d8b4266f7886f8b827873af641e9f1a5",
+                         "modified_ns":  1792925152547126400,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm033\\original-state-byte-copy\\7BD3C4E3-8DED-42C4-BE9A-22921AD28775.VMRS",
+                         "bytes":  1928753152,
+                         "sha256":  "b3f3f6ed552b354ec64cc4b0584cc3a86ed4701d4f3057e9bdc77f4cb6528c01",
+                         "modified_ns":  1792925155808663400,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm033\\EXPORTED_DISKS_RECLAIMED_379.json",
+                         "bytes":  2980,
+                         "sha256":  "d61c2dcea3cc65b5254b9d287df479cf1c389824c7ef7142039d8c27f1f233de",
+                         "modified_ns":  1793100248704219400,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\windows-acceptance-20261025-034\\acceptance.vhdx",
+                         "bytes":  34976301056,
+                         "sha256":  "4b71124dec7d085946effffd58feb9bd4cbafd39516b1d39ca51dc29012c4fec",
+                         "modified_ns":  1792927798617246200,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.vmcx",
+                         "bytes":  73728,
+                         "sha256":  "2f008b50e45a69b75222deb6455b222d2e8dc41da3f0bb9114e4ad3043349c8b",
+                         "modified_ns":  1792927954436527600,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.vmgs",
+                         "bytes":  4194816,
+                         "sha256":  "6b1483619643688e5e3fb303c38396b15033d1e7b5e952faa4954079402c693c",
+                         "modified_ns":  1792927954450551500,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.VMRS",
+                         "bytes":  1703022592,
+                         "sha256":  "13d369a99fae9cc8e583c9eecb2d97a637ddfb78abd97e3929a5694dbf67963e",
+                         "modified_ns":  1792927957125016900,
+                         "attributes":  32
+                     },
+                     {
+                         "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\EXPORTED_DISKS_RECLAIMED_379.json",
+                         "bytes":  2980,
+                         "sha256":  "414c661b1321d6e5359d3c19a7fc852cc9bc49193f0b5ece56e33e285c2786a4",
+                         "modified_ns":  1793100248705226900,
+                         "attributes":  32
+                     }
+                 ],
+    "restore_requires_retained_original_disk_and_existing_parent":  true,
+    "restore_or_replay_authorized":  false,
+    "guest_contacts":  0,
+    "utc":  "2026-10-30T11:04:02.1501530Z",
+    "registered_vm_states_unchanged":  true,
+    "Unknown_outcomes_unchanged":  true,
+    "archive_was_already_non_standalone":  true,
+    "unique_VM_state_deleted":  0,
+    "free_space_delta_nonisolated":  true,
+    "removed":  [
+                    "C:\\MorrowQA\\retained-unknown-archives\\vm033\\original-state-byte-copy\\acceptance-original.vhdx",
+                    "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\acceptance-original.vhdx"
+                ],
+    "registered_vm_count":  4,
+    "observed_free_delta":  71061909504,
+    "status":  "PASS_TWO_REDUNDANT_ARCHIVE_DISK_COPIES_REMOVED_UNIQUE_ORIGINAL_STATE_RETAINED",
+    "logical_bytes":  71061995520,
+    "memory_files_deleted":  0,
+    "configuration_files_deleted":  0,
+    "free_before":  13351137280,
+    "original_disks_deleted":  0
+}

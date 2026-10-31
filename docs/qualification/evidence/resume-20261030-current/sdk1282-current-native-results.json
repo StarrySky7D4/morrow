@@ -1,0 +1,114 @@
+{
+  "scope": "Windows x64 native SDK tests and SDK-only consumers; not Wasm/product qualification",
+  "source_metadata": {
+    "mode": "exact-current-working-tree-native",
+    "source_digest": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+    "git_ancestor_only": "35357a7097f48ccf9148a0275a456886a285570f",
+    "tool_ancestor_only": "35357a7097f48ccf9148a0275a456886a285570f",
+    "current_sdk_is_not_claimed_equal_to_published_ancestor": true,
+    "actual_tool_files": {
+      "tool/windows/fixtures/sdk_consumer.c": {
+        "bytes": 5035,
+        "sha256": "0b8eae3cd91931947125ade6674abf7bedb13cd2f41e9a0658bd806482b6667b"
+      },
+      "tool/windows/fixtures/sdk_consumer.cpp": {
+        "bytes": 4422,
+        "sha256": "690b25814ba3319fd5b6497df2d931239e06bd7688f2509390779c03d3f6ec70"
+      },
+      "tool/windows/fixtures/sdk_consumer.rs": {
+        "bytes": 2234,
+        "sha256": "1c5a545df99477602858ad8213a729eb8d4ad614b45d0f62efe931130f54fd1e"
+      },
+      "tool/windows/verify_sdk_native_bounded.py": {
+        "bytes": 16594,
+        "sha256": "72b6ebbc96cfa3d8819532ab302d6c47b41b1d75c0da712b2c9f802c06143bfa"
+      },
+      "tool/windows/sdk_native_provenance.py": {
+        "bytes": 14210,
+        "sha256": "5c4b0581b10be98748d98e4f15c17261d423b019a43d34a53a08431856dd6616"
+      }
+    },
+    "sdk_normalization_counts": {
+      "exact_working_byte_files": 344,
+      "normalization_used": false
+    }
+  },
+  "rust_test_passed": 93,
+  "rust_test_failed": 0,
+  "rust_test_command_exit": 0,
+  "native_executables": [
+    {
+      "name": "clang-c_channel",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_channel",
+      "status": "passed"
+    },
+    {
+      "name": "clang-c_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "clang-c_transport",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_transport",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_codec",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_channel",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_channel",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_transport",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_transport",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_codec",
+      "status": "passed"
+    }
+  ],
+  "standalone_dependency_paths": [
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-sdk-native-matrix1282\\standalone-source\\sdk\\rust"
+  ],
+  "shared_sdk_source_unchanged": true,
+  "protected_databases_or_keys_created": 0,
+  "test_commands_failed": [],
+  "not_run": [
+    "Windows Wasmi bounded-client import/fuel execution",
+    "Windows protected host/executor/product/UI",
+    "Windows ARM64/x86"
+  ],
+  "versions": {
+    "msvc_toolset": "14.44.35207",
+    "windows_sdk": "10.0.26100.0\\",
+    "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-pc-windows-msvc\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+    "clang": "clang version 22.1.0 (https://github.com/llvm/llvm-project 4434dabb69916856b824f68a64b029c67175e532)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Program Files\\LLVM\\bin\n"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "status": "RUNNING_WINDOWS_P2_ALIASED_OUTPUT_SCOPED_PASS_SDK_COMPATIBILITY_AND_LOOPBACK_SCOPED_PASS",
+  "utc": "2026-10-31T10:50:26.989178+00:00",
+  "source_digest": "ef78071c618c102962fe7a25b4c177b722a6fa0d47955c0a536bb571554d526e",
+  "previous_checkpoint": "continuation1290.json",
+  "P2_case1300": {
+    "status": "PASS_SCOPED_V7_ALIASED_OUTPUT_DELIVERY_REJECTED_ORIGINAL_RESOURCES_RETAINED",
+    "tag": "5228f346f70f4556b180d07a2d364a26",
+    "vm_id": "603281be-f3f0-474d-9835-fd9939aa9b52",
+    "completed_steps": 39,
+    "reserved_failure_step": 40,
+    "native_trace_records": 154,
+    "checks": 13488,
+    "original_first_failure": {
+      "stage": "Create",
+      "site": "CreateOutputIdentityGuard",
+      "kind": "PermissionDenied",
+      "win32": null,
+      "ntstatus": null
+    },
+    "actual_CreateProcessAsUser_success_before_injected_output_alias": true,
+    "natural_OS_malformed_output_claim": false,
+    "original_case_session": 67824,
+    "original_host_pid": 24844,
+    "original_native_owner_pid": 6800,
+    "case_clean": false,
+    "policy_clean": true,
+    "original_case_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+    "issued_tokens_revoked": false,
+    "automatic_replay": false
+  },
+  "local_entry_repair": {
+    "run": 1322,
+    "original_refusal": "KeyError: original_case_outcome before any product dispatch",
+    "product_invocations_before_repair": 0,
+    "reason": "The retained-archive entry read a ZIP-verification receipt as an unregister/closure receipt; the replacement joins both original proofs.",
+    "product_dispatches": 1,
+    "original_47_step_control_unchanged": true,
+    "original_policy_owner_unchanged": true,
+    "original_deadlines_unchanged": true,
+    "original_reviewer_unchanged": true,
+    "actual_provenance_review": 1324
+  },
+  "cold_roles": {
+    "series": "061",
+    "roles": [
+      "P",
+      "C",
+      "R",
+      "S"
+    ],
+    "independent_empty_targets": true,
+    "all_fresh_false": true,
+    "actual_setup_verified": true
+  },
+  "SDK_compatibility": {
+    "build": 1301,
+    "run": 1302,
+    "methods": 13,
+    "transport_item_metadata_only": true
+  },
+  "SDK_network": {
+    "build": 1306,
+    "run": 1307,
+    "transport_methods": 6,
+    "TLS_DPAPI_methods": 3,
+    "actual_loopback": true,
+    "synthetic_credentials_only": true,
+    "production_public_TLS": false
+  },
+  "SDK_review": {
+    "run": 1311,
+    "all_original_processes_returned": true,
+    "frozen_inputs": 57,
+    "frozen_inputs_unchanged": true,
+    "guests_rebuilt": false,
+    "native1282_source_retained": "797e3e2d10c089c79a46af94972c85b54906b32adf84fc3911b98bf54a2737ec",
+    "native344_SDK_and_current_core_schemas_byte_identical": true,
+    "counts_not_combined": true
+  },
+  "VM054": {
+    "status": "SAVED_VM054_FULL_ARCHIVE_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISK_RETAINED",
+    "archive": "D:\\build_cache\\retained-unknown-archives\\vm054",
+    "all_four_files_independently_verified": true,
+    "original_disk_retained": true,
+    "owner_contacts": 0,
+    "guest_commands": 0,
+    "VM_starts": 0
+  },
+  "registered_vms": 3,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    }
+  ],
+  "cache_root": "D:\\build_cache",
+  "storage": [
+    {
+      "run": 1287,
+      "roots": 18,
+      "files": 950274,
+      "logical_bytes_preserved": 14247326937,
+      "observed_free_delta": 3908874240,
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-delta-reclaim-1287\\result.json",
+        "bytes": 1728,
+        "sha256": "778340f4979fa406fd2e0ff61f02c66cb3df8d1717505f5fe096893d496d99e3"
+      }
+    },
+    {
+      "run": 1305,
+      "roots": 18,
+      "files": 950520,
+      "logical_bytes_preserved": 14252448174,
+      "observed_free_delta": 11166593024,
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-delta-reclaim-1305\\result.json",
+        "bytes": 1730,
+        "sha256": "c33e4433ac28a4d78657c3f4d5264e283fd5b6ebba4dd22449e675a855419ad4"
+      }
+    },
+    {
+      "run": 1310,
+      "roots": 12,
+      "files": 634200,
+      "logical_bytes_preserved": 9508979015,
+      "observed_free_delta": 7090601984,
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-delta-reclaim-1310\\result.json",
+        "bytes": 1540,
+        "sha256": "b38ef1b9677a43e78c82c0fffb9e2860951db50dfd396c62783ab529f52f141c"
+      }
+    },
+    {
+      "run": 1318,
+      "roots": 5,
+      "files": 264877,
+      "logical_bytes_preserved": 3971747411,
+      "observed_free_delta": 6103470080,
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-delta-reclaim-1318\\result.json",
+        "bytes": 1316,
+        "sha256": "30b3049e576b549b08f6eb4f7d0d5239b02159992003c3d4114f2891758bf923"
+      }
+    },
+    {
+      "run": 1321,
+      "roots": 3,
+      "files": 159327,
+      "logical_bytes_preserved": 2385620326,
+      "observed_free_delta": 4002025472,
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-delta-reclaim-1321\\result.json",
+        "bytes": 1260,
+        "sha256": "c2c6844bd0c966c894734cf1d2ab3bc4a4697a9be02b6046b9d7c9271beb7e8f"
+      }
+    }
+  ],
+  "observed_space_deltas_not_added_or_attributed": true,
+  "free_bytes_sample": {
+    "C": 13795667968,
+    "D": 15758155776
+  },
+  "formal_UI": "PRIOR_SCOPED1166_REOPEN1174_RETAINED_LATE_FEEDBACK1215_UNBOUND",
+  "CURRENT_SOURCE_FULL47": "OPEN",
+  "P2": "OPEN",
+  "formal_current_P3": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "commit_or_push_this_resume": false,
+  "next": "Audit remaining Windows P2/SDK obligations, preserve the closed alias-fault evidence, then prepare the next independent acceptance with fresh source/artifact binding and measured storage guards."
+}

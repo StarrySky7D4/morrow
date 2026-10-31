@@ -1,0 +1,24 @@
+{
+  "status": "LATE_USER_OBSERVATIONS_WINDOW_IDENTITY_UNBOUND",
+  "recorded_utc": "2026-10-31T06:16:09.082659+00:00",
+  "observations": [
+    {
+      "question_call": "call_9f0b365232f44e61a0613341cc057485",
+      "answer": "新窗口已打开历史上传记录"
+    },
+    {
+      "question_call": "call_073a3943d9a441a9bd492b75870ca916",
+      "answer": "已显示插件返回内容，保持结果页打开"
+    }
+  ],
+  "user_reports_result_page_left_open": true,
+  "current_window_identity_verified": false,
+  "new_program_control_actions": 0,
+  "old_unknown_owner_queries": 0,
+  "additional_runtime_acceptance_claim": false,
+  "already_completed_independent_desktop_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-desktop-visible-review-1174\\result.json",
+    "bytes": 5560,
+    "sha256": "edb4d36741dcb3b57319ee53c840a8d37fb816763042722103e10937e1e31ea0"
+  }
+}

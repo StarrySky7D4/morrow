@@ -1,0 +1,184 @@
+{
+  "status": "PASS_CURRENT_NORMAL47_NINE_GROUPS_CLOSED_AND_SAVED",
+  "tag": "41db0cb9cb6d434d88931bc22abc1cc9",
+  "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case1365-summary.json",
+    "bytes": 1319,
+    "sha256": "34a62c7b6e63641fb9ce43b8d1453f48f02f154aebf5fefc80722e02a3feb3ad"
+  },
+  "completed": [
+    {
+      "phase": "public-driver-static-review",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\01-public-driver-static-review.stdout",
+        "bytes": 183,
+        "sha256": "1d36378a8847d5e37896d4ed9151e2f20556a73f01e3f31b98425162383f2ca2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\01-public-driver-static-review.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\02-authorized-protected-login-input.stdout",
+        "bytes": 56,
+        "sha256": "6bc88051e006f11c585282962acd6537afc427cb491dbab03d35766e3eaa9e98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\02-authorized-protected-login-input.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\03-prepare-current-stage.stdout",
+        "bytes": 555,
+        "sha256": "3d683a0678bca492221fb4b8bccff4b562b257de6c2eb21e82a155783d7a0296"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\03-prepare-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\04-review-current-stage.stdout",
+        "bytes": 247,
+        "sha256": "173b897c5915ef1dc098cb70504d1c18b0247b4c951fd4dd06547b33af0a0df9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\04-review-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "stage-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\05-stage-once.stdout",
+        "bytes": 336,
+        "sha256": "afa32ba7b45b1c97653126c27300d5281aed72b22afc6fe3c0ff82319e2f6020"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\05-stage-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-reviewed-binding",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\06-prepare-reviewed-binding.stdout",
+        "bytes": 371,
+        "sha256": "013d43bcc1df38e0ad93290d22f47e97dd22be6eb69c44ad52c9563075f46863"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\06-prepare-reviewed-binding.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "bind-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\07-bind-once.stdout",
+        "bytes": 212,
+        "sha256": "d54fc5cd8e1883e61790f8576c0e934ef5118dd8b4cc79b550984f0c0472a767"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\07-bind-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-original47",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\08-prepare-original47.stdout",
+        "bytes": 655,
+        "sha256": "7b9872e08ad13d7ee630714a25d8c9ab4087cdb0ae7fbdd5a420efdee7030960"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\08-prepare-original47.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "original47-once",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\09-original47-once.stdout",
+        "bytes": 655,
+        "sha256": "5c9e8a0dc7bea06c09175a39d58b25853d5e523971e56e5aba6d5e0640d04e63"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\09-original47-once.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "closed-case-evidence-readback",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\10-closed-case-evidence-readback.stdout",
+        "bytes": 2190,
+        "sha256": "51d69042e7b63b54f418aedc371ad1836ef3011e20ad62a63fdecc191a5a72dc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\10-closed-case-evidence-readback.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "save-closed-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\11-save-closed-vm.stdout",
+        "bytes": 639,
+        "sha256": "136de84e12a6666a9a5c53cdc7eadb6a20ae7fc517421bb7ac63c694706e0778"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\11-save-closed-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "independent-nine-group-review",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\12-independent-nine-group-review.stdout",
+        "bytes": 290,
+        "sha256": "42e86a13018b0f8d24f2882aeea5269ba45262185714c0101c800bafc6d75263"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal1365-pipeline-1365\\12-independent-nine-group-review.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_pipeline_processes_returned": true,
+  "old_unknown_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

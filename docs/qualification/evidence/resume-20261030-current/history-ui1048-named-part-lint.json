@@ -1,0 +1,33 @@
+{
+  "status": "SOURCE_UI_CHECKS_RETAINED_NOT_ACCEPTED",
+  "source_digest": "49b2c7593c0fe176058c05e6e7bbc1bc15f7988faaeb2443c2162cf17d5979f3",
+  "source_unchanged": true,
+  "checks": [
+    {
+      "name": "analyze",
+      "exit_code": 1,
+      "original_process_returned": true,
+      "seconds": 1.438,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1048\\analyze.stdout",
+        "bytes": 343,
+        "sha256": "668b7cfc7f2a00c885b3a3a7cf3c3e1d3da6ab4729aa30c0b96122c02d4cdb37"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\history-ui-1048\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_check_processes_returned": true,
+  "retained_session_tests": 10,
+  "native_UI": false,
+  "supervised_host": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

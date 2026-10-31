@@ -1,0 +1,22 @@
+{
+  "observed_free_delta": 1133129728,
+  "roots": [
+    "D:\\build_cache\\qualification-targets\\protectedwatch1544-HOST-5a1c87b7f12ae144",
+    "D:\\build_cache\\qualification-targets\\watchworker1518-RUNTIME-728b67aa66be1aaf",
+    "D:\\build_cache\\qualification-targets\\watchworker1512-RUNTIME-caaf6916ad013ed6",
+    "D:\\build_cache\\qualification-targets\\watchpicker1524-GUI-1ae39080ca86d573",
+    "D:\\build_cache\\qualification-targets\\watchworker1497-RUNTIME-6bdd867f3d507030",
+    "D:\\build_cache\\qualification-targets\\watchworker1493-RUNTIME-0e854c5cda1233a9"
+  ],
+  "files_verified": 18055,
+  "concurrent_changes_not_attributed": true,
+  "free_before": 111890432,
+  "old_owner_contacts": 0,
+  "free_after": 1245020160,
+  "all_file_contents_unchanged": true,
+  "relocations": 0,
+  "protected_files_verified": 18,
+  "VM_calls": 0,
+  "status": "PASS_CLOSED_RETAINED_COMPILER_ARTIFACTS_LOSSLESSLY_COMPRESSED",
+  "deletions": 0
+}

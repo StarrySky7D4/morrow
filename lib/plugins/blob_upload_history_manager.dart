@@ -2,11 +2,24 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'blob_upload_history_models.dart';
 import 'blob_upload_models.dart';
+import 'blob_history_delivery_models.dart';
+import 'blob_history_delivery_manager.dart';
+import 'blob_history_delivery_session.dart';
+import 'plugin_library.dart';
 
-/// Read-only history, deliberately separate from live upload/repair controls.
+/// History browsing remains separate from live upload/repair controls.
 final class BlobUploadHistoryManager extends StatefulWidget {
-  const BlobUploadHistoryManager({super.key, required this.backend});
+  const BlobUploadHistoryManager({
+    super.key,
+    required this.backend,
+    this.delivery,
+    this.plugins = const [],
+    this.registryRevision,
+  });
   final BlobUploadHistoryBackend backend;
+  final BlobHistoryDeliveryBackend? delivery;
+  final List<PluginLibraryEntry> plugins;
+  final BigInt? registryRevision;
   @override
   State<BlobUploadHistoryManager> createState() =>
       _BlobUploadHistoryManagerState();
@@ -20,6 +33,8 @@ final class _BlobUploadHistoryManagerState
   bool busy = false, more = false;
   String? notice;
   int epoch = 0;
+  bool delivering = false;
+  Uint8List? deliverySubmission;
 
   String _s(String zh, String en) =>
       Localizations.localeOf(context).languageCode == 'zh' ? zh : en;
@@ -46,6 +61,8 @@ final class _BlobUploadHistoryManagerState
       busy = false;
       more = false;
       notice = null;
+      delivering = false;
+      deliverySubmission = null;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _load(reset: true);
       });
@@ -232,6 +249,20 @@ final class _BlobUploadHistoryManagerState
               icon: const Icon(Icons.search),
               label: Text(_s('查看当前内容记录', 'Check current content record')),
             ),
+            if (widget.delivery != null)
+              OutlinedButton.icon(
+                key: ValueKey('upload-history-share-$key'),
+                onPressed: busy
+                    ? null
+                    : () => setState(() {
+                        deliverySubmission = row.submission;
+                        delivering = true;
+                      }),
+                icon: const Icon(Icons.share_outlined),
+                label: Text(
+                  _s('选择插件查看这条记录', 'Choose a plugin for this record'),
+                ),
+              ),
             ExpansionTile(
               tilePadding: EdgeInsets.zero,
               title: Text(_s('核对信息', 'Record details')),
@@ -251,72 +282,96 @@ final class _BlobUploadHistoryManagerState
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: Text(_s('历史上传记录', 'Upload history')),
-    content: SizedBox(
-      width: 720,
-      height: 560,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _s(
-              '记录来自当前内容库。确认记录不代表当时的界面已收到结果。这里分别显示原任务结果与当前内容状态，不会启动上传或替旧任务确认。',
-              'Records belong to this library. Acknowledgement does not prove that the former UI received the result. Original results and current content state are separate; this view starts no upload and acknowledges no old task.',
-            ),
-          ),
-          if (busy)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: LinearProgressIndicator(),
-            ),
-          if (notice != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                notice!,
-                key: const ValueKey('upload-history-notice'),
-              ),
-            ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: rows.isEmpty
-                ? Center(
-                    child: Text(
-                      busy
-                          ? _s('正在读取…', 'Reading…')
-                          : notice != null
-                          ? _s('尚未取得可显示的记录。', 'No records could be loaded.')
-                          : _s(
-                              '当前内容库没有可显示的上传记录。空列表不代表旧任务未执行。',
-                              'This library has no upload records to display. An empty list does not prove an old task did not run.',
-                            ),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: rows.length,
-                    itemBuilder: (_, i) => _row(rows[i]),
+  Widget build(BuildContext context) => delivering && widget.delivery != null
+      ? BlobHistoryDeliveryManager(
+          backend: widget.delivery!,
+          plugins: widget.plugins,
+          registryRevision: widget.registryRevision,
+          submission: deliverySubmission,
+          onBack: () => setState(() => delivering = false),
+        )
+      : AlertDialog(
+          title: Text(_s('历史上传记录', 'Upload history')),
+          content: SizedBox(
+            width: 720,
+            height: 560,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _s(
+                    '记录来自当前内容库。确认记录不代表当时的界面已收到结果。这里分别显示原任务结果与当前内容状态，不会启动上传或替旧任务确认。',
+                    'Records belong to this library. Acknowledgement does not prove that the former UI received the result. Original results and current content state are separate; this view starts no upload and acknowledges no old task.',
                   ),
-          ),
-          if (more)
-            TextButton(
-              key: const ValueKey('upload-history-more'),
-              onPressed: busy ? null : () => _load(reset: false),
-              child: Text(_s('读取更多记录', 'Read more records')),
+                ),
+                if (busy)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: LinearProgressIndicator(),
+                  ),
+                if (notice != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      notice!,
+                      key: const ValueKey('upload-history-notice'),
+                    ),
+                  ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: rows.isEmpty
+                      ? Center(
+                          child: Text(
+                            busy
+                                ? _s('正在读取…', 'Reading…')
+                                : notice != null
+                                ? _s(
+                                    '尚未取得可显示的记录。',
+                                    'No records could be loaded.',
+                                  )
+                                : _s(
+                                    '当前内容库没有可显示的上传记录。空列表不代表旧任务未执行。',
+                                    'This library has no upload records to display. An empty list does not prove an old task did not run.',
+                                  ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: rows.length,
+                          itemBuilder: (_, i) => _row(rows[i]),
+                        ),
+                ),
+                if (more)
+                  TextButton(
+                    key: const ValueKey('upload-history-more'),
+                    onPressed: busy ? null : () => _load(reset: false),
+                    child: Text(_s('读取更多记录', 'Read more records')),
+                  ),
+              ],
             ),
-        ],
-      ),
-    ),
-    actions: [
-      TextButton(
-        key: const ValueKey('upload-history-refresh'),
-        onPressed: busy ? null : () => _load(reset: true),
-        child: Text(_s('重新查看', 'Refresh')),
-      ),
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: Text(_s('关闭', 'Close')),
-      ),
-    ],
-  );
+          ),
+          actions: [
+            if (widget.delivery != null &&
+                BlobHistoryDeliverySession.forBackend(
+                      widget.delivery!,
+                    ).request !=
+                    null)
+              TextButton(
+                key: const ValueKey('upload-history-resume-delivery'),
+                onPressed: () => setState(() {
+                  deliverySubmission = null;
+                  delivering = true;
+                }),
+                child: Text(_s('继续未完成交付', 'Continue retained delivery')),
+              ),
+            TextButton(
+              key: const ValueKey('upload-history-refresh'),
+              onPressed: busy ? null : () => _load(reset: true),
+              child: Text(_s('重新查看', 'Refresh')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(_s('关闭', 'Close')),
+            ),
+          ],
+        );
 }

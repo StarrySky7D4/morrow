@@ -1,0 +1,227 @@
+{
+  "isolated_sdk_candidate": true,
+  "canonical_source_edits": 0,
+  "status": "FAILED_WINDOWS_WASMI_ORIGINAL_MATRIX",
+  "source_digest": "4f2dd637ad086b7742bfa0f4b416f0cb8d42f96a21bea33d2cbc05638a1a45ec",
+  "source_unchanged": true,
+  "sdk_inputs_unchanged": 344,
+  "actual_methods": 8,
+  "passed": 6,
+  "failed": 2,
+  "methods": [
+    {
+      "name": "matched_fresh_oneshot_control_records_real_outcomes_without_claiming_old_case_failed",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 2.812,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-01.stdout",
+        "bytes": 209,
+        "sha256": "5b9afb80f0cf6231812cb905e52876afa876cfe72331072910de85debd75a832"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-01.stderr",
+        "bytes": 6320,
+        "sha256": "2fe4b814cee323d4c0a58d135719180722773cd697f8e062cf24c258c463401b"
+      }
+    },
+    {
+      "name": "matched_fresh_standard_oneshot_control_records_original_five_frame_outcomes",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.437,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-02.stdout",
+        "bytes": 200,
+        "sha256": "cbe5f4b92deeb43eaa581b5209a9d2f24e71d2829bb131e2b67efe572f79e9be"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-02.stderr",
+        "bytes": 2211,
+        "sha256": "16f35364987e5252e36ff24ef7feb653b511c8c115d6e33da8ea73f7c7a2e4d7"
+      }
+    },
+    {
+      "name": "reusable_four_full_frames_preserve_original_limits_fault_revoke_and_actual_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.406,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-03.stdout",
+        "bytes": 204,
+        "sha256": "e7335cedae6bca0e7b694c1abbf11c4b3b057c0a116e8b4c1a40f9c8fa2c8567"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-03.stderr",
+        "bytes": 1547,
+        "sha256": "a598a2ca27905946fc24f22ebcbf47f6f1638e512f4c28ab49e360d6f57530e4"
+      }
+    },
+    {
+      "name": "reusable_full_64kib_boundary_bytes_and_events_ack_original_frame_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.344,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-04.stdout",
+        "bytes": 198,
+        "sha256": "5f2699ebee2a2a71834c5e8dbbcc09a585a25de813af04bb914f00be81a11c26"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-04.stderr",
+        "bytes": 1562,
+        "sha256": "142d05e920fc2e8cc4500c20f44b4cd1e85869b21344366cad38436c4251ffa0"
+      }
+    },
+    {
+      "name": "reusable_repeated_full_64kib_frames_bytes_and_events_keep_default_limits",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.937,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-05.stdout",
+        "bytes": 197,
+        "sha256": "23a066971d3c09abfe64b852a67fe63c035cf7f9cca47f85c4cb093d122707bc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-05.stderr",
+        "bytes": 1787,
+        "sha256": "94648bb2d46f7f10c287e8a646b40a26de8fa825807bc303bb723813b7ca82b8"
+      }
+    },
+    {
+      "name": "reusable_small_frames_bytes_and_events_preserve_owned_responses_and_join",
+      "passed": true,
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.968,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-06.stdout",
+        "bytes": 197,
+        "sha256": "68505d733ce33471fe9178282097f46acc8e7e392df7ddbcb23068247f4886ac"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-06.stderr",
+        "bytes": 2223,
+        "sha256": "8cd6169cd72f90ba22c97ba52f8e4099a2ae764d462119a11b12fdefdaa5cb7d"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_byte_frames_use_all_sixteen_calls_and_join",
+      "passed": false,
+      "exit_code": 101,
+      "original_process_returned": true,
+      "seconds": 0.547,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-07.stdout",
+        "bytes": 302,
+        "sha256": "5f78343a22c7790d94448ab69c6fefb448cc9d8d6de0d383eb601103405ec48f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-07.stderr",
+        "bytes": 1006,
+        "sha256": "b8279aff51c6168c6afc45f17b95bd30985b6f0157cb757d5891f91247737e4b"
+      }
+    },
+    {
+      "name": "standard_five_original_32kib_event_frames_persist_exact_acks_and_join",
+      "passed": false,
+      "exit_code": 101,
+      "original_process_returned": true,
+      "seconds": 0.547,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-08.stdout",
+        "bytes": 298,
+        "sha256": "08126c3a7e7ec31a4388326e395859bae74d3008f04eebbbf054152f594da5d8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-bounded-sdk-1222\\test-08.stderr",
+        "bytes": 2114,
+        "sha256": "b4d747415ac9b0bb84015d998061d3f930c6e31c2c0966d1a8685cbea8ea43ec"
+      }
+    }
+  ],
+  "artifacts": {
+    "bounded-reusable-001": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\build\\plugin.wasm",
+        "bytes": 270103,
+        "sha256": "0209a49756750bd48fbbfac1ab34a43dbb1ff749d8b98f25c369a407e0ecb02b"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\dist\\c15de91ce696bed09380c002a30864704e9c4d7764dd27c4d6c81c8ac1d6696d.mplugin",
+        "bytes": 138445,
+        "sha256": "c15de91ce696bed09380c002a30864704e9c4d7764dd27c4d6c81c8ac1d6696d"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-reusable-001\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "71fcd134c0eef307908bd070b3669a8668cde32aef18354a6d35a51f9a4789ff"
+      }
+    },
+    "bounded-oneshot-001": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\build\\plugin.wasm",
+        "bytes": 269900,
+        "sha256": "2d91eb712b9ed359d304fc637e4d8088f27d0cd1cc228058fe88a2f6345f0486"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\dist\\d5aa74ce4df08354a808b5981ec8c1e5af8f3c85eee21e039cdf4dab91149b21.mplugin",
+        "bytes": 138273,
+        "sha256": "d5aa74ce4df08354a808b5981ec8c1e5af8f3c85eee21e039cdf4dab91149b21"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-bounded-oneshot-001\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "71fcd134c0eef307908bd070b3669a8668cde32aef18354a6d35a51f9a4789ff"
+      }
+    },
+    "standard-reusable-002": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-reusable-002\\build\\plugin.wasm",
+        "bytes": 270103,
+        "sha256": "9f644608c0331cb984feff42e271ffbd75a0b09c93b7447bc88bd49faecd7e0d"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-reusable-002\\dist\\a89e7d2e71c1b7db75b117ff747f37411a2ea1f8c290c1bb328f5573082037fc.mplugin",
+        "bytes": 138454,
+        "sha256": "a89e7d2e71c1b7db75b117ff747f37411a2ea1f8c290c1bb328f5573082037fc"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-reusable-002\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "71fcd134c0eef307908bd070b3669a8668cde32aef18354a6d35a51f9a4789ff"
+      }
+    },
+    "standard-oneshot-002": {
+      "wasm": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\build\\plugin.wasm",
+        "bytes": 269900,
+        "sha256": "63fdb205dc3134f24ed3963f7e71c8c62fe5b12bb8f149b22c612495bf1e2884"
+      },
+      "package": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\dist\\d3bda63b74aeb74532e1b1eff27a06ef7c9cf77d5a496a295cd106d38e50aff4.mplugin",
+        "bytes": 138281,
+        "sha256": "d3bda63b74aeb74532e1b1eff27a06ef7c9cf77d5a496a295cd106d38e50aff4"
+      },
+      "original_sdk_lock": {
+        "path": "D:\\build_cache\\sdk-bounded1222\\sdk\\fixtures\\rust-channel-standard-oneshot-002\\sdk.lock.toml",
+        "bytes": 8414,
+        "sha256": "71fcd134c0eef307908bd070b3669a8668cde32aef18354a6d35a51f9a4789ff"
+      }
+    }
+  },
+  "all_original_processes_returned": true,
+  "budgets_unchanged": true,
+  "old_fixture_pins_not_rewritten": true,
+  "VM_calls": 0,
+  "full_SDK26_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

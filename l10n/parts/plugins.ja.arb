@@ -837,5 +837,53 @@
     }
   },
   "pluginsDirectoryNativePickerStart": "フォルダーを選んでプラグインを実行",
-  "pluginsDirectoryNativePickerIntro": "フォルダーを選ぶとプラグインが実行されます。制限時間には選択時間も含まれます。この画面を離れると未完了のタスクはキャンセルされます。"
+  "pluginsDirectoryNativePickerIntro": "フォルダーを選ぶとプラグインが実行されます。制限時間には選択時間も含まれます。この画面を離れると未完了のタスクはキャンセルされます。",
+  "pluginsWatchTitle": "ディレクトリの変更",
+  "pluginsWatchIntro": "今回確認したフォルダーだけを監視します。時間、記録数、データ量の上限に達すると停止します。開始時に Windows の画面でフォルダーを確認します。",
+  "pluginsWatchAllow": "このプラグインにディレクトリ変更の監視を許可",
+  "pluginsWatchAllowNotice": "ファイル一覧の取得も許可し、実行ごとにフォルダーを確認してください。",
+  "pluginsWatchNoPlugins": "ディレクトリ監視とファイル一覧取得の両方が許可された有効なプラグインはありません。",
+  "pluginsWatchPath": "監視するフォルダー（完全パス）",
+  "pluginsWatchFrames": "配信する記録数の上限",
+  "pluginsWatchBytes": "配信データ量の上限（バイト）",
+  "pluginsWatchStart": "フォルダーを確認して監視を開始",
+  "pluginsWatchBounds": "プラグインの上限：記録 {frames} 件、{bytes} バイト、{ms} ミリ秒。",
+  "@pluginsWatchBounds": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      },
+      "ms": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchNew": "新しい監視を準備",
+  "pluginsWatchIdle": "ディレクトリの監視は開始されていません。",
+  "pluginsWatchRunning": "監視中です。状態を更新するか、キャンセルを要求できます。",
+  "pluginsWatchReady": "監視が終了しました。結果を一度だけ読み取れます。",
+  "pluginsWatchReviewed": "結果を読み取りました。内容を確認してから終了を確定してください。",
+  "pluginsWatchAcknowledged": "今回の監視の終了を確認しました。",
+  "pluginsWatchUnknown": "操作の結果を確認できませんでした。記録は保持され、自動再試行や新しいタスクの開始は行われません。",
+  "pluginsWatchCancelled": "今回の監視はキャンセルされました。",
+  "pluginsWatchExpired": "今回の監視は制限時間に達しました。",
+  "pluginsWatchClosed": "ディレクトリを解放し、後処理を完了しました。",
+  "pluginsWatchRecords": "プラグインが受信した記録：{frames} 件、計上データ量：{bytes} バイト。",
+  "@pluginsWatchRecords": {
+    "description": "Bounded directory observation values, rendered without numeric precision loss.",
+    "placeholders": {
+      "frames": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsWatchFormError": "完全なフォルダーパスを確認してください。各上限は正の値で、プラグインの上限以内である必要があります。",
+  "pluginsWatchOtherPanel": "ディレクトリ監視の終了はまだ確認されていません。「ディレクトリの変更」パネルで元のタスクを確認してください。"
 }

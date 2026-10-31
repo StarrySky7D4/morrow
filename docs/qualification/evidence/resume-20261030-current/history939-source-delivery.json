@@ -1,0 +1,32 @@
+{
+  "status": "PASS_SOURCE_DELIVERY_WITH_ORIGINAL_LICENSE",
+  "source_digest": "df7aefaa8f1db1b80f6579b2ac86010d262505db3d54e526b8da241f8e8a6190",
+  "qualified_native_package_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-distribution-938\\result.json",
+    "bytes": 6637,
+    "sha256": "45e77fdeafe4e2b747d8373ce2cac93df3eb0fa96e45d1be37686d29c63e9b60"
+  },
+  "original_archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-distribution-938\\morrow-blob-upload-history-v1-experimental-source.zip",
+    "bytes": 17836,
+    "sha256": "565478466e78ef4080cf03b2eb51262759ad17d8adfdc5253cc7cbb6f2f41025"
+  },
+  "archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-939\\morrow-blob-upload-history-v1-experimental-source.zip",
+    "bytes": 29200,
+    "sha256": "0b001fb5078a5b2d1d4e059225c22012329bb454823e7858a91ba7cb0d8329ca"
+  },
+  "files": 15,
+  "compiled_input_files_identical_to938": true,
+  "only_added_file": "LICENSE",
+  "original_license": {
+    "path": "C:\\ms1020\\LICENSE",
+    "bytes": 34020,
+    "sha256": "d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee"
+  },
+  "new_runtime_tests": 0,
+  "experimental": true,
+  "published": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

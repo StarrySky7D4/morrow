@@ -1,0 +1,39 @@
+{
+  "status": "FAILURE_RETAINED_NOT_ACCEPTED",
+  "source_digest": "6b5f4b54fed71f57f716c73b4247eb55b638963025b834b09e670e25f01f3417",
+  "source_unchanged": true,
+  "frozen_inputs_unchanged": true,
+  "guest_artifacts_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 101,
+      "seconds": 2058.937,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-955\\build.stdout",
+        "bytes": 1021738,
+        "sha256": "cef669256632ad67baf0f1b0cebf30e6a08e5a83253186f0ede9cc7b2148cf8c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-delivery-955\\build.stderr",
+        "bytes": 30266,
+        "sha256": "b1c74883cab268e0e1680b5da7c6723a80b9a7aaf970928c9289e3f9e37ebd2e"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "program": null,
+  "error": "RuntimeError: build failed; original evidence retained",
+  "ordinary_methods": 0,
+  "explicit_close_refusal_methods": 0,
+  "explicit_close_refusal_scenarios": 0,
+  "protected_store": true,
+  "product_private_route": false,
+  "rendered_UI": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "window_actions": 0
+}

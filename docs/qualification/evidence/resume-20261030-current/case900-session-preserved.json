@@ -1,0 +1,25 @@
+{
+  "status": "ORIGINAL_UNKNOWN_TOOL_SESSION_RETAINED_NO_CONTACT",
+  "tag": "222ea5f9be1243a38dd9da860c032660",
+  "vm_id": "d7c81ad4-d645-43fa-b654-acb91ace9582",
+  "exec_session_id": 19191,
+  "original_host_pid": 20568,
+  "original_exec_not_polled_after_unknown": true,
+  "original_exec_not_terminated": true,
+  "original_process_queried": false,
+  "original_case_replayed": false,
+  "independent_diagnostic_exec_session_id": 51091,
+  "independent_diagnostic_exit_code": 0,
+  "independent_diagnostic_transport_closed": true,
+  "case_summary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case900-summary.json",
+    "bytes": 3410,
+    "sha256": "4399389acb3f621510389d4346309b4edee6656a17fd07eb3d995e52327bef2f"
+  },
+  "diagnostic": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-900\\result.json",
+    "bytes": 202,
+    "sha256": "fd8506cad228fc6b7ac5fba9e7ec7efa7992c67602b7c02c43af969b0507f2a3"
+  },
+  "utc": "2026-10-30T16:06:52.078982+00:00"
+}

@@ -1,0 +1,99 @@
+{
+  "status": "RUNNING_P2_DEFAULT_DACL988_AND_SDK_NATIVE_PIPE1022_SCOPED_PASS",
+  "utc": "2026-10-30T23:54:16.056461+00:00",
+  "previous_checkpoint": "continuation982.json",
+  "build_source_digest": "92e94662944453d7a9a3aeb438cd9dd67d914be164052c409a0165866b090b70",
+  "prior_P2_source_digest": "7c531a3b8b05e4b7455ded47b3a37e1e53099e946ac1cbd0335f08c02a0ff660",
+  "Dart_client_land_source_digest": "c62bcdffacb70acde2e0ca93adb2969077a2702f145ea8b34231710a8c2bf507",
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+      "name": "Morrow Windows Acceptance 20261031 052",
+      "state": "Running"
+    }
+  ],
+  "free_bytes_sample": {
+    "C": 33837391872,
+    "D": 6775271424
+  },
+  "cache_root": "D:\\build_cache",
+  "retired_compiler_libraries": {
+    "files": 2894,
+    "logical_bytes": 5247777902,
+    "observed_free_delta": 2505420800,
+    "source_and_programs_preserved": true
+  },
+  "case988": {
+    "status": "PASS_SCOPED_V5_DEFAULT_DACL_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+    "checks": 2040,
+    "native_trace_records": 93,
+    "first_failure": {
+      "kind": "Uncategorized",
+      "ntstatus": null,
+      "site": "DefaultInitialization",
+      "stage": "TokenSecurity",
+      "win32": 6
+    },
+    "case_clean": false,
+    "policy_clean": true,
+    "original_exec_33031_not_polled": true,
+    "fully_archived": true,
+    "registration_released": true,
+    "original_disk_retained": true
+  },
+  "SDK": {
+    "Dart_client_checks": 30,
+    "public_codec_reproducible": true,
+    "default_host_cold_build": true,
+    "native_process_pipe": true,
+    "production_Dart_client": true,
+    "languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "scenarios_per_language": [
+      "explicit_approval",
+      "lost_reply_explicit_read_no_resubmit",
+      "cancel_before_execution"
+    ],
+    "formal_UI": false,
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN"
+  },
+  "source_accepted": false,
+  "release_eligible": false,
+  "full_P2": false,
+  "formal_current_P3": false,
+  "commit_or_push_this_resume": false,
+  "vm052": {
+    "vm_id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+    "status": "INSTALLATION_RUNTIME_AND_STRICT17_READINESS_PASSED_P2_NOT_DISPATCHED",
+    "firmware_uuid": "14cd527b-7fd6-45b4-8d77-5f5f5589d6d0",
+    "P2_dispatched": false
+  },
+  "next": "Bind fresh VM052 firmware fixture after this source-frozen SDK run; continue handle-close/remaining P2 matrix and supervised formal history approval UI. Keep old Unknown owners untouched.",
+  "additional_retired_compiler_libraries": {
+    "files": 2050,
+    "logical_bytes": 3356696174,
+    "observed_free_delta": 1650896896,
+    "source_and_programs_preserved": true
+  }
+}

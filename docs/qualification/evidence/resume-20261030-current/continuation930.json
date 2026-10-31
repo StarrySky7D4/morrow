@@ -1,0 +1,33 @@
+{
+  "status": "CACHE_RETIRED_VM051_READINESS_PREPARED_NOT_RUN",
+  "utc": "2026-10-30T17:07:15.693171+00:00",
+  "original_runtime_source_digest": "5df916789c2e450c6ff9117bfa9904c515a2da0b3af1c4170e17c57d95d371df",
+  "documentation_only_no_runtime_relabelling": true,
+  "cache929": {
+    "files": 4942,
+    "logical_bytes": 8600325407,
+    "observed_free_delta": 4237877248,
+    "protected_files_verified": 1764,
+    "current_sdk_caches_untouched": true
+  },
+  "vm051": {
+    "vm_id": "a63ae90d-27e0-4049-988d-9c979033c448",
+    "environment_driver": "run_vm051_environment_926.py",
+    "runtime_preparer": "prepare_vm051_runtime_927.py",
+    "readiness_preparer": "derive_vm051_readiness_928.py",
+    "readiness_driver": "run_vm051_readiness_928.py",
+    "prepared_only": true,
+    "new_account_and_firmware": "NOT_OBSERVED",
+    "strict_checks": 17,
+    "guest_contacts": 0,
+    "P2_dispatched": false
+  },
+  "free_bytes_sample": {
+    "C": 75199627264,
+    "D": 11666333696
+  },
+  "window_control": "STOPPED_AFTER_PHYSICAL_ESC_PENDING_DIRECT_USER_REPLY",
+  "goal": "ACTIVE",
+  "source_accepted": false,
+  "release_eligible": false
+}

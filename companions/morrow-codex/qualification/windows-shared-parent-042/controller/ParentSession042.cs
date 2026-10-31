@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace C28.RootP1682 {
  internal sealed class SharedRound042 {
   internal readonly int Ordinal;
-  internal readonly StepGate1725 Gate=new StepGate1725(RolePins1725.ShellSha);
+  internal readonly StepGate1725 Gate;
   internal readonly JournalPrefix1725 Prefix=new JournalPrefix1725();
   internal readonly FileImage1725 Evidence,Journal,Report;
   internal RoundPrompt042 Prompt {get;private set;}
@@ -18,7 +18,7 @@ namespace C28.RootP1682 {
   ulong NativeAttempt;bool FinishedAdmission;
   internal SharedRound042(int ordinal){
    if(ordinal<1||ordinal>17)throw new InvalidOperationException("FIXED_ATTEMPT_RANGE");
-   Ordinal=ordinal;string label=ordinal.ToString("D2");
+   Gate=new StepGate1725(RolePins1725.ShellSha,ordinal);Ordinal=ordinal;string label=ordinal.ToString("D2");
    Evidence=new FileImage1725("ATTEMPT_"+label+"_EVIDENCE");
    Journal=new FileImage1725("ATTEMPT_"+label+"_JOURNAL");
    Report=new FileImage1725("ATTEMPT_"+label+"_REPORT");
@@ -70,6 +70,32 @@ namespace C28.RootP1682 {
    Need(!Failed&&!Completed&&Prompt!=null&&Gate.Completed==47&&!Gate.Failed&&FinishedAdmission
     &&AttemptClosed&&(Ordinal==17?CommonOwnerClosed:!CommonOwnerClosed)&&Prefix.Parsed==Prefix.Length);
    Completed=true;
+  }
+ }
+}
+#endif
+
+#if P2_SHARED_PARENT_REFUSAL_SESSION
+namespace C28.RootP1682 {
+ internal static class SharedBaseSelection046 {
+  internal static int RoundBytes(int round){
+   if(round<1||round>17)throw new System.InvalidOperationException("SHARED_BASE_ROUND_RANGE");
+   return round==1?3557:3659;
+  }
+  internal static string Text(int index,string original){
+   if(index<0||index>=1564)throw new System.InvalidOperationException("SHARED_BASE_FRAME_RANGE");
+   if(index<92)return original;
+   foreach(string profile in new[]{"session","controls","proposal"}){
+    foreach(string action in new[]{"select","enable"}){
+     string old="sealed-"+profile+"-base-"+action;
+     string next="sealed-"+profile+"-base-verify-"+(action=="select"?"selected":"enabled");
+     if(original==old)return next;
+     string confirm="EXECUTE_ONE_ORIGINAL_SEALED_STEP_";
+     if(original==confirm+old.Substring(7).ToUpperInvariant().Replace('-','_'))
+      return confirm+next.Substring(7).ToUpperInvariant().Replace('-','_');
+    }
+   }
+   return original;
   }
  }
 }

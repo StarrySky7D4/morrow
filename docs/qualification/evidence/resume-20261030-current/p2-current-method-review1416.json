@@ -1,0 +1,53 @@
+{
+  "status": "PASS_SCOPED_CURRENT_P2_EXACT_NATIVE_AND_SDK_GUARD_REVIEW",
+  "source_digest": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+  "original_VM_P2_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "existing_product_files_unchanged": 53974,
+  "methods": 153,
+  "actual_readonly_native_refusals": 17,
+  "actual_checked_token_closes": 34,
+  "original_registry_negative_controls": 7,
+  "concurrent_admission_methods": 6,
+  "actual_original_scheduler_shutdown_methods": 2,
+  "independent_current_observation": true,
+  "prior_VM_results_keep_original_digest": true,
+  "original_receipts": {
+    "build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regression-build-1414\\result.json",
+      "bytes": 2945,
+      "sha256": "3cd8c1555e5a1ec2d562a1591ca5188680279b9e799d92697f89ccd0c480096c"
+    },
+    "selection": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\selection.json",
+      "bytes": 39045,
+      "sha256": "abe3a3fd6311d8c9b0334b2a0dbf801dfc092554cbd906b48ee41b6600ba35c8"
+    },
+    "runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-p2-regressions-1415\\result.json",
+      "bytes": 130635,
+      "sha256": "d2ded0924b4cab3ecb89c8d572aa5ccd135c9df8db47ccf88a5ca77774ca2402"
+    },
+    "matrix": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-current-matrix-1413\\result.json",
+      "bytes": 15287,
+      "sha256": "c31df58abecd476d4b55a0e9eae53bcbb52243d37a9172f5a7fd955c5c62b950"
+    },
+    "integration": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-fixture-integration-1407\\result.json",
+      "bytes": 1776,
+      "sha256": "3debfb302b6a5b035be8d9644bd3a1d3dc7ff47d40e31f6acd0a912cad880772"
+    }
+  },
+  "strengthened_groups": [
+    "Refusal before resource creation",
+    "Concurrent close duplicate consume wrong generation",
+    "More than 16 clean refusals; Unknown remains charged"
+  ],
+  "limits": "Selected pure/native-token/registry/factory checks; no additional VM fault execution or complete end-to-end concurrent closure proof.",
+  "full_eleven_group_P2_accepted": false,
+  "VM_calls": 0,
+  "historical_owner_contacts": 0,
+  "canonical_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

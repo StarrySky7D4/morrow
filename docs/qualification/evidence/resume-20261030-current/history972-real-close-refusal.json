@@ -1,0 +1,16 @@
+{
+  "name": "close-refusal",
+  "exit_code": 0,
+  "seconds": 0.281,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-refusal.stdout",
+    "bytes": 191,
+    "sha256": "f5c0a4b381dff5b60edb309777a2d6e1dfcc5f2cdd51211c67f313e3d3b2bb72"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-private-972\\close-refusal.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "archive": "C:\\MorrowQA\\retained-unknown-archives\\vm052",
+  "original_files": [
+    {
+      "sha256": "47e2fc4eb99fa76641e88b30f321de951f3a5be579cd95114c44f4efdfade169",
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm052\\disk\\acceptance-original.vhdx",
+      "bytes": 17855152128,
+      "modified_ticks": 639290092661793433,
+      "entry": "disk\\acceptance-original.vhdx",
+      "path": "C:\\MorrowQA\\windows-acceptance-20261031-052\\acceptance.vhdx"
+    },
+    {
+      "sha256": "a5fb77f9225c0eeb4c299c22da5fabd9ede1d229d92337ebee8ff8600453afd4",
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm052\\state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmcx",
+      "bytes": 73728,
+      "modified_ticks": 639290092663442620,
+      "entry": "state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmcx",
+      "path": "C:\\MorrowQA\\windows-acceptance-20261031-052\\vm\\Morrow Windows Acceptance 20261031 052\\Virtual Machines\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmcx"
+    },
+    {
+      "sha256": "3927c02b4a68ae3cfa29733c2e82c01c869e1e50aa6cdece9ae1c3bc409f5f11",
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm052\\state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmgs",
+      "bytes": 4194816,
+      "modified_ticks": 639290092662080174,
+      "entry": "state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmgs",
+      "path": "C:\\MorrowQA\\windows-acceptance-20261031-052\\vm\\Morrow Windows Acceptance 20261031 052\\Virtual Machines\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.vmgs"
+    },
+    {
+      "sha256": "470fc337f4dbd3ca4afa5aff98f8c6492bc9275d23422f52011b9a72cd1af408",
+      "copy": "C:\\MorrowQA\\retained-unknown-archives\\vm052\\state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.VMRS",
+      "bytes": 1980542976,
+      "modified_ticks": 639290092662105392,
+      "entry": "state\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.VMRS",
+      "path": "C:\\MorrowQA\\windows-acceptance-20261031-052\\vm\\Morrow Windows Acceptance 20261031 052\\Virtual Machines\\E50F1AD3-1BFE-4A4A-9343-A1B5EABC2579.VMRS"
+    }
+  ],
+  "source_disks_retained": true,
+  "vm_id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+  "case_clean": false,
+  "guest_contacts": 0,
+  "unregister_calls": 0,
+  "saved_memory_state_preserved": true,
+  "policy_clean": true,
+  "owner_query_or_replay": 0,
+  "status": "SAVED_VM052_FULL_ARCHIVE_PENDING_INDEPENDENT_REVIEW",
+  "guest_memory_saved": true,
+  "registered_vms": 4,
+  "original_bytes": 19839963648
+}

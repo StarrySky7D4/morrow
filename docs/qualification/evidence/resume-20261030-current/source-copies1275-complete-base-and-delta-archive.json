@@ -1,0 +1,236 @@
+{
+  "status": "PASS_COMPLETE_RETIRED_SOURCE_BASE_AND_DELTA_ARCHIVE_NOT_DELETED",
+  "archives": {
+    "base": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\d-short-source-copies-1272\\retired-d-build-source-copies.zip",
+      "bytes": 596203029,
+      "sha256": "587971913f35485a9ca1d95f3d46f0c6d7218ef7bc35062d4f4f98e82657b742"
+    },
+    "delta": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\source-deltas.zip",
+      "bytes": 555159,
+      "sha256": "5aba217e04a129eb9324f13ba2818df6b7dc6dc4fcea46f7798c5752e875e85f"
+    }
+  },
+  "roots": [
+    {
+      "root": "D:\\build_cache\\mr26c",
+      "files": 52791,
+      "logical_bytes": 791376018,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr26c.json.gz",
+        "bytes": 3344077,
+        "sha256": "377da09061a0bb00793c8decd1176424f407546573ba1bf115bdcf1e1310e69f"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr26p",
+      "files": 52791,
+      "logical_bytes": 791375863,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr26p.json.gz",
+        "bytes": 3353978,
+        "sha256": "773b89d6dec2676ceca0de1d5d602e12936e47bc062ca50c74ddc8c1cc6df1b6"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr26s",
+      "files": 52791,
+      "logical_bytes": 791376412,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr26s.json.gz",
+        "bytes": 3347327,
+        "sha256": "328c682a01fba5f17d94a1c48d8f06a5a3d98ce27cda073f5878018a5dfb1a61"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr27c",
+      "files": 52792,
+      "logical_bytes": 791401181,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr27c.json.gz",
+        "bytes": 3344968,
+        "sha256": "2b5b8d3a9381050b1bf05b60cb9a0db40295919be4665d4e17e10d1da064c82d"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr27p",
+      "files": 52792,
+      "logical_bytes": 791401026,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr27p.json.gz",
+        "bytes": 3349156,
+        "sha256": "2b09f9677554a61d526778315f382e25b3542c4dea48f123ea4400b63dff1818"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr27s",
+      "files": 52792,
+      "logical_bytes": 791401575,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr27s.json.gz",
+        "bytes": 3339488,
+        "sha256": "3f4257e2fdd78d97c9202b41bc9facf97feba6f86368ee5f5a941a28ee2b3570"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr28c",
+      "files": 52793,
+      "logical_bytes": 791417260,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr28c.json.gz",
+        "bytes": 3349772,
+        "sha256": "1ee7289a90a5552ecf3c3c33f483d5a91e041ec30622df4efe6c63068a8baa5a"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr28p",
+      "files": 52793,
+      "logical_bytes": 791417105,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr28p.json.gz",
+        "bytes": 3365489,
+        "sha256": "cfd4ad3f5f8d1b9fb47f0b10baf1189d8443360ba37caf470d89d6353409ff69"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr28s",
+      "files": 52793,
+      "logical_bytes": 791417654,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr28s.json.gz",
+        "bytes": 3343557,
+        "sha256": "fd0e24ae9127d4552539e467c22990a72bf9fc52f0c60b580b0132de50ef16cc"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr29c",
+      "files": 52793,
+      "logical_bytes": 791434490,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr29c.json.gz",
+        "bytes": 3346239,
+        "sha256": "2a0ccbf61c1b899516524d7a545e396847856e71fbbdf3ab9f9e98406fd555a7"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr29p",
+      "files": 52793,
+      "logical_bytes": 791434335,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr29p.json.gz",
+        "bytes": 3358624,
+        "sha256": "07d0977e365f2964c05b7b6d21c762391765123d10155423e8e3b7dcaf6d3479"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr29s",
+      "files": 52793,
+      "logical_bytes": 791434884,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr29s.json.gz",
+        "bytes": 3339810,
+        "sha256": "a04542c70f464d89172c07e6e16b2593d07a0e11c159b597a2c8893a423c2bb5"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr30c",
+      "files": 52793,
+      "logical_bytes": 791441980,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr30c.json.gz",
+        "bytes": 3348150,
+        "sha256": "f9a0deee63faa66c4d83d765365ac33773b8a2166ee75a9b8a9748a7c271628d"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr30p",
+      "files": 52793,
+      "logical_bytes": 791441825,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr30p.json.gz",
+        "bytes": 3358707,
+        "sha256": "f47301e5b90f1d22a272d18c749dcb75418dc905718dee911686073e7d618a1b"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr30s",
+      "files": 52793,
+      "logical_bytes": 791442374,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr30s.json.gz",
+        "bytes": 3345437,
+        "sha256": "f3cbbeec7bbefd66f22bc745e1d482d13899af5bf9a2b82b2c369c05bcc68c68"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr31c",
+      "files": 52793,
+      "logical_bytes": 791476647,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr31c.json.gz",
+        "bytes": 3335149,
+        "sha256": "ee4834b8c0c6c925ccbb963814cc76fe23db5cec0991fe84acdbe62caacd6558"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr31p",
+      "files": 52793,
+      "logical_bytes": 791476492,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr31p.json.gz",
+        "bytes": 3339499,
+        "sha256": "731f904d0b10f85af308e27d1a4189a0b856d7582189aeb2b4316d35d9921fe5"
+      }
+    },
+    {
+      "root": "D:\\build_cache\\mr31s",
+      "files": 52793,
+      "logical_bytes": 791477041,
+      "manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1275\\mr31s.json.gz",
+        "bytes": 3334338,
+        "sha256": "87d31536c17cdce798111b0124e04b77b5e9ebb16164fa56ea70b1c9a1fef1f7"
+      }
+    }
+  ],
+  "files": 950265,
+  "logical_bytes": 14245644162,
+  "unique_delta_members": 57,
+  "base_member_references": 949992,
+  "every_original_and_archive_member_hash_verified": true,
+  "no_current_compiler_references": true,
+  "protected": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\d-short-source-copies-1272\\archive-result.json",
+      "bytes": 1245,
+      "sha256": "6b3491d22e3319bd3696b8c9743a31f76b84d441aeb697ed3dbd54ca74d901df"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\d-short-source-copies-1272\\plan.json",
+      "bytes": 86872540,
+      "sha256": "7e1bfd183a2698495900f7b22993fae22db9bbda7e09654ebee415498dca1bb0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-060\\P\\result.json",
+      "bytes": 951,
+      "sha256": "01d946091b0ec0e9861aa23e18353758e4852b549e84e1cfde8418d8905300ba"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-060\\C\\result.json",
+      "bytes": 1807,
+      "sha256": "80c37fc4672e28c05263aa97f0da897f23909a408962934ab19f97d67d3067fb"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\windows-sdk-words-1242\\result.json",
+      "bytes": 10159,
+      "sha256": "1f79c45aa2ff2f239f00b81e7479c7414a0f2e35c5b8a506a84797de0eacd96d"
+    }
+  ],
+  "files_deleted": 0,
+  "source_data_discarded": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "canonical_source_edits": 0,
+  "restore_note": "Retain both archives and all .json.gz manifests together. Each file row names an archive and member; verify its size and SHA-256, then restore only into absent D:/build_cache roots and restore metadata. No historical execution or owner replay is authorized."
+}

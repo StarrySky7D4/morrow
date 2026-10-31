@@ -1,0 +1,17 @@
+{
+  "free_before": 11460165632,
+  "source_and_executable_removals": 0,
+  "old_owner_contacts": 0,
+  "protected_artifacts_equal": true,
+  "VM_calls": 0,
+  "observed_free_delta": 4544299008,
+  "plan_sha256": "a9de6d9b46c0655668a79dbbeec17ed7a57b7e9752d3e48b9f3f668fd35ade9a",
+  "free_after": 16004464640,
+  "removed_files": 3465,
+  "logical_bytes_removed": 6174257614,
+  "preserved_files": 25617,
+  "concurrent_space_changes_not_attributed": true,
+  "status": "PASS_OLD_EXPLICIT_MORROW_COMPILER_LIBRARIES_RECLAIMED",
+  "release_eligible": false,
+  "source_accepted": false
+}

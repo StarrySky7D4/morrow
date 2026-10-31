@@ -74,10 +74,11 @@ pub struct QualificationSlot {
     startup_rpc_fault: morrow_workbench_host::protocol::QualifiedStartupRpcFault,
 }
 impl QualificationSlot {
-    pub fn new(admission: b::Admission, host: &Workbench, record: &serde_json::Value) -> Result<Self> {
+    pub fn new(admission: b::Admission, host: &Workbench, record: &morrow_workbench_host::supervision_record_codec::OwnerRecord) -> Result<Self> {
+        let id = morrow_workbench_host::supervision_record_codec::identity(record)?;
         Ok(Self { binding: host.agent_owner_binding(),
-            incarnation: b::unhex(record["incarnation"].as_str().ok_or("qualification incarnation")?)?,
-            profile: b::unhex(record["profile"].as_str().ok_or("qualification profile")?)?,
+            incarnation: id.incarnation.as_slice().try_into()?,
+            profile: id.profile.as_slice().try_into()?,
             admission, policy: Policy::default(), reviewed: None, context: None, key: None,
             acknowledged: None, started: None, stopping: None,
             #[cfg(feature="c28-qualified-startup-rpc-fault-fixture")]

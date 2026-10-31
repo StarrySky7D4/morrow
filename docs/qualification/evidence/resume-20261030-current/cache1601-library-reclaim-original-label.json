@@ -1,0 +1,17 @@
+{
+  "free_after": 761446400,
+  "observed_free_delta": 398356480,
+  "plan_sha256": "0856f196617c48d5cc4332d3fb8a798b8607fe24b8751ba78e87b86436e768e4",
+  "release_eligible": false,
+  "removed_files": 300,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "concurrent_space_changes_not_attributed": true,
+  "free_before": 363089920,
+  "status": "PASS_CLOSED_UNRUN_PARTIAL1476_COMPILER_LIBRARY_RECLAIMED",
+  "protected_artifacts_equal": true,
+  "source_and_executable_removals": 0,
+  "preserved_files": 1366,
+  "VM_calls": 0,
+  "logical_bytes_removed": 397008657
+}

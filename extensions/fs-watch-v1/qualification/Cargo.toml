@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = ["ffi-support", "rust-guest", "host"]
+
+[profile.release]
+debug = 0
+panic = "abort"
+

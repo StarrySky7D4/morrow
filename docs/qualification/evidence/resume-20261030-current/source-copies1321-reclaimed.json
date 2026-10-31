@@ -1,0 +1,33 @@
+{
+  "canonical_source_edits": 0,
+  "free_after": 37493465088,
+  "archives": {
+    "base": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\d-short-source-copies-1272\\retired-d-build-source-copies.zip",
+      "bytes": 596203029,
+      "sha256": "587971913f35485a9ca1d95f3d46f0c6d7218ef7bc35062d4f4f98e82657b742"
+    },
+    "delta": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-source-deltas-1320\\source-deltas.zip",
+      "bytes": 4928771,
+      "sha256": "33fce8843cf67bf21a9a886d7ab84cdf36d2c4fd20212af3720c3f27cf09e1a6"
+    }
+  },
+  "source_data_discarded": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "observed_free_delta": 4002025472,
+  "files_removed": 159327,
+  "free_before": 33491439616,
+  "archive_receipt_sha256": "d3037f4efc7230b4ccf1eb9474c394109e27a5e5b7a3e4b77a6f9419a2133d00",
+  "concurrent_free_changes_not_attributed": true,
+  "status": "PASS_THREE_RETIRED_SOURCE_COPIES_PRESERVED_IN_BASE_AND_DELTA_ARCHIVE",
+  "logical_bytes_preserved": 2385620326,
+  "roots_removed": [
+    "D:\\build_cache\\m240s",
+    "D:\\build_cache\\m315s",
+    "D:\\build_cache\\m322s"
+  ],
+  "VM_calls": 0,
+  "release_eligible": false
+}

@@ -1,0 +1,119 @@
+{
+  "status": "PASS_SCOPED_HISTORY_WASM_SOURCE_DISTRIBUTION",
+  "canonical_source_digest": "9719c1c5d133e763ed50c9f959e22c347214a62b6b728d778c9d30ecd1b528cc",
+  "source_unchanged": true,
+  "packaged_source_digest": "7d7dee99559127ef23e872d635053a645cf27955b955dcd159ca7aad22f2403e",
+  "package_source_bytes_unchanged": true,
+  "source_files": 104,
+  "source_archive": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\morrow-history-wasm-experimental-source.zip",
+    "bytes": 200851,
+    "sha256": "b13b347339c155f80fac9bab0b656ffbc47aecead7c3606ca529570f6ccf4f89"
+  },
+  "commands": [
+    {
+      "name": "local-source-inventory",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\local-source-inventory.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\local-source-inventory.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "metadata-rust",
+      "exit_code": 0,
+      "seconds": 0.094,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\metadata-rust.stdout",
+        "bytes": 51651,
+        "sha256": "0823c6d5d5592ef7ad59e7e1fb82093b2afa022d1f97be9f01f8cb275b41f76a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\metadata-rust.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "metadata-ffi-support",
+      "exit_code": 0,
+      "seconds": 0.063,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\metadata-ffi-support.stdout",
+        "bytes": 51712,
+        "sha256": "15263e09f52d16efe03452b12b5336b97d2d3a1b63d1849761edab556fa66e64"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\metadata-ffi-support.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fresh-build",
+      "exit_code": 0,
+      "seconds": 52.5,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\fresh-build.stdout",
+        "bytes": 335,
+        "sha256": "ea3a7ab677592a8e1c89cfd7fb654d18084e0e7c1ce0d90ba42e85e90607fd40"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\fresh-build.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "packaged-runtime",
+      "exit_code": 0,
+      "seconds": 0.375,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\packaged-runtime.stdout",
+        "bytes": 285,
+        "sha256": "08c3fe5cea39ae10aecf0a66cb9a35a2409edd9eff638494b5f4b6f05c8ecd0b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-distribution-947\\packaged-runtime.stderr",
+        "bytes": 1893,
+        "sha256": "0c33e6daf828a2f6acea0a8b53b4311c048e84c4c3fb8899afe7464aa1680567"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "build_result": {
+    "path": "D:\\build_cache\\qualification-targets\\sdk947-HISTORY-DISTRIBUTION\\result.json",
+    "bytes": 10754,
+    "sha256": "fc552b1ed3520bc28c8f18ddf447d443257d346c9eb76042a83c17b03415cbae"
+  },
+  "reused_host_test_program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\public-history-wasm-runtime-948\\programs\\blob_upload_history_guest-b9c88248ec8f597c.exe",
+    "bytes": 7441920,
+    "sha256": "e5d02af37528a47a09dc521b5e8512a6dcb74ee1c4c1595225643173fcaead43"
+  },
+  "host_test_program_not_recompiled": true,
+  "repeat_methods": 3,
+  "repeat_task_cases": 27,
+  "no_added_method_credit": true,
+  "error": null,
+  "scope": "EXPERIMENTAL_HISTORY_DATA_AND_FROZEN_TASK_SDK_SOURCE_ONLY",
+  "current_product_disclosure_approval": false,
+  "protected_store_reading": false,
+  "full_SDK_accepted": false,
+  "VM_calls": 0,
+  "window_actions": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

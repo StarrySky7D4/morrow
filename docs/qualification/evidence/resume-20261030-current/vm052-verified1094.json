@@ -1,0 +1,18 @@
+{
+  "full_original_state_and_disk_chain_byte_identical": true,
+  "status": "SAVED_VM052_FULL_ARCHIVE_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISK_RETAINED",
+  "owner_query_or_replay": 0,
+  "case_clean": false,
+  "full_file_hash_verification_before_unregister": true,
+  "registered_vms": 3,
+  "guest_contacts": 0,
+  "original_case_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+  "vm_id": "e50f1ad3-1bfe-4a4a-9343-a1b5eabc2579",
+  "VM_starts": 0,
+  "source_accepted": false,
+  "original_disk_sizes_times_unchanged_after_unregister": true,
+  "release_eligible": false,
+  "archive": "C:\\MorrowQA\\retained-unknown-archives\\vm052",
+  "policy_clean": true,
+  "source_disks_retained": true
+}

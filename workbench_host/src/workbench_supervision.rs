@@ -1,18 +1,23 @@
-//! Windows product owner ledger. Missing post-crash proof never clears an owner.
-use crate::Result;
+//! Windows product owner ledger. Unknown owners are never migrated or acquired.
+use crate::{Result, supervision_record_codec as codec};
+use codec::proto::{BusinessOutcome, OwnerPhase, ProtocolAck};
+use codec::{Identity, OwnerRecord, ResourceFacts};
 use rusqlite::{Connection, TransactionBehavior, params};
-use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 pub struct Owner {
     db: Connection,
-    record: Value,
+    record: OwnerRecord,
+    encoded: Vec<u8>,
 }
 #[path = "owner_recovery.rs"]
 pub mod recovery;
 #[path = "startup_quarantine.rs"]
 mod startup_quarantine;
-const MARKER: &[u8] = b"Morrow supervised workbench v1\n";
+const MARKER: &[u8] = b"Morrow supervised workbench v2 Protobuf LZ4\n";
+const MARKER_NAME: &str = ".morrow-supervision-v2";
+const LEGACY_MARKER_NAME: &str = ".morrow-supervision-v1";
+const SCHEMA_VERSION: i64 = 2;
 fn schema(db: &Connection) -> Result<()> {
     let version: i64 = db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
     let triggers: i64 = db.query_row(
@@ -20,21 +25,24 @@ fn schema(db: &Connection) -> Result<()> {
         [],
         |r| r.get(0),
     )?;
-    if version != 1 || triggers != 0 {
-        return Err("Supervisor owner schema changed; retain original evidence".into());
+    if version != SCHEMA_VERSION || triggers != 0 {
+        return Err("Supervisor binary owner schema changed or legacy; retain original evidence without automatic migration".into());
     }
     Ok(())
 }
-fn readback(db: &Connection, expected: &str) -> Result<()> {
-    let (text, digest) = db.query_row(
+fn read_row(db: &Connection) -> Result<(Vec<u8>, Vec<u8>)> {
+    Ok(db.query_row(
         "SELECT record,digest FROM owner WHERE singleton=1",
         [],
-        |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
-    )?;
-    if text != expected || digest != sha(expected.as_bytes()) {
+        |r| Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, Vec<u8>>(1)?)),
+    )?)
+}
+fn readback(db: &Connection, expected: &[u8]) -> Result<()> {
+    let (bytes, digest) = read_row(db)?;
+    if bytes != expected || digest != sha_bytes(expected) {
         return Err("Supervisor durable owner write verification failed".into());
     }
-    decode(text, digest)?;
+    decode(bytes, digest)?;
     Ok(())
 }
 pub fn profile(root: &Path) -> String {
@@ -47,7 +55,26 @@ pub fn profile(root: &Path) -> String {
     sha(text.to_lowercase().as_bytes())
 }
 pub fn sha(bytes: &[u8]) -> String {
-    format!("{:x}", Sha256::digest(bytes))
+    hex(&sha_bytes(bytes))
+}
+pub fn sha_bytes(bytes: &[u8]) -> Vec<u8> {
+    Sha256::digest(bytes).to_vec()
+}
+pub fn hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+fn unhex(text: &str) -> Result<Vec<u8>> {
+    if text.len() != 64
+        || !text
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    {
+        return Err("Supervisor exact digest encoding".into());
+    }
+    Ok((0..64)
+        .step_by(2)
+        .map(|i| u8::from_str_radix(&text[i..i + 2], 16))
+        .collect::<std::result::Result<Vec<_>, _>>()?)
 }
 pub fn root_for(database: &Path, managed: bool) -> Result<PathBuf> {
     Ok(if managed {
@@ -56,133 +83,81 @@ pub fn root_for(database: &Path, managed: bool) -> Result<PathBuf> {
         database.parent().ok_or("database parent")?.canonicalize()?
     })
 }
-fn validate(record: &Value) -> Result<()> {
-    if ![json!(1), json!(2)].contains(&record["version"])
-        || record["generation"].as_u64().is_none_or(|v| v == 0)
-        || !["Pending", "Active", "Closing", "Released", "Recovered"]
-            .contains(&record["phase"].as_str().unwrap_or(""))
-    {
-        return Err(
-            "Supervisor ownership record is invalid; retain this library and its evidence".into(),
-        );
+fn validate(r: &OwnerRecord) -> Result<()> {
+    codec::validate(r)
+}
+fn decode(bytes: Vec<u8>, digest: Vec<u8>) -> Result<OwnerRecord> {
+    if sha_bytes(&bytes) != digest {
+        return Err("Supervisor ownership digest mismatch; no automatic repair".into());
     }
-    for key in ["profile", "incarnation", "host_sha256", "package_sha256"] {
-        if !record[key]
-            .as_str()
-            .is_some_and(|v| v.len() == 64 && v.bytes().all(|b| b.is_ascii_hexdigit()))
-        {
-            return Err("Supervisor ownership identity is invalid".into());
-        }
-    }
-    if record["version"] == 2 {
-        for key in ["supervisor_sha256"] {
-            if !record[key].as_str().is_some_and(|v| v.len()==64 && v.bytes().all(|b| b.is_ascii_hexdigit())) {
-                return Err("Supervisor producer identity missing".into());
-            }
-        }
-        if record["supervisor_creation_filetime"].as_u64().is_none_or(|v| v == 0)
-            || !record["supervisor_pid"].as_u64().is_some_and(|v| v>0 && v<=u32::MAX as u64)
-            || (record["phase"] != "Pending" &&
-                (record["child_creation_filetime"].as_u64().is_none_or(|v| v == 0)
-                 || !record["child_pid"].as_u64().is_some_and(|v| v>0 && v<=u32::MAX as u64))) {
-            return Err("Supervisor process creation binding missing".into());
-        }
-    }
-    if record["phase"] == "Recovered" && !recovery::complete_abnormal_proof(record) {
-        return Err("Recovered owner lacks original resource-only proof".into());
-    }
-    if record["phase"] == "Released"
-        && (record["resource_reclaimed"] != true
-            || record["gate_closed"] != true
-            || record["tree_empty"] != true
-            || record["child_exit"] != true
-            || record["stdout_eof"] != true
-            || record["stderr_eof"] != true
-            || record["control_reaped"] != true
-            || record["normal_shutdown"] != true
-            || record["child_exit_code"] != 0)
-    {
-        return Err("Supervisor ownership release lacks resource proof".into());
+    codec::decode_owner(&bytes)
+}
+fn reject_legacy(root: &Path) -> Result<()> {
+    if root.join(LEGACY_MARKER_NAME).exists() {
+        return Err("Legacy supervisor ledger requires a separately reviewed offline migration. Preserve original owners; no automatic migration, clearing or takeover.".into());
     }
     Ok(())
 }
-fn decode(text: String, digest: String) -> Result<Value> {
-    if sha(text.as_bytes()) != digest {
-        return Err("Supervisor ownership digest mismatch; no automatic repair".into());
-    }
-    let r: Value = serde_json::from_str(&text)?;
-    validate(&r)?;
-    Ok(r)
-}
 impl Owner {
     pub fn claim(root: &Path, host: &Path, package: &Path) -> Result<Self> {
-        let canonical_root=root.canonicalize()?;
-        let root=canonical_root.as_path();
+        reject_legacy(root)?;
+        let marker = root.join(MARKER_NAME);
         let path = root.join("workbench-supervisor.sqlite");
-        let marker = root.join(".morrow-supervision-v1");
         let fresh = !marker.exists();
+        if !fresh && std::fs::read(&marker)? != MARKER {
+            return Err("Supervisor marker changed".into());
+        }
+        if fresh && path.exists() {
+            return Err(
+                "Supervisor marker missing from existing ledger; no migration or takeover".into(),
+            );
+        }
+        if !fresh && !path.exists() {
+            return Err("Supervisor owner ledger missing; no automatic repair".into());
+        }
         if fresh {
             use std::io::Write;
-            let mut file = std::fs::OpenOptions::new()
+            let mut f = std::fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
                 .open(&marker)?;
-            file.write_all(MARKER)?;
-            file.sync_all()?;
-        } else if std::fs::read(&marker)? != MARKER {
-            return Err("Supervisor ownership marker changed".into());
-        }
-        if !fresh && !path.exists() {
-            return Err(
-                "Supervisor owner record is missing; no automatic repair or takeover".into(),
-            );
-        }
-        if fresh && path.exists() {
-            return Err("Supervisor ownership marker missing from existing ledger".into());
-        }
-        if fresh {
+            f.write_all(MARKER)?;
+            f.sync_all()?;
             std::fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
                 .open(&path)?
                 .sync_all()?;
         }
-        let db = Connection::open(path)?;
+        let mut db = Connection::open(path)?;
         db.busy_timeout(std::time::Duration::from_millis(100))?;
         if fresh {
-            db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA user_version=1; CREATE TABLE owner(singleton INTEGER PRIMARY KEY CHECK(singleton=1),record TEXT NOT NULL,digest TEXT NOT NULL);")?;
+            db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA user_version=2; CREATE TABLE owner(singleton INTEGER PRIMARY KEY CHECK(singleton=1),record BLOB NOT NULL CHECK(typeof(record)='blob'),digest BLOB NOT NULL CHECK(typeof(digest)='blob' AND length(digest)=32));")?;
         } else {
             db.execute_batch("PRAGMA synchronous=FULL;")?;
         }
         schema(&db)?;
-        let mut this = Self {
-            db,
-            record: Value::Null,
-        };
-        let tx = this
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let profile = unhex(&profile(root))?;
         let old = tx.query_row(
             "SELECT record,digest FROM owner WHERE singleton=1",
             [],
-            |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
+            |r| Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, Vec<u8>>(1)?)),
         );
-        let profile = profile(root);
         let generation = match old {
-            Ok((r, d)) => {
-                let r = decode(r, d)?;
+            Ok((bytes, digest)) => {
+                let r = decode(bytes, digest)?;
                 recovery::validate_history_binding(&tx, &r)?;
-                if r["profile"] != profile {
+                if codec::identity(&r)?.profile != profile {
                     return Err("Supervisor library identity changed; no takeover".into());
                 }
-                if r["phase"] == "Recovered" {
+                if r.phase == OwnerPhase::Recovered as i32 {
                     recovery::validate_recovered(&tx, &r)?;
-                } else if r["phase"] != "Released" {
-                    return Err(format!("Supervisor owner retained ({}, generation {}). Previous resources have no trusted durable recovery proof. Keep the original library; automatic replay, database clearing and takeover are refused.",r["phase"],r["generation"]).into());
+                } else if r.phase != OwnerPhase::Released as i32 {
+                    return Err("Supervisor owner retained. Original resources lack trusted durable recovery proof; no replay or takeover.".into());
                 }
-                r["generation"]
-                    .as_u64()
-                    .unwrap()
+                codec::identity(&r)?
+                    .generation
                     .checked_add(1)
                     .ok_or("owner generation exhausted")?
             }
@@ -190,125 +165,124 @@ impl Owner {
             Err(e) => return Err(e.into()),
         };
         recovery::create_history(&tx)?;
-        let supervisor_creation = morrow_native_pipe_win::job::ProcessWatch::open(std::process::id())?.creation_filetime()?;
-        let supervisor_sha = sha(&std::fs::read(std::env::current_exe()?)?);
         let mut random = [0; 32];
         getrandom::fill(&mut random)?;
-        let record = json!({"version":2,"supervisor_creation_filetime":supervisor_creation,"supervisor_sha256":supervisor_sha,"child_creation_filetime":0,"recovery_history_head":recovery::head(&tx)?,"profile":profile,"generation":generation,"incarnation":sha(&random),"host_sha256":sha(&std::fs::read(host)?),"package_sha256":sha(&std::fs::read(package)?),"supervisor_pid":std::process::id(),"child_pid":0,"phase":"Pending","resource_reclaimed":false,"gate_closed":false,"tree_empty":false,"child_exit":false,"stdout_eof":false,"stderr_eof":false,"control_reaped":false,"business_outcome":"Unknown","protocol_ack":"not_applicable"});
-        let text = record.to_string();
-        tx.execute("INSERT INTO owner VALUES(1,?1,?2) ON CONFLICT(singleton) DO UPDATE SET record=excluded.record,digest=excluded.digest",params![text,sha(text.as_bytes())])?;
-        readback(&tx, &text)?;
+        let record = OwnerRecord {
+            model_version: 2,
+            identity: Some(Identity {
+                profile,
+                generation,
+                incarnation: sha_bytes(&random),
+                host_sha256: sha_bytes(&std::fs::read(host)?),
+                package_sha256: sha_bytes(&std::fs::read(package)?),
+                supervisor_sha256: sha_bytes(&std::fs::read(std::env::current_exe()?)?),
+                supervisor_pid: std::process::id(),
+                supervisor_creation_filetime: morrow_native_pipe_win::job::ProcessWatch::open(
+                    std::process::id(),
+                )?
+                .creation_filetime()?,
+                child_pid: 0,
+                child_creation_filetime: 0,
+                recovery_history_head: recovery::head(&tx)?,
+            }),
+            phase: OwnerPhase::Pending as i32,
+            resources: Some(ResourceFacts::default()),
+            business_outcome: BusinessOutcome::Unknown as i32,
+            protocol_ack: ProtocolAck::NotApplicable as i32,
+            reader_joins: None,
+            recovery: None,
+        };
+        let encoded = codec::encode_owner(&record)?;
+        tx.execute("INSERT INTO owner VALUES(1,?1,?2) ON CONFLICT(singleton) DO UPDATE SET record=excluded.record,digest=excluded.digest",params![encoded,sha_bytes(&encoded)])?;
+        readback(&tx, &encoded)?;
         recovery::validate_history_binding(&tx, &record)?;
         schema(&tx)?;
         tx.commit()?;
-        this.record = record;
-        Ok(this)
+        Ok(Self {
+            db,
+            record,
+            encoded,
+        })
     }
-    pub fn record(&self) -> Value {
+    pub fn record(&self) -> OwnerRecord {
         self.record.clone()
     }
-    pub fn update(&mut self, record: Value) -> Result<()> {
-        validate(&record)?;
+    pub fn update(&mut self, record: OwnerRecord) -> Result<()> {
+        codec::validate_transition(&self.record, &record)?;
         schema(&self.db)?;
-        let previous_phase = self.record["phase"].as_str().unwrap();
-        let next_phase = record["phase"].as_str().unwrap();
-        if !matches!(
-            (previous_phase, next_phase),
-            ("Pending", "Active")
-                | ("Active", "Closing")
-                | ("Closing", "Closing")
-                | ("Closing", "Released")
-        ) {
-            return Err("Supervisor owner phase transition refused".into());
-        }
-        if previous_phase != "Pending" && (record["child_pid"] != self.record["child_pid"] || record["child_creation_filetime"] != self.record["child_creation_filetime"]) {
-            return Err("Supervisor child identity changed".into());
-        }
-        for key in [
-            "version",
-            "profile",
-            "generation",
-            "incarnation",
-            "host_sha256",
-            "package_sha256",
-            "supervisor_pid",
-            "supervisor_creation_filetime",
-            "supervisor_sha256",
-            "recovery_history_head",
-        ] {
-            if record[key] != self.record[key] {
-                return Err("Supervisor immutable owner binding changed".into());
-            }
-        }
-        let text = record.to_string();
-        let previous = self.record.to_string();
+        let encoded = codec::encode_owner(&record)?;
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let actual = tx.query_row(
-            "SELECT record,digest FROM owner WHERE singleton=1",
-            [],
-            |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
-        )?;
-        if decode(actual.0, actual.1)? != self.record {
-            return Err("Supervisor owner changed during session; no release".into());
+        let (actual, digest) = read_row(&tx)?;
+        if actual != self.encoded
+            || digest != sha_bytes(&self.encoded)
+            || decode(actual, digest)? != self.record
+        {
+            return Err("Supervisor exact original owner bytes changed; no release".into());
         }
         recovery::validate_history_binding(&tx, &self.record)?;
         if tx.execute(
-            "UPDATE owner SET record=?1,digest=?2 WHERE singleton=1 AND record=?3",
-            params![text, sha(text.as_bytes()), previous],
+            "UPDATE owner SET record=?1,digest=?2 WHERE singleton=1 AND record=?3 AND digest=?4",
+            params![
+                encoded,
+                sha_bytes(&encoded),
+                self.encoded,
+                sha_bytes(&self.encoded)
+            ],
         )? != 1
         {
             return Err("Supervisor owner CAS refused".into());
         }
-        readback(&tx, &text)?;
+        readback(&tx, &encoded)?;
         recovery::validate_history_binding(&tx, &record)?;
         schema(&tx)?;
         tx.commit()?;
         self.record = record;
+        self.encoded = encoded;
         Ok(())
     }
 }
-/// Direct host/maintenance invocations cannot bypass a retained product owner.
+/// Direct host invocations cannot bypass a retained or legacy product owner.
 pub fn guard(database: &Path, managed: bool, incarnation: Option<&str>) -> Result<()> {
     let root = root_for(database, managed)?;
+    reject_legacy(&root)?;
     let path = root.join("workbench-supervisor.sqlite");
-    let marker = root.join(".morrow-supervision-v1");
+    let marker = root.join(MARKER_NAME);
     if !path.exists() && !marker.exists() {
         return Ok(());
     }
     if !path.exists() || !marker.exists() || std::fs::read(marker)? != MARKER {
-        return Err("Supervisor ownership record or marker missing; no automatic unlock".into());
+        return Err("Supervisor ownership marker or ledger missing; no automatic unlock".into());
     }
     let db = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
     schema(&db)?;
-    let (text, digest) = db.query_row(
-        "SELECT record,digest FROM owner WHERE singleton=1",
-        [],
-        |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
-    )?;
-    let r = decode(text, digest)?;
+    let (bytes, digest) = read_row(&db)?;
+    let r = decode(bytes, digest)?;
     recovery::validate_history_binding(&db, &r)?;
-    if r["phase"] == "Recovered" { recovery::validate_recovered(&db, &r)?; }
-    if r["profile"] != profile(&root) {
+    if r.phase == OwnerPhase::Recovered as i32 {
+        recovery::validate_recovered(&db, &r)?;
+    }
+    let id = codec::identity(&r)?;
+    if id.profile != unhex(&profile(&root))? {
         return Err("Supervisor library identity mismatch".into());
     }
-    if r["phase"] == "Released" && incarnation.is_none() {
+    if r.phase == OwnerPhase::Released as i32 && incarnation.is_none() {
         return Ok(());
     }
-    if r["phase"] == "Active"
-        && r["business_gate_revoked"] != true
-        && !morrow_native_pipe_win::job::RevocationEvent::open(
-            r["incarnation"].as_str().ok_or("owner incarnation")?,
-        )?
-        .is_revoked()?
-        && incarnation.is_some_and(|v| r["incarnation"] == v)
-        && r["child_pid"] == std::process::id()
-        && (r["version"] == 1 || r["child_creation_filetime"] == morrow_native_pipe_win::job::ProcessWatch::open(std::process::id())?.creation_filetime()?)
+    let token = hex(&id.incarnation);
+    if r.phase == OwnerPhase::Active as i32
+        && !codec::facts(&r)?.business_gate_revoked
+        && !morrow_native_pipe_win::job::RevocationEvent::open(&token)?.is_revoked()?
+        && incarnation.is_some_and(|v| v == token)
+        && id.child_pid == std::process::id()
+        && id.child_creation_filetime
+            == morrow_native_pipe_win::job::ProcessWatch::open(std::process::id())?
+                .creation_filetime()?
     {
         return Ok(());
     }
-    Err("Supervisor owner retained or binding mismatch. Keep the original library; no automatic unlock or replay.".into())
+    Err("Supervisor owner retained or binding mismatch; no unlock or replay".into())
 }
 
 pub struct HostWatch {
@@ -326,6 +300,7 @@ impl HostWatch {
             .map(morrow_native_pipe_win::job::ProcessWatch::open)
             .collect::<std::io::Result<Vec<_>>>()?;
         let event = morrow_native_pipe_win::job::RevocationEvent::open(&incarnation)?;
+        let expected = unhex(&incarnation)?;
         let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
         let stopped = stop.clone();
         std::thread::Builder::new()
@@ -337,13 +312,11 @@ impl HostWatch {
                         rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
                     )?;
                     db.busy_timeout(std::time::Duration::from_millis(20))?;
-                    let (text, digest) = db.query_row(
-                        "SELECT record,digest FROM owner WHERE singleton=1",
-                        [],
-                        |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
-                    )?;
-                    let r = decode(text, digest)?;
-                    Ok(r["incarnation"] != incarnation || r["business_gate_revoked"] == true)
+                    schema(&db)?;
+                    let (bytes, digest) = read_row(&db)?;
+                    let r = decode(bytes, digest)?;
+                    Ok(codec::identity(&r)?.incarnation != expected
+                        || codec::facts(&r)?.business_gate_revoked)
                 };
                 while !stopped.load(std::sync::atomic::Ordering::Acquire) {
                     if event.is_revoked().unwrap_or(true)
@@ -364,97 +337,24 @@ impl Drop for HostWatch {
         self.stop.store(true, std::sync::atomic::Ordering::Release);
     }
 }
-
-pub fn binding(database: &Path, managed: bool, incarnation: &str) -> Result<Value> {
+pub fn binding(database: &Path, managed: bool, incarnation: &str) -> Result<OwnerRecord> {
     guard(database, managed, Some(incarnation))?;
     let root = root_for(database, managed)?;
     let db = Connection::open_with_flags(
         root.join("workbench-supervisor.sqlite"),
         rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
     )?;
-    let (text, digest) = db.query_row(
-        "SELECT record,digest FROM owner WHERE singleton=1",
-        [],
-        |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
-    )?;
-    let record = decode(text, digest)?;
-    if record["host_sha256"] != sha(&std::fs::read(std::env::current_exe()?)?) {
-        return Err("Supervisor host artifact differs from owner binding".into());
+    let (bytes, digest) = read_row(&db)?;
+    let record = decode(bytes, digest)?;
+    if codec::identity(&record)?.host_sha256 != sha_bytes(&std::fs::read(std::env::current_exe()?)?)
+    {
+        return Err("Supervisor host artifact differs from original binding".into());
     }
     Ok(record)
 }
-
 #[cfg(test)]
-mod ledger_tests {
-    use super::*;
-    fn fixture() -> (tempfile::TempDir, PathBuf, PathBuf) {
-        let dir=tempfile::tempdir().unwrap();
-        let host=dir.path().join("host.bin");let package=dir.path().join("package.bin");
-        std::fs::write(&host,b"bound host artifact").unwrap();
-        std::fs::write(&package,b"bound package artifact").unwrap();
-        (dir,host,package)
-    }
-    fn active(owner:&mut Owner) {
-        let mut r=owner.record();r["phase"]=json!("Active");r["child_pid"]=json!(101);r["child_creation_filetime"]=json!(1);owner.update(r).unwrap();
-    }
-    fn closing(owner:&mut Owner) {
-        let mut r=owner.record();r["phase"]=json!("Closing");r["gate_closed"]=json!(true);owner.update(r).unwrap();
-    }
-    #[test]
-    fn concurrent_claims_and_direct_host_cannot_take_active_owner() {
-        let (dir,host,package)=fixture();let mut owner=Owner::claim(dir.path(),&host,&package).unwrap();active(&mut owner);
-        let before=owner.record();assert!(Owner::claim(dir.path(),&host,&package).is_err());
-        assert!(guard(&dir.path().join("library.db"),false,None).is_err());
-        readback(&owner.db,&before.to_string()).unwrap();
-    }
-    #[test]
-    fn release_requires_original_complete_normal_proof_then_generation_increases() {
-        let (dir,host,package)=fixture();let mut owner=Owner::claim(dir.path(),&host,&package).unwrap();active(&mut owner);closing(&mut owner);
-        let mut r=owner.record();r["phase"]=json!("Released");
-        assert!(owner.update(r.clone()).is_err());
-        for key in ["resource_reclaimed","gate_closed","tree_empty","child_exit","stdout_eof","stderr_eof","control_reaped","normal_shutdown"] {r[key]=json!(true);}
-        r["child_exit_code"]=json!(0);
-        for key in ["resource_reclaimed","tree_empty","child_exit","stdout_eof","stderr_eof","control_reaped","normal_shutdown"] {
-            let mut missing=r.clone();missing[key]=json!(false);assert!(owner.update(missing).is_err(),"{key}");
-        }
-        let mut abnormal=r.clone();abnormal["child_exit_code"]=json!(2);assert!(owner.update(abnormal).is_err());
-        owner.update(r).unwrap();drop(owner);
-        let next=Owner::claim(dir.path(),&host,&package).unwrap();assert_eq!(next.record()["generation"],2);
-    }
-    #[test]
-    fn deleted_owner_row_and_missing_ledger_fail_closed() {
-        let (dir,host,package)=fixture();let owner=Owner::claim(dir.path(),&host,&package).unwrap();
-        owner.db.execute("DELETE FROM owner",[]).unwrap();drop(owner);
-        assert!(Owner::claim(dir.path(),&host,&package).is_err());
-        std::fs::remove_file(dir.path().join("workbench-supervisor.sqlite")).unwrap();
-        assert!(Owner::claim(dir.path(),&host,&package).is_err());
-    }
-    #[test]
-    fn changed_binding_digest_or_schema_cannot_persist_release() {
-        for mutation in 0..3 {
-            let (dir,host,package)=fixture();let mut owner=Owner::claim(dir.path(),&host,&package).unwrap();active(&mut owner);
-            let before=owner.record();let db=Connection::open(dir.path().join("workbench-supervisor.sqlite")).unwrap();
-            match mutation {
-                0=>{let mut changed=before.clone();changed["generation"]=json!(9);let text=changed.to_string();db.execute("UPDATE owner SET record=?1,digest=?2",params![text,sha(text.as_bytes())]).unwrap();},
-                1=>{db.execute("UPDATE owner SET digest='bad'",[]).unwrap();},
-                _=>{db.execute_batch("CREATE TRIGGER injected AFTER UPDATE ON owner BEGIN UPDATE owner SET digest='bad'; END;").unwrap();},
-            }
-            let mut closing=before;closing["phase"]=json!("Closing");assert!(owner.update(closing).is_err());
-            assert!(Owner::claim(dir.path(),&host,&package).is_err());
-        }
-    }
-    #[test]
-    fn changed_profile_or_marker_cannot_become_fresh_owner() {
-        let (dir,host,package)=fixture();let owner=Owner::claim(dir.path(),&host,&package).unwrap();drop(owner);
-        std::fs::write(dir.path().join(".morrow-supervision-v1"),b"replacement").unwrap();
-        assert!(Owner::claim(dir.path(),&host,&package).is_err());
-        std::fs::remove_file(dir.path().join(".morrow-supervision-v1")).unwrap();
-        assert!(Owner::claim(dir.path(),&host,&package).is_err());
-    }
-}
-
-// Keep the trusted original resource producer in the ledger crate. Only the
-// zero-argument process entry is public; no proof/token constructor is exposed.
+#[path = "supervision_ledger_tests.rs"]
+mod ledger_tests;
 #[path = "workbench_supervisor.rs"]
 mod supervisor_runtime;
 pub use supervisor_runtime::run as run_supervisor;

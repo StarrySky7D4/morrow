@@ -3554,6 +3554,90 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pluginsViewFailed => 'Не удалось открыть представление плагина';
 
   @override
+  String get pluginsWatchAcknowledged => 'Завершение наблюдения подтверждено.';
+
+  @override
+  String get pluginsWatchAllow =>
+      'Разрешить плагину наблюдать за изменениями каталога';
+
+  @override
+  String get pluginsWatchAllowNotice =>
+      'Также разрешите просмотр списка файлов и подтверждайте папку для каждого запуска.';
+
+  @override
+  String pluginsWatchBounds(String bytes, String frames, String ms) {
+    return 'Лимиты плагина: $frames записей, $bytes байт, $ms миллисекунд.';
+  }
+
+  @override
+  String get pluginsWatchBytes => 'Лимит передаваемых данных (байты)';
+
+  @override
+  String get pluginsWatchCancelled => 'Наблюдение отменено.';
+
+  @override
+  String get pluginsWatchClosed => 'Каталог освобождён, очистка завершена.';
+
+  @override
+  String get pluginsWatchExpired =>
+      'Наблюдение остановлено по истечении времени.';
+
+  @override
+  String get pluginsWatchFormError =>
+      'Проверьте полный путь к папке. Все лимиты должны быть положительными и не превышать лимиты плагина.';
+
+  @override
+  String get pluginsWatchFrames => 'Максимум передаваемых записей';
+
+  @override
+  String get pluginsWatchIdle => 'Наблюдение за каталогом ещё не начато.';
+
+  @override
+  String get pluginsWatchIntro =>
+      'Наблюдение касается только папки, подтверждённой для этого запуска. Оно прекращается при достижении лимита времени, записей или данных. При запуске Windows запросит подтверждение папки.';
+
+  @override
+  String get pluginsWatchNew => 'Подготовить новое наблюдение';
+
+  @override
+  String get pluginsWatchNoPlugins =>
+      'Нет включённых плагинов с разрешениями на наблюдение за каталогом и просмотр списка файлов.';
+
+  @override
+  String get pluginsWatchOtherPanel =>
+      'Завершение наблюдения за каталогом ещё не подтверждено. Проверьте исходную задачу на панели изменений каталога.';
+
+  @override
+  String get pluginsWatchPath => 'Наблюдаемая папка (полный путь)';
+
+  @override
+  String get pluginsWatchReady =>
+      'Наблюдение завершено. Результат можно прочитать один раз.';
+
+  @override
+  String pluginsWatchRecords(String bytes, String frames) {
+    return 'Плагин получил записей: $frames; учтено данных: $bytes байт.';
+  }
+
+  @override
+  String get pluginsWatchReviewed =>
+      'Результат прочитан. Проверьте его и подтвердите завершение.';
+
+  @override
+  String get pluginsWatchRunning =>
+      'Наблюдение выполняется. Обновите состояние или запросите отмену.';
+
+  @override
+  String get pluginsWatchStart => 'Подтвердить папку и начать наблюдение';
+
+  @override
+  String get pluginsWatchTitle => 'Изменения каталога';
+
+  @override
+  String get pluginsWatchUnknown =>
+      'Результат операции не подтверждён. Запись сохранена. Автоматического повтора или запуска новой задачи не будет.';
+
+  @override
   String get pluginsWorkbench => 'Плагин рабочего пространства';
 
   @override
