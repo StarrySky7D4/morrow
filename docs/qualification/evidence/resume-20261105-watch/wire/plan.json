@@ -1,0 +1,20 @@
+{
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "method": "original_protected_owner_capnp_expiry_and_one_receipt",
+  "fixtures": "D:\\build_cache\\wr1105w",
+  "nomination": "D:\\build_cache\\wr1105w\\wire-expiry\\observed",
+  "args": [
+    "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "--exact",
+    "original_protected_owner_capnp_expiry_and_one_receipt",
+    "--test-threads=1"
+  ],
+  "case": "wire",
+  "VM_calls": 0,
+  "old_owner_contacts": 0
+}

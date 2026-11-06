@@ -20,6 +20,7 @@ fn exact_mutation_feature_and_digest_round_trip_without_grant() {
     for capabilities in [
         vec![IoCapability::FileCreate],
         vec![IoCapability::FileDelete],
+        vec![IoCapability::FileReplace],
         vec![IoCapability::FileCreate, IoCapability::FileDelete],
     ] {
         let m = manifest(capabilities);
@@ -73,6 +74,7 @@ fn budgeted_manifest() -> proto::Manifest {
     let mut m = manifest(vec![IoCapability::FileCreate, IoCapability::FileDelete]);
     m.required_features.push(MUTATION_BUDGET_FEATURE.into());
     m.mutation_budget = Some(proto::MutationBudget {
+        max_resources: 0,
         max_job_bytes: MAX_MUTATION_JOB_BYTES,
         max_bytes: MAX_MUTATION_BYTES,
     });
@@ -150,7 +152,7 @@ fn duplicate_or_noncanonical_mutation_budget_wire_rejects() {
     let mut base = m.clone();
     base.mutation_budget = None;
     let mut unknown = nested.clone();
-    unknown.extend_from_slice(&[0x18, 0x01]);
+    unknown.extend_from_slice(&[0x20, 0x01]);
     let mut bytes = base.encode_to_vec();
     append_budget(&mut bytes, &unknown);
     assert!(Package::from_parts(&bytes, MODULE).is_err());
@@ -159,4 +161,41 @@ fn duplicate_or_noncanonical_mutation_budget_wire_rejects() {
     let mut bytes = base.encode_to_vec();
     append_budget(&mut bytes, &repeated);
     assert!(Package::from_parts(&bytes, MODULE).is_err());
+}
+
+#[test]
+fn replacement_resource_declaration_is_bounded_and_never_expands_ordinary_io() {
+    for resources in [1, 8, 9, 128] {
+        let mut m = budgeted_manifest();
+        m.io_declaration
+            .as_mut()
+            .unwrap()
+            .requested_capabilities
+            .push(IoCapability::FileReplace.number());
+        m.mutation_budget.as_mut().unwrap().max_resources = resources;
+        let package = Package::build(m, MODULE).unwrap();
+        assert_eq!(package.mutation_budget().unwrap().max_resources, resources);
+        assert_eq!(
+            package
+                .io_declaration()
+                .unwrap()
+                .budget
+                .as_ref()
+                .unwrap()
+                .max_resources,
+            8
+        );
+    }
+    let mut no_replace = budgeted_manifest();
+    no_replace.mutation_budget.as_mut().unwrap().max_resources = 9;
+    assert!(Package::build(no_replace, MODULE).is_err());
+    let mut excessive = budgeted_manifest();
+    excessive
+        .io_declaration
+        .as_mut()
+        .unwrap()
+        .requested_capabilities
+        .push(IoCapability::FileReplace.number());
+    excessive.mutation_budget.as_mut().unwrap().max_resources = 129;
+    assert!(Package::build(excessive, MODULE).is_err());
 }

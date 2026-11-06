@@ -337,7 +337,7 @@ impl Parent {
             "--helper-sha256".into(),hex_text(selection.c),"--phase".into(),
             if selection.refusal_session {"live-guest-refusal-session-interactive".into()}else{"live-guest-interactive".into()},
             "--inventory-shell".into(),shell,"--inventory-shell-sha256".into(),hex_text(selection.shell),
-            "--expected-guest-uuid".into(),"a704e61e-a729-43c7-a370-9f147a00e647".into()];
+            "--expected-guest-uuid".into(),"c08c2abe-4f9e-4ceb-9c3e-b378f98953f5".into()];
         self.diagnostic.completed(Stage::NamespaceInputs);
         // C is the SAME trusted high caller role, not private T. Its NULL
         // creation SAs use this P's independently observed safe primary-token

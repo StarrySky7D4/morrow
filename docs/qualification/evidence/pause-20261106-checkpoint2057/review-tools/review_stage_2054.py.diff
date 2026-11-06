@@ -1,0 +1,17 @@
+--- 
++++ 
+@@ -22,10 +22,11 @@
+      '-File',selection['script']['path'],'-Mode','public-only','-PlanPhase','stage-and-bind',
+      '-SelfBytes',str(selection['script']['bytes']),'-SelfSha256',selection['script']['sha256'],
+      '-PlanBytes',str(selection['plan']['bytes']),'-PlanSha256',selection['plan']['sha256']]
+-with (root/'public-only-invocation.reserved').open('x') as f:f.write(selection['tag'])
++with (root/'public-only-2054-invocation.reserved').open('x') as f:f.write(selection['tag'])
+ done=subprocess.run(cmd,capture_output=True,creationflags=subprocess.CREATE_NO_WINDOW)
+-with (root/'public-only.stdout').open('xb') as f:f.write(done.stdout)
+-with (root/'public-only.stderr').open('xb') as f:f.write(done.stderr)
++with (root/'public-only-2054.stdout').open('xb') as f:f.write(done.stdout)
++with (root/'public-only-2054.stderr').open('xb') as f:f.write(done.stderr)
++with (root/'public-only-2054-process-result.json').open('x') as f:json.dump(dict(exit_code=done.returncode,original_process_returned=True,vm_calls=0,private_reads=0),f)
+ assert done.returncode==0 and done.stdout.strip()==b'ROOT1737_PUBLIC_PINS_ONLY_NO_VM_PRIVATE_POLICY_OR_APPROVAL' and not done.stderr
+ result=dict(exit_code=done.returncode,status='PASS_PUBLIC_PINS_AND_FIXED_SECURITY_MODULE',
+     manual_single_use_input_adapter_verified=True,legacy_password_file_access=False,credentials_read=False,vm_calls=0,tag=selection['tag'])

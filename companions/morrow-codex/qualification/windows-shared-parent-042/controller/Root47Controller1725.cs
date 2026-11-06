@@ -184,6 +184,7 @@ namespace C28.RootP1682 {
     &&view.StdoutThrough<=Stdout.Length&&view.StderrThrough<=Stderr.Length,"HELPER_PREFIX_CURSOR");
    Buffer.BlockCopy(view.Stdout,0,Stdout,OutLength,view.Stdout.Length);OutLength+=view.Stdout.Length;
    Buffer.BlockCopy(view.Stderr,0,Stderr,ErrLength,view.Stderr.Length);ErrLength+=view.Stderr.Length;
+   Io.CacheStderrMarkers(Stderr,ErrLength);
   }
   void ObserveDelivery(InputObservation1701 input){
    Io.Need(input!=null&&input.State!="Poisoned"&&input.Delivered>=Delivered&&input.Delivered<=Delivered+1
@@ -477,6 +478,7 @@ namespace C28.RootP1682 {
     &&view.StdoutThrough<=Stdout.Length&&view.StderrThrough<=Stderr.Length,"HELPER_PREFIX_CURSOR");
    Buffer.BlockCopy(view.Stdout,0,Stdout,OutLength,view.Stdout.Length);OutLength+=view.Stdout.Length;
    Buffer.BlockCopy(view.Stderr,0,Stderr,ErrLength,view.Stderr.Length);ErrLength+=view.Stderr.Length;
+   Io.CacheStderrMarkers(Stderr,ErrLength);
   }
   void ObserveDelivery(InputObservation1701 input){
    Io.Need(input!=null&&input.State!="Poisoned"&&input.Delivered>=Delivered&&input.Delivered<=Delivered+1

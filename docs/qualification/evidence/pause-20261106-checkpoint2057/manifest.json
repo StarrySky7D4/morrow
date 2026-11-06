@@ -1,0 +1,414 @@
+{
+  "files": [
+    {
+      "path": "caller-refusal1966.json",
+      "bytes": 3277,
+      "sha256": "f4608d96032421707b857eebd567ae3fe133277455bf254865b517e298ba4fd0"
+    },
+    {
+      "path": "case-public-preflight.json",
+      "bytes": 143,
+      "sha256": "e47e79ed7a41a4d6decb7f604685d1cc97ad83fbfee5adbb111a77cbe7666e4e"
+    },
+    {
+      "path": "checkpoint-memory2043.json",
+      "bytes": 3793,
+      "sha256": "ab7bca9babcf398a20807340b2bb072eb0e2d77a5614ebbb8436ad5629eed27e"
+    },
+    {
+      "path": "checkpoint.json",
+      "bytes": 4485,
+      "sha256": "c530cf9ed0a5476c9c336a07381999979eb64a62b1259e470a6522b62e890abe"
+    },
+    {
+      "path": "clean-checkpoint-restore2045.json",
+      "bytes": 5021,
+      "sha256": "ad84a3a1ef5109a0258696ef7ebdcf5ddaf441a3d9335cfa0fcc8ac2e4267cb1"
+    },
+    {
+      "path": "closed-host-cache-compression2056.json",
+      "bytes": 459,
+      "sha256": "faf2575f00df135a38c5226fc581d3ae0164187bcd3599c92b68773e1c52e73c"
+    },
+    {
+      "path": "cold-role-binding2054.json",
+      "bytes": 4106,
+      "sha256": "47ceed124a3329c249313edf13aed5b141e1fab5ad2d41c88882fde2676d9c6b"
+    },
+    {
+      "path": "helper2028.json",
+      "bytes": 1481,
+      "sha256": "feab4ec1527342c3fc508bc8139265f0626ebf7585ac3a5a03d298830907e14b"
+    },
+    {
+      "path": "host-at-pause.json",
+      "bytes": 1207,
+      "sha256": "99fc0e8484fb2c4206c11e6d748da0861601f9198d3b7165f96adef910393a2a"
+    },
+    {
+      "path": "logon1950.json",
+      "bytes": 1321,
+      "sha256": "cc3275ede6bd02bc986b55d92022fd41d4317cf749003fbeb70bc1d3083f8dfe"
+    },
+    {
+      "path": "native2031.json",
+      "bytes": 89031,
+      "sha256": "db783600085260d99e51410e4961d2d2563a84aea3749ba01efc7fce0b7e9ccf"
+    },
+    {
+      "path": "normal-S-cache-retirement2048.json",
+      "bytes": 508,
+      "sha256": "c99f7d259b29f56d7bfef5dfbc7ef95cb57e4d352927e6e8deddde8b7438828e"
+    },
+    {
+      "path": "normal1910.json",
+      "bytes": 1285,
+      "sha256": "6d86e211d31568d1a7a49f1562bdc6b1c0a763970f28d167b52a8b4295e7b2cd"
+    },
+    {
+      "path": "p2-matrix.json",
+      "bytes": 6432,
+      "sha256": "01a9364d390927081e3d3842af15d900757585a241e859551f774cbd89f1bf35"
+    },
+    {
+      "path": "plan-metadata-repair2054.json",
+      "bytes": 14623,
+      "sha256": "cd8424a43be313869e1e7f53e4ac4de1128df4b562bb4c115653641c1ed6ef42"
+    },
+    {
+      "path": "preparation-closed2055.json",
+      "bytes": 6733,
+      "sha256": "d23f153620b443298f676445b74874b9a94057bbc309f8f432411fa1866408f1"
+    },
+    {
+      "path": "preparation-original-failure.json",
+      "bytes": 3569,
+      "sha256": "e6affc6567678aaea0c85599705429aa6b6e348db66710571ff382450e163d34"
+    },
+    {
+      "path": "prior-checkpoint2046.json",
+      "bytes": 9003,
+      "sha256": "34cbc445cba07a76aed84994c0c2ec8c2db8cd65c0997a943dd4ef9f32f7aa40"
+    },
+    {
+      "path": "public-preflight-diagnostic2053.json",
+      "bytes": 972,
+      "sha256": "cc6422580f1519535a8154aaa5ccbfb0d868cd06c17bacb6ed9a4865bc89a6f6"
+    },
+    {
+      "path": "public-preflight2054.json",
+      "bytes": 86,
+      "sha256": "e62f135b563e8cedac66cf4fe284e314f713220aba9b03ad87bb023f166790a6"
+    },
+    {
+      "path": "release-gates-before-publication.json",
+      "bytes": 309,
+      "sha256": "09c4a4b1dab07bfe71a29f30862cad5dca1c0ffe0ab6464808ee75c68057311f"
+    },
+    {
+      "path": "retained-checkpoint2044.json",
+      "bytes": 4706,
+      "sha256": "2b85e71e61e0dd205d13c572e53ad606329547d60ff762fd699fe538422621a3"
+    },
+    {
+      "path": "review-tools/continue_setup_preparation2055.py",
+      "bytes": 5190,
+      "sha256": "76d0cb9acf00c4899d78ba93bd653b4aa8a7b7a41eeed243bf900a5115ad2b81"
+    },
+    {
+      "path": "review-tools/diagnose_public_preflight2053.py",
+      "bytes": 3035,
+      "sha256": "2a2738f7ac4e04492bbb141f151f3bd8a4d365fa979ef850c35c80b7090a0fdb"
+    },
+    {
+      "path": "review-tools/prepare_isolated_case_2054.py.diff",
+      "bytes": 1949,
+      "sha256": "2f772580571d64c9da52a928289f7751a042ab817b849c98885c752ec239b50d"
+    },
+    {
+      "path": "review-tools/prepare_vm_stage_2054.py.diff",
+      "bytes": 1577,
+      "sha256": "50bd09b85abe17c785aacd594d8e09cd30ef8799a168f483cb237a90bb64f593"
+    },
+    {
+      "path": "review-tools/repair_setup_plan2054.py",
+      "bytes": 8994,
+      "sha256": "cce255e4e59e7c4dbba4ddf805ea4eeedeba58a2c00fb1c104271602f967e883"
+    },
+    {
+      "path": "review-tools/review_stage_2054.py.diff",
+      "bytes": 1434,
+      "sha256": "f94dac4ee2205fc5ed8f7c9b769389b91ac176abd416a9a84b376c27ca47f333"
+    },
+    {
+      "path": "review-tools/run_cold_guarded_2054.py.diff",
+      "bytes": 2044,
+      "sha256": "25be8c6d233d4a413d8ac24ac9660836f7d858acc1f0a185d788912852562464"
+    },
+    {
+      "path": "review-tools/run_isolated_case_2054.py.diff",
+      "bytes": 1757,
+      "sha256": "82c992e35165235138de2d78ce19e7b503d27d8ede499e2006ad9d45836cf596"
+    },
+    {
+      "path": "review-tools/verify_roles070_stage2054.py.diff",
+      "bytes": 630,
+      "sha256": "56cee4a4ed83d3ea64b4046eadf95248eb1110021edcb8258603278723a12b2e"
+    },
+    {
+      "path": "roles070.json",
+      "bytes": 2178,
+      "sha256": "325a804e945d79b106402c53847f375ccd368d98aa2a747d48bb39645e560a1d"
+    },
+    {
+      "path": "runner-parser2032.json",
+      "bytes": 681,
+      "sha256": "2d000c36057500389e29a20c9b7fc66662a726dba006175677be618aadf1ae1a"
+    },
+    {
+      "path": "sdk-cabi2024.json",
+      "bytes": 1107,
+      "sha256": "443d3e1a943e42db17578fc874f226bf5bb020e1399e37591f0e4d1e610de60f"
+    },
+    {
+      "path": "sdk-contracts2025.json",
+      "bytes": 698,
+      "sha256": "cfa08b46c04010a3624343e000a94db281f5a9c62b1e5916a88eeebcf63e0b3a"
+    },
+    {
+      "path": "sdk-dart2021.json",
+      "bytes": 480,
+      "sha256": "7388fdac79e01d7ca917743a37cb0c37e33e1c60e381b652afcb4295b6c1228a"
+    },
+    {
+      "path": "sdk-guests2022.json",
+      "bytes": 1689,
+      "sha256": "bef767852734fec54df048a95798dd5f7e94224e9478522afa1091b9202dee7a"
+    },
+    {
+      "path": "sdk-host2023.json",
+      "bytes": 127038,
+      "sha256": "9f0d856267a5e62565c9ea893bd10e4fa0fcea43c81965bcda2fa98af9e83f68"
+    },
+    {
+      "path": "sdk-native2019.json",
+      "bytes": 60925,
+      "sha256": "9f01a029717a2db7b8cfed185be641ea6e6739a9bd13b487af807be743e98b66"
+    },
+    {
+      "path": "setup-fault-derivation.json",
+      "bytes": 1494,
+      "sha256": "62a3a78823b9433179e23176f916724f733c9a628de6109fb93ac59832d602e1"
+    },
+    {
+      "path": "shared1938.json",
+      "bytes": 1316,
+      "sha256": "08185387fd580c9174956c9c07ee9f5a797490a1101dacb95e66ca658298c926"
+    }
+  ],
+  "source_pins": {
+    "prior-checkpoint2046.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint2046\\result.json",
+      "bytes": 9003,
+      "sha256": "34cbc445cba07a76aed84994c0c2ec8c2db8cd65c0997a943dd4ef9f32f7aa40"
+    },
+    "p2-matrix.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint2046\\current-p2-matrix.json",
+      "bytes": 6432,
+      "sha256": "01a9364d390927081e3d3842af15d900757585a241e859551f774cbd89f1bf35"
+    },
+    "release-gates-before-publication.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint2046\\gate-result.json",
+      "bytes": 309,
+      "sha256": "09c4a4b1dab07bfe71a29f30862cad5dca1c0ffe0ab6464808ee75c68057311f"
+    },
+    "normal1910.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1910-summary.json",
+      "bytes": 1285,
+      "sha256": "6d86e211d31568d1a7a49f1562bdc6b1c0a763970f28d167b52a8b4295e7b2cd"
+    },
+    "shared1938.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1938-summary.json",
+      "bytes": 1316,
+      "sha256": "08185387fd580c9174956c9c07ee9f5a797490a1101dacb95e66ca658298c926"
+    },
+    "logon1950.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1950-summary.json",
+      "bytes": 1321,
+      "sha256": "cc3275ede6bd02bc986b55d92022fd41d4317cf749003fbeb70bc1d3083f8dfe"
+    },
+    "caller-refusal1966.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\p2-native-refusal-current-1966\\result.json",
+      "bytes": 3277,
+      "sha256": "f4608d96032421707b857eebd567ae3fe133277455bf254865b517e298ba4fd0"
+    },
+    "helper2028.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case2028-summary.json",
+      "bytes": 1481,
+      "sha256": "feab4ec1527342c3fc508bc8139265f0626ebf7585ac3a5a03d298830907e14b"
+    },
+    "native2031.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\result.json",
+      "bytes": 89031,
+      "sha256": "db783600085260d99e51410e4961d2d2563a84aea3749ba01efc7fce0b7e9ccf"
+    },
+    "runner-parser2032.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\runner-parser-current-2032\\result.json",
+      "bytes": 681,
+      "sha256": "2d000c36057500389e29a20c9b7fc66662a726dba006175677be618aadf1ae1a"
+    },
+    "checkpoint-memory2043.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-checkpoint-memory-equivalence-2043\\result.json",
+      "bytes": 3793,
+      "sha256": "ab7bca9babcf398a20807340b2bb072eb0e2d77a5614ebbb8436ad5629eed27e"
+    },
+    "retained-checkpoint2044.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-case2028-retained-checkpoint-review-2044\\result.json",
+      "bytes": 4706,
+      "sha256": "2b85e71e61e0dd205d13c572e53ad606329547d60ff762fd699fe538422621a3"
+    },
+    "clean-checkpoint-restore2045.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-clean-restore-2045\\result.json",
+      "bytes": 5021,
+      "sha256": "ad84a3a1ef5109a0258696ef7ebdcf5ddaf441a3d9335cfa0fcc8ac2e4267cb1"
+    },
+    "roles070.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\result.json",
+      "bytes": 2178,
+      "sha256": "325a804e945d79b106402c53847f375ccd368d98aa2a747d48bb39645e560a1d"
+    },
+    "setup-fault-derivation.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\S-fault-derivation.json",
+      "bytes": 1494,
+      "sha256": "62a3a78823b9433179e23176f916724f733c9a628de6109fb93ac59832d602e1"
+    },
+    "preparation-original-failure.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\result.json",
+      "bytes": 3569,
+      "sha256": "e6affc6567678aaea0c85599705429aa6b6e348db66710571ff382450e163d34"
+    },
+    "public-preflight-diagnostic2053.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\public-preflight-diagnostic-2053\\result.json",
+      "bytes": 972,
+      "sha256": "cc6422580f1519535a8154aaa5ccbfb0d868cd06c17bacb6ed9a4865bc89a6f6"
+    },
+    "plan-metadata-repair2054.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\result.json",
+      "bytes": 14623,
+      "sha256": "cd8424a43be313869e1e7f53e4ac4de1128df4b562bb4c115653641c1ed6ef42"
+    },
+    "cold-role-binding2054.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles070-stage2054-binding-review\\result.json",
+      "bytes": 4106,
+      "sha256": "47ceed124a3329c249313edf13aed5b141e1fab5ad2d41c88882fde2676d9c6b"
+    },
+    "preparation-closed2055.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-continuation-2055\\result.json",
+      "bytes": 6733,
+      "sha256": "d23f153620b443298f676445b74874b9a94057bbc309f8f432411fa1866408f1"
+    },
+    "public-preflight2054.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\public-only-2054-process-result.json",
+      "bytes": 86,
+      "sha256": "e62f135b563e8cedac66cf4fe284e314f713220aba9b03ad87bb023f166790a6"
+    },
+    "case-public-preflight.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\case-public-only-result.json",
+      "bytes": 143,
+      "sha256": "e47e79ed7a41a4d6decb7f604685d1cc97ad83fbfee5adbb111a77cbe7666e4e"
+    },
+    "normal-S-cache-retirement2048.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles069-intermediate-retirement-2048\\result.json",
+      "bytes": 508,
+      "sha256": "c99f7d259b29f56d7bfef5dfbc7ef95cb57e4d352927e6e8deddde8b7438828e"
+    },
+    "closed-host-cache-compression2056.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\closed-host-cache-compression-2056\\result.json",
+      "bytes": 459,
+      "sha256": "faf2575f00df135a38c5226fc581d3ae0164187bcd3599c92b68773e1c52e73c"
+    },
+    "host-at-pause.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\pause-publication-2057\\host-readonly.json",
+      "bytes": 1207,
+      "sha256": "99fc0e8484fb2c4206c11e6d748da0861601f9198d3b7165f96adef910393a2a"
+    },
+    "sdk-native2019.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\result.json",
+      "bytes": 60925,
+      "sha256": "9f01a029717a2db7b8cfed185be641ea6e6739a9bd13b487af807be743e98b66"
+    },
+    "sdk-dart2021.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-dart-2021\\result.json",
+      "bytes": 480,
+      "sha256": "7388fdac79e01d7ca917743a37cb0c37e33e1c60e381b652afcb4295b6c1228a"
+    },
+    "sdk-guests2022.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-sdk-guests-2022\\result.json",
+      "bytes": 1689,
+      "sha256": "bef767852734fec54df048a95798dd5f7e94224e9478522afa1091b9202dee7a"
+    },
+    "sdk-host2023.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-host-route-2023\\result.json",
+      "bytes": 127038,
+      "sha256": "9f0d856267a5e62565c9ea893bd10e4fa0fcea43c81965bcda2fa98af9e83f68"
+    },
+    "sdk-cabi2024.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-cabi-2024\\result.json",
+      "bytes": 1107,
+      "sha256": "443d3e1a943e42db17578fc874f226bf5bb020e1399e37591f0e4d1e610de60f"
+    },
+    "sdk-contracts2025.json": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-contracts-2025\\result.json",
+      "bytes": 698,
+      "sha256": "cfa08b46c04010a3624343e000a94db281f5a9c62b1e5916a88eeebcf63e0b3a"
+    },
+    "review-tools/repair_setup_plan2054.py": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\repair_setup_plan2054.py",
+      "bytes": 8994,
+      "sha256": "cce255e4e59e7c4dbba4ddf805ea4eeedeba58a2c00fb1c104271602f967e883"
+    },
+    "review-tools/continue_setup_preparation2055.py": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\continue_setup_preparation2055.py",
+      "bytes": 5190,
+      "sha256": "76d0cb9acf00c4899d78ba93bd653b4aa8a7b7a41eeed243bf900a5115ad2b81"
+    },
+    "review-tools/diagnose_public_preflight2053.py": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\diagnose_public_preflight2053.py",
+      "bytes": 3035,
+      "sha256": "2a2738f7ac4e04492bbb141f151f3bd8a4d365fa979ef850c35c80b7090a0fdb"
+    },
+    "review-tools/prepare_isolated_case_2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\prepare_isolated_case_2054.py.diff",
+      "bytes": 1949,
+      "sha256": "2f772580571d64c9da52a928289f7751a042ab817b849c98885c752ec239b50d"
+    },
+    "review-tools/prepare_vm_stage_2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\prepare_vm_stage_2054.py.diff",
+      "bytes": 1577,
+      "sha256": "50bd09b85abe17c785aacd594d8e09cd30ef8799a168f483cb237a90bb64f593"
+    },
+    "review-tools/review_stage_2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\review_stage_2054.py.diff",
+      "bytes": 1434,
+      "sha256": "f94dac4ee2205fc5ed8f7c9b769389b91ac176abd416a9a84b376c27ca47f333"
+    },
+    "review-tools/run_cold_guarded_2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\run_cold_guarded_2054.py.diff",
+      "bytes": 2044,
+      "sha256": "25be8c6d233d4a413d8ac24ac9660836f7d858acc1f0a185d788912852562464"
+    },
+    "review-tools/run_isolated_case_2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\run_isolated_case_2054.py.diff",
+      "bytes": 1757,
+      "sha256": "82c992e35165235138de2d78ce19e7b503d27d8ede499e2006ad9d45836cf596"
+    },
+    "review-tools/verify_roles070_stage2054.py.diff": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\verify_roles070_stage2054.py.diff",
+      "bytes": 630,
+      "sha256": "56cee4a4ed83d3ea64b4046eadf95248eb1110021edcb8258603278723a12b2e"
+    }
+  },
+  "secrets_included": false,
+  "binaries_included": false,
+  "VM_disks_included": false
+}

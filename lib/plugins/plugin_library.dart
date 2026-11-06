@@ -57,16 +57,23 @@ class PluginLibraryPage {
 
 /// Package-declared ceilings only. Constructing this never grants a live budget.
 final class PluginMutationBudget {
-  PluginMutationBudget({required this.maxJobBytes, required this.maxBytes}) {
+  PluginMutationBudget({
+    required this.maxJobBytes,
+    required this.maxBytes,
+    this.maxResources = 0,
+  }) {
     if (maxJobBytes <= BigInt.zero ||
         maxJobBytes > BigInt.from(32 * 1024 * 1024) ||
         maxBytes < maxJobBytes ||
-        maxBytes > BigInt.from(256 * 1024 * 1024)) {
+        maxBytes > BigInt.from(256 * 1024 * 1024) ||
+        maxResources < 0 ||
+        maxResources > 128) {
       throw const FormatException('Invalid declared mutation budget');
     }
   }
 
   final BigInt maxJobBytes, maxBytes;
+  final int maxResources;
 }
 
 class PluginLibraryEntry {

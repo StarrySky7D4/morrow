@@ -1,0 +1,50 @@
+{
+  "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+  "case": "wire",
+  "method": "original_protected_owner_capnp_expiry_and_one_receipt",
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "original_process_returned": true,
+  "exit_code": 0,
+  "receipts": [
+    {
+      "path": "D:\\build_cache\\wr1105w\\wire-expiry\\original-owner-finished.txt",
+      "bytes": 197,
+      "sha256": "07cc0c47417b1808d217be0f43ca83c75c051ed43a0cbbb47ad3d66422fc496f"
+    },
+    {
+      "path": "D:\\build_cache\\wr1105w\\wire-expiry\\start.capnp",
+      "bytes": 680,
+      "sha256": "f54c4cc89ddf7ca4880fa92bb8eb8f5abdf48e3cea5ee6c55372de0edc9060dd"
+    },
+    {
+      "path": "D:\\build_cache\\wr1105w\\wire-expiry\\ready.capnp",
+      "bytes": 640,
+      "sha256": "c6b98690d1364a704ddb6aa4175ff675c96cdf1fefabd5b5f785db9da05b2c0f"
+    },
+    {
+      "path": "D:\\build_cache\\wr1105w\\wire-expiry\\read.capnp",
+      "bytes": 712,
+      "sha256": "1545fb8c9929fa8c30f467271c8559b00485b18d7e129a46a6be7b4efe8a4e67"
+    }
+  ],
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-wire\\runtime.stdout",
+    "bytes": 179,
+    "sha256": "ef82f3ade7149cb920dc8bd6ca085534b7472705cfc34e645bd949f406cb9a2f"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-wire\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "formal_product_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

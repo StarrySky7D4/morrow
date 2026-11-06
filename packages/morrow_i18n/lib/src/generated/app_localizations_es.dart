@@ -2111,6 +2111,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Eliminar este archivo permanentemente';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm =>
+      'Reemplazar permanentemente el contenido de este archivo';
+
+  @override
   String get pluginsFileMutationExecuteTitle =>
       'Confirmar operación de archivo';
 
@@ -2314,6 +2318,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => 'Liberar tarea';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget =>
+      'Recursos simultáneos aprobados';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration =>
+      'Límite de recursos declarado';
 
   @override
   String get pluginsGuestExecutionTitle =>

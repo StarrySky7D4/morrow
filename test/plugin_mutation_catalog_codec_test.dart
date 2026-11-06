@@ -11,6 +11,7 @@ PluginLibraryEntry decode({
   bool budget = false,
   BigInt? maxJobBytes,
   BigInt? maxBytes,
+  int resources = 0,
 }) {
   final message = MessageBuilder();
   final row = message.initRoot(host.pluginEntryFactory);
@@ -23,6 +24,7 @@ PluginLibraryEntry decode({
     final declared = row.initMutationBudget();
     declared.maxJobBytesBigInt = maxJobBytes ?? BigInt.zero;
     declared.maxBytesBigInt = maxBytes ?? BigInt.zero;
+    declared.maxResources = resources;
   }
   return decodePluginLibraryEntry(
     MessageReader.deserialize(
@@ -76,5 +78,24 @@ void main() {
     );
     expect(maximum.mutationBudget!.maxJobBytes, maxJob);
     expect(maximum.mutationBudget!.maxBytes, maxTotal);
+    expect(maximum.mutationBudget!.maxResources, 0);
+    final bounded = decode(
+      supported: true,
+      budget: true,
+      maxJobBytes: maxJob,
+      maxBytes: maxTotal,
+      resources: 128,
+    );
+    expect(bounded.mutationBudget!.maxResources, 128);
+    expect(
+      () => decode(
+        supported: true,
+        budget: true,
+        maxJobBytes: maxJob,
+        maxBytes: maxTotal,
+        resources: 129,
+      ),
+      throwsFormatException,
+    );
   });
 }

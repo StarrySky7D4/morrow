@@ -1978,6 +1978,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => 'このファイルを完全に削除';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm => 'このファイルの内容を完全に置き換える';
+
+  @override
   String get pluginsFileMutationExecuteTitle => 'ファイル操作の実行確認';
 
   @override
@@ -2167,6 +2170,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => 'タスクを解放';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget => '同時に使用を許可するリソース数の上限';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration => 'プラグインが宣言したリソース上限';
 
   @override
   String get pluginsGuestExecutionTitle => 'プラグインによるファイルの作成と削除';

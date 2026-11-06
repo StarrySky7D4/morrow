@@ -1,0 +1,15 @@
+{
+  "status": "PASS_OLD_COMPILER_LEAVES_REMOVED_ALL_OTHER_BYTES_PRESERVED",
+  "files": 1026,
+  "logical_bytes": 1660465312,
+  "free_before": 4892172288,
+  "free_after": 5715943424,
+  "observed_D_free_gain": 823771136,
+  "preserved_files": 25302,
+  "directories_removed": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "original_artifacts_and_receipts_unchanged": true,
+  "current_roles069_preserved": true,
+  "plan_sha256": "f3411030cfd7a0ed11607ef6a4db688045a926aa85bd033f672d08f84fcfe2bf"
+}

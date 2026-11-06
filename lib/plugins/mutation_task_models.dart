@@ -9,6 +9,7 @@ Uint8List _checkpoint(Uint8List v) {
   }
   return _copy(v);
 }
+
 List<Uint8List>? _copyPlans(List<Uint8List>? v) =>
     v == null ? null : List<Uint8List>.unmodifiable(v.map(_copy));
 
@@ -44,6 +45,7 @@ enum MutationResultKind {
   reconciled,
   planned,
   plans,
+  replaced,
 }
 
 enum MutationPhase {

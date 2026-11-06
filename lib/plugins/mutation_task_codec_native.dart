@@ -306,6 +306,7 @@ abstract final class MutationTaskCodec {
           throw const FormatException('Invalid staged result');
         }
       case MutationResultKind.created:
+      case MutationResultKind.replaced:
       case MutationResultKind.deleted:
         if (reference != null ||
             hasPlan ||

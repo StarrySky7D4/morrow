@@ -133,13 +133,20 @@ fn descriptor_encodes_all_actions_and_preserves_buffer_on_failure() {
         (6, Action::Query),
         (7, Action::CancelPlan),
         (8, Action::Release),
+        (
+            9,
+            Action::Replace {
+                content_length: 3,
+                content_sha256: hash,
+            },
+        ),
     ];
     let mut output = vec![0xa5; mutation::MAX_FRAME_BYTES];
     let mut length = 99;
     for (kind, action) in cases {
         raw.kind = kind;
-        raw.content_length = if kind == 1 { 3 } else { 0 };
-        raw.content_sha256 = if kind == 1 {
+        raw.content_length = if matches!(kind, 1 | 9) { 3 } else { 0 };
+        raw.content_sha256 = if matches!(kind, 1 | 9) {
             span(&hash)
         } else {
             Span::default()
@@ -195,7 +202,7 @@ fn descriptor_prefix_and_unused_fields_are_rejected_before_copy() {
     raw.struct_size = (size_of::<Descriptor>() - 1) as u32;
     assert_eq!(encode(&raw, &mut output, &mut length), 18);
     raw.struct_size = size_of::<Descriptor>() as u32;
-    raw.kind = 9;
+    raw.kind = 10;
     assert_eq!(encode(&raw, &mut output, &mut length), 16);
     raw.kind = 2;
     raw.content_length = 1;

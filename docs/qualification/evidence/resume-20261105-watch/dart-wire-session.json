@@ -1,0 +1,42 @@
+{
+  "status": "PASS_CURRENT_CANONICAL_DART_WATCH_WIRE_AND_SESSION",
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "commands": [
+    {
+      "name": "wire",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\dart-checks\\wire.stdout",
+        "bytes": 65,
+        "sha256": "7df1354f4cd469dfd2c6d30df2315da1f275327a4d00c37412a4b24cc7861018"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\dart-checks\\wire.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "session",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\dart-checks\\session.stdout",
+        "bytes": 68,
+        "sha256": "4322228755f156bc8ff59768071d83552b32175e4314bb7392354165646e85de"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\dart-checks\\session.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "wire_checks": 44,
+  "session_checks": 45,
+  "actual_native_runtime": false,
+  "formal_product_UI": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

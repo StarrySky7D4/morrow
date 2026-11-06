@@ -1,0 +1,14 @@
+{
+  "status": "PASS_CLOSED_HOST_CACHE_BYTES_IDENTITIES_MTIMES_PRESERVED",
+  "files": 1159,
+  "protected_files": 6645,
+  "logical_bytes_preserved": 2292791469,
+  "allocated_bytes_recovered": 1069832365,
+  "observed_D_free_change": 1071783936,
+  "free_before": 4396507136,
+  "free_after": 5468291072,
+  "deletions": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "plan_sha256": "0a5b5e49f60074b0db7e4724591faa99d3cbdc934f77741124daba397ae7ca9c"
+}

@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "Vérifiez le chemin complet. Chaque limite doit être positive et respecter les plafonds du plugin.",
-  "pluginsWatchOtherPanel": "La fin de l’observation n’est pas encore confirmée. Vérifiez la tâche d’origine dans le panneau des modifications du dossier."
+  "pluginsWatchOtherPanel": "La fin de l’observation n’est pas encore confirmée. Vérifiez la tâche d’origine dans le panneau des modifications du dossier.",
+  "pluginsFileMutationExecuteReplaceConfirm": "Remplacer définitivement le contenu de ce fichier",
+  "pluginsGuestExecutionResourceBudget": "Ressources simultanées autorisées",
+  "pluginsGuestExecutionResourceDeclaration": "Limite de ressources déclarée"
 }

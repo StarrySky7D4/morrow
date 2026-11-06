@@ -1,0 +1,100 @@
+{
+  "status": "ACTIVE_CLEANUP_AND_FIVE_LOCK_REPAIRS_SDK_SCOPED_PRODUCT_UI_OPEN",
+  "utc": "2026-11-05T01:09:12.332821+00:00",
+  "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+  "branch": "codex/local-continue-20261020",
+  "source_before_locks": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "source_after_locks_before_report": "8b1a903b81cd47b70116daf8ecd8609ae06e6301dc892fa38120b83850613e23",
+  "previous_watch_checkpoint": "docs/qualification/evidence/resume-20261105-watch/checkpoint.json",
+  "cleanup": {
+    "removed_files": 69063,
+    "logical_bytes_removed": 33385939134,
+    "deletion_stage_observed_free_delta": 28448395264,
+    "cleaned_target_roots": 127,
+    "source_final_artifact_backup_VM_deletions": 0
+  },
+  "canonical_lock_repairs": {
+    "count": 5,
+    "changed_files": [
+      "extensions/agent-catalog-owner-v1/Cargo.lock",
+      "extensions/agent-session-exec-v1-r2-host/Cargo.lock",
+      "extensions/agent-session-process-v1-host/Cargo.lock",
+      "extensions/codex-session-exec-client-r2/qualification/Cargo.lock",
+      "network_node/Cargo.lock"
+    ],
+    "locked_offline_metadata": 5,
+    "four_separately_cold_compile_checks": 4,
+    "new_canonical_runtime_dispatches": 0
+  },
+  "SDK_frozen_runtime": {
+    "original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+    "methods": 13,
+    "transport_metadata_only_methods": 1,
+    "guest_modules_rebuilt": false,
+    "original_processes_returned": true
+  },
+  "SDK_static_preflight": {
+    "packages": 19,
+    "guest_execution": false
+  },
+  "staged_network_runtime": {
+    "qualified_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+    "methods": 9,
+    "loopback_transport_methods": 6,
+    "real_loopback_TLS_Windows_DPAPI_methods": 3,
+    "scope": "isolated staged network lock repair; original stage binding retained",
+    "source_lock_later_applied": true,
+    "original_processes_returned": true,
+    "production_TLS_accepted": false
+  },
+  "frozen_inputs_unchanged": 57,
+  "formal_product_UI": "PENDING_MANUAL_NAVIGATION_AND_ORIGINAL_CLOSURE",
+  "UI_original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "UI_original_receipts_relabelled": false,
+  "product_component_artifacts_unchanged": true,
+  "Windows_P2": "OPEN",
+  "current_source_P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "task_status": "ACTIVE",
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "free_space": [
+    {
+      "Name": "C",
+      "Free": 46388559872
+    },
+    {
+      "Name": "D",
+      "Free": 55846010880
+    }
+  ],
+  "cache_root": "D:/build_cache",
+  "VM_guest_calls": 0,
+  "old_owner_contacts": 0,
+  "remote_publication": false
+}

@@ -42,6 +42,7 @@ int main(int argc, char** argv) {
       morrow::mutation_request::query(7, reference, submission, "mutation-vector-1", 30000),
       morrow::mutation_request::cancel_plan(7, reference, submission, "mutation-vector-1", 30000),
       morrow::mutation_request::release(7, reference, submission, "mutation-vector-1", 30000),
+      morrow::mutation_request::replace(7, reference, submission, "mutation-vector-1", 30000, 0, empty_hash),
   };
   for (const auto& action : actions) {
     const auto encoded = action.encode();
@@ -52,15 +53,19 @@ int main(int argc, char** argv) {
       "mutation-vector-1", 30000, 3, content_hash).encode();
   assert(content.status == MP_CODEC_OK);
   assert(mp_mutation_request_validate(content.bytes.data(), static_cast<uint32_t>(content.bytes.size())) == MP_CODEC_OK);
+  const auto replacement = morrow::mutation_request::replace(7, reference, submission,
+      "mutation-vector-1", 30000, 3, content_hash).encode();
+  assert(replacement.status == MP_CODEC_OK && replacement.bytes == load(dir, "replace-content"));
+  assert(actions.back().encode().bytes == load(dir, "replace-empty"));
   const auto encoded_execute = actions[4].encode();
   assert(encoded_execute.bytes == load(dir, "execute"));
 
-  for (const char* name : {"create-empty", "create-content", "delete", "chunk", "commit",
+  for (const char* name : {"create-empty", "create-content", "replace-empty", "replace-content", "delete", "chunk", "commit",
                            "execute", "query", "cancel", "release"}) {
     const auto bytes = load(dir, name);
     assert(mp_mutation_request_validate(bytes.data(), static_cast<uint32_t>(bytes.size())) == MP_CODEC_OK);
   }
-  for (const char* name : {"bad-zero-reference", "bad-empty-hash", "bad-chunk-overflow",
+  for (const char* name : {"bad-zero-reference", "bad-empty-hash", "bad-replace-empty-hash", "bad-chunk-overflow",
                            "bad-call", "bad-deadline", "bad-unicode-control", "bad-trailing"}) {
     const auto bytes = load(dir, name);
     assert(mp_mutation_request_validate(bytes.data(), static_cast<uint32_t>(bytes.size())) != MP_CODEC_OK);

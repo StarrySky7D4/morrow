@@ -19,6 +19,7 @@ const ID: &str = "org.example.workbench.guest-mutation";
 const SUBJECT: &str = "workbench.guest-mutation-test";
 const APPROVAL: [u8; 32] = [83; 32];
 const BUDGET: MutationBudget = MutationBudget {
+    max_resources: 0,
     max_job_bytes: MAX_MUTATION_JOB_BYTES,
     max_bytes: MAX_MUTATION_BYTES,
 };
@@ -86,6 +87,7 @@ impl Setup {
                 .required_features
                 .push(MUTATION_BUDGET_FEATURE.into());
             manifest.mutation_budget = Some(DeclaredBudget {
+                max_resources: 0,
                 max_job_bytes: BUDGET.max_job_bytes,
                 max_bytes: BUDGET.max_bytes,
             });
@@ -120,7 +122,7 @@ impl Setup {
         Self {
             app: Workbench {
                 upload_plans: Default::default(),
-            history_deliveries: Default::default(),
+                history_deliveries: Default::default(),
                 #[cfg(windows)]
                 product_session_wire: Default::default(),
                 channel_tasks: Default::default(),

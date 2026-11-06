@@ -1,0 +1,44 @@
+{
+  "vms": [
+    {
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "state": "Saved"
+    },
+    {
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "state": "Saved"
+    },
+    {
+      "name": "Morrow Windows Acceptance 20261106 058",
+      "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+      "state": "Running"
+    },
+    {
+      "name": "Windows 11 开发环境",
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "state": "Running"
+    }
+  ],
+  "vm058": {
+    "disk": "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2746CA0E-A848-46FA-9C05-023D5958F4E4.avhdx",
+    "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+    "checkpoints": [
+      {
+        "name": "Morrow clean Windows P2 baseline 20261106 VM058",
+        "id": "e75dc168-6c96-4add-8596-2f1b8b16452b",
+        "state": "Off"
+      },
+      {
+        "name": "Morrow retained Unknown case2028 20261106 VM058",
+        "id": "ba264892-7fa6-4111-a9dc-9bde534f4ed2",
+        "state": "Saved"
+      }
+    ],
+    "state": "Running"
+  },
+  "registered_vms": 4,
+  "VM_mutations": 0,
+  "owner_contacts": 0
+}

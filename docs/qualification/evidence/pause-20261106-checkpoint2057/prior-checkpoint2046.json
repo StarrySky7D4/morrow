@@ -1,0 +1,202 @@
+{
+  "status": "VERIFIED_REUSABLE_CLEAN_CHECKPOINT_WITH_RETAINED_UNKNOWN_RELEASE_OPEN",
+  "utc": "2026-11-06T11:11:15.805003+00:00",
+  "canonical_source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "candidate_source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+  "source_unchanged": true,
+  "git": [
+    {
+      "root": "C:\\ms1020",
+      "status": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint2046\\canonical-git-status.stdout",
+        "bytes": 8932,
+        "sha256": "28f2f44a6b6c583775206461686fa9cae45584e8b028f858cff6c717906bc1e5"
+      },
+      "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+      "branch": "codex/local-continue-20261020"
+    },
+    {
+      "root": "D:\\build_cache\\worktrees\\g04-conditional-replace-1850",
+      "status": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint2046\\candidate-git-status.stdout",
+        "bytes": 14722,
+        "sha256": "3f5a3ef34c0e9da7035759e318cff65457248cf00e203cb0088d946b5e81a0d7"
+      },
+      "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+      "branch": "codex/g04-conditional-replace-20261106-1850"
+    }
+  ],
+  "vm": {
+    "registered_vms": 4,
+    "vm_id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+    "state": "Off",
+    "disk": "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2746CA0E-A848-46FA-9C05-023D5958F4E4.avhdx",
+    "checkpoints": [
+      {
+        "name": "Morrow clean Windows P2 baseline 20261106 VM058",
+        "id": "e75dc168-6c96-4add-8596-2f1b8b16452b",
+        "state": "Off"
+      },
+      {
+        "name": "Morrow retained Unknown case2028 20261106 VM058",
+        "id": "ba264892-7fa6-4111-a9dc-9bde534f4ed2",
+        "state": "Saved"
+      }
+    ],
+    "old_owner_contacts": 0,
+    "VM_mutations": 0
+  },
+  "checkpoint_restore": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-clean-restore-2045\\result.json",
+    "bytes": 5021,
+    "sha256": "ad84a3a1ef5109a0258696ef7ebdcf5ddaf441a3d9335cfa0fcc8ac2e4267cb1"
+  },
+  "canonical_P2_current_scoped_rows": 5,
+  "total_P2_groups": 11,
+  "SDK_scope_results": [
+    {
+      "status": "PASS_PUBLIC_REPLACE_SCOPED_NATIVE_AND_CODEC_TESTS",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    },
+    {
+      "status": "PASS_DART_SESSION_AND_CAPNP_SCOPES",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    },
+    {
+      "status": "PASS_THREE_LANGUAGE_SDK_GUEST_SCOPES",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    },
+    {
+      "status": "PASS_ACTUAL_HOST_CAPNP_PROJECTION",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    },
+    {
+      "status": "PASS_NATIVE_C_CPP_TYPED_REPLACE_AND_VECTORS",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    },
+    {
+      "status": "PASS_CURRENT_CONTRACTS_AND_UNCHANGED_ORIGINAL_FIXTURES",
+      "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\result.json",
+      "bytes": 60925,
+      "sha256": "9f01a029717a2db7b8cfed185be641ea6e6739a9bd13b487af807be743e98b66"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-dart-2021\\result.json",
+      "bytes": 480,
+      "sha256": "7388fdac79e01d7ca917743a37cb0c37e33e1c60e381b652afcb4295b6c1228a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-sdk-guests-2022\\result.json",
+      "bytes": 1689,
+      "sha256": "bef767852734fec54df048a95798dd5f7e94224e9478522afa1091b9202dee7a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-host-route-2023\\result.json",
+      "bytes": 127038,
+      "sha256": "9f0d856267a5e62565c9ea893bd10e4fa0fcea43c81965bcda2fa98af9e83f68"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-cabi-2024\\result.json",
+      "bytes": 1107,
+      "sha256": "443d3e1a943e42db17578fc874f226bf5bb020e1399e37591f0e4d1e610de60f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-contracts-2025\\result.json",
+      "bytes": 698,
+      "sha256": "cfa08b46c04010a3624343e000a94db281f5a9c62b1e5916a88eeebcf63e0b3a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\result.json",
+      "bytes": 89031,
+      "sha256": "db783600085260d99e51410e4961d2d2563a84aea3749ba01efc7fce0b7e9ccf"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\runner-parser-current-2032\\result.json",
+      "bytes": 681,
+      "sha256": "2d000c36057500389e29a20c9b7fc66662a726dba006175677be618aadf1ae1a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case2028-summary.json",
+      "bytes": 1481,
+      "sha256": "feab4ec1527342c3fc508bc8139265f0626ebf7585ac3a5a03d298830907e14b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case2028-after-helper-review\\result.json",
+      "bytes": 1481,
+      "sha256": "feab4ec1527342c3fc508bc8139265f0626ebf7585ac3a5a03d298830907e14b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-memory-metadata-2038\\result.json",
+      "bytes": 1372,
+      "sha256": "b4e13562bd96b64036b8535fcde28cb0fb9748bcb69ae12d170c6a3d5fa99c6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-case2028-unknown-saved-reviewed-2041\\result.json",
+      "bytes": 2974,
+      "sha256": "2d7a3d9468ad09e89725ebf6245275106416b6d0e3cfa770ae0f56cd5a792c18"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-checkpoint-memory-equivalence-2043\\result.json",
+      "bytes": 3793,
+      "sha256": "ab7bca9babcf398a20807340b2bb072eb0e2d77a5614ebbb8436ad5629eed27e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-case2028-retained-checkpoint-review-2044\\result.json",
+      "bytes": 4706,
+      "sha256": "2b85e71e61e0dd205d13c572e53ad606329547d60ff762fd699fe538422621a3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-clean-restore-2045\\result.json",
+      "bytes": 5021,
+      "sha256": "ad84a3a1ef5109a0258696ef7ebdcf5ddaf441a3d9335cfa0fcc8ac2e4267cb1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-shared-cache-retirement-2018\\result.json",
+      "bytes": 489,
+      "sha256": "9660d9a6a3807e65f2b052e77e1c3cdd32000a923787c041faebe0e414526fb4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-cache-fix-2017\\result.json",
+      "bytes": 641,
+      "sha256": "998d0c5dc233c3e84f10c2aa4aa7e9486846c322d2c54a57d495d36b66200c6b"
+    }
+  ],
+  "free_bytes": {
+    "C": 26546921472,
+    "D": 4915544064
+  },
+  "cache_root": "D:/build_cache",
+  "new_VM_installations": 0,
+  "VM_mutations": 0,
+  "original_unknown_owner_contacts": 0,
+  "commits": 0,
+  "pushes": 0,
+  "original_release_catalogue_exit": 2,
+  "remaining_release_gates": [
+    "L0_TOKEN",
+    "L1_RUNNER",
+    "L2_BUSINESS_AND_RETIREMENT",
+    "L3_FULL47_NINE",
+    "EDITOR_PERSISTENCE",
+    "SDK26",
+    "G04",
+    "SDK_FREEZE"
+  ],
+  "next_work": [
+    "Reuse VM058 clean checkpoint e75dc168-6c96-4add-8596-2f1b8b16452b and exact post-restore guard from restore2045. Fresh boot/readiness remains required before any new case.",
+    "Keep retained Unknown checkpoint ba264892-7fa6-4111-a9dc-9bde534f4ed2 and its disk/memory/configuration. Never restore it for retries or contact case2028 owner PID21064/session6902.",
+    "Next P2 scope: derive a separately compiled S-only SETUP_AFTER_OWNED_ACCOUNTS fault from current roles069, retain exact P/C/R bytes, bind a new case and independent outcome review before dispatch. Historical case079 is a recipe, not current acceptance.",
+    "Finish the other current-source P2 groups: partial/abnormal outputs, token and DACL failures separately, late creation, handle-close failure and concurrent/wrong-generation SDK ownership cases.",
+    "Candidate37a public Replace scopes passed; formal visible window workflow and durable replacement crash/Unknown matrix remain open. Preserve independent per-workspace build targets.",
+    "Qualify the final combined source against all eight original release gates. Canonical f55 P2 evidence and candidate37a SDK scopes are separate; do not pool them into release acceptance."
+  ],
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "full_G04_accepted": false,
+  "release_eligible": false
+}

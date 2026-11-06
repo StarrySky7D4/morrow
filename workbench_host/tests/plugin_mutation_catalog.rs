@@ -43,6 +43,7 @@ fn package(extended: bool) -> Package {
             .required_features
             .push(MUTATION_BUDGET_FEATURE.into());
         manifest.mutation_budget = Some(proto::MutationBudget {
+            max_resources: 0,
             max_job_bytes: MAX_JOB,
             max_bytes: MAX_TOTAL,
         });
@@ -121,6 +122,7 @@ fn inspect_and_catalog_report_declared_mutation_budget_without_approval() {
     assert_eq!(
         row.mutation_budget,
         Some(MutationBudgetDeclaration {
+            max_resources: 0,
             max_job_bytes: MAX_JOB,
             max_bytes: MAX_TOTAL,
         })

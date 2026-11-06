@@ -19,10 +19,13 @@ try {
     [IO.Path]::GetFullPath((Join-Path $repo $Output))
   }
   New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
-  $rustTarget = Join-Path $outputPath 'rust'
-  Checked cargo @('build', '--offline', '--locked', '--manifest-path', 'sdk/examples/rust-mutation/Cargo.toml', '--target', 'wasm32-unknown-unknown', '--release', '--target-dir', $rustTarget)
-  Copy-Item -LiteralPath (Join-Path $rustTarget 'wasm32-unknown-unknown/release/morrow_example_mutation.wasm') -Destination (Join-Path $outputPath 'rust_mutation.wasm') -Force
-  Checked cargo @('rustc', '--offline', '--locked', '--manifest-path', 'sdk/rust/Cargo.toml', '--target', 'wasm32-unknown-unknown', '--features', 'wasm-c', '--release', '--target-dir', $rustTarget, '--crate-type', 'staticlib')
+  # Independent Cargo workspaces may emit the same unhashed cdylib/rlib name.
+  # Never let the guest workspace and standalone codec workspace overwrite it.
+  $rustGuestTarget = Join-Path $outputPath 'rust-guest'
+  $rustCodecTarget = Join-Path $outputPath 'rust-codec'
+  Checked cargo @('build', '--offline', '--locked', '--manifest-path', 'sdk/examples/rust-mutation/Cargo.toml', '--target', 'wasm32-unknown-unknown', '--release', '--target-dir', $rustGuestTarget)
+  Copy-Item -LiteralPath (Join-Path $rustGuestTarget 'wasm32-unknown-unknown/release/morrow_example_mutation.wasm') -Destination (Join-Path $outputPath 'rust_mutation.wasm') -Force
+  Checked cargo @('rustc', '--offline', '--locked', '--manifest-path', 'sdk/rust/Cargo.toml', '--target', 'wasm32-unknown-unknown', '--features', 'wasm-c', '--release', '--target-dir', $rustCodecTarget, '--crate-type', 'staticlib')
   $common = @('--target=wasm32-wasip1', "--sysroot=$mutationSysroot", '-O2', '-Wall', '-Wextra', '-Werror', '-Isdk/c/include')
   $objects = @()
   foreach ($name in @('morrow_plugin_wasm_libc', 'morrow_plugin_task')) {
@@ -30,7 +33,7 @@ try {
     Checked $Clang ($common + @('-std=c11', '-c', "sdk/c/src/$name.c", '-o', $objectPath))
     $objects += $objectPath
   }
-  $codec = Join-Path $rustTarget 'wasm32-unknown-unknown/release/libmorrow_plugin_sdk.a'
+  $codec = Join-Path $rustCodecTarget 'wasm32-unknown-unknown/release/libmorrow_plugin_sdk.a'
   $link = @('-nostdlib', '-Wl,--no-entry', '-Wl,--export=morrow_run', '-Wl,-z,stack-size=1048576', '-Wl,--max-memory=16777216', '-Wl,--strip-all')
   $stdlib = Join-Path $mutationSysroot 'lib/wasm32-wasip1'
   Checked $Clang ($common + @('-std=c11', 'sdk/examples/c-mutation/plugin.c') + $objects + @($codec) + $link + @("-L$stdlib", '-lc', '-o', (Join-Path $outputPath 'c_mutation.wasm')))

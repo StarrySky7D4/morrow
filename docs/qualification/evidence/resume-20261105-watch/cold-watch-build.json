@@ -1,0 +1,101 @@
+{
+  "status": "PASS_COLD_SELECTED_WATCH_BUILD_RUNTIME_NOT_RUN",
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "input_digest": "d615fd34cee45cd289842fbfc939c53bbd921014233aea5278a2925ab787022d",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "compiler_proof": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\compiler-proof.json",
+    "bytes": 1728410,
+    "sha256": "d20cbd361a1833a79455a1d4570194aae4b38ae78a75d5a963cd44d5c6783538"
+  },
+  "commands": [
+    {
+      "name": "lock",
+      "exit_code": 0,
+      "elapsed_seconds": 2.2189999999827705,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\lock.stdout",
+        "bytes": 3951457,
+        "sha256": "9ee75d127e41bcd2ef557c3f248606720feabbae6103321022bc188121f018a4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\lock.stderr",
+        "bytes": 794,
+        "sha256": "1698684cdb9a9206aca50fe585933360f0f4b20dff03beb183cb688dd39a0514"
+      }
+    },
+    {
+      "name": "build",
+      "exit_code": 0,
+      "elapsed_seconds": 1070.4060000000172,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\build.stdout",
+        "bytes": 1001237,
+        "sha256": "849f141eccd6e48f90921ed35ad4f36b5c8f25273d33b38649682987c457d08e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\build.stderr",
+        "bytes": 30457,
+        "sha256": "f2b450913a2a0fe5fe4aea11b10bea48f607b6f84e3f44fa07bf7dbd8d36f546"
+      }
+    },
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1720000000204891,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\discovery.stdout",
+        "bytes": 472,
+        "sha256": "d3d3e64eaa1187c9b359d63543c1461dc042656bb4fd26eea3fd6e1606564227"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "all_compiler_artifacts_cold": true,
+  "methods": [
+    "exact_bounds_handler_revision_and_host_nomination_preflight",
+    "file_list_is_not_watch_approval_and_stale_decisions_do_not_dispatch",
+    "original_protected_owner_cancel_after_guest_delivery",
+    "original_protected_owner_capnp_expiry_and_one_receipt",
+    "original_protected_owner_picker_expiry_has_no_native_capture",
+    "original_protected_owner_visible_c_guest",
+    "original_protected_owner_visible_cpp_guest",
+    "original_protected_owner_visible_rust_guest"
+  ],
+  "executed_methods": [],
+  "SDK_modules": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\sdk\\watch-c.wasm",
+      "bytes": 76140,
+      "sha256": "e1797f06cdaa3444838e8153f408486d80723064cda5fbcd7397033cba2c0133"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\sdk\\watch-cpp.wasm",
+      "bytes": 77553,
+      "sha256": "508005f9ef91d5788a7d2cdd5f15581590051a829ecfd261c312c12f19572df6"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\sdk\\watch-rust.wasm",
+      "bytes": 91643,
+      "sha256": "b47b4db04dfa1a7cc5a32764c6bd1b476ca8cba96fa8b8edb1e971b05801cf28"
+    }
+  ],
+  "shown_native_picker": false,
+  "production_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

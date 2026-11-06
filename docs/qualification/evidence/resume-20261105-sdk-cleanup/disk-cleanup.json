@@ -1,0 +1,51 @@
+{
+  "status": "PASS_SCOPED_DISK_CLEANUP",
+  "utc": "2026-11-05T00:05:17.653447+00:00",
+  "removed_files": 69063,
+  "logical_bytes_removed": 33385939134,
+  "operation_observed_free_delta": 28448395264,
+  "disk_free_before": {
+    "C": 46842241024,
+    "D": 28702928896
+  },
+  "disk_free_after": {
+    "C": 46395236352,
+    "D": 60802428928
+  },
+  "whole_task_observed_free_delta": {
+    "C": -447004672,
+    "D": 32099500032
+  },
+  "concurrent_changes_not_attributed": true,
+  "removed_by_kind": {
+    "cargo_library": 11984,
+    "cargo_incremental": 57079
+  },
+  "bytes_by_kind": {
+    "cargo_library": 20687575903,
+    "cargo_incremental": 12698363231
+  },
+  "cleaned_target_roots": 127,
+  "retained_files": 213794,
+  "retained_hashed_files": 201347,
+  "external_protected_files": 73,
+  "retained_metadata_verified": true,
+  "selected_critical_hashes_verified": true,
+  "excluded_roots": 20,
+  "excluded_reasons": {
+    "NO_CARGO_LOCK_RETAINED": 18,
+    "Command '['git', '-c', 'safe.directory=C:\\\\Users\\\\Administrator\\\\Desktop\\\\rmsim', '-C', 'C:\\\\Users\\\\Administrator\\\\Desktop\\\\rmsim', 'rev-parse', 'HEAD']' returned non-zero exit status 128.": 1,
+    "RECENT_TARGET_RETAINED": 1
+  },
+  "inaccessible_inventory_entries_preserved": 47,
+  "C_compatibility_links_unchanged": 42,
+  "source_git_unchanged": true,
+  "VM_inventory_unchanged": true,
+  "registered_VMs": 4,
+  "source_final_artifact_backup_VM_deletions": 0,
+  "build_cache_root": "D:\\build_cache",
+  "new_builds_started": 0,
+  "GitHub_pushes": 0,
+  "verification_scope": "Every retained file has namespace, size, write time and attributes verified; files at most 1 MiB and external critical records additionally have SHA256 verified",
+  "current_build_targets_retained": true
+}

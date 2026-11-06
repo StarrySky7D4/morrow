@@ -70,7 +70,7 @@ impl TargetBroker {
             native_windows::GateError::RestartRequired => Error::RestartRequired,
         })?;
         let entry = self.entries.get(&reference).ok_or(Error::Missing)?;
-        let binding = entry.lease.delivery_guard();
+        let binding = entry.file.lease().delivery_guard();
         let charge = command
             .request_bytes
             .checked_add(command.response_limit)
@@ -129,7 +129,7 @@ impl TargetBroker {
         fault("after-claim");
         let authorized = (|| -> Result<()> {
             controlled(control, |now| {
-                Ok(entry.lease.check(manager, host, instance, now)?)
+                Ok(entry.file.lease().check(manager, host, instance, now)?)
             })?;
             if Stamp::read(entry.file.metadata()?)? != entry.stamp {
                 return Err(Error::Changed);
@@ -138,14 +138,17 @@ impl TargetBroker {
                 return Err(Error::RestartRequired);
             }
             controlled(control, |now| {
-                Ok(entry.lease.check(manager, host, instance, now)?)
+                Ok(entry.file.lease().check(manager, host, instance, now)?)
             })?;
             Ok(())
         })();
         if authorized.is_err() {
             return Err(Error::OutcomeUnknown);
         }
-        let result = match effect_gate.delete(entry.file) {
+        let TargetFile::Direct { file, lease } = entry.file else {
+            return Err(Error::OutcomeUnknown);
+        };
+        let result = match effect_gate.delete(file) {
             native_windows::DeleteAttempt::Deleted => DeleteResult::Deleted,
             native_windows::DeleteAttempt::Rejected(code) if code != 0 => {
                 DeleteResult::OsRejected { code }
@@ -155,7 +158,7 @@ impl TargetBroker {
                 // Native handle validity is unknown. Do not pretend its resource
                 // was freed. Admission is poisoned process-wide; keep this charge
                 // until process teardown without ever re-closing a numeric handle.
-                std::mem::forget(entry.lease);
+                std::mem::forget(lease);
                 return Err(Error::OutcomeUnknown);
             }
         };

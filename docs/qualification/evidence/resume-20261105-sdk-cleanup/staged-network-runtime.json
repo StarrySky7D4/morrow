@@ -1,0 +1,197 @@
+{
+  "status": "PASS_STAGED_NETWORK_LOCK_REPAIR_TRANSPORT_TLS_DPAPI",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "qualified_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+  "canonical_source_unchanged": true,
+  "staged_inputs_unchanged": true,
+  "frozen_inputs_unchanged": 57,
+  "actual_methods": 9,
+  "transport_methods": 6,
+  "tls_dpapi_methods": 3,
+  "phases": [
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::credential_injection_and_http_error_are_observed_without_secret_in_request_material",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.453,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\01.log",
+        "bytes": 225,
+        "sha256": "9b0ce277386eaca0a42bb102d50a8558394d21c05b323af5fd36d907d59177d1"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::dropped_response_is_unknown_not_retried_and_survives_store_reopen",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.516,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\02.log",
+        "bytes": 207,
+        "sha256": "4e42b008a2037d2f37b527e764a67d7276baf849e383f5b190105a12b7cacee3"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_preserve_real_tls_dpapi_and_durable_exact_response",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.422,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\03.log",
+        "bytes": 651,
+        "sha256": "af69dd37b93307cd19db950de75a9a7ce029eb11f6b6ed5daf32797492386730"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_reject_wrong_tls_hostname_before_application_dispatch",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.469,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\04.log",
+        "bytes": 657,
+        "sha256": "1ba1c16db3db01837a3d2d98aea88f31bba60f9972daf76a10d0c886d75f10b2"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::frozen_packages_reject_wrong_tls_root_before_application_dispatch",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.406,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\05.log",
+        "bytes": 653,
+        "sha256": "ef5d7f747adcceb533169b2bcfd8a5376fee5da4eb9307590fbe880b83812bd8"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": true
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::seven_methods_preserve_binary_bytes_headers_and_durable_receipts",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 3.172,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\06.log",
+        "bytes": 206,
+        "sha256": "dfc2cd98ddc1391974c935f04ea6e0605d48506de0564895a8412cb8c2cc6cc6"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "managed_http",
+      "test": "sdk_http_guest::unapproved_endpoint_method_and_credential_never_send_or_create_intent",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.125,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\07.log",
+        "bytes": 211,
+        "sha256": "debc554ccedac985744fdc635e7a992341ba724aa52eceac7fbd6a6aebcc84e5"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+        "bytes": 14360064,
+        "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "sdk_service_guest",
+      "test": "generated_original_packages_serve_seven_methods_and_enforce_grants",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 0.719,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\08.log",
+        "bytes": 191,
+        "sha256": "f9c317d5eb12f99b7341a9c78966ef6a35e592ef5d1d4c6cd253f60b88bbf7b8"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\sdk_service_guest-fe121bfbdf9b7ea7.exe",
+        "bytes": 10177024,
+        "sha256": "76a104a9c452d699e867385c0123a5caa9fc23163f5a4d813c33d1e5b4e1553a"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    },
+    {
+      "suite": "sdk_service_guest",
+      "test": "generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend",
+      "exit_code": 0,
+      "passed": true,
+      "seconds": 1.14,
+      "log": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\09.log",
+        "bytes": 206,
+        "sha256": "55e013b7c11c9f4000739c1f6810c78aa5e2669aa7ded122bb36e90c820150d0"
+      },
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\sdk_service_guest-fe121bfbdf9b7ea7.exe",
+        "bytes": 10177024,
+        "sha256": "76a104a9c452d699e867385c0123a5caa9fc23163f5a4d813c33d1e5b4e1553a"
+      },
+      "original_process_returned": true,
+      "tls_dpapi": false
+    }
+  ],
+  "failure": null,
+  "all_original_processes_returned": true,
+  "real_loopback_network": true,
+  "synthetic_credentials": true,
+  "guest_rebuilt": false,
+  "canonical_patch_applied": false,
+  "VM_calls": 0,
+  "production_TLS_accepted": false,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

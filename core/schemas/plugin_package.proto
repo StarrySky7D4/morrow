@@ -39,6 +39,9 @@ message DependencyRequirement {
 message MutationBudget {
   uint64 max_job_bytes = 1;
   uint64 max_bytes = 2;
+  // Zero preserves the ordinary IO ceiling. A nonzero value requires FileReplace
+  // and a separate explicit host approval; it never changes an existing grant.
+  uint32 max_resources = 3;
 }
 // Independent upload ceiling. No Store, object, live owner or authorization.
 message BlobUploadDeclaration {

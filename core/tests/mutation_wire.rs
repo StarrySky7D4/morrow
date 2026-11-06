@@ -29,7 +29,17 @@ fn schema_limits_match_existing_content_contract() {
 
 #[test]
 fn independent_capnp_vectors_decode_and_reencode() {
-    const GOOD: [(&str, &[u8], Kind); 9] = [
+    const GOOD: [(&str, &[u8], Kind); 11] = [
+        (
+            "replace-empty",
+            include_bytes!("../../sdk/vectors/mutation-v1/replace-empty.bin"),
+            Kind::PrepareReplace,
+        ),
+        (
+            "replace-content",
+            include_bytes!("../../sdk/vectors/mutation-v1/replace-content.bin"),
+            Kind::PrepareReplace,
+        ),
         (
             "create-empty",
             include_bytes!("../../sdk/vectors/mutation-v1/create-empty.bin"),
@@ -85,7 +95,11 @@ fn independent_capnp_vectors_decode_and_reencode() {
             "{name}"
         );
     }
-    const BAD: [(&str, &[u8]); 7] = [
+    const BAD: [(&str, &[u8]); 8] = [
+        (
+            "bad-replace-empty-hash",
+            include_bytes!("../../sdk/vectors/mutation-v1/bad-replace-empty-hash.bin"),
+        ),
         (
             "bad-zero-reference",
             include_bytes!("../../sdk/vectors/mutation-v1/bad-zero-reference.bin"),

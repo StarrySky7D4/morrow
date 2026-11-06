@@ -28,8 +28,9 @@ use zeroize::Zeroizing;
 fn start_request(value: wire::mutation_start::Reader<'_>) -> Result<StartRequest> {
     let disposition = match value.get_disposition() {
         1 => Disposition::Create,
+        2 => Disposition::Replace,
         3 => Disposition::Delete,
-        _ => return Err("guest mutation only supports Create/Delete".into()),
+        _ => return Err("invalid guest mutation disposition".into()),
     };
     let relative = text(value.get_relative_path())?;
     Ok(StartRequest {
@@ -268,6 +269,7 @@ pub(super) fn handle(
         let approved = if start.has_approved_budget() {
             let budget = start.get_approved_budget()?;
             Some(MutationBudget {
+                max_resources: budget.get_max_resources(),
                 max_job_bytes: budget.get_max_job_bytes(),
                 max_bytes: budget.get_max_bytes(),
             })

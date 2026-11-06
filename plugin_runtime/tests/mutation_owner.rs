@@ -2,7 +2,7 @@
 #![cfg(all(windows, feature = "packages", not(target_arch = "wasm32")))]
 use morrow_core::{
     dispatch::HostRuntime,
-    file_effect::{CreateResult, DeleteResult},
+    file_effect::{CreateResult, DeleteResult, ReplaceResult},
     file_mutation::{Disposition, MutationRequest, RequestRecord, Target},
     file_path::RelativeFilePath,
     io_intent::Phase,
@@ -19,7 +19,8 @@ use morrow_plugin_runtime::{
     file_target::{Error as TargetError, SelectionScope},
     io_jobs::{
         HostOwner, IoWorker, JobError, JobLimits, MAX_MUTATION_CHUNK, ManagedHostOwner,
-        MutationHandle, MutationResponse, OwnerCommandError, OwnerCommandPoll, WorkerExit,
+        MutationHandle, MutationOutcome, MutationResponse, OwnerCommandError, OwnerCommandPoll,
+        WorkerExit,
     },
     manager::Manager,
 };
@@ -1106,7 +1107,106 @@ fn chunked_create_queries_durable_history_then_deletes_on_the_original_owner() {
 }
 
 #[test]
-fn replace_stays_prepared_and_unsupported_without_changing_selected_file() {
+fn queued_replace_returns_original_effect_and_reconciles_without_replay() {
+    let _serial = serial_effects();
+    for bytes in [Vec::new(), vec![0, 255, 13, 10, 1, 0, 128]] {
+        let fixture = Fixture::new();
+        let identity = Arc::clone(&fixture.owner.identity);
+        let (dir, package, mut worker) = fixture.start();
+        let path = dir.path().join("replace-queued.bin");
+        let alias = dir.path().join("original-alias.bin");
+        fs::write(&path, b"original queue bytes").unwrap();
+        fs::hard_link(&path, &alias).unwrap();
+        let (session, mut select) = worker
+            .select_mutation_existing(path.clone(), scope(Disposition::Replace), [73; 32])
+            .unwrap();
+        let (reference, expected) = selected(&mut select);
+        assert!(expected.is_some());
+        let plan = request(
+            package,
+            "owner-queued-replace",
+            Disposition::Replace,
+            reference,
+            None,
+            expected,
+            &bytes,
+        );
+        assert!(matches!(
+            read(&mut worker.prepare_mutation(session, plan.clone()).unwrap()),
+            Ok(MutationResponse::Prepared(_))
+        ));
+        if !bytes.is_empty() {
+            assert!(matches!(
+                read(
+                    &mut worker
+                        .stage_mutation_chunk(session, 0, bytes.clone())
+                        .unwrap()
+                ),
+                Ok(MutationResponse::Staged { durable: false, .. })
+            ));
+        }
+        let MutationResponse::Staged {
+            bytes: staged,
+            durable: true,
+        } = read(&mut worker.commit_mutation_content(session).unwrap()).unwrap()
+        else {
+            panic!("expected durable replacement content");
+        };
+        assert_eq!(staged, bytes.len() as u64);
+        let MutationResponse::Replaced(outcome) =
+            read(&mut worker.execute_mutation(session).unwrap()).unwrap()
+        else {
+            panic!("queue lost the original replacement response");
+        };
+        assert_eq!(outcome.result(), ReplaceResult::Replaced);
+        assert_eq!(outcome.operation_id(), "owner-queued-replace");
+        assert_eq!(fs::read(&path).unwrap(), bytes);
+        assert_eq!(fs::read(&alias).unwrap(), b"original queue bytes");
+        let MutationResponse::History {
+            record: Some(observed),
+            durable_content: true,
+            staged_bytes,
+        } = read(&mut worker.query_mutation(session).unwrap()).unwrap()
+        else {
+            panic!("missing durable replacement history");
+        };
+        assert_eq!(observed.phase(), Phase::Observed);
+        assert_eq!(staged_bytes, bytes.len() as u64);
+        assert!(matches!(
+            read(&mut worker.execute_mutation(session).unwrap()),
+            Err(TargetError::AlreadyDispatched)
+        ));
+        let MutationResponse::Reconciled {
+            record: Some(history),
+            outcome: Some(recovered),
+        } = read(&mut worker.reconcile_mutation(plan).unwrap()).unwrap()
+        else {
+            panic!("missing original replacement reconciliation");
+        };
+        assert_eq!(history.digest(), observed.digest());
+        assert_eq!(history.event_id(), observed.event_id());
+        let MutationOutcome::Replaced(recovered) = *recovered else {
+            panic!("reconciliation changed the effect kind");
+        };
+        assert_eq!(recovered.container(), outcome.container());
+        assert!(matches!(
+            read(&mut worker.release_mutation(session).unwrap()),
+            Ok(MutationResponse::Released)
+        ));
+        let exit = reclaim(&mut worker);
+        assert_eq!(exit.disconnect, Ok(()));
+        assert!(Arc::ptr_eq(&exit.owner.identity, &identity));
+        assert_eq!(fs::read(&path).unwrap(), bytes);
+        exit.owner
+            .host
+            .store_local()
+            .integrity_check()
+            .unwrap();
+    }
+}
+
+#[test]
+fn unstaged_replace_stays_prepared_without_changing_selected_file() {
     let _serial = serial_effects();
     let fixture = Fixture::new();
     let (dir, package, mut worker) = fixture.start();
@@ -1116,7 +1216,7 @@ fn replace_stays_prepared_and_unsupported_without_changing_selected_file() {
         .select_mutation_existing(path.clone(), scope(Disposition::Replace), [3; 32])
         .unwrap();
     let (reference, expected) = selected(&mut select);
-    let replacement = b"replacement not allowed";
+    let replacement = b"replacement requires durable content";
     let plan = request(
         package,
         "owner-replace",
@@ -1134,7 +1234,9 @@ fn replace_stays_prepared_and_unsupported_without_changing_selected_file() {
     let mut effect = worker.execute_mutation(session).unwrap();
     assert!(matches!(
         read(&mut effect),
-        Err(TargetError::UnsupportedConditionalReplacement)
+        Err(TargetError::Persistence(
+            morrow_core::Error::EvidenceUnavailable
+        ))
     ));
     let mut history = worker.query_mutation(session).unwrap();
     let MutationResponse::History {
@@ -1764,7 +1866,7 @@ fn plan_cancel_cannot_relabel_an_observed_delete() {
 }
 
 #[test]
-fn delete_and_unsupported_replace_plans_cancel_without_touching_selected_file() {
+fn delete_and_unstaged_replace_plans_cancel_without_touching_selected_file() {
     let _serial = serial_effects();
     for disposition in [Disposition::Delete, Disposition::Replace] {
         let (dir, package, mut worker) = Fixture::new().start();
@@ -1792,7 +1894,9 @@ fn delete_and_unsupported_replace_plans_cancel_without_touching_selected_file() 
         if disposition == Disposition::Replace {
             assert!(matches!(
                 read(&mut worker.execute_mutation(session).unwrap()),
-                Err(TargetError::UnsupportedConditionalReplacement)
+                Err(TargetError::Persistence(
+                    morrow_core::Error::EvidenceUnavailable
+                ))
             ));
         }
         let MutationResponse::PlanCancelled(record) =

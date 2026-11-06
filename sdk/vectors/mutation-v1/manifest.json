@@ -1,133 +1,151 @@
 {
   "profile": "mutation-v1-experimental",
-  "schema_sha256": "f8143ed0ea177e4600841f9f64b598ba2c6c774df83646b76ebb44653b8d6c9f",
+  "schema_sha256": "83cd6ea6e96f426bd6a25187bf4407591716b78c16def6737c052d697f82438f",
   "request_for_responses": "execute",
   "vectors": [
     {
       "name": "create-empty",
       "type": "Request",
       "valid": true,
-      "sha256": "a5c7e440b6701ddee31a69e5a18dc8742d4ab0c910796b34bab664cb915292ba"
+      "sha256": "0b71ab62222e131c40bda0690c58172c2d0b95c992695012acbd79908ad32a1f"
     },
     {
       "name": "create-content",
       "type": "Request",
       "valid": true,
-      "sha256": "d1cd68fa992b3864ad117ba01a8c8f3d5b6c51d87461ed2aab3f5ab4e55878a7"
+      "sha256": "e27a8a10887577b539244ce6fb9acbc0f32bcaa33e77cdfa6e0615155da96f46"
     },
     {
       "name": "delete",
       "type": "Request",
       "valid": true,
-      "sha256": "ee2b10a3b4eb25dc1e879aa9549d7f9eea728a4a5225faa0315e71222ea6091b"
+      "sha256": "1b4a584cbbcd1c72c443d0e7133a0b2f9beb5ec0f16a51757ed0e3b8094743eb"
     },
     {
       "name": "chunk",
       "type": "Request",
       "valid": true,
-      "sha256": "926dc5356d1ff3ed95de81740c5102ac37f71fe9840d1472fbdbca7dfcd493c2"
+      "sha256": "a3cee1cac748a7ede0710cdfca720a624ea11e04fc11ec4a8e81a4f2333b9eb3"
     },
     {
       "name": "commit",
       "type": "Request",
       "valid": true,
-      "sha256": "2cdd173d9f2be3d7c12d8274b92af97f2c11e3cebcd836565b42aab5305a6110"
+      "sha256": "fdedc173a8b930301114ed5fab84c8a109aaa977a46be5c4d18ea2093cefc8ee"
     },
     {
       "name": "execute",
       "type": "Request",
       "valid": true,
-      "sha256": "26ea2a71d17ddb99ae42e4452892f56b0d84ea38c88954d1e502835896581d84"
+      "sha256": "f835f2e8e00567073ae05becf1becefa24f90303ee578e91e4f3ef7b2d2017ef"
     },
     {
       "name": "query",
       "type": "Request",
       "valid": true,
-      "sha256": "f9f3633040195c27be4ba67315ba698a05abb72794896dc967453567744d1b54"
+      "sha256": "6f1ad17c435c545a59455cb7030ac859c99bc74d2b59d0b46ccedd848b44d064"
     },
     {
       "name": "cancel",
       "type": "Request",
       "valid": true,
-      "sha256": "0eb89051991d854eba5f0144453c9f87c55df506c1ae38699ec1a1839782261b"
+      "sha256": "0d97ef54e4aa6ce8b2f69119c5a764fed2fa341e64813d008fae3f1dbd082c30"
     },
     {
       "name": "release",
       "type": "Request",
       "valid": true,
-      "sha256": "8c37a103da96513d49a43c421e45de03ea3a5dc37700c95027e46baf7e6567de"
+      "sha256": "3a167ba770b88ea991a55c5f19187589b24ef86871e2704d567b1bfc011ab9e8"
     },
     {
       "name": "bad-zero-reference",
       "type": "Request",
       "valid": false,
-      "sha256": "fe905e30b1c9fbd4b257c59dab4301eeeedb28282dba1eb38855442ff5a65d13"
+      "sha256": "2ad92274561934f2aca037b384c50cee7e59e4eab3f911f7eedde4a4763ace06"
     },
     {
       "name": "bad-empty-hash",
       "type": "Request",
       "valid": false,
-      "sha256": "b82fb109c7ecab1f2c4af1db57f81ff94e9001158e789043ffc13f51776ed4d9"
+      "sha256": "b6a2c79b26e57839dd34ce4c0780e76a53ed5408206af2f265b9961b68f3cafe"
     },
     {
       "name": "bad-chunk-overflow",
       "type": "Request",
       "valid": false,
-      "sha256": "4ac97e8e232e08ea709f31d4bef3b0f6e1f9584da820defb939252821eb85ec3"
+      "sha256": "f1fdeba43b914142d60c4b9e20fed1e010edfbff042223126fe1fc451fc8d048"
     },
     {
       "name": "bad-call",
       "type": "Request",
       "valid": false,
-      "sha256": "a4d67e9d68060b61a0f24367fd0563617c23b1a0d45faa1aed979f8792056eb1"
+      "sha256": "080f3a388ad765f2a871b7fb389b88d438b6922582704c20d5eea172c4296c83"
     },
     {
       "name": "bad-deadline",
       "type": "Request",
       "valid": false,
-      "sha256": "12f646f958f416136788725db0e9e30eea9b1f6d3e13c38004d5dd6d2e2b4574"
+      "sha256": "9a7460b2ef797ffa0aebab93ccdd8ab386017a8524aaab1a09b1c47994412b11"
     },
     {
       "name": "created",
       "type": "Response",
       "valid": true,
-      "sha256": "748f702ef8d62f160da2435cdd827660f8ea6d70de403c89c9501d51a626d9bf"
+      "sha256": "22a7b7cc21caaa7f5b973f2f2c36eff3aeaba68d4333efac0aa72c1cd2720498"
     },
     {
       "name": "unknown",
       "type": "Response",
       "valid": true,
-      "sha256": "13e14a999ef814779598bf4665566114de7304b151fa5c168550573f5f30b3d5"
+      "sha256": "70e3effd36e8c50ca60732248801f9c0aa3ad7e111a20557be7581b4ab45e38e"
     },
     {
       "name": "denied",
       "type": "Response",
       "valid": true,
-      "sha256": "36103dec1cb9b4f7812bbffb46d3f78823f2c5e7a7111ffefa2614cd2c648efb"
+      "sha256": "3ce2010378c1cca0365cc2f594cb478ab3123a3020b1bb975bacb0b543dc7fa6"
     },
     {
       "name": "bad-success-effect",
       "type": "Response",
       "valid": false,
-      "sha256": "5ed2da0a6cb1f6cdb75dc758bad6b7585d1c67730815a83239b9117890435b00"
+      "sha256": "12d630cac6b59468b66864f54a55a718d659709a6c3e04b37b7c2838e111011b"
     },
     {
       "name": "bad-denied-effect",
       "type": "Response",
       "valid": false,
-      "sha256": "6103a9fd19b033feed4a4ed5257e3d25aa8cd0021d631a3e7fd2a878ac25b3df"
+      "sha256": "8c4c6c16e25de57aa1a80cf84c40beaf13b3b170c2ea89d867fc540aabe9aed0"
     },
     {
       "name": "bad-trailing",
       "type": "Request",
       "valid": false,
-      "sha256": "ed16ff14e544ac63fb8101e2039ebbc81badf78197f78855dfa01a2c9088324b"
+      "sha256": "979ab307ec7a89c6de4f414ca1fcab36d902ddc8cdd4ecc5632422ba290874fe"
     },
     {
       "name": "bad-unicode-control",
       "type": "Request",
       "valid": false,
-      "sha256": "d4d88bd73a3c4ab1735656f9e47ca526175e5161e60a522bb72743ed7d193cbb"
+      "sha256": "7705324f76361598cf2f9e05e2e5cba663a7ab5e03cdd2d89fe5569351bd049f"
+    },
+    {
+      "name": "replace-empty",
+      "type": "Request",
+      "valid": true,
+      "sha256": "696a22d18218b09b9d91f6d6382bc5737ee15fd3fc1507241c8ef15d9594e7df"
+    },
+    {
+      "name": "replace-content",
+      "type": "Request",
+      "valid": true,
+      "sha256": "d4c1b4d1a0572334594382febd7061057a391a60a47c485ef82c1c1e305de1bc"
+    },
+    {
+      "name": "bad-replace-empty-hash",
+      "type": "Request",
+      "valid": false,
+      "sha256": "1f1bb3d2579c14ea28b7d0683a3276c51d00d811b88b39e19b47249c50db5a22"
     }
   ]
 }

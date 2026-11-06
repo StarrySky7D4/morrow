@@ -1,0 +1,53 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:capnproto_dart/capnproto_dart.dart';
+import 'package:morrow_studio/plugins/fs_watch_models.dart';
+import 'package:morrow_studio/plugins/fs_watch_native.dart';
+import 'package:morrow_studio/plugins/generated/host.capnp.dart' as host;
+import 'package:morrow_studio/plugins/generated/identity.dart' as identity;
+import 'package:morrow_studio/plugins/io_task_models.dart';
+
+int checks = 0;
+void check(bool value, String label) {
+  if (!value) throw StateError(label);
+  checks++;
+}
+
+void main(List<String> args) {
+  if (args.length != 1) throw ArgumentError('One original closed receipt directory is required');
+  final root = Directory(args.single);
+  check(File('${root.path}/original-owner-finished.txt').readAsStringSync().contains('original_owner_finished=true'), 'original owner closed');
+  Uint8List? originalKey;
+  FsWatchResult? actual;
+  for (final name in ['start', 'ready', 'read']) {
+    final bytes = File('${root.path}/$name.capnp').readAsBytesSync();
+    check(bytes.isNotEmpty && bytes.length <= 512 * 1024, 'bounded $name bytes');
+    final reply = MessageReader.deserialize(bytes).getRoot(host.responseFactory);
+    check(reply.version == 1, '$name protocol version');
+    check(fsWatchSame(reply.digest, identity.hostDigest), '$name canonical schema identity');
+    check(reply.error?.isEmpty ?? true, '$name successful protocol dispatch');
+    final decoded = NativeFsWatchClient.decode(reply, allowResult: name == 'read');
+    originalKey ??= decoded.snapshot.task.key;
+    check(fsWatchSame(originalKey, decoded.snapshot.task.key), '$name original task');
+    check(fsWatchSame(decoded.snapshot.task.submission, List.filled(32, 63)), '$name original submission');
+    check(decoded.snapshot.frames == 0, '$name no guest frames');
+    if (name == 'start') {
+      check(decoded.result == null && !decoded.snapshot.ready && !decoded.snapshot.delivered, 'start does not invent completion');
+    } else if (name == 'ready') {
+      check(decoded.result == null && decoded.snapshot.ready && !decoded.snapshot.delivered, 'ready has not delivered the receipt');
+      check(decoded.snapshot.task.storage == IoStoragePhase.reclaimed && decoded.snapshot.task.exit != null, 'ready follows actual worker exit');
+    } else {
+      check(!decoded.snapshot.ready && decoded.snapshot.delivered, 'receipt delivered exactly once');
+      actual = decoded.result;
+      check(actual != null, 'original native receipt decoded');
+    }
+  }
+  final result = actual!;
+  check(!result.success && result.error == FsWatchError.expired, 'original deadline is expired');
+  check(result.knownClosed && result.workerJoined && !result.unknown, 'closed owner and native resources');
+  check(result.hasSnapshot && result.pickerStarted && result.pickerClosed, 'original native picker closed');
+  check(!result.hasNative && result.ancestorObjects == 0 && result.ancestorClosed == 0, 'expiry did not grant a native directory');
+  check(result.deliveries.isEmpty && result.resources == 0 && result.jobs == 0, 'no effects or owned resources after expiry');
+  print(jsonEncode({'status':'PASS_ACTUAL_NATIVE_CAPNP_DART_DECODE','checks':checks,'messages':3,'error':result.error.name,'knownClosed':result.knownClosed,'originalOwnerClosed':true,'formalProductUI':false}));
+}

@@ -1,0 +1,2068 @@
+{
+  "status": "PASS_CURRENT_NATIVE_GUARD_SUBSET",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "source_unchanged": true,
+  "methods_passed": 127,
+  "methods": [
+    "asuser_a1_helper::parent_native::session_admission::tests::competing_closes_discharge_exactly_once_without_erasing_the_spent_identity",
+    "asuser_a1_helper::parent_native::session_admission::tests::concurrent_reservations_enforce_the_original_active_limit",
+    "asuser_a1_helper::parent_native::session_admission::tests::foreign_owner_wrong_reservation_and_late_close_never_release_unknown_charge",
+    "asuser_a1_helper::parent_native::session_admission::tests::lifetime_history_is_never_deleted_to_make_room",
+    "asuser_a1_helper::parent_native::session_admission::tests::more_than_limit_closed_attempts_keep_history_then_unknowns_fill_the_same_ledger",
+    "asuser_a1_helper::parent_native::session_admission::tests::preinstalled_reservations_and_unknown_owners_cannot_be_dropped_to_recover_capacity",
+    "asuser_a1_helper::parent_native::tests::equal_public_metadata_cannot_substitute_a_different_original_parent",
+    "asuser_a1_helper::parent_native::tests::fresh_session_attempt_cannot_borrow_or_claim_before_its_own_preflight",
+    "asuser_a1_helper::parent_native::tests::independent_compiled_parent_anchor_is_required_before_any_native_import",
+    "asuser_a1_helper::parent_native::tests::native_c_zero_cannot_discharge_open_failed_uncertain_or_unobserved_parent_aliases",
+    "asuser_a1_helper::parent_native::tests::one_original_parent_origin_cannot_issue_two_native_generations_or_hide_busy_first_error",
+    "asuser_a1_helper::parent_native::tests::parent_normal_proof_requires_original_both_signals_dwords_job_and_completed_delivery",
+    "asuser_a1_helper::parent_native::tests::public_selection_cannot_swap_roles_expand_paths_commands_or_reuse_zero_binding",
+    "asuser_cwd_pins::tests::actual_directory_remains_pinned_until_checked_close",
+    "asuser_cwd_pins::tests::actual_failed_second_open_retains_first_pin_until_explicit_close",
+    "asuser_cwd_pins::tests::close_failure_preserves_exact_originals_and_never_retries",
+    "asuser_cwd_pins::tests::late_close_never_becomes_completed_or_releases_remaining_pins",
+    "asuser_cwd_pins::tests::successful_checked_close_consumes_each_original_once_in_reverse_order",
+    "asuser_cwd_pins::tests::unwind_keeps_closing_slot_and_cannot_be_retried",
+    "asuser_a1_native::source_policy_refusal::tests::no_admission_or_native_observations_cannot_authorize_source_policy_retirement",
+    "asuser_a1_target::tests::account_privileges_are_source_only_and_must_be_deleted_before_launch",
+    "asuser_a1_target::tests::created_runner_context_requires_its_actual_read_only_query_and_same_fresh_logon",
+    "asuser_a1_target::tests::diagnostic_mirror_is_ordered_and_not_an_admission_or_runner_query_alias",
+    "asuser_a1_target::tests::diagnostic_mirror_names_every_original_reject_without_changing_error_or_policy",
+    "asuser_a1_target::tests::exact_original_grant_still_rejects_security_right_loss_or_extra_rights",
+    "asuser_a1_target::tests::explicit_default_change_has_a_new_stable_modified_window_but_no_other_policy_drift",
+    "asuser_a1_target::tests::filtered_launch_identity_is_retained_through_runner_readback",
+    "asuser_a1_target::tests::independent_observed_logon_sid_and_authentication_id_are_not_arithmetic_aliases",
+    "asuser_a1_target::tests::qualification_managed_equals_caller_policy_is_denial_only",
+    "asuser_a1_target::tests::runner_initialization_requires_distinct_primary_and_exact_private_creator_grant",
+    "asuser_a1_target::tests::target_identity_is_fresh_enabled_logon_not_stable_user_or_caller_restriction",
+    "asuser_a1_target::tests::target_policy_rejects_partial_grant_aba_privilege_and_wrong_integrity",
+    "asuser_a1_native::logon_refusal::tests::diagnostic_preserves_original_logon_refusal_ahead_of_later_close_failure",
+    "asuser_a1_native::logon_refusal::tests::expired_refusal_close_budget_is_sticky_resource_uncertainty",
+    "asuser_a1_native::logon_refusal::tests::only_exact_false_nonzero_error_null_output_is_a_logon_rejection",
+    "asuser_a1_native::logon_refusal::tests::original_login_result_cannot_be_recaptured_or_promote_existing_unknown",
+    "asuser_a1_native::logon_refusal::tests::uncertain_partial_login_output_keeps_original_raw_and_no_refusal",
+    "asuser_a1_helper::producer_default_tests::helper_partial_pi_and_unwind_keep_both_outputs_in_the_preinstalled_originals",
+    "asuser_a1_helper::producer_default_tests::trusted_producer_defaults_remain_distinct_from_private_t_and_deny_managed_nonadmins",
+    "asuser_a1_native::tests::after_helper_fault_guard_rejects_every_partial_runner_output",
+    "asuser_a1_native::tests::after_helper_fault_guard_rejects_missing_or_uncertain_original_transport",
+    "asuser_a1_native::tests::after_helper_fault_keeps_unknown_first_error_and_original_resources",
+    "asuser_a1_native::tests::busy_cell_cannot_report_clean_and_unstarted_cannot_retire_or_fake_native_adoption",
+    "asuser_a1_native::tests::checkpoint_deadline_retains_resources_even_before_dispatch",
+    "asuser_a1_native::tests::default_initialization_uses_actual_adjust_default_only_for_one_required_mutation",
+    "asuser_a1_native::tests::failed_outputs_are_retained_unless_actual_rejection_has_canonical_null_output",
+    "asuser_a1_native::tests::original_transfer_failure_and_unwind_keep_both_originals_and_first_error_no_replay",
+    "asuser_a1_native::tests::runner_initialization_cannot_publish_until_its_original_write_handle_is_checked_closed",
+    "asuser_a1_native::tests::token_derivation_and_default_initialization_have_independent_one_shot_budgets",
+    "asuser_a1_native::tests::uncertain_runner_initialization_keeps_original_owner_and_forbids_retry",
+    "asuser_a1_native::caller_window_tests::actual_unrestored_policy_or_foreign_primary_token_never_becomes_normal_completion",
+    "asuser_a1_native::caller_window_tests::caller_sampling_windows_do_not_presume_modified_id_across_temporary_enable",
+    "asuser_a1_native::first_failure_projection_tests2659::busy_original_cell_does_not_call_callback_or_fabricate_first_failure",
+    "asuser_a1_native::first_failure_projection_tests2659::original_raw_first_error_survives_later_error_and_ignored_error_return_paths",
+    "asuser_a1_native::first_failure_projection_tests2659::same_original_internal_denial_is_recorded_once_without_inventing_os_access_denied",
+    "asuser_a1_native::first_failure_projection_tests2659::saved_signed_ntstatus_is_preserved_without_win32_substitution_or_native_query",
+    "asuser_a1_native::first_failure_projection_tests2659::unwind_preserves_original_slots_and_first_stage_without_closing_or_replaying",
+    "asuser_a1_native::target_policy_observation_tests2740::accepted_facts_do_not_manufacture_a_rejection_or_native_success",
+    "asuser_a1_native::target_policy_observation_tests2740::later_target_classification_cannot_relabel_an_earlier_first_failure",
+    "asuser_a1_native::target_policy_observation_tests2740::same_original_guard_err_has_one_reason_no_raw_os_code_or_resource_operation",
+    "asuser_parent_diagnostic::tests::d2103_01_initial_is_not_observed_and_not_returned_ok",
+    "asuser_parent_diagnostic::tests::d2103_02_entered_is_not_completed_or_native_success",
+    "asuser_parent_diagnostic::tests::d2103_03_returned_native_error_keeps_exact_bits_and_first_error",
+    "asuser_parent_diagnostic::tests::d2103_04_success_does_not_invent_a_last_error_zero",
+    "asuser_parent_diagnostic::tests::d2103_05_pending_native_false_is_not_a_business_failure",
+    "asuser_parent_diagnostic::tests::d2103_06_first_error_and_whole_snapshot_freeze_without_late_queries",
+    "asuser_parent_diagnostic::tests::d2103_07_unwind_has_no_fabricated_io_code_or_payload",
+    "asuser_parent_diagnostic::tests::d2103_08_same_scope_required_and_wrong_completion_cannot_encode",
+    "asuser_parent_diagnostic::tests::d2103_09_bounded_history_reports_truncation_and_retains_first",
+    "asuser_parent_diagnostic::tests::d2103_10_counter_saturation_is_explicit_and_does_not_wrap",
+    "asuser_parent_diagnostic::tests::d2103_11_exact_length_magic_version_and_reserved_bits_required",
+    "asuser_parent_diagnostic::tests::d2103_12_invalid_enum_bool_history_count_and_scope_are_rejected",
+    "asuser_parent_diagnostic::tests::d2103_13_absent_fields_and_unused_history_are_canonical_zero",
+    "asuser_parent_diagnostic::tests::d2103_14_event_sequences_must_be_consecutive_and_match_header",
+    "asuser_parent_diagnostic::tests::d2103_15_logical_success_cannot_erase_error_or_become_native_exit",
+    "asuser_parent_diagnostic::tests::d2103_16_prior_native_result_is_not_promoted_to_current_failure_cause",
+    "asuser_parent_diagnostic::tests::d2103_17_native_capture_requires_an_entered_original_operation",
+    "asuser_parent_diagnostic::tests::d2103_18_unwind_and_io_error_kinds_are_not_interchangeable",
+    "asuser_parent_diagnostic::tests::d2103_19_sealed_copy_does_not_borrow_or_follow_a_different_owner",
+    "asuser_parent_diagnostic::tests::d2103_20_encoder_never_serializes_free_error_strings",
+    "asuser_parent_diagnostic::tests::d2103_21_cached_header_cannot_claim_unrecorded_completion",
+    "asuser_parent_diagnostic::tests::d2103_22_retained_history_cannot_invent_overlapping_operations",
+    "asuser_parent_diagnostic::tests::exit_diagnostic_keeps_v1_readable_and_rejects_unobserved_or_wrong_scope_predicates",
+    "asuser_parent_diagnostic::tests::exit_diagnostic_v2_roundtrips_each_actual_predicate_and_freezes_without_queries",
+    "runner_wire::tests::diagnostic_never_contains_untrusted_text",
+    "runner_wire::tests::encoder_enforces_text_list_and_aggregate_bounds",
+    "runner_wire::tests::environment_order_does_not_change_authenticated_payload",
+    "runner_wire::tests::every_runner_message_uses_pinned_binary_transport",
+    "runner_wire::tests::json_trailing_truncated_and_oversized_input_is_never_eof_or_dispatch",
+    "runner_wire::tests::permission_variants_and_path_semantics_roundtrip_without_json",
+    "runner_wire::tests::schema_version_magic_and_unknown_union_cannot_be_accepted",
+    "elevated::ipc_framed::tests::error_payload_serializes_stage_and_windows_error_code",
+    "elevated::ipc_framed::tests::framed_round_trip",
+    "elevated::ipc_framed::tests::spawn_request_serializes_permission_profile",
+    "elevated::ipc_framed::legacy_compatibility_tests::old_spawn_ready_defaults_to_no_checked_controls",
+    "elevated::ipc_framed::checked_protocol::tests::bound_never_evicts_unknown_or_accepts_more_ids",
+    "elevated::ipc_framed::checked_protocol::tests::duplicate_unknown_never_reapplies_and_mismatch_is_zero_effect",
+    "elevated::ipc_framed::checked_protocol::tests::hello_requires_fixed_schema_and_nonzero_nonce",
+    "elevated::ipc_framed::checked_protocol::tests::request_digest_and_arguments_are_checked",
+    "elevated::native_close_protocol::native_close_codec::tests::every_native_frame_and_runtime_content_roundtrips_as_canonical_binary",
+    "elevated::native_close_protocol::native_close_codec::tests::exact_frame_limit_and_recursive_runtime_event_are_rejected_without_fallback",
+    "elevated::native_close_protocol::native_close_codec::tests::hostile_deep_pointer_chain_and_all_legacy_json_are_bounded_and_redacted",
+    "elevated::native_close_protocol::native_close_codec::tests::packet_authentication_covers_all_fields_except_its_own_tag",
+    "elevated::native_close_protocol::native_close_codec::tests::rejects_noncanonical_unknown_fields_truncation_and_invalid_pointers",
+    "elevated::native_close_protocol::native_close_codec::tests::rejects_unredacted_embedded_nonce_on_both_encoding_and_decoding",
+    "elevated::native_close_protocol::native_close_codec::tests::rejects_wrong_envelope_identity_and_unknown_enum_or_union_tags",
+    "elevated::native_close_protocol::native_close_codec::tests::seven_fact_domains_and_unknown_debt_states_survive_and_change_authentication_bytes",
+    "elevated::native_close_protocol::tests::bounded_roundtrip_and_ordered_lifecycle_progression",
+    "elevated::native_close_protocol::tests::codec_errors_redact_untrusted_field_variant_duplicate_and_value_markers_in_debug_and_display",
+    "elevated::native_close_protocol::tests::enforces_runner_vs_host_lease_scope_split_and_extra_job_member_origin_gate",
+    "elevated::native_close_protocol::tests::existing_v6_and_v7_protocol_constants_and_frames_remain_unchanged",
+    "elevated::native_close_protocol::tests::preserves_legitimate_259_after_positive_original_exit_proof_and_rejects_unproven_or_timed_out_259",
+    "elevated::native_close_protocol::tests::rejects_incomplete_io_job_leases_sender_writer_joined_claim_and_preserves_sticky_error",
+    "elevated::native_close_protocol::tests::rejects_missing_capability_out_of_order_duplicate_and_missing_receipt_at_eof",
+    "elevated::native_close_protocol::tests::rejects_unknown_duplicate_trailing_malformed_and_oversize_wire_frames",
+    "elevated::native_close_protocol::tests::rejects_version_schema_nonce_attempt_and_child_identity_mismatches",
+    "elevated::native_close_runtime::tests::authenticated_packets_reject_tamper_replay_and_wrong_attempt_without_resuming",
+    "elevated::native_close_runtime::tests::busy_or_poisoned_protocol_observation_never_returns_clean_defaults",
+    "elevated::native_close_runtime::tests::control_versions_use_capnp_and_v7_hello_cannot_negotiate_v8",
+    "elevated::native_close_runtime::tests::explicit_bootstrap_rejects_wrong_version_schema_attempt_nonce_runner_and_missing_capability",
+    "elevated::native_close_runtime::tests::independent_runner_identity_and_native_dword_are_required_after_receipt_and_eof",
+    "elevated::native_close_runtime::tests::live_data_control_exit_receipt_and_eof_preserve_full_dword_with_outer_scope_pending",
+    "elevated::native_close_runtime::tests::missing_or_duplicate_receipt_and_post_exit_output_remain_sticky_not_eof_success",
+    "elevated::native_close_runtime::tests::terminal_ack_binds_attempt_child_full_dword_schema_direction_sequence_and_authentication",
+    "elevated::native_close_runtime::tests::terminal_ack_missing_early_duplicate_replayed_and_late_are_not_eof_or_receipt_success",
+    "elevated::native_close_runtime::tests::terminal_ack_receipt_binds_actual_observed_ack_and_failed_write_is_not_replayed",
+    "asuser_a1_native::launch_object_tests::intermediate_unknown_and_partial_final_output_keep_the_original_charge"
+  ],
+  "original_results": [
+    {
+      "label": "inventory",
+      "exit_code": 0,
+      "seconds": 0.063,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\inventory.stdout",
+        "bytes": 73357,
+        "sha256": "fbef41b059a5383baa47e8b3cd2b41314d6ea0c3d121a0dfb3c11678f35ff8f5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\inventory.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "000",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\000.stdout",
+        "bytes": 260,
+        "sha256": "0bfb3b41e340c8226c07dbcc5f4a15d8077abb8df1ece5e02ab82a7154bc5fbd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "001",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\001.stdout",
+        "bytes": 243,
+        "sha256": "09a5fdb58c97a20841c3518d3d6124d4446940946bfeb9b8a79e2bf5d70434e7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\001.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "002",
+      "exit_code": 0,
+      "seconds": 0.063,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\002.stdout",
+        "bytes": 261,
+        "sha256": "8a3cf726c82e2f50594ee22dbbb22907478f6c3a4ea1e7872e2a649d4ca24ef1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\002.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "003",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\003.stdout",
+        "bytes": 232,
+        "sha256": "717e0fff474765eca1c533cc07ed6eb28deede29db14136f187d57c4f949d975"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\003.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "004",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\004.stdout",
+        "bytes": 265,
+        "sha256": "fd407bad37190a0af4e1d774d2fb65a580ad8df9d67cadb622b5c13b3e6d7c3d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\004.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "005",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\005.stdout",
+        "bytes": 268,
+        "sha256": "466f7b522b49783983e4b2540b7de86b34e4a079dabdf31b47b958bb4e291150"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\005.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "006",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\006.stdout",
+        "bytes": 234,
+        "sha256": "933d3af32d6b6f2984aeed88292c941c1775618c9fa5c47436ff30cf56921504"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\006.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "007",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\007.stdout",
+        "bytes": 236,
+        "sha256": "1a352ea9b74ef57a56ed4e74b05e83a6c12415d18c9f50a6e62b3a4a512b4ca8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\007.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "008",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\008.stdout",
+        "bytes": 238,
+        "sha256": "db23de6a52413b1bdaa34853fa2ddf86490d16847bf22e54e802d62b2ff46009"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\008.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "009",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\009.stdout",
+        "bytes": 248,
+        "sha256": "4db6413c71638fbdc372c7b0fc0e74ee124c87e5c1ff769ceb65605225886c05"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\009.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "010",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\010.stdout",
+        "bytes": 254,
+        "sha256": "d4686b60c9b4803cdeba23c0b09d5dd919aed35b7381cf40b3ee120d7357c469"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\010.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "011",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\011.stdout",
+        "bytes": 251,
+        "sha256": "cd0e637f358f8b1aa50c90f8840bb732a88041dc52c89ff31495e3690b417e19"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\011.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "012",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\012.stdout",
+        "bytes": 245,
+        "sha256": "9e8176fd900b623298ef4c0a8aadc5113a37f4189287f4ca20d40e6bb7da4ca9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\012.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "013",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\013.stdout",
+        "bytes": 202,
+        "sha256": "869501c431c3d4b6f1f212d20a8e73348b11c8bb17bd33c6534a123282d30a0b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\013.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "014",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\014.stdout",
+        "bytes": 215,
+        "sha256": "f2935e52d25b48cb6f0a5a488f8e63a6c528ee11df091d64c4644036924a282d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\014.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "015",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\015.stdout",
+        "bytes": 208,
+        "sha256": "776357e56b5f5d226fab585c9aea36a38a1d1b58fd9471be7a93974f188b75c5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\015.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "016",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\016.stdout",
+        "bytes": 212,
+        "sha256": "4501e06e432fe2b0d770cb0544bd08dbdbcf55a605a6413da435d6ffd3dd2055"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\016.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "017",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\017.stdout",
+        "bytes": 220,
+        "sha256": "d864a55acdafcbdeb28da41951b608ad6b8b394b88f10a4110fbddca803a6805"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\017.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "018",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\018.stdout",
+        "bytes": 198,
+        "sha256": "b4299366a7d968818be4af78626effe11c43f67f72dc7a420f2d68e39a1a65e3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\018.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "019",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\019.stdout",
+        "bytes": 252,
+        "sha256": "ff050db89f9c109601fd7c1d9f159ef5f3a9f8bd21827722619e66c67489d168"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\019.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "020",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\020.stdout",
+        "bytes": 220,
+        "sha256": "1dc26baee68bb4983f0516de293f078c623c9cd4020e37e7bf59abf62cf04032"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\020.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "021",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\021.stdout",
+        "bytes": 231,
+        "sha256": "0851fe25093d1aef41857ac9aa5626c46d5f78e0e911db15664843dd79be2cb5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\021.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "022",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\022.stdout",
+        "bytes": 223,
+        "sha256": "33f71a7f79d6da3fc7e8ce883813c05e6fd58e86a49846afc3a8efda6b64c686"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\022.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "023",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\023.stdout",
+        "bytes": 230,
+        "sha256": "8011fe691dfbae81804153b81a54a3bdcb75643a976d8160da10374753360c10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\023.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "024",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\024.stdout",
+        "bytes": 222,
+        "sha256": "f2614a326b5758f5fef4f59da069375c21e1fe05bc2c844772a565182e843aea"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\024.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "025",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\025.stdout",
+        "bytes": 234,
+        "sha256": "341049206aec39b1300c4bd7fffbfd04522896426e50f96a219d9710289db31d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\025.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "026",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\026.stdout",
+        "bytes": 212,
+        "sha256": "9af20e54d70ad92d3a9ec662c545e7b615ae092455264d53c3cd3382fce905b7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\026.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "027",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\027.stdout",
+        "bytes": 231,
+        "sha256": "1f7ab858851aadd6c5257b00ff4527e064feaaa2247d33e7c9eb8c1b34d27813"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\027.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "028",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\028.stdout",
+        "bytes": 209,
+        "sha256": "79f726d6bc28df441926a7a3758ed148c47d41f6f09aa5cc8c93cfe1931d76f7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\028.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "029",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\029.stdout",
+        "bytes": 231,
+        "sha256": "97b32b88b5cac3c87315203edd5dd49983cbf2626b0af5f0b2b12da392af62b2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\029.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "030",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\030.stdout",
+        "bytes": 228,
+        "sha256": "5bb1dd9079e58bdf1331060a1b96fa51df6266181e994afa3418351a97558aee"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\030.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "031",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\031.stdout",
+        "bytes": 221,
+        "sha256": "2db6d73eb5465ee7d2531f2f1fefb8dd047b13e494d02f078c2913b9f04a378e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\031.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "032",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\032.stdout",
+        "bytes": 239,
+        "sha256": "4bd8c5c9444c6e83a89c90b78d9d5705ab270603440d8da1ae19d1db7d2dd992"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\032.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "033",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\033.stdout",
+        "bytes": 226,
+        "sha256": "007c2d541da813ee834f33d01c66685bf2b6ce0e2b77ec4ce7bee4f1a8f7fad0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\033.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "034",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\034.stdout",
+        "bytes": 230,
+        "sha256": "0bc59b5dcbce9f7dc29174ea39de4aaa8f50269f71cc923d82a342561a486abd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\034.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "035",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\035.stdout",
+        "bytes": 237,
+        "sha256": "8f57d36b750b56e2bcbcb219b2d4f850e3f74099b0fccdd1e69e724eb7a84fd3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\035.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "036",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\036.stdout",
+        "bytes": 231,
+        "sha256": "49181bfeca74ac31bbbf0307032bd8e5710871c73ded489cdc661780b96f8fdd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\036.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "037",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\037.stdout",
+        "bytes": 245,
+        "sha256": "6c9f6ee151fba39b6c652ec56cb63210ef1ad29f0838d0d99098e13501aecfbc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\037.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "038",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\038.stdout",
+        "bytes": 252,
+        "sha256": "3ab9d572e8bbf2569675f4a9f0f80ffdd08a45e1b6c4278f73e823d622afd640"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\038.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "039",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\039.stdout",
+        "bytes": 212,
+        "sha256": "e57c4cfdd55ceafc5ccb8b2b8f35dc3c253f8339cb3f555f0f3665a67dcc3854"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\039.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "040",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\040.stdout",
+        "bytes": 224,
+        "sha256": "80bb04e54fcc2767061ee9206bb51d56e2d1169dbc96c433c1c11d7a37c50d4a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\040.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "041",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\041.stdout",
+        "bytes": 219,
+        "sha256": "ad259f6ee852fb02fb0d0423465e2377cd52700292c6d933ffd3aa0c73ee298a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\041.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "042",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\042.stdout",
+        "bytes": 233,
+        "sha256": "6951877c9e5b3e92b33bc40d11f08001a4dd49867fd35f90436d32686f657662"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\042.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "043",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\043.stdout",
+        "bytes": 210,
+        "sha256": "95d0d491c6c37779b1cb943ba55c009e906cc45a37a1c516ac653764a3e0c800"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\043.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "044",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\044.stdout",
+        "bytes": 232,
+        "sha256": "9d13f11f0f6c4e6476f294c9d43cea2b528c6d35eda03e1609b427f3b5d345d0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\044.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "045",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\045.stdout",
+        "bytes": 229,
+        "sha256": "d68e33b3d0a1dc148a9d05cb6ef3a2ff34cad0f901910433ca648c12d9266ec7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\045.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "046",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\046.stdout",
+        "bytes": 234,
+        "sha256": "8390cd8e9572e3d596c4fa231f0557166be1f625e31d6824874413bd76dd4a0e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\046.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "047",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\047.stdout",
+        "bytes": 238,
+        "sha256": "3d9c92d2637c48fa0b941c6d019d80fb454b3f1492e4901227952982cced3621"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\047.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "048",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\048.stdout",
+        "bytes": 229,
+        "sha256": "6519e0cf95dd5ac020303967dc03030c9ea4b36c221a1700a54d28800aa56151"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\048.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "049",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\049.stdout",
+        "bytes": 222,
+        "sha256": "79dd61ae27e2bb3bb4cc12b45b862d243d8db02fa708f4d8420421905c2a2528"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\049.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "050",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\050.stdout",
+        "bytes": 247,
+        "sha256": "a9ee72b5d2a2da144bc848a1705513113d666a5fff52bdc730eaa8e7ae7fb88c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\050.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "051",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\051.stdout",
+        "bytes": 240,
+        "sha256": "629008207bc78a644344a48a65b83b9cf9106398435f216aa226e69a30b0e294"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\051.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "052",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\052.stdout",
+        "bytes": 249,
+        "sha256": "87d3795f1f012282081d0b8aa36d216dafbc739edc2bfd4b323df71a26046633"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\052.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "053",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\053.stdout",
+        "bytes": 257,
+        "sha256": "22884fbb323c781baea954ec18c1d798ca86f00a5efc0860bc1a071ee1297f29"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\053.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "054",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\054.stdout",
+        "bytes": 262,
+        "sha256": "92aa5b112a9fe663ce1f3527566005f3351e71281f60f7162ce829618a122716"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\054.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "055",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\055.stdout",
+        "bytes": 258,
+        "sha256": "e6e37f825fb4c3cc006b471da94a38064fd4f234ff2dc3d15b195e34b5cba5cd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\055.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "056",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\056.stdout",
+        "bytes": 257,
+        "sha256": "f47ea8d53f16eb82bb09b5458aa7b51123ba2e2eaacdb9471cb8a5a2a256adef"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\056.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "057",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\057.stdout",
+        "bytes": 245,
+        "sha256": "f1c270bc6505b60a4375d3eb15b1935067134777d65372bfd18b211264381122"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\057.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "058",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\058.stdout",
+        "bytes": 249,
+        "sha256": "4caa9a6a38c8f8b16de5f8dbc699e1f2f907438551f41e566889a9a19f5fb1d0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\058.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "059",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\059.stdout",
+        "bytes": 257,
+        "sha256": "baf7e53551fb232f1cbf776e63e8ae2b0c74d15011fc21a6b27909253d9ba78e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\059.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "060",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\060.stdout",
+        "bytes": 212,
+        "sha256": "35fea9ef780e437be3f12a881e5479960cb8242d54f000817d2574e72caeb3f3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\060.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "061",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\061.stdout",
+        "bytes": 211,
+        "sha256": "553d824c8be714ca1b22dbbbf8ec60c918b24bbd2b1579bcf13fe00718e8716d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\061.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "062",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\062.stdout",
+        "bytes": 223,
+        "sha256": "5f1f5fb7ec7e917faaca3417f7b1a78de1e21b648151c6d8628ef1b676a33ee2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\062.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "063",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\063.stdout",
+        "bytes": 210,
+        "sha256": "accd054a6c5d987d670b1fcd8b54d7f6a1d3377bf78a9c2c6d1fd2716e2c2a1b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\063.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "064",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\064.stdout",
+        "bytes": 215,
+        "sha256": "f4db72b4d6ed23cb289d75c75ee9a8c3cbca25e97054e603cc8a98c7b086e6c7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\064.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "065",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\065.stdout",
+        "bytes": 227,
+        "sha256": "e337ab394a0f1a00f8a35ddf179a830ae6c423d38c21aca2db31aee9c28ad158"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\065.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "066",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\066.stdout",
+        "bytes": 212,
+        "sha256": "1e05df4c91afda135f2dd565aa1d742224cb2093a7f4a1be30990e7f4e9fbcc2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\066.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "067",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\067.stdout",
+        "bytes": 223,
+        "sha256": "71a796eadd06fac7b5cb55ea8a34a2c7d3d6ba714903e500f2a7470cb08ab610"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\067.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "068",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\068.stdout",
+        "bytes": 221,
+        "sha256": "6c9d1e92596e40730bbe7f6e73f42b6e3675d19d24be3047c3985d0e05fe04b9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\068.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "069",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\069.stdout",
+        "bytes": 217,
+        "sha256": "3ab5f93df5a3721851da73901a1ff98dd2ba548db9c7299df08eb4d9dcf513db"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\069.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "070",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\070.stdout",
+        "bytes": 222,
+        "sha256": "a9eb08631ce6d104afbe321c837fdcc06d51827aa81821edb515aa6fcd040977"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\070.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "071",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\071.stdout",
+        "bytes": 223,
+        "sha256": "c6dad422e46415505013e6d78089eb1049d2e25d5237bc525a240de872a6b60c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\071.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "072",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\072.stdout",
+        "bytes": 220,
+        "sha256": "7af21fb30da597c470ad59f3af29ec091149c7293283d2f7195f840432eba08c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\072.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "073",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\073.stdout",
+        "bytes": 221,
+        "sha256": "671c9629ef4e1c25495d4838e853b1de9ee8be596e9033e8572cdd55fef59114"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\073.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "074",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\074.stdout",
+        "bytes": 225,
+        "sha256": "446b95a808a3e74d664c69d87bcd7a371bcc3425bf64ee20a827334b52bb16b5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\074.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "075",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\075.stdout",
+        "bytes": 229,
+        "sha256": "afe46b5ed6ad3999d98995c4611124be2280fc8e7c1dd33e384ee39b1dbfd012"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\075.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "076",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\076.stdout",
+        "bytes": 222,
+        "sha256": "d8f00c34f4cc10ef37a28b031b37f72bfb5e1a390b67e7130695daad23796aad"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\076.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "077",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\077.stdout",
+        "bytes": 218,
+        "sha256": "3d668a981bfb620c65ef129cf5193536fd10da4f6727abb163d26d514b5fa667"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\077.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "078",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\078.stdout",
+        "bytes": 224,
+        "sha256": "5716da159c6cc02187c8d2959aff63e05a1fe135e4b580b459f578409899ff57"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\078.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "079",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\079.stdout",
+        "bytes": 212,
+        "sha256": "50fdcd9768f6fd05a33619371ea9c3e3f05c2ab107845caee7c96453f04af51a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\079.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "080",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\080.stdout",
+        "bytes": 217,
+        "sha256": "ad0921ea3ecab25e120511e94d4b9c6ec1a218c7375623b285ff56cfc7eda6dd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\080.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "081",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\081.stdout",
+        "bytes": 222,
+        "sha256": "9b8cad82341c4c717d6f2331e1fb5768252db89d0fbeebea2316d3d10043f8ad"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\081.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "082",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\082.stdout",
+        "bytes": 242,
+        "sha256": "619580e18574e271081b6b4676172d25486bb57dcd50663d50d683a75643ff10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\082.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "083",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\083.stdout",
+        "bytes": 239,
+        "sha256": "a46d47cf40c9a4794616e51b4f7cbed61bc476d919750737c3c2abced072ce2e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\083.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "084",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\084.stdout",
+        "bytes": 187,
+        "sha256": "686f2f825aadbf845d0506cd4dbeea4fae0d7d34b7e24e5653aeed34447617fb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\084.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "085",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\085.stdout",
+        "bytes": 194,
+        "sha256": "67a6e5ba65f269df25e89a2ee8bda267e3146e2d0383887d957942a1ad69107e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\085.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "086",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\086.stdout",
+        "bytes": 202,
+        "sha256": "523870add74e460096c0c2db17eeb296f54ce1ac2ffae4551421aa411cc9db79"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\086.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "087",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\087.stdout",
+        "bytes": 196,
+        "sha256": "fc54c67be045300c234919c692956291b5066d2c925cbfcd663f201c28fc0ba0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\087.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "088",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\088.stdout",
+        "bytes": 215,
+        "sha256": "b3f090fcf77db08d307b5cb649fc08236f06a12577c89a20d7e6c2f61c54c521"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\088.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "089",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\089.stdout",
+        "bytes": 208,
+        "sha256": "851e7cec0ba5b0468d8136126565709193bac21a1bc60c62a7e2d672834428d2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\089.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "090",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\090.stdout",
+        "bytes": 204,
+        "sha256": "5a3817234a00bb7fe116217a945581b417a456e98fc266176a1aa1c530abc0b3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\090.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "091",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\091.stdout",
+        "bytes": 209,
+        "sha256": "68f010deba7e5d019faf097001a95c0a14d6c607bac69abd5e1efa7e3e179a05"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\091.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "092",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\092.stdout",
+        "bytes": 173,
+        "sha256": "2bb4f27bac23878420941189f751b38ddc6545b6914060bc0f61ff98b6e0a023"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\092.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "093",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\093.stdout",
+        "bytes": 199,
+        "sha256": "258ce10686319a0a8469fc7afb98ab727d1bdbb171796c50a862bd4c3efe9b27"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\093.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "094",
+      "exit_code": 0,
+      "seconds": 0.094,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\094.stdout",
+        "bytes": 224,
+        "sha256": "f6bb2ecec4cc89a6a2b7e73d766e30cf6d665ca5d41386131461772522b16bf9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\094.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "095",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\095.stdout",
+        "bytes": 220,
+        "sha256": "9e4cdde6d42e2647b8ebcea79165b48be611e944548d25ef590aaecb313736ed"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\095.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "096",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\096.stdout",
+        "bytes": 235,
+        "sha256": "7c849814361060a00a9165af978b9ac5ddd3647caccf4888192ee70232781f4c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\096.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "097",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\097.stdout",
+        "bytes": 219,
+        "sha256": "e369fb29e2656f11b6a09bc1ae51401606cb841c1f991872d68c2b0bfc4ed1b9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\097.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "098",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\098.stdout",
+        "bytes": 214,
+        "sha256": "73bdc1ee99ac2a43cfa46c4e6ff9b8eb0d3b1d59f3afa46045f0250796ec8b87"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\098.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "099",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\099.stdout",
+        "bytes": 256,
+        "sha256": "cef963c4347f0d4eca4b38e88dfee541988567183bdd1b8c21bbd7e7faa58534"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\099.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "100",
+      "exit_code": 0,
+      "seconds": 0.047,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\100.stdout",
+        "bytes": 262,
+        "sha256": "61c21e763b5eb1118d01dccfa34ec65e2707c24f862022a62000bdafa474c8b3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\100.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "101",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\101.stdout",
+        "bytes": 258,
+        "sha256": "39eec53451111b11ab99a607a477e548778c0127ef48ca0ee3f54862ea807811"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\101.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "102",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\102.stdout",
+        "bytes": 245,
+        "sha256": "ca35b0fc42d05e1ca163cf2a64fd886580a29fbfd57bce3b9a05816f0decb132"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\102.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "103",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\103.stdout",
+        "bytes": 254,
+        "sha256": "4ca8d5d5f95f5571c30ddab3295926b349aa1b6cb04bdae7811f1d6f13ed42a0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\103.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "104",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\104.stdout",
+        "bytes": 250,
+        "sha256": "27359a721e44686f53b7293623a74bdd94e0847bbe5f06e133ebb87825a77b67"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\104.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "105",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\105.stdout",
+        "bytes": 249,
+        "sha256": "6b133d548675241a99985458f1eb15de2327d23edd2f87e830f2fcc478ea5cdb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\105.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "106",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\106.stdout",
+        "bytes": 269,
+        "sha256": "109e8ef04251326ce1861082aa643738cf08fb7866be7684f890fc2127e97a00"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\106.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "107",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\107.stdout",
+        "bytes": 218,
+        "sha256": "146e7caad58e83b5de83386b2b5c5b497efce667138ee65284d5fedd7fad98c6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\107.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "108",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\108.stdout",
+        "bytes": 259,
+        "sha256": "76eebea6fe1cd810746b6a74b66071db9dc723e8a0ba3af271f780f7a9251ecb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\108.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "109",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\109.stdout",
+        "bytes": 241,
+        "sha256": "da61a7dd8f38a50b688a8c45c450c694f4c8a6116ed6bf51b9352f26a982e312"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\109.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "110",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\110.stdout",
+        "bytes": 232,
+        "sha256": "0efff69f6e0ef238d2ccecab29fb151c1b3e219925013e28351a22ac4a6d1dc5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\110.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "111",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\111.stdout",
+        "bytes": 264,
+        "sha256": "0f194703b333cf898e64a32c61ef36a22dd9c3d409a0d877280281dbacf9e7b9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\111.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "112",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\112.stdout",
+        "bytes": 253,
+        "sha256": "4e2e3438a63100e8e02ab88a37ecc40cf3a7f3d8c6475ee5dc5f3325a8e7d86a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\112.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "113",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\113.stdout",
+        "bytes": 243,
+        "sha256": "209fae8ae8475076a7763f24590ffa79fabe52a20b2085d73970d75823619d3c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\113.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "114",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\114.stdout",
+        "bytes": 236,
+        "sha256": "24697de1f37288e847a79549c3066f61567aa88fde7df5e6618f91d6b90de4be"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\114.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "115",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\115.stdout",
+        "bytes": 233,
+        "sha256": "c85201421b711a8faf67a938da8fd8376019d65c9ba23b79e74a4ffad4fb6d86"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\115.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "116",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\116.stdout",
+        "bytes": 243,
+        "sha256": "681cad455361fc715c90c56e4e25240dc8013b4c810b01cb15e3221d64004bd2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\116.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "117",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\117.stdout",
+        "bytes": 232,
+        "sha256": "1567a788666cc576e42371f77ca9a48f8ad660fdef914200f229d2695f2817a4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\117.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "118",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\118.stdout",
+        "bytes": 225,
+        "sha256": "2d0be58c63a8271c7cd9a200d6c1bf87a334744dcaf3d0db26e21ccf7ae7f366"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\118.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "119",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\119.stdout",
+        "bytes": 257,
+        "sha256": "dc90beeb95501d893b35b2362cea37ad9cb2b34984e00eb0f9b65daa253607ac"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\119.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "120",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\120.stdout",
+        "bytes": 245,
+        "sha256": "ff4ef2224e67366685bbfac0dd94ac9d65001b2abff80d192b9657f948e1d245"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\120.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "121",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\121.stdout",
+        "bytes": 249,
+        "sha256": "312010f6ad30e2c609565c67264a25816c4f742d94e69fe918d7469b53c2d20d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\121.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "122",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\122.stdout",
+        "bytes": 245,
+        "sha256": "32153a2fe51bf18755876798994e117fbdf0d548b21dee9028cf79bbcc1c3f71"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\122.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "123",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\123.stdout",
+        "bytes": 254,
+        "sha256": "df6da0e4c8a5afb28cc7e21e95287edd80e05bc2245665cce1c87f66aef745d9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\123.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "124",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\124.stdout",
+        "bytes": 251,
+        "sha256": "bc6654afb6ce8a9df20ea4701c76eaa0a168dc53fe6cf6d1c2c701e4d7d7770d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\124.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "125",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\125.stdout",
+        "bytes": 245,
+        "sha256": "6c928163011300e9d09ba2f5f9b5383c0b5867c9bfb557d6b12d334bc901d560"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\125.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "126",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\126.stdout",
+        "bytes": 236,
+        "sha256": "53a684730659191c7916f3824035309e88476d3d15c5051dad3f16e37ed52ed0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\native-guards-current-2031\\126.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "failure": null,
+  "excluded_runner_parser_method": "win::checked_lifecycle_tests::checked_input_capnp_reader_rejects_json_and_partial_boundaries_without_native_resources",
+  "all_original_processes_returned": true,
+  "actual_directory_pin_methods": 2,
+  "actual_after_helper_fault_injection": false,
+  "full_native_execution": false,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

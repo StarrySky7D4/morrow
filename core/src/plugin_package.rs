@@ -21,6 +21,8 @@ pub const DIRECTORY_REQUEST_FEATURE: &str = "fs-directory-request-v1";
 pub const MUTATION_BUDGET_FEATURE: &str = "mutation-budget-v1";
 pub const MAX_MUTATION_JOB_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_MUTATION_BYTES: u64 = 256 * 1024 * 1024;
+/// Explicit mutation-only handle ceiling; ordinary IO remains bounded at eight.
+pub const MAX_MUTATION_RESOURCES: u32 = 128;
 pub const MAX_DEPENDENCIES: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
@@ -158,7 +160,8 @@ impl Package {
         let mut manifest = Self::manifest_for_task(id, version, module, vec![]);
         manifest.required_features = vec![io::FEATURE.into(), fs_watch::FEATURE.into()];
         manifest.io_declaration = Some(io::declaration(
-            vec![io::IoCapability::FileList], handlers.clone(),
+            vec![io::IoCapability::FileList],
+            handlers.clone(),
         ));
         manifest.fs_watch_declaration = Some(fs_watch::declaration(handlers));
         manifest
@@ -665,6 +668,7 @@ impl Package {
                 || manifest.mutation_schema_sha256 != crate::mutation::schema_digest()
                 || !io_ceiling.contains(&io::IoCapability::FileCreate)
                     && !io_ceiling.contains(&io::IoCapability::FileDelete)
+                    && !io_ceiling.contains(&io::IoCapability::FileReplace)
             {
                 return Err(Error::Invalid("mutation feature declaration"));
             }
@@ -687,13 +691,18 @@ impl Package {
                 || io_ceiling.iter().any(|cap| {
                     !matches!(
                         cap,
-                        io::IoCapability::FileCreate | io::IoCapability::FileDelete
+                        io::IoCapability::FileCreate
+                            | io::IoCapability::FileReplace
+                            | io::IoCapability::FileDelete
                     )
                 })
                 || budget.max_job_bytes == 0
                 || budget.max_job_bytes > MAX_MUTATION_JOB_BYTES
                 || budget.max_bytes < budget.max_job_bytes
-                || budget.max_bytes > MAX_MUTATION_BYTES)
+                || budget.max_bytes > MAX_MUTATION_BYTES
+                || budget.max_resources > MAX_MUTATION_RESOURCES
+                || (budget.max_resources != 0
+                    && !io_ceiling.contains(&io::IoCapability::FileReplace)))
         {
             return Err(Error::Invalid("mutation budget declaration"));
         }

@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "Prüfen Sie den vollständigen Ordnerpfad. Alle Limits müssen positiv sein und innerhalb der Plugin-Limits liegen.",
-  "pluginsWatchOtherPanel": "Der Abschluss der Verzeichnisbeobachtung ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Task im Bereich Verzeichnisänderungen."
+  "pluginsWatchOtherPanel": "Der Abschluss der Verzeichnisbeobachtung ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Task im Bereich Verzeichnisänderungen.",
+  "pluginsFileMutationExecuteReplaceConfirm": "Den Inhalt dieser Datei dauerhaft ersetzen",
+  "pluginsGuestExecutionResourceBudget": "Genehmigte gleichzeitige Ressourcen",
+  "pluginsGuestExecutionResourceDeclaration": "Deklarierte Ressourcengrenze"
 }

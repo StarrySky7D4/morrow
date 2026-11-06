@@ -1,0 +1,77 @@
+{
+  "status": "PASS_ISOLATED_NETWORK_LOCK_REPAIR_METADATA_ONLY_NOT_COMPILED",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "source_copy": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\source",
+  "copied_files": 1055,
+  "changed_files": [
+    "network_node/Cargo.lock"
+  ],
+  "added_local_packages": [
+    {
+      "name": "morrow-fs-watch-native-v1",
+      "version": "0.1.0",
+      "source": null
+    },
+    {
+      "name": "morrow-fs-watch-v1",
+      "version": "0.1.0",
+      "source": null
+    }
+  ],
+  "registry_package_changes": 0,
+  "removed_packages": 0,
+  "original_lock": {
+    "path": "C:\\ms1020\\network_node\\Cargo.lock",
+    "bytes": 71840,
+    "sha256": "ae17c374942925140634949c9ffcb08b1e3d2e03051b3dc0e59fe2f8f8bdd697"
+  },
+  "corrected_lock": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\source\\network_node\\Cargo.lock",
+    "bytes": 72139,
+    "sha256": "3485e6991a3bf9e38af0350c9e1b31855580d778965e9f859ef2a0be9a7a83fb"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\network-Cargo.lock.diff",
+    "bytes": 671,
+    "sha256": "19f2d1f7f2152a4228fcd6479fceae4d93c88c656d45e0608ea01bd405b0b78f"
+  },
+  "commands": [
+    {
+      "label": "repair",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\repair.json",
+        "bytes": 928285,
+        "sha256": "cf905541f78df48bfe537c22eb6316a4e21f79996243165c0837301d40a3dad8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\repair.stderr",
+        "bytes": 350,
+        "sha256": "0256d7405e274a43dee6276c96aea23dc3f23ca6400254afac2bdc4c5e711b71"
+      }
+    },
+    {
+      "label": "locked-validation",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\locked-validation.json",
+        "bytes": 928285,
+        "sha256": "cf905541f78df48bfe537c22eb6316a4e21f79996243165c0837301d40a3dad8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\locked-validation.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "canonical_source_unchanged": true,
+  "canonical_patch_applied": false,
+  "compiler_processes": 0,
+  "network_test_processes": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

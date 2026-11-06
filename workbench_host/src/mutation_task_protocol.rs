@@ -304,6 +304,19 @@ pub(super) fn result_reply(
             }
             out.set_outcome(outcome.container());
         }
+        Some(Ok(MutationResponse::Replaced(outcome))) => {
+            out.set_kind(13);
+            out.set_phase(3);
+            out.set_operation_id(outcome.operation_id());
+            match outcome.result() {
+                morrow_core::file_effect::ReplaceResult::Replaced => out.set_effect(1),
+                morrow_core::file_effect::ReplaceResult::OsRejected { code } => {
+                    out.set_effect(2);
+                    out.set_os_code(code);
+                }
+            }
+            out.set_outcome(outcome.container());
+        }
         Some(Ok(MutationResponse::Deleted(outcome))) => {
             out.set_kind(5);
             out.set_phase(3);
@@ -455,6 +468,57 @@ mod reconciliation_projection_tests {
         io_intent::{ObservationSource, Record},
     };
     use morrow_plugin_runtime::io_jobs::MutationOutcome;
+
+    #[test]
+    fn replace_response_preserves_original_success_or_os_rejection_over_capnp() {
+        use morrow_core::file_effect::{ReplaceOutcome, ReplaceResult};
+        for (result, effect, code) in [
+            (ReplaceResult::Replaced, 1, 0),
+            (ReplaceResult::OsRejected { code: 5 }, 2, 5),
+        ] {
+            let outcome = ReplaceOutcome::new(
+                "replace-projection",
+                "plugin.history",
+                [1; 32],
+                [2; 32],
+                [3; 32],
+                [4; 32],
+                7,
+                result,
+            )
+            .unwrap();
+            let original = outcome.container().to_vec();
+            let mut message = capnp::message::Builder::new_default();
+            result_reply(
+                Some(Ok(MutationResponse::Replaced(outcome))),
+                message.init_root::<wire::mutation_result::Builder>(),
+                [0; 32],
+            )
+            .unwrap();
+            let bytes = capnp::serialize::write_message_to_words(&message);
+            let message = capnp::serialize::read_message(
+                &mut &bytes[..],
+                capnp::message::ReaderOptions::new(),
+            )
+            .unwrap();
+            let row = message.get_root::<wire::mutation_result::Reader>().unwrap();
+            assert_eq!(row.get_kind(), 13);
+            assert_eq!(row.get_phase(), 3);
+            assert_eq!(row.get_effect(), effect);
+            assert_eq!(row.get_os_code(), code);
+            assert_eq!(
+                row.get_operation_id().unwrap().to_str().unwrap(),
+                "replace-projection"
+            );
+            assert_eq!(row.get_outcome().unwrap(), original);
+            assert_eq!(
+                ReplaceOutcome::decode(row.get_outcome().unwrap())
+                    .unwrap()
+                    .result(),
+                result
+            );
+        }
+    }
 
     #[test]
     fn historical_unknown_and_os_rejection_never_project_as_success() {

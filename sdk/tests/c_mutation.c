@@ -30,10 +30,10 @@ static uint32_t load(const char *dir, const char *name, uint8_t *out) {
 
 int main(int argc, char **argv) {
   static const char *valid_requests[] = {
-      "create-empty", "create-content", "delete", "chunk", "commit",
+      "create-empty", "create-content", "replace-empty", "replace-content", "delete", "chunk", "commit",
       "execute", "query", "cancel", "release"};
   static const char *invalid_requests[] = {
-      "bad-zero-reference", "bad-empty-hash", "bad-chunk-overflow",
+      "bad-zero-reference", "bad-empty-hash", "bad-replace-empty-hash", "bad-chunk-overflow",
       "bad-call", "bad-deadline", "bad-unicode-control", "bad-trailing"};
   static const char *valid_responses[] = {"created", "unknown", "denied"};
   static const char *invalid_responses[] = {"bad-success-effect", "bad-denied-effect"};
@@ -76,10 +76,10 @@ int main(int argc, char **argv) {
   req.operation_id = span("mutation-vector-1", strlen("mutation-vector-1"));
   req.deadline_ms = MP_MUTATION_MAX_DEADLINE_MS;
   for (req.kind = MP_MUTATION_PREPARE_CREATE;
-       req.kind <= MP_MUTATION_RELEASE; ++req.kind) {
+       req.kind <= MP_MUTATION_PREPARE_REPLACE; ++req.kind) {
     req.content_length = 0; req.content_sha256 = span(NULL, 0);
     req.offset = 0; req.bytes = span(NULL, 0);
-    if (req.kind == MP_MUTATION_PREPARE_CREATE)
+    if (req.kind == MP_MUTATION_PREPARE_CREATE || req.kind == MP_MUTATION_PREPARE_REPLACE)
       req.content_sha256 = span(empty_hash, sizeof(empty_hash));
     if (req.kind == MP_MUTATION_CHUNK)
       req.bytes = span(chunk_bytes, sizeof(chunk_bytes));
@@ -100,6 +100,11 @@ int main(int argc, char **argv) {
   assert(mp_mutation_request_encode(&req, output, MP_MAX_MUTATION_FRAME_BYTES,
                                     &out_length) == MP_CODEC_OK);
   assert(mp_mutation_request_validate(output, out_length) == MP_CODEC_OK);
+  req.kind = MP_MUTATION_PREPARE_REPLACE;
+  assert(mp_mutation_request_encode(&req, output, MP_MAX_MUTATION_FRAME_BYTES, &out_length) == MP_CODEC_OK);
+  n = load(argv[1], "replace-content", input);
+  assert(out_length == n && memcmp(output, input, n) == 0);
+  req.kind = MP_MUTATION_PREPARE_CREATE;
   req.content_length = 0; req.content_sha256 = span(empty_hash, sizeof(empty_hash));
   memset(output, 0xa5, MP_MAX_MUTATION_FRAME_BYTES);
   req.reference.length = 31; out_length = 99;

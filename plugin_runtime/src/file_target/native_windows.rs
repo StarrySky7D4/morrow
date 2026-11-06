@@ -11,6 +11,11 @@ use std::{
 };
 static CLOSE_UNCERTAIN: AtomicBool = AtomicBool::new(false);
 static EFFECT_GATE: Mutex<()> = Mutex::new(());
+// The production replacement selection owns its transaction from the initial
+// exclusive open through original-owner rollback/commit and checked closure.
+pub(super) mod replacement_owner;
+#[allow(dead_code)] // The independent native identity qualification also uses these entry points.
+mod transaction;
 pub(super) enum GateError {
     Busy,
     RestartRequired,
@@ -226,12 +231,17 @@ pub(super) fn open_relative_directory(
     crate::directory_io::selection_path::validate_component(component)
         .map_err(|_| std::io::Error::from(std::io::ErrorKind::InvalidInput))?;
     let mut encoded = Vec::new();
-    encoded.try_reserve_exact(component.len())
+    encoded
+        .try_reserve_exact(component.len())
         .map_err(|_| std::io::Error::other("directory component allocation failed"))?;
     encoded.extend_from_slice(component);
-    let bytes = u16::try_from(encoded.len().checked_mul(2)
-        .ok_or(std::io::ErrorKind::InvalidInput)?)
-        .map_err(|_| std::io::Error::from(std::io::ErrorKind::InvalidInput))?;
+    let bytes = u16::try_from(
+        encoded
+            .len()
+            .checked_mul(2)
+            .ok_or(std::io::ErrorKind::InvalidInput)?,
+    )
+    .map_err(|_| std::io::Error::from(std::io::ErrorKind::InvalidInput))?;
     let mut name = UnicodeString {
         length: bytes,
         maximum_length: bytes,
@@ -246,7 +256,9 @@ pub(super) fn open_relative_directory(
         security_quality_of_service: null_mut(),
     };
     let mut status = IoStatusBlock {
-        status: IoStatus { pointer: null_mut() },
+        status: IoStatus {
+            pointer: null_mut(),
+        },
         information: 0,
     };
     let mut raw = null_mut();

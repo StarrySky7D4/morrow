@@ -295,7 +295,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
   }
 
   Future<void> _pickSource() async {
-    if (!_canEdit || _draft.disposition != MutationDisposition.create) return;
+    if (!_canEdit || _draft.disposition == MutationDisposition.delete) return;
     final epoch = ++_epoch, backend = widget.backend;
     setState(() => _picking = true);
     try {
@@ -406,13 +406,13 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       _formError = null;
     });
     try {
-      final content = _draft.disposition == MutationDisposition.create
+      final content = _draft.disposition != MutationDisposition.delete
           ? await _readContent(_draft.content, epoch)
           : Uint8List(0);
       if (!mounted || epoch != _epoch || !identical(widget.backend, backend)) {
         return;
       }
-      final contentHash = _draft.disposition == MutationDisposition.create
+      final contentHash = _draft.disposition != MutationDisposition.delete
           ? Uint8List.fromList(sha256.convert(content).bytes)
           : null;
       final operationId = 'morrow-${_hex(_token().sublist(0, 16))}';
@@ -474,7 +474,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       await _session.prepare(
         request,
         operationId: operationId,
-        content: request.disposition == MutationDisposition.create
+        content: request.disposition != MutationDisposition.delete
             ? content
             : null,
       );
@@ -507,11 +507,11 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               Text('${l.pluginsEndpointPackage}: ${review.packageName}'),
               SelectableText(review.request.packageId),
               SelectableText(_hex(review.request.packageDigest)),
-              Text(
-                review.request.disposition == MutationDisposition.create
-                    ? l.pluginsIoFileCreate
-                    : l.pluginsIoFileDelete,
-              ),
+              Text(switch (review.request.disposition) {
+                MutationDisposition.create => l.pluginsIoFileCreate,
+                MutationDisposition.replace => l.pluginsIoFileReplace,
+                MutationDisposition.delete => l.pluginsIoFileDelete,
+              }),
               Text('${l.pluginsFileMutationTarget}: ${review.target}'),
               Text(
                 '${l.pluginsFileMutationContentLength}: ${review.contentLength}',
@@ -523,6 +523,9 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               if (execute &&
                   review.request.disposition == MutationDisposition.delete)
                 Text(l.pluginsFileMutationExecuteDeleteConfirm),
+              if (execute &&
+                  review.request.disposition == MutationDisposition.replace)
+                Text(l.pluginsFileMutationExecuteReplaceConfirm),
             ],
           ),
         ),
@@ -543,9 +546,14 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
             onPressed: () => Navigator.pop(dialogContext, true),
             child: Text(
               execute
-                  ? review.request.disposition == MutationDisposition.delete
-                        ? l.pluginsFileMutationExecuteDeleteConfirm
-                        : l.pluginsFileMutationExecuteCreateConfirm
+                  ? switch (review.request.disposition) {
+                      MutationDisposition.create =>
+                        l.pluginsFileMutationExecuteCreateConfirm,
+                      MutationDisposition.replace =>
+                        l.pluginsFileMutationExecuteReplaceConfirm,
+                      MutationDisposition.delete =>
+                        l.pluginsFileMutationExecuteDeleteConfirm,
+                    }
                   : l.pluginsFileMutationPrepareConfirm,
             ),
           ),
@@ -643,6 +651,10 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               child: Text(l.pluginsIoFileCreate),
             ),
             DropdownMenuItem(
+              value: MutationDisposition.replace,
+              child: Text(l.pluginsIoFileReplace),
+            ),
+            DropdownMenuItem(
               value: MutationDisposition.delete,
               child: Text(l.pluginsIoFileDelete),
             ),
@@ -688,13 +700,13 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               'pick-target',
               _canEdit && selected != null ? _pickTarget : null,
             ),
-            if (_draft.disposition == MutationDisposition.create)
+            if (_draft.disposition != MutationDisposition.delete)
               _button(
                 l.pluginsFileMutationPickContent,
                 'pick-content',
                 _canEdit && selected != null ? _pickSource : null,
               ),
-            if (_draft.disposition == MutationDisposition.create &&
+            if (_draft.disposition != MutationDisposition.delete &&
                 _draft.content != null)
               _button(
                 l.pluginsFileMutationEmptyContent,

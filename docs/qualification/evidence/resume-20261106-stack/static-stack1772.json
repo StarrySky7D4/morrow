@@ -1,0 +1,53 @@
+{
+  "status": "PASS_SCOPED_STATIC_STACK_REDUCTION",
+  "source_digest_at_compile": "1619fa29c9b1118714b0d90426395c0db3af99fc53989aa5aa09ae93ae5be0a5",
+  "live_source": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\live.rs",
+    "bytes": 54019,
+    "sha256": "b86b42d7373bd912869763d87a0d320aa2763ba1f9b3535bb040c0e9c161567d"
+  },
+  "baseline_exe_sha256": "c3bcfc2f76f3c453e767ae17eca14879fa9a73b74b1c474ec33dbf43fa2f8e5e",
+  "candidate_exe": {
+    "path": "D:\\build_cache\\qualification-targets\\stack1770-C-b66084e1803fd46b\\x86_64-pc-windows-msvc\\debug\\morrow-protected-checked-vm-harness.exe",
+    "bytes": 100608000,
+    "sha256": "ec7fec789882ac2b3c954a90edc12433fa6c8efe2c6aad446567a21b1633f960"
+  },
+  "candidate_PE_PDB_identity": [
+    {
+      "guid": "5a764685-f8f5-4931-939d-26f786b373c2",
+      "age": 1
+    }
+  ],
+  "PE_stack_reserve_unchanged": 1048576,
+  "baseline_step_caller_frame_bytes": 262680,
+  "candidate_step_caller": {
+    "start": 160416,
+    "end": 161549,
+    "stack_bytes": 344,
+    "workflow_callsite": 161008,
+    "non_inlined_constructor_helper_called": true,
+    "disassembly": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\candidate1772-stack-review\\workflow-caller-000272a0.txt",
+      "bytes": 16336,
+      "sha256": "eef1f99dab8f8b2a9a5b5f4d9708b840e99c35a5b0d41adf0d9f6956e46cfa6b"
+    }
+  },
+  "reduced_stack_bytes": 262336,
+  "constructor_helper": {
+    "rva": 452544,
+    "name": "_ZN35morrow_protected_checked_vm_harness4live7Session22select_formal_workflow17h1b741df7db35740cE",
+    "frame_bytes": 262440
+  },
+  "workflow_step": {
+    "rva": 593632,
+    "frame_bytes": 179224
+  },
+  "all_candidate_compiler_outputs_fresh": true,
+  "baseline_runtime_case": "1760_RETAINED_UNKNOWN_NOT_REPLAYED",
+  "precise_original_crash_callsite": "NOT_ESTABLISHED_NO_RUNTIME_STACK_CAPTURE",
+  "VM_calls": 0,
+  "product_execution": 0,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

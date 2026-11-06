@@ -34,6 +34,14 @@ struct Fixture {
 }
 impl Fixture {
     fn new(extended: bool, approve: bool) -> Self {
+        Self::with_resources(extended, approve, 0, 8)
+    }
+    fn with_resources(
+        extended: bool,
+        approve: bool,
+        declared_resources: u32,
+        ordinary_resources: u32,
+    ) -> Self {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wat::parse_str(
             r#"(module
@@ -55,9 +63,17 @@ impl Fixture {
                 .required_features
                 .push(MUTATION_BUDGET_FEATURE.into());
             manifest.mutation_budget = Some(proto::MutationBudget {
+                max_resources: declared_resources,
                 max_job_bytes: MAX_MUTATION_JOB_BYTES,
                 max_bytes: MAX_MUTATION_BYTES,
             });
+        }
+        let declaration = manifest.io_declaration.as_mut().unwrap();
+        declaration.budget.as_mut().unwrap().max_resources = ordinary_resources;
+        if declared_resources != 0 {
+            declaration
+                .requested_capabilities
+                .push(IoCapability::FileReplace.number());
         }
         let package = Package::build(manifest, &wasm).unwrap();
         let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
@@ -106,6 +122,7 @@ impl Fixture {
 
 fn approved() -> MutationBudget {
     MutationBudget {
+        max_resources: 0,
         max_job_bytes: 24 * MIB,
         max_bytes: 100 * MIB,
     }
@@ -132,6 +149,7 @@ fn mutation_extension_requires_explicit_host_budget_and_preserves_legacy_bind() 
         f.bind(
             &instance,
             MutationBudget {
+                max_resources: 0,
                 max_job_bytes: 33 * MIB,
                 max_bytes: 100 * MIB
             }
@@ -142,6 +160,7 @@ fn mutation_extension_requires_explicit_host_budget_and_preserves_legacy_bind() 
         f.bind(
             &instance,
             MutationBudget {
+                max_resources: 0,
                 max_job_bytes: 24 * MIB,
                 max_bytes: 257 * MIB
             }
@@ -152,6 +171,7 @@ fn mutation_extension_requires_explicit_host_budget_and_preserves_legacy_bind() 
         f.bind(
             &instance,
             MutationBudget {
+                max_resources: 0,
                 max_job_bytes: 24 * MIB,
                 max_bytes: 20 * MIB
             }
@@ -214,6 +234,7 @@ fn lower_host_approval_limits_single_target_admission_and_cumulative_bytes() {
     let mut f = Fixture::new(true, true);
     let instance = f.connect();
     let lower = MutationBudget {
+        max_resources: 0,
         max_job_bytes: 8 * MIB,
         max_bytes: 12 * MIB,
     };
@@ -391,4 +412,79 @@ fn foreign_identity_unapproved_capability_and_revocation_cannot_rebind() {
     instance.close(&mut f.host).unwrap();
     other.close(&mut f.host).unwrap();
     foreign_instance.close(&mut foreign.host).unwrap();
+}
+
+#[test]
+fn mutation_resource_approval_is_explicit_bounded_and_preserves_lower_legacy_ceiling() {
+    for (approved_resources, expected_ceiling) in [(0, 2), (1, 1), (9, 9), (32, 32)] {
+        let mut f = Fixture::with_resources(true, true, 32, 2);
+        let instance = f.connect();
+        let binding = f
+            .bind(
+                &instance,
+                MutationBudget {
+                    max_resources: approved_resources,
+                    ..approved()
+                },
+            )
+            .unwrap();
+        let hold = binding
+            .admit(
+                &f.manager,
+                &f.host,
+                &instance,
+                IoCapability::FileCreate,
+                expected_ceiling,
+                1,
+                2,
+            )
+            .unwrap();
+        assert_eq!(binding.usage().resources, expected_ceiling);
+        assert!(
+            binding
+                .admit(
+                    &f.manager,
+                    &f.host,
+                    &instance,
+                    IoCapability::FileCreate,
+                    1,
+                    1,
+                    3
+                )
+                .is_err()
+        );
+        // The resource approval grants no unapproved file operation.
+        assert!(
+            binding
+                .admit(
+                    &f.manager,
+                    &f.host,
+                    &instance,
+                    IoCapability::FileReplace,
+                    0,
+                    1,
+                    4
+                )
+                .is_err()
+        );
+        drop(hold);
+        assert_eq!(binding.usage().resources, 0);
+        instance.close(&mut f.host).unwrap();
+    }
+    for declared in [0, 32] {
+        let mut f = Fixture::with_resources(true, true, declared, 2);
+        let instance = f.connect();
+        assert!(
+            f.bind(
+                &instance,
+                MutationBudget {
+                    max_resources: declared + 1,
+                    ..approved()
+                }
+            )
+            .is_err()
+        );
+        assert_eq!(f.bind(&instance, approved()).unwrap().usage().resources, 0);
+        instance.close(&mut f.host).unwrap();
+    }
 }

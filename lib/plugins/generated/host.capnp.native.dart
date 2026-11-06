@@ -5583,7 +5583,7 @@ final class PluginEntryBuilder extends StructBuilder {
   }
 
   MutationBudgetBuilder initMutationBudget() {
-    return initStructFieldWith(12, (r) => MutationBudgetBuilder(r), 2, 0);
+    return initStructFieldWith(12, (r) => MutationBudgetBuilder(r), 3, 0);
   }
 
   bool hasMutationBudget() => hasPointerField(12);
@@ -5998,6 +5998,8 @@ final class MutationBudgetReader extends StructReader {
   BigInt get maxBytesBigInt =>
       ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
       BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get maxResources => getUint32Field(16);
 }
 
 final class MutationBudgetBuilder extends StructBuilder {
@@ -6031,6 +6033,10 @@ final class MutationBudgetBuilder extends StructBuilder {
     setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
     setUint32Field(12, (bits >> 32).toInt());
   }
+
+  set maxResources(int v) {
+    setUint32Field(16, v);
+  }
 }
 
 final class _MutationBudgetFactory
@@ -6038,7 +6044,7 @@ final class _MutationBudgetFactory
   @override
   StructSchemaInfo get schema => mutationBudgetSchema;
   @override
-  int get dataWords => 2;
+  int get dataWords => 3;
   @override
   int get ptrWords => 0;
   @override
@@ -6058,7 +6064,7 @@ const StructSchemaInfo mutationBudgetSchema = StructSchemaInfo(
   id: 0xf40b68d6e3ae16f1,
   displayName: 'host.capnp:MutationBudget',
   shortName: 'MutationBudget',
-  dataWords: 2,
+  dataWords: 3,
   pointerWords: 0,
   fields: [
     FieldSchemaInfo(
@@ -6075,6 +6081,14 @@ const StructSchemaInfo mutationBudgetSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxResources',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
   ],
@@ -11016,7 +11030,7 @@ final class GuestMutationStartBuilder extends StructBuilder {
   bool hasSelection() => hasPointerField(0);
 
   MutationBudgetBuilder initApprovedBudget() {
-    return initStructFieldWith(1, (r) => MutationBudgetBuilder(r), 2, 0);
+    return initStructFieldWith(1, (r) => MutationBudgetBuilder(r), 3, 0);
   }
 
   bool hasApprovedBudget() => hasPointerField(1);

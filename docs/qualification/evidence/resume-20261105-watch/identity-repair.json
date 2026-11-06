@@ -1,0 +1,559 @@
+{
+  "status": "PASS_CANONICAL_WORKBENCH_GENERATOR_AND_CHECK",
+  "source_before": "abb879c3b8d0d621e0aceae1279c624e3baaa5df436adb5718c90fac9a2c4a7d",
+  "source_after": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "host_digest": "276a2ed0842cedd7867568dbf930d1c3587b506b6850857001ee587c29d2bf9e",
+  "schema_digest": "276a2ed0842cedd7867568dbf930d1c3587b506b6850857001ee587c29d2bf9e",
+  "changed_files": [
+    "identity.dart"
+  ],
+  "before": {
+    "blob_upload_history.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.dart",
+      "bytes": 234,
+      "sha256": "8bb79d40d060144766d490320e1e07fa50441158a6f84a0f69e71ff83278adf6"
+    },
+    "blob_upload_history.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.ids.dart",
+      "bytes": 414,
+      "sha256": "7f6d9a5797cfa4e4295dac7d9f2036b10935996f1740ad845d15e218774edb15"
+    },
+    "blob_upload_history.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.native.dart",
+      "bytes": 15487,
+      "sha256": "d5da0c0c1c519f982c9398ea59b2591e8b03cd180d5dc0e4e10532266f8fec19"
+    },
+    "blob_upload_history.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.web.dart",
+      "bytes": 10295,
+      "sha256": "56aa624bf0d25762feebf25b40041cd89ebd1894c2c63301431f2b0a448b379c"
+    },
+    "blob_upload_history_identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history_identity.dart",
+      "bytes": 346,
+      "sha256": "e2ef77a7b07cb0f058e083bf1de9dba3b62877569679c57dbfa4af4f6419f902"
+    },
+    "capture.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.dart",
+      "bytes": 191,
+      "sha256": "4b12f05e6ea39203d615cf9d243f9fc8f43dc623eb23a1845e6a1bc52a6fd1a8"
+    },
+    "capture.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.ids.dart",
+      "bytes": 362,
+      "sha256": "4825150be2cd1d3b7c9a189e7e697316c96eae99d7c5c10c524cfb4e88855a45"
+    },
+    "capture.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.native.dart",
+      "bytes": 9295,
+      "sha256": "3602148c539c1979b8d7b01c6b7155885717e0726b091abfd74b705b33481edd"
+    },
+    "capture.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.web.dart",
+      "bytes": 5030,
+      "sha256": "b5b5bd9fda5c81e200d0a4c36ce040f1376b3a6fbe99a96e0c23aa926bff3bb7"
+    },
+    "channel.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.dart",
+      "bytes": 195,
+      "sha256": "75b69323329155bc627059f9b31d7927cf9be89c5596c91330b2eda6f5264cd2"
+    },
+    "channel.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.ids.dart",
+      "bytes": 682,
+      "sha256": "cf4088597ab62e40b3ddb6e8970a0ab6636362aab7019d79214f6d74f6a0a82c"
+    },
+    "channel.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.native.dart",
+      "bytes": 32409,
+      "sha256": "3d857b4ee41ab362aada4d737ca2685c638182793417147751934ed67277b5db"
+    },
+    "channel.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.web.dart",
+      "bytes": 21468,
+      "sha256": "ad7d0fe6b0c38a95660d932785aac7aa1b41b06cb65ee4a6ebdbd143cc9626e9"
+    },
+    "content_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.dart",
+      "bytes": 203,
+      "sha256": "2339fce3de88162c2a6c292a9e17c7c9deb8754f4559c0ddf231110fe1cb55b4"
+    },
+    "content_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.ids.dart",
+      "bytes": 760,
+      "sha256": "8d636d81b731ed859ca4692fea08ecf2eb9304f5207d2bd6d890a56fc1653733"
+    },
+    "content_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.native.dart",
+      "bytes": 40809,
+      "sha256": "1d26e8f226797caf7f09a114427340a29676fd345d16588a4c5bc12cf9f3ac2e"
+    },
+    "content_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.web.dart",
+      "bytes": 22889,
+      "sha256": "fd84e14df67d4ab7db9195449d126a45fdea632cb08333989139ba6eadb565b6"
+    },
+    "editor_draft_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.dart",
+      "bytes": 218,
+      "sha256": "4877bdb9c73e7595710c2d72de211058aa1a9cf18cfec7e2db611d59e8b52d19"
+    },
+    "editor_draft_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.ids.dart",
+      "bytes": 1285,
+      "sha256": "6491f2fb30e18177506c6d89d6b9fbd502fb5fdad9bf8b689dcf1ae255af6458"
+    },
+    "editor_draft_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.native.dart",
+      "bytes": 96937,
+      "sha256": "7cb41db5eee4c49b403b0ee7ed0c40f3aaa600e41eac04c79c5847fd0c1c9ca3"
+    },
+    "editor_draft_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.web.dart",
+      "bytes": 61934,
+      "sha256": "820bc3c7a452d327b0946f2c71caa22cdafe21251afff0f98277566d8a3b9b77"
+    },
+    "editor_draft_staging_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.dart",
+      "bytes": 242,
+      "sha256": "fbd93b0728d2aba30d067bfe1cfa608e4dec1f3f7f77e8798ca8b3bd97d71c8c"
+    },
+    "editor_draft_staging_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.ids.dart",
+      "bytes": 572,
+      "sha256": "0e811980d3fa10c4a6522bcad59791b15df1d91d3b1bd3fba832e1354b8a3de5"
+    },
+    "editor_draft_staging_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.native.dart",
+      "bytes": 30769,
+      "sha256": "2c97f752edad60401cabc0ae2bee5cb7277bc5e629d8f891731a6037c8bae33a"
+    },
+    "editor_draft_staging_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.web.dart",
+      "bytes": 21048,
+      "sha256": "998e9cd0e7ef1a8136f51f8802a722afbe73c98d0fc9ef51257f557471174843"
+    },
+    "host.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.dart",
+      "bytes": 186,
+      "sha256": "751edb01d258f2f185463d5cd1081f1c34024edda180d4ecc54a409fb75758e6"
+    },
+    "host.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.ids.dart",
+      "bytes": 3991,
+      "sha256": "2e35ac4b5e63934baac0cf14dc8f4d0ea3a6be29f4530be1342d063de96ea735"
+    },
+    "host.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.native.dart",
+      "bytes": 434314,
+      "sha256": "94f1d9e300e30a817676f652822ec62f6c2348896d087b2b320f27cdb7bbde0c"
+    },
+    "host.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.web.dart",
+      "bytes": 261887,
+      "sha256": "5f76dd0d13b1e7b67884f042622c4cd275b75476c2c7e7580825a2eaa0f37955"
+    },
+    "identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\identity.dart",
+      "bytes": 2845,
+      "sha256": "03601de369508dbd7c58e5186f419a74d1dce3f350fdefe82303a08b2b0447b8"
+    },
+    "mutation.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.dart",
+      "bytes": 194,
+      "sha256": "cfff088b3cb2ddb25e6721c6cde1031df44ff1da23133e2a2dbdb10b23526db6"
+    },
+    "mutation.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.ids.dart",
+      "bytes": 550,
+      "sha256": "e94fd1f9568f3dd81bbfb7fff8e8d6ae328b76ed0af5b6c9e6821bab918222a4"
+    },
+    "mutation.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.native.dart",
+      "bytes": 20379,
+      "sha256": "a2fd912357b2686d1395d024942b5fa1455f361dc568cb8ccba72a04093710d1"
+    },
+    "mutation.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.web.dart",
+      "bytes": 11816,
+      "sha256": "f35db545dc8e6ef06c72b0704a693a70056c5f490baa19a9b4af23e9fdeba547"
+    },
+    "studio.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.dart",
+      "bytes": 188,
+      "sha256": "a3ac9f8e7f011097f8c7659aa94137b3a8987a5e921fa106ef26327886ee57ae"
+    },
+    "studio.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.ids.dart",
+      "bytes": 764,
+      "sha256": "6c7d7c9315b027df577359e2799a86792b9756ee325f79acd8f170480ca583b3"
+    },
+    "studio.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.native.dart",
+      "bytes": 48340,
+      "sha256": "b6835f9bf98d1347cf95c998eadb4d5259fcf8136fc7d1316f1e0dda1a17ae26"
+    },
+    "studio.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.web.dart",
+      "bytes": 27264,
+      "sha256": "94fb05aad68c6ee34aaa42666e6bfa589dd28aa20e2a4688739e90614b6cf7c0"
+    },
+    "tasks.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.dart",
+      "bytes": 185,
+      "sha256": "8097fdeae2fb8a7962da0ff44ad27e485b0aca74575a6c3a1445dd1891cfa964"
+    },
+    "tasks.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.ids.dart",
+      "bytes": 400,
+      "sha256": "bfcb273792ea96dc887d861890d48a30f5cadb83e752ab49b7afddf2ea378008"
+    },
+    "tasks.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.native.dart",
+      "bytes": 12567,
+      "sha256": "3699d90d9d49ef7731cfce25ad8a806b8fc2e1a2ba8d52a64846a921e010467e"
+    },
+    "tasks.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.web.dart",
+      "bytes": 7331,
+      "sha256": "ce4436c699b50834e420455d1b00c27d082266785491854f68d186ab97903992"
+    },
+    "workbench.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.dart",
+      "bytes": 197,
+      "sha256": "c2d505c2b865076827d8efb75a2145ef271aa6051f12d75a755eeabbec3bee35"
+    },
+    "workbench.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.ids.dart",
+      "bytes": 437,
+      "sha256": "449388aa049411e39c1b4d495d0d93afa1a5fbd28bfca4d7fd5017cf9ec69f49"
+    },
+    "workbench.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.native.dart",
+      "bytes": 17803,
+      "sha256": "8634ecfbc4363a737b67561aa9bfdb913afb8bbb4f594f9e9fea2377cbe45398"
+    },
+    "workbench.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.web.dart",
+      "bytes": 10417,
+      "sha256": "4242397b09595afd5f36300b27966d365e8b856ae436282626d4ba66e727e3e2"
+    },
+    "workbench_supervision.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.dart",
+      "bytes": 249,
+      "sha256": "06da6d887feb83cfaa21ef1579186351af3f5f8fd5d0bbad1dbb7d75c0ab44a3"
+    },
+    "workbench_supervision.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.ids.dart",
+      "bytes": 1090,
+      "sha256": "2332d5d378657e13683ea71bf09113b2dc356332e35fddaaff843f2b8cda8577"
+    },
+    "workbench_supervision.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.native.dart",
+      "bytes": 53123,
+      "sha256": "c6922c7d2b7cc7382f72e7b02ee475853d2dace6b4ddb1ac4dbb68e34fe27c9b"
+    },
+    "workbench_supervision.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.web.dart",
+      "bytes": 29984,
+      "sha256": "702d63c6dcf4da7c5837eb05fdaf192dc68e478c4b3f6404ade4243c30f571ff"
+    },
+    "workbench_supervision_identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision_identity.dart",
+      "bytes": 167,
+      "sha256": "d9ab9e93593d6abf10d533033deb7508fe14648cff97ae1740bed94f05fd2896"
+    }
+  },
+  "after": {
+    "blob_upload_history.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.dart",
+      "bytes": 234,
+      "sha256": "8bb79d40d060144766d490320e1e07fa50441158a6f84a0f69e71ff83278adf6"
+    },
+    "blob_upload_history.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.ids.dart",
+      "bytes": 414,
+      "sha256": "7f6d9a5797cfa4e4295dac7d9f2036b10935996f1740ad845d15e218774edb15"
+    },
+    "blob_upload_history.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.native.dart",
+      "bytes": 15487,
+      "sha256": "d5da0c0c1c519f982c9398ea59b2591e8b03cd180d5dc0e4e10532266f8fec19"
+    },
+    "blob_upload_history.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history.capnp.web.dart",
+      "bytes": 10295,
+      "sha256": "56aa624bf0d25762feebf25b40041cd89ebd1894c2c63301431f2b0a448b379c"
+    },
+    "blob_upload_history_identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\blob_upload_history_identity.dart",
+      "bytes": 346,
+      "sha256": "e2ef77a7b07cb0f058e083bf1de9dba3b62877569679c57dbfa4af4f6419f902"
+    },
+    "capture.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.dart",
+      "bytes": 191,
+      "sha256": "4b12f05e6ea39203d615cf9d243f9fc8f43dc623eb23a1845e6a1bc52a6fd1a8"
+    },
+    "capture.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.ids.dart",
+      "bytes": 362,
+      "sha256": "4825150be2cd1d3b7c9a189e7e697316c96eae99d7c5c10c524cfb4e88855a45"
+    },
+    "capture.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.native.dart",
+      "bytes": 9295,
+      "sha256": "3602148c539c1979b8d7b01c6b7155885717e0726b091abfd74b705b33481edd"
+    },
+    "capture.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\capture.capnp.web.dart",
+      "bytes": 5030,
+      "sha256": "b5b5bd9fda5c81e200d0a4c36ce040f1376b3a6fbe99a96e0c23aa926bff3bb7"
+    },
+    "channel.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.dart",
+      "bytes": 195,
+      "sha256": "75b69323329155bc627059f9b31d7927cf9be89c5596c91330b2eda6f5264cd2"
+    },
+    "channel.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.ids.dart",
+      "bytes": 682,
+      "sha256": "cf4088597ab62e40b3ddb6e8970a0ab6636362aab7019d79214f6d74f6a0a82c"
+    },
+    "channel.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.native.dart",
+      "bytes": 32409,
+      "sha256": "3d857b4ee41ab362aada4d737ca2685c638182793417147751934ed67277b5db"
+    },
+    "channel.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\channel.capnp.web.dart",
+      "bytes": 21468,
+      "sha256": "ad7d0fe6b0c38a95660d932785aac7aa1b41b06cb65ee4a6ebdbd143cc9626e9"
+    },
+    "content_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.dart",
+      "bytes": 203,
+      "sha256": "2339fce3de88162c2a6c292a9e17c7c9deb8754f4559c0ddf231110fe1cb55b4"
+    },
+    "content_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.ids.dart",
+      "bytes": 760,
+      "sha256": "8d636d81b731ed859ca4692fea08ecf2eb9304f5207d2bd6d890a56fc1653733"
+    },
+    "content_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.native.dart",
+      "bytes": 40809,
+      "sha256": "1d26e8f226797caf7f09a114427340a29676fd345d16588a4c5bc12cf9f3ac2e"
+    },
+    "content_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\content_api.capnp.web.dart",
+      "bytes": 22889,
+      "sha256": "fd84e14df67d4ab7db9195449d126a45fdea632cb08333989139ba6eadb565b6"
+    },
+    "editor_draft_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.dart",
+      "bytes": 218,
+      "sha256": "4877bdb9c73e7595710c2d72de211058aa1a9cf18cfec7e2db611d59e8b52d19"
+    },
+    "editor_draft_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.ids.dart",
+      "bytes": 1285,
+      "sha256": "6491f2fb30e18177506c6d89d6b9fbd502fb5fdad9bf8b689dcf1ae255af6458"
+    },
+    "editor_draft_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.native.dart",
+      "bytes": 96937,
+      "sha256": "7cb41db5eee4c49b403b0ee7ed0c40f3aaa600e41eac04c79c5847fd0c1c9ca3"
+    },
+    "editor_draft_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_api.capnp.web.dart",
+      "bytes": 61934,
+      "sha256": "820bc3c7a452d327b0946f2c71caa22cdafe21251afff0f98277566d8a3b9b77"
+    },
+    "editor_draft_staging_api.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.dart",
+      "bytes": 242,
+      "sha256": "fbd93b0728d2aba30d067bfe1cfa608e4dec1f3f7f77e8798ca8b3bd97d71c8c"
+    },
+    "editor_draft_staging_api.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.ids.dart",
+      "bytes": 572,
+      "sha256": "0e811980d3fa10c4a6522bcad59791b15df1d91d3b1bd3fba832e1354b8a3de5"
+    },
+    "editor_draft_staging_api.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.native.dart",
+      "bytes": 30769,
+      "sha256": "2c97f752edad60401cabc0ae2bee5cb7277bc5e629d8f891731a6037c8bae33a"
+    },
+    "editor_draft_staging_api.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\editor_draft_staging_api.capnp.web.dart",
+      "bytes": 21048,
+      "sha256": "998e9cd0e7ef1a8136f51f8802a722afbe73c98d0fc9ef51257f557471174843"
+    },
+    "host.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.dart",
+      "bytes": 186,
+      "sha256": "751edb01d258f2f185463d5cd1081f1c34024edda180d4ecc54a409fb75758e6"
+    },
+    "host.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.ids.dart",
+      "bytes": 3991,
+      "sha256": "2e35ac4b5e63934baac0cf14dc8f4d0ea3a6be29f4530be1342d063de96ea735"
+    },
+    "host.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.native.dart",
+      "bytes": 434314,
+      "sha256": "94f1d9e300e30a817676f652822ec62f6c2348896d087b2b320f27cdb7bbde0c"
+    },
+    "host.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\host.capnp.web.dart",
+      "bytes": 261887,
+      "sha256": "5f76dd0d13b1e7b67884f042622c4cd275b75476c2c7e7580825a2eaa0f37955"
+    },
+    "identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\identity.dart",
+      "bytes": 2844,
+      "sha256": "839181fc3e4560f9d742b2daf0a451b3301a87986f1425b37a55ad790a034fe9"
+    },
+    "mutation.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.dart",
+      "bytes": 194,
+      "sha256": "cfff088b3cb2ddb25e6721c6cde1031df44ff1da23133e2a2dbdb10b23526db6"
+    },
+    "mutation.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.ids.dart",
+      "bytes": 550,
+      "sha256": "e94fd1f9568f3dd81bbfb7fff8e8d6ae328b76ed0af5b6c9e6821bab918222a4"
+    },
+    "mutation.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.native.dart",
+      "bytes": 20379,
+      "sha256": "a2fd912357b2686d1395d024942b5fa1455f361dc568cb8ccba72a04093710d1"
+    },
+    "mutation.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\mutation.capnp.web.dart",
+      "bytes": 11816,
+      "sha256": "f35db545dc8e6ef06c72b0704a693a70056c5f490baa19a9b4af23e9fdeba547"
+    },
+    "studio.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.dart",
+      "bytes": 188,
+      "sha256": "a3ac9f8e7f011097f8c7659aa94137b3a8987a5e921fa106ef26327886ee57ae"
+    },
+    "studio.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.ids.dart",
+      "bytes": 764,
+      "sha256": "6c7d7c9315b027df577359e2799a86792b9756ee325f79acd8f170480ca583b3"
+    },
+    "studio.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.native.dart",
+      "bytes": 48340,
+      "sha256": "b6835f9bf98d1347cf95c998eadb4d5259fcf8136fc7d1316f1e0dda1a17ae26"
+    },
+    "studio.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\studio.capnp.web.dart",
+      "bytes": 27264,
+      "sha256": "94fb05aad68c6ee34aaa42666e6bfa589dd28aa20e2a4688739e90614b6cf7c0"
+    },
+    "tasks.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.dart",
+      "bytes": 185,
+      "sha256": "8097fdeae2fb8a7962da0ff44ad27e485b0aca74575a6c3a1445dd1891cfa964"
+    },
+    "tasks.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.ids.dart",
+      "bytes": 400,
+      "sha256": "bfcb273792ea96dc887d861890d48a30f5cadb83e752ab49b7afddf2ea378008"
+    },
+    "tasks.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.native.dart",
+      "bytes": 12567,
+      "sha256": "3699d90d9d49ef7731cfce25ad8a806b8fc2e1a2ba8d52a64846a921e010467e"
+    },
+    "tasks.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\tasks.capnp.web.dart",
+      "bytes": 7331,
+      "sha256": "ce4436c699b50834e420455d1b00c27d082266785491854f68d186ab97903992"
+    },
+    "workbench.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.dart",
+      "bytes": 197,
+      "sha256": "c2d505c2b865076827d8efb75a2145ef271aa6051f12d75a755eeabbec3bee35"
+    },
+    "workbench.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.ids.dart",
+      "bytes": 437,
+      "sha256": "449388aa049411e39c1b4d495d0d93afa1a5fbd28bfca4d7fd5017cf9ec69f49"
+    },
+    "workbench.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.native.dart",
+      "bytes": 17803,
+      "sha256": "8634ecfbc4363a737b67561aa9bfdb913afb8bbb4f594f9e9fea2377cbe45398"
+    },
+    "workbench.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench.capnp.web.dart",
+      "bytes": 10417,
+      "sha256": "4242397b09595afd5f36300b27966d365e8b856ae436282626d4ba66e727e3e2"
+    },
+    "workbench_supervision.capnp.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.dart",
+      "bytes": 249,
+      "sha256": "06da6d887feb83cfaa21ef1579186351af3f5f8fd5d0bbad1dbb7d75c0ab44a3"
+    },
+    "workbench_supervision.capnp.ids.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.ids.dart",
+      "bytes": 1090,
+      "sha256": "2332d5d378657e13683ea71bf09113b2dc356332e35fddaaff843f2b8cda8577"
+    },
+    "workbench_supervision.capnp.native.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.native.dart",
+      "bytes": 53123,
+      "sha256": "c6922c7d2b7cc7382f72e7b02ee475853d2dace6b4ddb1ac4dbb68e34fe27c9b"
+    },
+    "workbench_supervision.capnp.web.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision.capnp.web.dart",
+      "bytes": 29984,
+      "sha256": "702d63c6dcf4da7c5837eb05fdaf192dc68e478c4b3f6404ade4243c30f571ff"
+    },
+    "workbench_supervision_identity.dart": {
+      "path": "C:\\ms1020\\lib\\plugins\\generated\\workbench_supervision_identity.dart",
+      "bytes": 167,
+      "sha256": "d9ab9e93593d6abf10d533033deb7508fe14648cff97ae1740bed94f05fd2896"
+    }
+  },
+  "commands": [
+    {
+      "name": "generate",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\generate.stdout",
+        "bytes": 30,
+        "sha256": "56f1fe1a09302b58f335f713c3a174be1cc69189578e12b35ddb59f76e6010d0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\generate.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "check",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\check.stdout",
+        "bytes": 29,
+        "sha256": "73053600804a903908d390418d2d78e7cbc11740d157ec1fbb6fbf0d413dceab"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "cache_root": "D:/build_cache",
+  "source_accepted": false,
+  "release_eligible": false
+}

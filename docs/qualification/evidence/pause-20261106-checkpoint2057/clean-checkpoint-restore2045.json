@@ -1,0 +1,76 @@
+{
+    "credential_reads":  0,
+    "guard":  {
+                  "path":  "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-clean-restore-2045\\host-guard.ps1",
+                  "bytes":  7998,
+                  "sha256":  "27fd8ceabe987924bc5237bf6b3cb8bf3c3185b10ca750e9ebb03c6a55443d52"
+              },
+    "all_protected_hashes_unchanged":  true,
+    "Unknown_checkpoint_restores":  0,
+    "release_eligible":  false,
+    "restore_attempts":  1,
+    "free_C_after":  26547576832,
+    "strict_guest_readiness":  "PENDING_NEW_BOOT",
+    "retained_checkpoint_files":  [
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmcx",
+                                          "bytes":  48933,
+                                          "sha256":  "bd0db926d05f2189f6b0c9c38b0e365464f917acd3dbba92eba79c0d5dd3540a"
+                                      },
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmrs",
+                                          "bytes":  2129649636,
+                                          "sha256":  "9a35f38dda7d95c2b64366d0df76ca4264be33577b240fec973ad500e4f205b5"
+                                      },
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmgs",
+                                          "bytes":  4194816,
+                                          "sha256":  "65b621db572c8bd2effc2971dcb4078c8e5c02d79cead185c166350fdc5458ad"
+                                      }
+                                  ],
+    "retained_unknown_disk":  {
+                                  "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_0D2CD82B-53B7-4435-8936-C1B349086F19.avhdx",
+                                  "bytes":  9226420224,
+                                  "sha256":  "e82cd9f8bfa62cba66b81b1351d2223e28d7d7e4a81b047f6a9aaf18f1993362"
+                              },
+    "status":  "PASS_CLEAN_CHECKPOINT_RESTORED_UNKNOWN_CHECKPOINT_PRESERVED",
+    "retained_checkpoint_id":  "ba264892-7fa6-4111-a9dc-9bde534f4ed2",
+    "clean_checkpoint_files":  [
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmcx",
+                                       "bytes":  48144,
+                                       "sha256":  "9ed9123e8926d23105b30a5a49cfa14622f5dc19a31ad97a296072ef31020061"
+                                   },
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmrs",
+                                       "bytes":  82010,
+                                       "sha256":  "159d94ec2cfe8d1089d097d0972ccbc9b7d1c288f50089a53da6164cc6219bdc"
+                                   },
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmgs",
+                                       "bytes":  4194816,
+                                       "sha256":  "7ac51e9ef28fbb97a5286a9a7344f26f88b3df1a8a66c5d08a1631267fbf9299"
+                                   }
+                               ],
+    "guest_calls":  0,
+    "baseline":  {
+                     "mtime_ticks":  639295321332097408,
+                     "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance.vhdx",
+                     "sha256":  "337904e0a7218fa67d24f17e6951b27f08a3e3e1895e71fd820e3137ffbcbcf6",
+                     "bytes":  20573061120
+                 },
+    "current_disk":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2746CA0E-A848-46FA-9C05-023D5958F4E4.avhdx",
+    "utc":  "2026-11-06T11:06:35.2663007Z",
+    "registered_vms":  4,
+    "vm_id":  "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+    "original_restore_returned":  true,
+    "Windows_reinstallations":  0,
+    "original_owner_contacts":  0,
+    "free_C_before":  24418861056,
+    "original_case_clean":  false,
+    "other_vms_unchanged":  true,
+    "source_digest":  "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+    "clean_checkpoint_id":  "e75dc168-6c96-4add-8596-2f1b8b16452b",
+    "state":  "Off",
+    "VM_creations":  0
+}

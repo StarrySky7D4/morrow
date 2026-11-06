@@ -1,6 +1,6 @@
 # Local continuation, 2026-10-21
 
-Status: **paused by explicit user instruction on 2026-11-01; checkpoint1624 preserves protected watch results, staged UI checks and uncompiled current changes. Complete Windows P2/P3, SDK and release gates remain open. No development or VM work until the user resumes**.
+Status: **PAUSED by explicit user instruction on 2026-11-06. case2050 is prepared and bound, NOT_RUN; all eight final release gates remain open. See [the current pause handoff](PAUSED_WINDOWS_20261106.md). No goal work until explicit resume.**
 See [the current continuation](RESUMED_WINDOWS_20261030.md) and [pause/checkpoint1624](PAUSED_WINDOWS_20261101.md). The [2026-10-30 pause](PAUSED_WINDOWS_20261030.md) and historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
 `116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
@@ -1943,3 +1943,74 @@ Evidence: [scope and outcome](evidence/resume-20261029-p2-directory/p2-directory
 ## Paused publication checkpoint, 2026-10-29
 
 Four P2 roles052 cold-built; policy703 passed 18 pure methods and 31 malformed-input checks without LSA calls. The already-running SDK719 build closed all three original compilers. Kernel722 compiled. VM047 is Saved; case703 remains prepared and NOT_RUN. Original47 case638 and formal text/history/reopen678 retain source5fc113; neither qualifies a038. Policy failure684 and earlier Unknown outcomes are preserved. P2, current-source P3, SDK26/G04/FREEZE and release remain open. Publication changes the whole-tree digest: prove equivalence and rebind sealed preparation after explicit resume. [Current handoff](PAUSED_WINDOWS_20261029.md).
+
+
+## Resumed Windows watch qualification — 2026-11-05
+
+Canonical Dart host identity now matches the current schema through the official generator and its full check. Source `bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37` cold-built all 883 reported artifacts and passed all eight selected protected Workbench watch methods. These cover independent approval and bounds, original native expiry, Rust/C/C++ delivery, cancellation after delivery, and actual Cap’n Proto expiry/read-once/replay refusal. All original processes returned and native retirement was confirmed. The production Dart decoder read three actual captured messages and passed 32 checks; current canonical wire44 and session45 also passed. These counts describe separate scopes and are not a release score.
+
+The 57 frozen inputs and four VM registrations are unchanged; caches remain on D. Old failures and Unknown owners were untouched. Full product approval/review UI is the next required step, followed by remaining current-source Windows P2/P3 and SDK gates. SDK26/G04/SDK_FREEZE remain OPEN; source_accepted=false; release_eligible=false. Goal ACTIVE; no commit or push.
+
+[Original evidence and scope](evidence/resume-20261105-watch/checkpoint.json).
+
+
+## Cleanup and bounded SDK continuation — 2026-11-05
+
+Removed 69,063 old compiler intermediate files from 127 targets: 31.09 GiB logical, with 26.49 GiB observed free-space gain during deletion. Sources, final binaries, backup files, Unknown evidence and all VM disks were retained. Four VMs remain registered; caches remain on D.
+
+Canonical five-workspace lock repair is applied and locked offline metadata passes for all five. Four related consumers passed separate cold compile checks; staged network repair passed nine actual methods, including three loopback TLS / Windows DPAPI paths. The 13 frozen compatibility methods (one transport metadata-only method) and 19 static package preflights preserve source 190b; network runtime preserves its staged input digest. No frozen guest modules were rebuilt. These results are separate scopes, not release qualification.
+
+Product watch B is pending manual navigation and original closure after repeated UI capture mismatch. Its original artifacts and source identity remain retained; the five changed nested workspace lock files do not govern those compiled components. No original runtime receipt is relabelled. Full Windows P2, current P3, SDK26/G04/SDK_FREEZE and final candidate qualification remain open. Goal ACTIVE; no commit or push.
+
+[Checkpoint and evidence](evidence/resume-20261105-sdk-cleanup/checkpoint.json).
+
+
+## Cleanup and native-context stack repair — 2026-11-06
+
+The completed cleanup removed 38,094 old compiler objects (2.178 GiB logical;
+2.074 GiB observed D free-space gain during deletion) and moved 1.342 GiB of
+four C cache leaves to D with verified compatibility junctions. Final artifacts,
+sources, backups, VM disks and retained Unknown evidence were preserved. Later
+static analysis and one cold compile consumed D space separately; do not count
+earlier cleanups again. Four VMs remain registered; VM056 remains Saved.
+
+Normal1755 passed its pinned source859 original47 and nine groups, with genuine
+case/policy closure. Shared1760 returned only 34 steps, then retained Unknown at
+sealed-native-context with an original cached stack-overflow marker. The precise
+runtime callsite and native resource retirement remain unproven. Never query,
+poll, replay or terminate its original exec 53429, historical shared owner 99895,
+or product-watch A owner 35497. No old case was resumed for this analysis.
+
+The exact baseline PE/PDB and unwind tables showed that the formal-step closure
+kept 262,680 bytes of constructor temporaries active during later owner steps.
+The constructor body is now moved unchanged to a non-inlined helper on the same
+thread. Candidate1770 cold-compiled all 884 artifacts, original compiler exit 0,
+without executing product code. Candidate1772 verified the actual caller frame
+fell to 344 bytes (262,336 bytes removed), with the PE's 1 MiB reserve unchanged.
+The first read-only reviewer rejected symbol-resolved disassembler output; its
+format error was recorded and corrected without recompiling or runtime replay.
+
+This is a bounded stack-pressure repair, not fresh P2 acceptance. The candidate
+retains the canonical zero parent anchor and cannot be deployed as an admitted
+VM role. Compile identity 1619fa29c9b1118714b0d90426395c0db3af99fc53989aa5aa09ae93ae5be0a5
+predates this documentation update. Untouched original line endings were
+restored after compilation to avoid whole-file churn; normalized LF bytes match
+the exact compiled input. Both hashes and the equivalence proof are retained. Recheck disk headroom, use the already-approved verified offline archival
+procedure, create a clean VM within the four-registration limit, then bind and
+cold-build all four roles for new normal47/nine and shared-parent tests.
+
+Full Windows P2, current-source P3, SDK26/G04/SDK_FREEZE and final candidate
+qualification remain OPEN. Goal ACTIVE; source_accepted=false;
+release_eligible=false. No commit or remote publication in this checkpoint.
+
+[Cleanup, stack analysis, source identity and remaining work](evidence/resume-20261106-stack/checkpoint.json).
+
+
+## Paused checkpoint2057 — 2026-11-06
+
+The user explicitly requested pause and GitHub publication. Goal status is PAUSED. Do not start another build, VM case or product workflow until resumed. Existing preparation and compression processes have returned 0; old Unknown owners remain untouched.
+
+The canonical development branch is `codex/local-continue-20261020`; the separate SDK Replace candidate is `codex/g04-conditional-replace-20261106-1850`. Their pre-publication source identities are `f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e` and `37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275`. These are separate evidence scopes. Publication only adds handoff/report material to each working tree, changes its whole-tree digest and requires a reviewed identity rebind before further qualification.
+
+
+[Exact stopping point, source boundaries and next work](PAUSED_WINDOWS_20261106.md).

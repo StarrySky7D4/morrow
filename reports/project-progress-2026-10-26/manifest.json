@@ -1,19 +1,9 @@
 {
   "files": [
     {
-      "path": "index.html",
-      "bytes": 11071,
-      "sha256": "f49e5a5f770737b818ade715c03ddd6029956e3f5228d6d73a9eb284e0b23e1a"
-    },
-    {
-      "path": "report-data.json",
-      "bytes": 354883,
-      "sha256": "7d1b12af8b3264639425c22875f103a85c90baca4697cf4587cc0101b522a5b8"
-    },
-    {
-      "path": "verification.json",
-      "bytes": 712,
-      "sha256": "1073601808c0da5b00d79072331711443567518ab6f4dc3d5a2545a0a21feec7"
+      "path": "history-before-pause-20261106.html",
+      "bytes": 13213,
+      "sha256": "fccbf8f5460efb054f60ac797b6a4641ab023cf44f815bf540535f0dd9488a7c"
     },
     {
       "path": "history-checkpoint-1348.html",
@@ -49,12 +39,32 @@
       "path": "history-checkpoint-1527.html",
       "bytes": 11276,
       "sha256": "f728f2077a5017bcb54dcf6c551fe54932c52bf58c248be560537ea06c921d62"
+    },
+    {
+      "path": "history-checkpoint-1624.html",
+      "bytes": 11071,
+      "sha256": "f49e5a5f770737b818ade715c03ddd6029956e3f5228d6d73a9eb284e0b23e1a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 7805,
+      "sha256": "a50c1611e513f31ac9fd26865ae165a7604a843bed994ea98099962093917a62"
+    },
+    {
+      "path": "report-data.json",
+      "bytes": 366664,
+      "sha256": "23620f93f09d06ebed4ffda3d9851b7547803beac90885fa6dca6e0a52976d9a"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 508,
+      "sha256": "15a512e8ed917f12519d08b9f5a6a04586c45cb2a7d021cd09993e0eb30074dc"
     }
   ],
   "evidence": {
-    "path": "../../docs/qualification/evidence/resume-20261030-current/manifest.json",
-    "bytes": 312956,
-    "sha256": "a20065056baaf790dfaf666912553558ad7124cc7d0b277e67155f85b18afe55"
+    "path": "../../docs/qualification/evidence/pause-20261106-checkpoint2057/manifest.json",
+    "bytes": 17171,
+    "sha256": "4e127dbc3b64c2c17d6060bc3b107b38caf4f1f4ff4c62617be91215d61cbc1a"
   },
-  "scope": "Source-bound P2 token failure and SDK backend results; full original Windows and SDK gates remain open"
+  "scope": "Paused source-bound Windows P2 and separate SDK candidate; all final gates remain open."
 }

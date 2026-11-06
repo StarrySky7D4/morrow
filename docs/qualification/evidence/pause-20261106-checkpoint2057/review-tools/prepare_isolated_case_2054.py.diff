@@ -1,0 +1,17 @@
+--- 
++++ 
+@@ -18,10 +18,12 @@
+ assert receipt['scope']=='EXACT_REVIEWED_BYTES_BOUND_NO_P_T_POLICY'
+ assert plan['vm_id']=='59c31486-5a5e-4d88-bd06-69a0f23a9337'
+ assert json.loads((root/'controller/report.json').read_bytes())['pure_tests_passed']==85
+-assert plan['qualification_profile']=='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION' and plan['p2_wire_bytes']==3523 and not plan['original47_qualification']
++stage_profile=json.loads((root/'qualification-stage2054.json').read_bytes())
++assert stage_profile['tag']==tag and stage_profile['vm_id']==plan['vm_id']
++assert stage_profile['qualification_profile']=='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION' and stage_profile['p2_wire_bytes']==3523 and not stage_profile['original47_qualification']
+ assert len(json.loads((root/'policy/report.json').read_bytes())['pure_tests'])==18
+ plan.update(phase='apply-run-restore',binding_receipt=pin(out/'bind-receipt.json'))
+-save(root/'qualification-profile.json',dict(tag=tag,vm_id=plan['vm_id'],qualification_profile='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION',original47_qualification=False,source_roles=pin(base/'roles-070/result.json'),qualification_fault_derivation=pin(base/'roles-070/S-fault-derivation.json'),diagnostic_only=True,authority=False))
++save(root/'qualification-profile.json',dict(tag=tag,vm_id=plan['vm_id'],qualification_profile='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION',original47_qualification=False,p2_wire_bytes=3523,stage_profile=pin(root/'qualification-stage2054.json'),source_roles=pin(base/'roles-070/result.json'),qualification_fault_derivation=pin(base/'roles-070/S-fault-derivation.json'),diagnostic_only=True,authority=False))
+ save(root/'case-plan.json',plan)
+ selection=dict(root=str(root),tag=tag,script=selected['script'],plan=pin(root/'case-plan.json'),qualification=pin(root/'qualification-profile.json'),state='PREPARED_WITH_EXISTING_DIRECT_HUMAN_SCOPE_NOT_RUN')
+ save(base/'vm-case-selection-2050.json',selection)

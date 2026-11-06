@@ -55,6 +55,8 @@ class _Backend implements MutationTaskBackend, WorkbenchIoTaskControl {
   MutationPhase executedPhase = MutationPhase.observed;
   MutationEffect executedEffect = MutationEffect.osSucceeded;
   bool badPrepared = false, failStatus = false;
+  MutationResultKind? executedKindOverride;
+  String? executedOperationOverride;
 
   IoTaskSnapshot _snapshot() => IoTaskSnapshot(
     key: key,
@@ -172,12 +174,15 @@ class _Backend implements MutationTaskBackend, WorkbenchIoTaskControl {
     return _command(
       MutationCommandKind.execute,
       _result(
-        request!.disposition == MutationDisposition.delete
-            ? MutationResultKind.deleted
-            : MutationResultKind.created,
+        executedKindOverride ??
+            switch (request!.disposition) {
+              MutationDisposition.create => MutationResultKind.created,
+              MutationDisposition.replace => MutationResultKind.replaced,
+              MutationDisposition.delete => MutationResultKind.deleted,
+            },
         phase: executedPhase,
         effect: executedEffect,
-        operationId: operationId,
+        operationId: executedOperationOverride ?? operationId,
       ),
     );
   }
@@ -373,6 +378,79 @@ Future<void> _prepare(WidgetTester tester) async {
 }
 
 void main() {
+  MutationStartRequest replacementRequest() => MutationStartRequest(
+    submission: _id(10),
+    packageId: 'test.mutation-execution',
+    packageDigest: _id(2),
+    registryRevision: BigInt.one,
+    disposition: MutationDisposition.replace,
+    selectedPath: r'D:\build_cache\selected.bin',
+    relativePath: '',
+    subject: mutationExecutionSubject,
+    approvalSha256: _id(11),
+    timeoutMs: 30000,
+  );
+  test(
+    'replacement stages exact content and executes only once explicitly',
+    () async {
+      for (final content in [
+        Uint8List(0),
+        Uint8List.fromList([0, 255, 13, 10, 128]),
+      ]) {
+        final backend = _Backend();
+        final session = MutationExecutionSession.forBackend(backend, backend);
+        await session.refresh();
+        await session.prepare(
+          replacementRequest(),
+          operationId: 'replace-session',
+          content: content,
+        );
+        expect(session.error, isNull);
+        expect(session.ready, isTrue);
+        expect(backend.executes, 0);
+        expect(backend.contentLength, BigInt.from(content.length));
+        expect(backend.contentHash, sha256.convert(content).bytes);
+        expect(backend.chunks, content.isEmpty ? 0 : 1);
+        if (content.isNotEmpty) expect(backend.stagedContent, content);
+        await session.execute();
+        expect(session.error, isNull);
+        expect(session.uncertain, isFalse);
+        expect(session.outcome?.kind, MutationResultKind.replaced);
+        expect(session.canExecute, isFalse);
+        await expectLater(session.execute(), throwsStateError);
+        expect(backend.executes, 1);
+        await session.release();
+        backend.joined();
+        await session.refresh();
+        await session.acknowledge();
+      }
+    },
+  );
+  test(
+    'replacement rejects a different effect kind or operation identity',
+    () async {
+      for (final wrongIdentity in [false, true]) {
+        final backend = _Backend();
+        if (wrongIdentity) {
+          backend.executedOperationOverride = 'foreign-operation';
+        } else {
+          backend.executedKindOverride = MutationResultKind.created;
+        }
+        final session = MutationExecutionSession.forBackend(backend, backend);
+        await session.refresh();
+        await session.prepare(
+          replacementRequest(),
+          operationId: 'replace-session',
+          content: Uint8List(0),
+        );
+        await session.execute();
+        expect(session.error, isNotNull);
+        expect(session.uncertain, isTrue);
+        expect(session.canExecute, isFalse);
+        expect(backend.executes, 1);
+      }
+    },
+  );
   testWidgets('budgeted guests are not offered on the ordinary native route', (
     tester,
   ) async {

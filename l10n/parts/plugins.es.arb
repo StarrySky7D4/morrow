@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "Revise la ruta completa. Todos los límites deben ser positivos y respetar los máximos del plugin.",
-  "pluginsWatchOtherPanel": "Aún no se ha confirmado el fin de la observación. Revise la tarea original en el panel de cambios del directorio."
+  "pluginsWatchOtherPanel": "Aún no se ha confirmado el fin de la observación. Revise la tarea original en el panel de cambios del directorio.",
+  "pluginsFileMutationExecuteReplaceConfirm": "Reemplazar permanentemente el contenido de este archivo",
+  "pluginsGuestExecutionResourceBudget": "Recursos simultáneos aprobados",
+  "pluginsGuestExecutionResourceDeclaration": "Límite de recursos declarado"
 }

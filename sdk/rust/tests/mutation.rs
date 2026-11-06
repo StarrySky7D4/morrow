@@ -34,6 +34,14 @@ fn response(request: &Request) -> Response {
 fn independent_capnp_cli_vectors() {
     let valid_requests: &[(&str, &[u8])] = &[
         (
+            "replace-empty",
+            include_bytes!("../../vectors/mutation-v1/replace-empty.bin"),
+        ),
+        (
+            "replace-content",
+            include_bytes!("../../vectors/mutation-v1/replace-content.bin"),
+        ),
+        (
             "create-empty",
             include_bytes!("../../vectors/mutation-v1/create-empty.bin"),
         ),
@@ -79,6 +87,10 @@ fn independent_capnp_cli_vectors() {
         assert!(Request::decode(&value.encode().unwrap()).is_ok(), "{name}");
     }
     let invalid_requests: &[(&str, &[u8])] = &[
+        (
+            "bad-replace-empty-hash",
+            include_bytes!("../../vectors/mutation-v1/bad-replace-empty-hash.bin"),
+        ),
         (
             "bad-zero-reference",
             include_bytes!("../../vectors/mutation-v1/bad-zero-reference.bin"),

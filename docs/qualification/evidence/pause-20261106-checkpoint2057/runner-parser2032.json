@@ -1,0 +1,19 @@
+{
+  "status": "PASS_CURRENT_RUNNER_CAPNP_PARSER_ONLY",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "source_unchanged": true,
+  "build_exit": 0,
+  "exit_code": 0,
+  "methods": 1,
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\runner-parser-current-2032\\codex_command_runner-df6d8200d47db880.exe",
+    "bytes": 26115072,
+    "sha256": "5e7a859ba6a140f6429a852ab616d53d24b8f8de08e627b891ecfd8ca13cc2fe"
+  },
+  "original_processes_returned": true,
+  "VM_calls": 0,
+  "Runner_business_starts": 0,
+  "host_account_or_policy_calls": 0,
+  "full_P2_accepted": false,
+  "release_eligible": false
+}

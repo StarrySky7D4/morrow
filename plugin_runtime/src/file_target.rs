@@ -1,7 +1,8 @@
 //! Windows trusted-host selection of existing files and directory-bound create targets.
 //! Retains the opened object, never reopens a guest path. Selection is not
 //! dispatch authority or durable identity. Deletion uses a separate persistent
-//! one-way claim before native effects; conditional replacement remains unsupported.
+//! one-way claim before native effects. Replacement retains its original bounded
+//! native transaction, or explicitly rejects an unsupported filesystem/backend.
 use crate::{
     io_binding::{self, IoBinding, IoResourceLease},
     manager::{ManagedInstance, Manager},
@@ -147,12 +148,29 @@ impl Stamp {
     }
 }
 struct Entry {
-    file: File,
-    lease: IoResourceLease,
+    file: TargetFile,
     scope: SelectionScope,
     package_sha256: [u8; 32],
     stamp: Stamp,
     selected: SelectedTarget,
+}
+enum TargetFile {
+    Direct { file: File, lease: IoResourceLease },
+    Conditional(native_windows::replacement_owner::ReplacementOwner),
+}
+impl TargetFile {
+    fn lease(&self) -> &IoResourceLease {
+        match self {
+            Self::Direct { lease, .. } => lease,
+            Self::Conditional(owner) => owner.lease(),
+        }
+    }
+    fn metadata(&self) -> Result<Metadata> {
+        match self {
+            Self::Direct { file, .. } => Ok(file.metadata()?),
+            Self::Conditional(owner) => owner.metadata(),
+        }
+    }
 }
 struct Spent {
     binding: IoBinding,
@@ -196,13 +214,16 @@ impl TargetBroker {
     }
     pub fn reap(&mut self, now: u64) {
         self.entries
-            .retain(|_, entry| !entry.lease.reclaimable(now));
+            .retain(|_, entry| !entry.file.lease().reclaimable(now));
         self.creates.retain(|_, entry| !entry.reclaimable(now));
         self.spent
             .retain(|_, spent| !spent.binding.reclaimable(now));
     }
     fn retained_slots(&self) -> usize {
-        self.entries.len()
+        self.entries
+            .values()
+            .map(|entry| entry.file.lease().resources() as usize)
+            .sum::<usize>()
             + self.spent.len()
             + self
                 .creates
@@ -219,7 +240,7 @@ impl TargetBroker {
         } else {
             self.entries
                 .get(&value.target.reference)
-                .map(|entry| &entry.lease)
+                .map(|entry| entry.file.lease())
         }
         .ok_or(Error::Missing)
     }
@@ -253,7 +274,7 @@ impl TargetBroker {
             } else {
                 let entry = self.entries.get(&reference).ok_or(Error::Missing)?;
                 control.with(|now, cancelled| {
-                    entry.lease.preflight(manager, host, instance, now)?;
+                    entry.file.lease().preflight(manager, host, instance, now)?;
                     running(cancelled)
                 })?;
                 (
@@ -283,8 +304,8 @@ impl TargetBroker {
     /// Open a host-selected absolute disk path without modifying any bytes.
     /// Windows exclusive sharing prevents ordinary concurrent read/write/delete
     /// opens while retained. A final reparse point is opened itself and rejected.
-    /// Parent resolution is the trusted picker boundary, NOT directory traversal
-    /// authority: no guest-relative path is accepted by this broker.
+    /// Replacement pins its complete local ancestry and opens the original
+    /// selection in a finite transaction. No guest-relative path is accepted.
     ///
     /// Metadata identity is selection-local, not a stable filesystem file ID or
     /// content digest. Actual effects still require a conditional platform backend
@@ -346,7 +367,16 @@ impl TargetBroker {
         validate_path(path)?;
         let now = controlled(control, Ok)?;
         self.reap(now);
-        if self.retained_slots() >= MAX_TARGETS {
+        let resources = if scope.disposition == Disposition::Replace {
+            native_windows::replacement_owner::resources(path)?
+        } else {
+            1
+        };
+        if self
+            .retained_slots()
+            .checked_add(resources as usize)
+            .is_none_or(|count| count > MAX_TARGETS)
+        {
             return Err(Error::Limit);
         }
         let next = self.next.checked_add(1).ok_or(Error::Limit)?;
@@ -357,31 +387,30 @@ impl TargetBroker {
         hash.update(next.to_le_bytes());
         let reference = hash.finalize().into();
         let lease = controlled(control, |now| {
-            Ok(binding.admit_resource(manager, host, instance, &[capability], now)?)
+            Ok(binding.admit_resources(manager, host, instance, &[capability], resources, now)?)
         })?;
         controlled(
             control,
             |now| Ok(lease.check(manager, host, instance, now)?),
         )?;
-        // GENERIC_READ | DELETE, plus GENERIC_WRITE for the replacement selection.
-        // No CREATE/TRUNCATE/DELETE_ON_CLOSE: opening must never perform an effect.
-        let access = 0x8000_0000
-            | 0x0001_0000
-            | if scope.disposition == Disposition::Replace {
-                0x4000_0000
-            } else {
-                0
-            };
-        let file = OpenOptions::new()
-            .access_mode(access)
-            .share_mode(0)
-            .custom_flags(0x0020_0000)
-            .open(path)?; // FILE_FLAG_OPEN_REPARSE_POINT
+        let file = if scope.disposition == Disposition::Replace {
+            let deadline = controlled(control, |now| Ok(binding.native_deadline(now)?))?;
+            TargetFile::Conditional(native_windows::replacement_owner::ReplacementOwner::select(
+                path, deadline, lease,
+            )?)
+        } else {
+            // GENERIC_READ | DELETE; no create, truncate or delete-on-close.
+            let file = OpenOptions::new()
+                .access_mode(0x8001_0000)
+                .share_mode(0)
+                .custom_flags(0x0020_0000)
+                .open(path)?;
+            TargetFile::Direct { file, lease }
+        };
         let stamp = Stamp::read(file.metadata()?)?;
-        controlled(
-            control,
-            |now| Ok(lease.check(manager, host, instance, now)?),
-        )?;
+        controlled(control, |now| {
+            Ok(file.lease().check(manager, host, instance, now)?)
+        })?;
         let selected = SelectedTarget {
             reference,
             expected_identity: stamp.identity(reference),
@@ -390,7 +419,6 @@ impl TargetBroker {
             reference,
             Entry {
                 file,
-                lease,
                 scope,
                 package_sha256: instance.package().package().digest(),
                 stamp,
@@ -433,7 +461,7 @@ impl TargetBroker {
             .get(&request.target.reference)
             .ok_or(Error::Missing)?;
         control.with(|now, cancelled| {
-            entry.lease.preflight(manager, host, instance, now)?;
+            entry.file.lease().preflight(manager, host, instance, now)?;
             running(cancelled)
         })?;
         if request.subject != entry.scope.subject
@@ -446,13 +474,13 @@ impl TargetBroker {
             return Err(Error::Mismatch);
         }
         controlled(control, |now| {
-            Ok(entry.lease.check(manager, host, instance, now)?)
+            Ok(entry.file.lease().check(manager, host, instance, now)?)
         })?;
         if Stamp::read(entry.file.metadata()?)? != entry.stamp {
             return Err(Error::Changed);
         }
         controlled(control, |now| {
-            Ok(entry.lease.check(manager, host, instance, now)?)
+            Ok(entry.file.lease().check(manager, host, instance, now)?)
         })?;
         Ok(())
     }
@@ -491,7 +519,7 @@ impl TargetBroker {
         } else {
             let entry = self.entries.get(&reference).ok_or(Error::Missing)?;
             control.with(|now, cancelled| {
-                entry.lease.check(manager, host, instance, now)?;
+                entry.file.lease().check(manager, host, instance, now)?;
                 running(cancelled)
             })?;
             self.entries.remove(&reference);

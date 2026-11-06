@@ -59,7 +59,7 @@ class _Draft {
   MutationDisposition disposition = MutationDisposition.create;
   String? package, directory, file, contentName;
   XFile? content;
-  String name = '', jobBudget = '', totalBudget = '';
+  String name = '', jobBudget = '', totalBudget = '', resourceBudget = '';
   _Review? review;
 }
 
@@ -110,6 +110,7 @@ class _GuestMutationExecutionManagerState
   final _name = TextEditingController();
   final _jobBudget = TextEditingController();
   final _totalBudget = TextEditingController();
+  final _resourceBudget = TextEditingController();
   Timer? _timer, _dialogTimer;
   DialogRoute<bool>? _reviewRoute;
   int _epoch = 0;
@@ -129,7 +130,7 @@ class _GuestMutationExecutionManagerState
   ];
 
   String _catalog(GuestMutationExecutionManager value) =>
-      '${value.registryRevision}|${value.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.mutationSupported}:${p.declaredIo.join(',')}:${p.approvedIo.join(',')}:${p.mutationBudget?.maxJobBytes}:${p.mutationBudget?.maxBytes}').join('|')}';
+      '${value.registryRevision}|${value.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.mutationSupported}:${p.declaredIo.join(',')}:${p.approvedIo.join(',')}:${p.mutationBudget?.maxJobBytes}:${p.mutationBudget?.maxBytes}:${p.mutationBudget?.maxResources}').join('|')}';
 
   PluginLibraryEntry? _selectedPackage() {
     for (final plugin in _choices(_draft.disposition)) {
@@ -168,6 +169,7 @@ class _GuestMutationExecutionManagerState
     _name.text = _draft.name;
     _jobBudget.text = _draft.jobBudget;
     _totalBudget.text = _draft.totalBudget;
+    _resourceBudget.text = _draft.resourceBudget;
     _session.addListener(_changed);
     if (!_session.busy) unawaited(_session.refresh());
   }
@@ -217,6 +219,7 @@ class _GuestMutationExecutionManagerState
     _name.dispose();
     _jobBudget.dispose();
     _totalBudget.dispose();
+    _resourceBudget.dispose();
     super.dispose();
   }
 
@@ -333,7 +336,7 @@ class _GuestMutationExecutionManagerState
   }
 
   Future<void> _pickSource() async {
-    if (!_canEdit || _draft.disposition != MutationDisposition.create) return;
+    if (!_canEdit || _draft.disposition == MutationDisposition.delete) return;
     final epoch = ++_epoch, backend = widget.backend;
     setState(() => _picking = true);
     try {
@@ -440,8 +443,14 @@ class _GuestMutationExecutionManagerState
     if (declaration == null) return null;
     final job = BigInt.tryParse(_jobBudget.text.trim());
     final total = BigInt.tryParse(_totalBudget.text.trim());
+    final resources = declaration.maxResources == 0
+        ? 0
+        : int.tryParse(_resourceBudget.text.trim());
     if (job == null ||
         total == null ||
+        resources == null ||
+        resources < (declaration.maxResources == 0 ? 0 : 1) ||
+        resources > declaration.maxResources ||
         job <= BigInt.zero ||
         total < job ||
         job > declaration.maxJobBytes ||
@@ -450,7 +459,11 @@ class _GuestMutationExecutionManagerState
         total > BigInt.from(GuestMutationValidation.maxApprovedBytes)) {
       throw const FormatException('Invalid approved guest budget');
     }
-    return ApprovedGuestBudget(maxJobBytes: job, maxBytes: total);
+    return ApprovedGuestBudget(
+      maxJobBytes: job,
+      maxBytes: total,
+      maxResources: resources,
+    );
   }
 
   Future<bool?> _confirm(_Review review, {required String step}) async {
@@ -499,12 +512,11 @@ class _GuestMutationExecutionManagerState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (expired) Text(l.pluginsGuestExecutionExpired),
-                    Text(
-                      review.start.selection.disposition ==
-                              MutationDisposition.create
-                          ? l.pluginsIoFileCreate
-                          : l.pluginsIoFileDelete,
-                    ),
+                    Text(switch (review.start.selection.disposition) {
+                      MutationDisposition.create => l.pluginsIoFileCreate,
+                      MutationDisposition.replace => l.pluginsIoFileReplace,
+                      MutationDisposition.delete => l.pluginsIoFileDelete,
+                    }),
                     Text('${l.pluginsEndpointPackage}: ${review.packageName}'),
                     SelectableText(review.start.selection.packageId),
                     SelectableText(_hex(review.start.selection.packageDigest)),
@@ -523,6 +535,10 @@ class _GuestMutationExecutionManagerState
                       Text(
                         '${l.pluginsGuestExecutionTotalBudget}: ${review.start.approvedBudget!.maxBytes}',
                       ),
+                      if (review.start.approvedBudget!.maxResources != 0)
+                        Text(
+                          '${l.pluginsGuestExecutionResourceBudget}: ${review.start.approvedBudget!.maxResources}',
+                        ),
                     ],
                     if (plan)
                       SelectableText(
@@ -532,6 +548,10 @@ class _GuestMutationExecutionManagerState
                         review.start.selection.disposition ==
                             MutationDisposition.delete)
                       Text(l.pluginsFileMutationExecuteDeleteConfirm),
+                    if (step == 'execute' &&
+                        review.start.selection.disposition ==
+                            MutationDisposition.replace)
+                      Text(l.pluginsFileMutationExecuteReplaceConfirm),
                   ],
                 ),
               ),
@@ -550,10 +570,14 @@ class _GuestMutationExecutionManagerState
                       : null,
                   child: Text(
                     step == 'execute'
-                        ? review.start.selection.disposition ==
-                                  MutationDisposition.delete
-                              ? l.pluginsFileMutationExecuteDeleteConfirm
-                              : l.pluginsFileMutationExecuteCreateConfirm
+                        ? switch (review.start.selection.disposition) {
+                            MutationDisposition.create =>
+                              l.pluginsFileMutationExecuteCreateConfirm,
+                            MutationDisposition.replace =>
+                              l.pluginsFileMutationExecuteReplaceConfirm,
+                            MutationDisposition.delete =>
+                              l.pluginsFileMutationExecuteDeleteConfirm,
+                          }
                         : step == 'prepare'
                         ? l.pluginsFileMutationPrepareConfirm
                         : l.pluginsGuestExecutionDraft,
@@ -592,13 +616,13 @@ class _GuestMutationExecutionManagerState
     });
     try {
       final budget = _approvedBudget(package);
-      final content = _draft.disposition == MutationDisposition.create
+      final content = _draft.disposition != MutationDisposition.delete
           ? await _readContent(_draft.content, epoch)
           : Uint8List(0);
       if (!mounted || epoch != _epoch || !identical(backend, widget.backend)) {
         return;
       }
-      final contentHash = _draft.disposition == MutationDisposition.create
+      final contentHash = _draft.disposition != MutationDisposition.delete
           ? Uint8List.fromList(sha256.convert(content).bytes)
           : null;
       final operationId = 'morrow-guest-${_hex(_token().sublist(0, 16))}';
@@ -623,6 +647,7 @@ class _GuestMutationExecutionManagerState
             contentHash == null ? '' : _hex(contentHash),
             budget?.maxJobBytes.toString() ?? '',
             budget?.maxBytes.toString() ?? '',
+            budget?.maxResources.toString() ?? '',
           ]),
         ),
       );
@@ -665,7 +690,7 @@ class _GuestMutationExecutionManagerState
       await _session.review(
         request,
         operationId: operationId,
-        content: _draft.disposition == MutationDisposition.create
+        content: _draft.disposition != MutationDisposition.delete
             ? content
             : null,
       );
@@ -899,6 +924,10 @@ class _GuestMutationExecutionManagerState
               child: Text(l.pluginsIoFileCreate),
             ),
             DropdownMenuItem(
+              value: MutationDisposition.replace,
+              child: Text(l.pluginsIoFileReplace),
+            ),
+            DropdownMenuItem(
               value: MutationDisposition.delete,
               child: Text(l.pluginsIoFileDelete),
             ),
@@ -932,8 +961,10 @@ class _GuestMutationExecutionManagerState
                   _draft.package = value;
                   _draft.jobBudget = '';
                   _draft.totalBudget = '';
+                  _draft.resourceBudget = '';
                   _jobBudget.clear();
                   _totalBudget.clear();
+                  _resourceBudget.clear();
                 })
               : null,
         ),
@@ -970,6 +1001,24 @@ class _GuestMutationExecutionManagerState
               _invalidateDraft();
             },
           ),
+          if (package.mutationBudget!.maxResources != 0) ...[
+            _note(
+              '${l.pluginsGuestExecutionResourceDeclaration}: ${package.mutationBudget!.maxResources}',
+            ),
+            TextField(
+              key: const ValueKey('guest-mutation-resource-budget'),
+              controller: _resourceBudget,
+              enabled: _canEdit,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: l.pluginsGuestExecutionResourceBudget,
+              ),
+              onChanged: (value) {
+                _draft.resourceBudget = value;
+                _invalidateDraft();
+              },
+            ),
+          ],
         ] else if (package != null)
           _note(l.pluginsGuestExecutionOrdinaryBudget),
         Wrap(
@@ -983,13 +1032,13 @@ class _GuestMutationExecutionManagerState
               'pick-target',
               _canEdit && package != null ? _pickTarget : null,
             ),
-            if (_draft.disposition == MutationDisposition.create)
+            if (_draft.disposition != MutationDisposition.delete)
               _button(
                 l.pluginsFileMutationPickContent,
                 'pick-content',
                 _canEdit && package != null ? _pickSource : null,
               ),
-            if (_draft.disposition == MutationDisposition.create &&
+            if (_draft.disposition != MutationDisposition.delete &&
                 _draft.content != null)
               _button(
                 l.pluginsFileMutationEmptyContent,

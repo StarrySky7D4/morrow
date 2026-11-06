@@ -1,0 +1,3592 @@
+{
+  "status": "PASS_ACTUAL_HOST_CAPNP_PROJECTION",
+  "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+  "source_unchanged": true,
+  "build_exit": 0,
+  "test_exit": 0,
+  "methods": [
+    "protocol::mutation_task::reconciliation_projection_tests::historical_unknown_and_os_rejection_never_project_as_success",
+    "protocol::mutation_task::reconciliation_projection_tests::replace_response_preserves_original_success_or_os_rejection_over_capnp"
+  ],
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-host-route-2023\\morrow_workbench_host.exe",
+    "bytes": 40923136,
+    "sha256": "a9133bb8d18061cb657fc32f627ae4677abdf17bc93332817214616fd39dd407",
+    "compiler_fresh": false
+  },
+  "artifacts": [
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.24",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@3.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_derive@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.16.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#portable-atomic@1.15.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#portable-atomic@1.15.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#critical-section@1.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#scopeguard@1.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lock_api@0.4.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror-impl@2.0.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#subtle@2.6.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#parking_lot_core@0.9.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#parking_lot_core@0.9.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#parking_lot@0.12.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-syntax@0.8.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aho-corasick@1.1.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-automata@0.4.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jobserver@0.1.35",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#find-msvc-tools@0.1.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shlex@2.0.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cc@1.4.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#stable_deref_trait@1.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#allocator-api2@0.2.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-core@0.3.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#socket2@0.6.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#mio@1.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-macros@2.7.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.53.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zeroize_derive@1.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-sink@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#synstructure@0.13.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-core@0.1.36",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#slab@0.4.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-attributes@0.1.31",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-io@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.44",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-channel@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-macro@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-task@0.3.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-util@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#displaydoc@0.2.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#http@1.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom-derive@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom@0.1.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yoke-derive@0.8.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bstr@1.13.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustc_version@0.4.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yoke@0.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.2.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerocopy@0.8.57",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerovec-derive@0.11.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.12.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerovec@0.11.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerocopy@0.8.57",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-util@0.7.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#writeable@0.6.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha1@0.10.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ppv-lite86@0.2.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tinystr@0.8.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#http-body@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-strings@0.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-result@0.4.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#litemap@0.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_core@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#potential_utf@0.1.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerotrie@0.2.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zlib-rs@0.6.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heck@0.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_provider@2.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.9.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fnv@1.0.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-trace@0.1.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_chacha@0.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-validate@0.11.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cmake@0.1.58",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#utf8_iter@1.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fs_extra@1.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dunce@1.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-syntax@0.8.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ipnet@2.12.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aws-lc-sys@0.44.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_collections@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-path@0.11.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#form_urlencoded@1.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sync_wrapper@1.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#untrusted@0.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-utils@0.8.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#mime@0.3.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#http-body-util@0.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex@1.13.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-conv@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aws-lc-rs@1.18.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#httparse@1.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#time-core@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#time-macros@0.2.32",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#idna_adapter@1.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-utils@0.8.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aho-corasick@1.1.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.15.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#spin@0.9.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#powerfmt@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#deranged@0.5.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#httpdate@1.0.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#time-core@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-conv@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#time@0.3.55",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-automata@0.4.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#idna@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#httparse@1.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aws-lc-sys@0.44.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#untrusted@0.7.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows_x86_64_msvc@0.52.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aws-lc-rs@1.18.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex@1.13.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-registry@0.6.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows_x86_64_msvc@0.52.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#url@2.5.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.16.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winapi-util@0.1.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#psl-types@2.0.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-xid@0.2.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#same-file@1.0.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-targets@0.52.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-executor@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.27.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.45",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pkg-config@0.3.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#try-lock@0.2.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#atomic-waker@1.1.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#want@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.14.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.45",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#h2@0.4.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schannel@0.1.29",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winnow@1.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_parser@1.1.3+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-derive@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.14.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.92",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#data-encoding@2.11.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-epoch@0.9.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_datetime@1.1.1+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_edit@0.25.15+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures@0.3.33",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nibble_vec@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicase@2.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ryu@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-epoch@0.9.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro-crate@3.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hyper@1.11.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#const_format_proc_macros@0.2.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-integer@0.1.47",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ahash@0.8.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lazy_static@1.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-bigint@0.4.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#const_format@0.2.35",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hyper-util@0.1.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-macros@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls-native-certs@0.8.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-rustls@0.26.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winapi-util@0.1.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-normalization@0.1.25",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wildcard@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_derive_internals@0.29.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#smol_str@0.3.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schemars@0.8.22",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicase@2.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tower-layer@0.3.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-utils@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schemars_derive@0.8.22",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-utils@0.3.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#termcolor@1.4.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ahash@0.8.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#walkdir@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-graceful@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#asynk-strim@0.1.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dunce@1.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dyn-clone@1.0.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-error@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#option-ext@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dirs-sys@0.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-core@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schemars@0.8.22",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ts-rs-macros@11.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tower@0.5.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nom@8.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#endian-type@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#radix_trie@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http-types@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ts-rs@11.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dirs@6.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#psl@2.1.239",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#flume@0.12.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prodash@31.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#minimal-lexical@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#native-tls@0.2.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#md5@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-net@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nom@7.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-features@0.46.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/absolute-path#codex-utils-absolute-path@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.52.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#webpki-roots@1.0.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry@0.31.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cookie@0.18.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#widestring@1.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#simd-adler32@0.3.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heapless@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#native-tls@0.2.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hash32@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-stream@0.1.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@1.0.109",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-deque@0.8.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lazy_static@1.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rayon-core@1.13.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#adler2@2.0.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#litrs@1.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#document-features@0.2.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heapless@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-native-tls@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cookie@0.18.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sharded-slab@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_urlencoded@0.7.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zstd-sys@2.0.16+zstd.1.5.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#publicsuffix@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-channel@0.5.16",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#env_filter@2.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heapless@0.7.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-error@0.2.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-log@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#matchers@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nu-ansi-term@0.50.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thread_local@1.1.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#encoding_rs@0.8.35",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytemuck_derive@1.12.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dupe_derive@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typeid@1.0.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@0.4.30",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ipconfig@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bumpalo@3.20.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ref-cast@1.0.27",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytemuck@1.25.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-subscriber@0.3.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#env_logger@0.11.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cookie_store@0.22.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hyper-tls@0.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#faster-hex@0.10.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@1.0.109",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crossbeam-deque@0.8.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#miniz_oxide@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hyper-rustls@0.27.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rusticata-macros@4.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#enum-as-inner@0.6.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hash32@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#logos-codegen@0.15.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#asn1-rs-derive@0.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#arrayvec@0.7.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand@0.10.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#blake3@1.8.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ref-cast-impl@1.0.27",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#asn1-rs-impl@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-xid@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anstyle@1.0.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#constant_time_eq@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#linktime-proc-macro@0.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tagptr@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bit-vec@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#atomic@0.5.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crc-catalog@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#utf8parse@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#allocative@0.3.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@1.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell_polyfill@1.70.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#link-section@0.19.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#erased-serde@0.4.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ctor@1.0.13",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anstyle-wincon@3.0.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anstyle-parse@1.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crc@3.4.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lock_free_hashtable@0.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bit-set@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#moka@0.12.16",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@0.4.30",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#asn1-rs@0.7.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ref-cast@1.0.27",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quickcheck@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heapless@0.7.17",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hickory-proto@0.25.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#reqwest@0.12.28",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#flate2@1.1.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rayon-core@1.13.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typeid@1.0.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ipconfig@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cobs@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anstyle-query@1.1.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strong_hash_derive@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#allocative_derive@0.3.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#colorchoice@1.0.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#resolv-conf@0.7.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.14.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#arrayref@0.3.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-segmentation@1.13.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#oid-registry@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zstd-safe@7.2.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fnv@1.0.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http-headers@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#is_terminal_polyfill@1.70.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.1.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#beef@0.5.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@0.15.44",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#logos-codegen@0.15.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anstream@1.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#convert_case@0.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#blake3@1.8.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dashmap@6.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hickory-resolver@0.25.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#allocative@0.3.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strong_hash@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#postcard@1.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#erased-serde@0.4.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sorted_vector_map@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@0.6.13",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fancy-regex@0.16.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#static_interner@0.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zstd-sys@2.0.16+zstd.1.5.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dupe@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.45",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha1-checked@0.10.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#triomphe@0.1.16",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winnow@0.7.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#csv-core@0.1.13",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pagable_derive@0.4.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#static_assertions@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strsim@0.11.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jiff-tzdb@0.1.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ident_case@1.0.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strsim@0.11.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sequence_trie@0.3.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#take_mut@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#inventory@0.3.24",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clap_lex@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark_map@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.6.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pagable@0.4.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#darling_core@0.23.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jiff-tzdb-platform@0.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#csv@1.4.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-hash@0.23.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http-headers@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zstd-safe@7.2.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schemafy_core@0.5.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@0.15.44",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-dns@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#derive_more-impl@1.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#oid-registry@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#logos-derive@0.15.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#der-parser@10.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fluent-uri@0.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#Inflector@0.11.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_html_form@0.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/rustls-provider#codex-utils-rustls-provider@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clap_derive@4.6.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fxhash@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_repr@0.1.21",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#iri-string@0.7.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#base64@0.23.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#http-range-header@0.4.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#error-code@3.4.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_fallback_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#matchit@0.9.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jiff-core@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#endian-type@0.1.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.1.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.15.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#radix_trie@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jiff@0.2.35",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clipboard-win@5.4.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pem@4.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lsp-types@0.97.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark_map@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clap@4.6.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#schemafy@0.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#x509-parser@0.18.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#logos@0.15.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#derive_more@1.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-tcp@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zstd@0.13.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#darling_macro@0.23.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#annotate-snippets@0.9.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#derivative@2.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-opentelemetry@0.32.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dupe@0.9.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#miniz_oxide@0.8.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-test@0.4.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fdeflate@0.3.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fd-lock@4.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/home-dir#codex-utils-home-dir@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustls-platform-verifier@0.7.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yasna@0.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-url@0.35.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#home@0.5.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#byteorder-lite@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-segmentation@1.13.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zune-core@0.5.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quick-error@2.0.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#indenter@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#weezl@0.1.12",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_decimal_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#color_quant@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pxfm@0.1.30",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fixedbitset@0.5.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#petgraph@0.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#moxcms@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gif@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#display_container@0.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#image-webp@0.2.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zune-jpeg@0.5.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustyline@14.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rcgen@0.14.10",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/http-client#codex-http-client@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#png@0.18.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http-core@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark_derive@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark_syntax@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#darling@0.23.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#debugserver-types@0.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_fallback_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-date@0.15.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#textwrap@0.11.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-udp@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lru@0.18.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#erased-serde@0.3.31",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cmp_any@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#urlencoding@2.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-ppcle_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-s390_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strsim@0.10.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#multimap@0.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_32@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#maplit@1.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-win32@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored@3.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#starlark@0.14.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-build@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/path-uri#codex-utils-path-uri@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/cache#codex-utils-cache@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-socks5@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-actor@0.40.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_fallback@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_with_macros@3.19.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-http-backend@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#image@0.25.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rama-tls-rustls@0.3.0-alpha.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_decimal_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-hashtable@0.13.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_regex@0.18.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fixed_decimal@0.7.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#globset@0.4.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#multimap@0.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_ignored@0.1.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shlex@1.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-lite@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/string#codex-utils-string@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/execpolicy#codex-execpolicy@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/network-proxy#codex-network-proxy@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_decimal@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-object@0.58.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/image#codex-utils-image@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_with@3.19.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#chardetng@0.1.17",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/ext/items#codex-extension-items@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/redacted-string#codex-utils-redacted-string@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/async-utils#codex-async-utils@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strum_macros@0.28.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quick-xml@0.41.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#strum@0.27.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memmap2@0.9.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winapi@0.3.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sys-locale@0.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wildmatch@2.6.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/protocol#codex-protocol@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winapi@0.3.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.4.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek-derive@0.1.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#parking@2.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shell-words@1.1.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-fs@0.19.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#concurrent-queue@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.6.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#headers-core@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-interface@0.59.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-implement@0.60.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pin-project-internal@1.1.13",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-language@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg_aliases@0.1.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nix@0.28.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pin-project@1.1.13",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-core@0.62.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#headers@0.4.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-chunk@0.7.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hyper-timeout@0.5.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror-impl@1.0.69",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#vcpkg@0.2.15",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#utf-8@0.7.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winreg@0.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nonempty@0.12.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/openai-oss-forks/tungstenite-rs?rev=4fffad30fe373adbdcffab9545e9e9bf4f2fc19f#tungstenite@0.27.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tonic@0.14.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.11.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-tempfile@21.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#event-listener@5.4.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#eventsource-stream@0.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.27.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_path_to_error@0.1.20",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#mxc_telemetry@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/codex-client#0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#event-listener-strategy@0.5.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-lock@21.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#nix@0.28.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tonic-prost@0.14.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#filedescriptor@0.8.3",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/openai-oss-forks/tokio-tungstenite?rev=0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186#0.28.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winreg@0.10.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry_sdk@0.31.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shared_library@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-result@0.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#flatbuffers@25.12.19",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#const-hex@1.19.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serial2@0.2.38",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-threading@0.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#downcast-rs@1.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-general-category@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracelogging_macros@1.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#signature@3.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519@3.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracelogging@1.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#portable-pty@0.9.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-future@0.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry-proto@0.31.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-strings@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-reflect@0.16.5",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/websocket-client#codex-websocket-client@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#async-channel@2.5.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-commitgraph@0.35.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-collections@0.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-numerics@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry-http@0.31.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-quote@0.7.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.59.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-sec@0.13.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashlink@0.12.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/windows_user_directories#morrow-windows-user-directories@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-interface@0.58.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-implement@0.58.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-iterator@0.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-streaming-iterator@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rusqlite@0.40.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-core@0.58.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winreg@0.55.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry-otlp@0.31.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows@0.62.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-revwalk@0.29.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@3.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#mxc_telemetry@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/codex-api#0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#flatbuffers@25.12.19",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/utils/pty#codex-utils-pty@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-general-category@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-ref@0.61.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-language@0.1.7",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand_chacha@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dirs-sys-next@0.1.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry-appender-tracing@0.31.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-transfer-v1#morrow-blob-transfer-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#mxc_config_contract@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#os_info@3.15.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gethostname@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cidr@0.3.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opentelemetry-semantic-conventions@0.31.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/stream-parser#codex-utils-stream-parser@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows_x86_64_msvc@0.53.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lz4_flex@0.14.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/otel#codex-otel@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#wxc_common@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#dirs-next@2.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rand@0.8.8",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows@0.58.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-command@0.8.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-packetline@0.21.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tracing-appender@0.2.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter@0.25.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-glob@0.24.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#learning_mode_core@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clru@0.6.3",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-v1#morrow-fs-watch-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-v1#morrow-fs-directory-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-powershell@0.26.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-bash@0.25.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#inout@0.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#winnow@1.0.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmparser@0.239.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#glob@0.3.4",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_parser@1.1.3+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cipher@0.4.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-pack@0.68.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#learning_mode_windows@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-transport@0.55.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_core@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#arc-swap@1.9.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-transfer-v1#morrow-blob-transfer-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows_x86_64_msvc@0.53.1",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#sandbox_spec@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#process_security_environment_spec@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-revision@0.43.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-shallow@0.10.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-config-value@0.17.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#async-io@2.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-request-v1#morrow-blob-upload-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-proposal-v1#morrow-blob-upload-proposal-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-request-v1#morrow-fs-directory-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#universal-hash@0.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#errno@0.3.14",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_datetime@0.7.5+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#maybe-async@0.2.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_writer@1.1.2+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-bom@2.0.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#which@8.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#opaque-debug@0.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#streaming-iterator@0.1.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter@0.25.10",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#polyval@0.6.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-config@0.54.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-protocol@0.59.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-refspec@0.39.0",
+      "fresh": false
+    },
+    {
+      "package_id": "git+https://github.com/microsoft/mxc?rev=6cd3d58f05d3447e67109cfb75e042803b843ca4#appcontainer_common@0.8.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-targets@0.53.5",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-odb@0.78.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_ir@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-v1#morrow-fs-watch-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-v1#morrow-fs-directory-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-powershell@0.26.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-bash@0.25.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmparser@0.239.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-discover@0.49.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-traverse@0.55.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#polling@3.11.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/file-system#codex-file-system@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix-diff@0.61.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tungstenite@0.29.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pem@3.0.6",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-session-exec-v1-r2#morrow-agent-session-exec-v1-r2@0.1.0-experimental.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-process-control-v1#morrow-agent-process-control-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#futures-lite@2.6.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_spanned@1.1.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#keccak@0.1.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_collections@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi@1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha3@0.10.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml@0.9.12+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#async-io@2.6.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tokio-tungstenite@0.29.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#gix@0.81.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/shell-command#codex-shell-command@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-request-v1#morrow-fs-directory-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-native-v1#morrow-fs-watch-native-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.60.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/mxc-sandbox#codex-mxc-sandbox@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-request-v1#morrow-blob-upload-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-proposal-v1#morrow-blob-upload-proposal-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ghash@0.5.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aes@0.8.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ctr@0.9.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#kem@0.3.0-pre.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#uds_windows@1.2.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror-impl-no-std@2.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#axum-core@0.5.6",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#simple_asn1@0.6.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#notify-types@2.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aead@0.5.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#include_dir_macros@0.7.4",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/build-info#codex-build-info@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasm-encoder@0.239.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#matchit@0.8.4",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/skills#codex-skills@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unsafe-libyaml@0.2.11",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#similar@2.7.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/git-utils#codex-git-utils@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_yaml@0.9.34+deprecated",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.9",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#include_dir@0.7.4",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ml-kem@0.2.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aes-gcm@0.10.3",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#notify@8.2.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#jsonwebtoken@9.3.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror-no-std@2.0.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/uds#codex-uds@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#x25519-dalek@2.0.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-session-exec-v1-r2#morrow-agent-session-exec-v1-r2@0.1.0-experimental.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-process-control-v1#morrow-agent-process-control-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/features#codex-features@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml_edit@0.24.1+spec-1.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/model-provider-info#codex-model-provider-info@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/audit#morrow-audit@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/install-context#codex-install-context@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/path-utils#codex-utils-path@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-catalog-admin-v1#morrow-agent-catalog-admin-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#leb128fmt@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasm-encoder@0.239.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/config#codex-config@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/build-info#codex-build-info@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#clatter@2.3.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/sandboxing#codex-sandboxing@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/websocket-auth#codex-websocket-auth@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/file-watcher#codex-file-watcher@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/skills#codex-skills@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/exec-server-protocol#codex-exec-server-protocol@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugins/workbench#morrow-workbench-plugin@0.1.9-test.54.8",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/core-plugin-common#codex-core-plugin-common@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/examples/blob-upload-common#morrow-blob-upload-sample@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.2.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wast@239.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/exec-server#codex-exec-server@0.0.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/audit#morrow-audit@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-catalog-admin-v1#morrow-agent-catalog-admin-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-session-process-v1-host#morrow-agent-session-process-v1-host@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yasna@0.5.2",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rcgen@0.13.2",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/agent-catalog-owner-v1#morrow-agent-catalog-owner-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugins/workbench#morrow-workbench-plugin@0.1.9-test.54.8",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/network_node#morrow-network-node@0.1.9-test.51",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/companions/morrow-codex/session-exec-windows-v1#morrow-codex-session-exec-windows-v1@0.1.0-experimental.1",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-history-v1#morrow-blob-upload-history-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/examples/blob-upload-common#morrow-blob-upload-sample@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wat@1.239.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/native_pipe_win_001#morrow-native-pipe-win@0.1.0",
+      "fresh": false
+    },
+    {
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "fresh": false
+    }
+  ],
+  "VM_calls": 0,
+  "full_G04_qualified": false,
+  "release_eligible": false,
+  "scope": "Actual host library with exact projection tests only; no legacy sandbox or product entry invoked",
+  "cache_reuse": "Cold dedicated Host workspace/default-feature/release namespace; no old target, Unknown cache or process reused"
+}

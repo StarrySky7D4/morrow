@@ -16,6 +16,12 @@ namespace C28.RootP1682 {
    Assert(!(bool)helper["create_attempted"]&&helper["create_returned"]==null&&helper["create_success"]==null
     &&helper["create_error"]==null&&helper["creation_filetime"]==null&&helper["process_dword"]==null);
    Assert(c.FirstError=="UNSAFE_TOKEN_OWNER_OR_DEFAULT_DACL"&&c.CreateError==123&&!c.CreateReturned);
+   var empty=new Io1725();empty.CacheStderrMarkers(new byte[0],0);empty.Fail("FIRST");
+   var cached=(Dictionary<string,object>)empty.DiagnosticData("run")["cached_stderr_markers"];
+   Assert((int)cached["bytes"]==0&&(uint)cached["marker_bits"]==0&&(bool)cached["valid"]);
+   empty.CacheStderrMarkers(Encoding.ASCII.GetBytes("panicked at"),11);empty.Fail("LATER");
+   Assert((uint)((Dictionary<string,object>)empty.DiagnosticData("run")["cached_stderr_markers"])["marker_bits"]==0);
+
   }
   public static void cached_helper_partial_creation_keeps_actual_failure_and_bounds_slot_diagnostics(){
    CaptureObservation c=new CaptureObservation{Status="UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY",
@@ -32,10 +38,13 @@ namespace C28.RootP1682 {
    string text=Json1725.Encode(Io1725.CachedHelper(c));
    Assert(!text.Contains("PRIVATE")&&!text.Contains("PASSWORD")&&!text.Contains("untrusted body")
     &&!text.Contains("private path")&&Encoding.UTF8.GetByteCount(text)<1800);
+   CachedStderrBoundaryCases();
   }
   public static void combined_cached_diagnostic_fits_existing_public_record_bound(){
    string label=new string('X',120);Io1725 io=new Io1725();io.At(label,null);io.NativeBegin(label);
-   io.NativeResult(false,5);io.Fail(label);
+   io.NativeResult(false,5);
+   byte[] markers=Encoding.ASCII.GetBytes("PRIVATE_BODY has overflowed its stack; panicked at; Cannot drop a runtime in a context where blocking is not allowed; Cannot start a runtime from within a runtime; failed to spawn thread; memory allocation of; ORIGINAL_PARENT_SESSION_UNKNOWN_RETAINED_NO_NEXT_ATTEMPT; ORIGINAL_PARENT_SESSION_ENTRY_UNKNOWN_RETAINED");
+   io.CacheStderrMarkers(markers,markers.Length);io.Fail(label);
    Exception error=new InvalidOperationException("PRIVATE_BODY");
    for(int i=0;i<8;i++)error=new InvalidOperationException("PRIVATE_BODY",error);
    io.CaptureException(error);
@@ -47,6 +56,26 @@ namespace C28.RootP1682 {
     OriginalValueCaptured=true,ApiReturned=false,Error=int.MaxValue};
    string text=Json1725.Encode(io.DiagnosticData("run",c));
    Assert(Encoding.UTF8.GetByteCount(text)<=3500&&!text.Contains("PRIVATE_BODY"));
+  }
+  static void CachedStderrBoundaryCases(){
+   string[] markers={"has overflowed its stack","panicked at","Cannot drop a runtime in a context where blocking is not allowed",
+    "Cannot start a runtime from within a runtime","OS can't spawn worker thread","out of memory",
+    "ORIGINAL_PARENT_SESSION_UNKNOWN_RETAINED_NO_NEXT_ATTEMPT","ORIGINAL_PARENT_SESSION_ENTRY_UNKNOWN_RETAINED"};
+   for(int k=0;k<markers.Length;k++){
+    byte[] bytes=Encoding.ASCII.GetBytes(new string('s',505)+markers[k]+" PRIVATE_BODY");
+    var c=new CachedStderrMarkers1727();c.Observe(bytes,505);Assert((uint)c.Data()["marker_bits"]==0);
+    c.Observe(bytes,512);Assert((uint)c.Data()["marker_bits"]==0);
+    c.Observe(bytes,bytes.Length);Assert((uint)c.Data()["marker_bits"]==(1u<<k));
+    c.Observe(bytes,bytes.Length);Assert((uint)c.Data()["marker_bits"]==(1u<<k));
+    Assert(!Json1725.Encode(c.Data()).Contains("PRIVATE_BODY"));
+   }
+   foreach(int count in new[]{-1,2,int.MaxValue}){
+    var c=new CachedStderrMarkers1727();c.Observe(new byte[1],count);Assert(!(bool)c.Data()["valid"]);
+    c.Observe(Encoding.ASCII.GetBytes("panicked at"),11);Assert(!(bool)c.Data()["valid"]&&(uint)c.Data()["marker_bits"]==0);
+   }
+   var nil=new CachedStderrMarkers1727();Assert(nil.Data()==null);nil.Observe(null,0);Assert(!(bool)nil.Data()["valid"]);
+   var backwards=new CachedStderrMarkers1727();backwards.Observe(new byte[20],20);backwards.Observe(new byte[20],19);Assert(!(bool)backwards.Data()["valid"]);
+   var cap=new CachedStderrMarkers1727();cap.Observe(new byte[2097153],2097153);Assert(!(bool)cap.Data()["valid"]);
   }
   static void Assert(bool b){if(!b)throw new InvalidOperationException("HELPER_DIAGNOSTIC_PURE_ASSERTION");}
  }

@@ -442,6 +442,155 @@ fn extension_discovery() -> Value {
     })
 }
 
+// Optional metadata for independently versioned observation and upload profiles.
+// These records do not widen the legacy extension list or grant a live operation.
+fn observation_and_upload_discovery() -> Value {
+    use morrow_blob_transfer_v1 as transfer;
+    use morrow_blob_upload_proposal_v1 as proposal;
+    use morrow_blob_upload_request_v1 as upload;
+    use plugin_package::{blob_upload, blob_upload_proposal, fs_watch};
+
+    let mut watch = extension_profile(
+        "morrow.fs-watch.v1",
+        "fs_watch",
+        1,
+        fs_watch::frame_schema_digest(),
+    );
+    watch["required_features"] = json!([plugin_package::io::FEATURE, fs_watch::FEATURE]);
+    watch["declaration_versions"] =
+        json!({"io": plugin_package::io::DECLARATION_VERSION, "fs_watch": 1});
+    watch["contracts"]["io"] =
+        json!({"version": io::VERSION, "sha256": digest(io::schema_digest())});
+    watch["guest_imports"] = json!([
+        {"module": "morrow_task_v1", "name": "read_input"},
+        {"module": "morrow_task_v1", "name": "complete"},
+    ]);
+    watch["hard_byte_limits"] = json!({"declared_window_wire": fs_watch::MAX_WIRE_BYTES});
+    watch["count_limits"] = json!({"declared_window_frames": fs_watch::MAX_FRAMES});
+    watch["duration_limits_ms"] = json!({"declared_window": fs_watch::MAX_WINDOW_MS});
+    watch["runtime_static_preparation_supported"] = json!(true);
+    watch["native_source_adapter_compiled"] = json!(cfg!(windows));
+    watch["explicit_trusted_routes"] = json!(["WatchWorker::spawn_owned"]);
+    watch["private_workbench_routes"] = json!({
+        "compiled": cfg!(windows), "actions": ["FsWatchStart", "FsWatchStatus", "FsWatchRead"],
+    });
+    watch["observation_scope"] = json!({
+        "file_list_only_declaration": true, "fresh_original_window_approval_required": true,
+        "host_nominated_directory": true, "native_confirmation_required": true,
+        "guest_input": "original_capnp_observation_frame",
+        "guest_completion": "exact_original_frame_echo_acknowledges_delivery_only",
+        "guest_paths": false, "guest_core_or_io_imports": false,
+        "automatic_replay": false, "ack_proves_native_retirement": false,
+        "atomic_filesystem_snapshot": false,
+    });
+    watch["unsupported_operations"] = json!([
+        "GuestCapture",
+        "ReadFileContents",
+        "RenameFiles",
+        "WriteFiles",
+        "DurableReopen",
+        "NonWindowsNativeObservation",
+    ]);
+    watch["host_prerequisites"] = json!([
+        "Exact enabled package, registry revision, original Manager and live IoBinding",
+        "Separate watch approval and native directory confirmation; FileList permission alone is insufficient",
+        "Finite cumulative budget, cancellation, native retirement and original worker join remain independent",
+    ]);
+
+    let mut request = extension_profile(
+        upload::PROFILE,
+        "blob_upload_request",
+        upload::VERSION,
+        upload::SCHEMA_DIGEST,
+    );
+    request["contracts"]["blob_transfer"] =
+        json!({"version": transfer::VERSION, "sha256": digest(transfer::SCHEMA_DIGEST)});
+    request["required_features"] = json!([
+        plugin_package::TRANSFORM_HANDLERS_FEATURE,
+        blob_upload::FEATURE
+    ]);
+    request["optional_features"] = json!([blob_upload_proposal::FEATURE]);
+    request["declaration_versions"] = json!({"blob_upload": 1});
+    request["import"] = json!({"module": "morrow_blob_upload_v1", "name": "call", "parameters": ["i32", "i32", "i32", "i32"], "result": "i32"});
+    request["hard_byte_limits"] = json!({
+        "request": upload::MAX_REQUEST_BYTES, "response": upload::MAX_RESPONSE_BYTES,
+        "embedded_frame": upload::MAX_EMBEDDED_FRAME_BYTES,
+        "embedded_receipt": upload::MAX_EMBEDDED_RECEIPT_BYTES,
+        "object": blob_upload::MAX_OBJECT_BYTES, "declared_task_wire": blob_upload::MAX_WIRE_BYTES,
+    });
+    request["count_limits"] = json!({"declared_task_calls": blob_upload::MAX_CALLS});
+    request["implemented_operations"] = json!(operations(
+        &["Open", "Push", "Inspect", "Release"],
+        "original_upload_worker",
+        false,
+    ));
+    request["runtime_static_preparation_supported"] = json!(true);
+    request["native_source_adapter_compiled"] = json!(true);
+    request["explicit_trusted_routes"] = json!(["UploadWorker::spawn_owned"]);
+    request["private_workbench_routes"] = json!({
+        "compiled": true, "actions": ["BlobUploadStart", "BlobUploadStatus", "BlobUploadRead"],
+    });
+    request["operation_scope"] = json!({
+        "same_original_store_and_receiver": true, "host_nomination_required": true,
+        "fresh_exact_operation_approval_required": true, "cumulative_budgets": true,
+        "chunk_receipt_proves_persistence": false, "receipt_proves_worker_join": false,
+        "receipt_proves_business_commit": false, "automatic_replay": false,
+    });
+    request["unsupported_operations"] = json!([
+        "GuestPath",
+        "UnboundUpload",
+        "CombinedIoImport",
+        "CombinedChannelImport",
+        "CombinedDependencyImport",
+        "AutomaticRetry",
+    ]);
+    request["host_prerequisites"] = json!([
+        "Exact original package, handler, Store and receiver with a live one-use upload approval",
+        "Package ceilings intersect host fuel, call, wire, native-work and lifetime limits",
+        "Chunk receipt, persistence, original worker join and business acknowledgement are separate evidence",
+    ]);
+
+    let mut plan = extension_profile(
+        proposal::PROFILE,
+        "blob_upload_proposal",
+        proposal::VERSION,
+        proposal::SCHEMA_DIGEST,
+    );
+    plan["contracts"]["blob_transfer"] = request["contracts"]["blob_transfer"].clone();
+    plan["required_features"] = json!([
+        plugin_package::TRANSFORM_HANDLERS_FEATURE,
+        blob_upload::FEATURE,
+        blob_upload_proposal::FEATURE,
+    ]);
+    plan["declaration_versions"] = json!({"blob_upload": 1, "blob_upload_proposal": 1});
+    plan["hard_byte_limits"] = json!({
+        "planner_input": proposal::MAX_PRODUCER_INPUT_BYTES, "proposal": proposal::MAX_PROPOSAL_BYTES,
+        "bound_upload_input": proposal::MAX_BOUND_INPUT_BYTES, "label": proposal::MAX_LABEL_BYTES,
+        "object": proposal::MAX_OBJECT_BYTES,
+    });
+    plan["type_ids"] = json!({"proposal_output": proposal::OUTPUT_TYPE, "upload_input": proposal::BOUND_INPUT_TYPE});
+    plan["runtime_static_preparation_supported"] = json!(true);
+    plan["planning_scope"] = json!({
+        "same_package_handler_mapping_required": true, "pure_metadata": true,
+        "untrusted_label": true, "proposal_grants_upload": false,
+        "live_store_or_upload_approval_in_planner": false,
+        "fresh_host_review_and_approval_before_upload": true, "automatic_replay": false,
+    });
+    plan["private_workbench_routes"] = json!({
+        "compiled": true, "methods": ["start_blob_upload_plan", "read_blob_upload_plan", "approve_blob_upload_plan"],
+    });
+    plan["host_prerequisites"] = json!([
+        "A declared proposal handler maps to one upload handler in the same exact package",
+        "Pure planning executes without Store or live upload authority",
+        "The original host retains the plan for a separate explicit review and one upload approval",
+    ]);
+
+    json!({
+        "schema_version": 1, "status": "compiled_metadata_only", "authority": "none",
+        "package_preflight_required": true, "profiles": [watch, request, plan],
+    })
+}
+
 pub fn descriptor() -> Value {
     let defaults = morrow_plugin_runtime::Limits::default();
     json!({
@@ -494,7 +643,7 @@ pub fn descriptor() -> Value {
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],
-        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery(), "agent_discovery": agent_discovery()},
+        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery(), "agent_discovery": agent_discovery(), "observation_and_upload_discovery": observation_and_upload_discovery()},
         "unsupported_requirements": ["workbench_public_channel_binding", "network_sse_websocket_backend", "cloud_account_change_subscription", "arbitrary_os_access", "untrusted_native_library", "multi_version_schema_fallback"],
         "legacy_abi1": {"runtime_route_exists": true, "frozen_original_profile": false},
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",

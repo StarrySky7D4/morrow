@@ -1,0 +1,2503 @@
+{
+  "status": "CURRENT_P2_SOURCE_DRIFT_RECORDED_NO_RUNTIME_ACCEPTANCE_UPGRADE",
+  "current_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "reference_source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+  "reference_inventory": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-062\\source-before.json",
+    "bytes": 10563352,
+    "sha256": "2c6fcd3fe7632c0c6eb994ed90e05acd6b17baf2cd72c21a0ac35804d274b5bc"
+  },
+  "current_file_count": 54238,
+  "reference_file_count": 53974,
+  "current_tombstones": [],
+  "differences": [
+    {
+      "path": ".gitattributes",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "a038663390991da4acd1bb04717376c11273be28c9ae71e1e7b03f0451ba91a7",
+      "current_sha256": "8e8e3d16a44eee8231f1d4e8e2b22e9f95ad0a2414cc3240f272e9cb45f1bcfb"
+    },
+    {
+      "path": "core/schemas/plugin_package.proto",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "43e25ceb345aa5944de59e0dd551876247b7fec8ad822f59c1c4b2a0e1edbc47",
+      "current_sha256": "c92d9dfda81ad87f0decda79537350b87b9245073cecdac60954d1f271a9b118"
+    },
+    {
+      "path": "core/schemas/plugin_registry.proto",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "505d812e7b34f3309dcba14cadcf4487facb84861a88b98f4da67fe8faed166a",
+      "current_sha256": "b6035f209c4a0195ca8dfef273063cdbf899931bf69290ac41423c43838f92a6"
+    },
+    {
+      "path": "core/src/plugin_package.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "6344190c64e2074c27bf6056e464c36bd9a28e9f9a8caf4417bfd27646b134ad",
+      "current_sha256": "34cc61ea7326fbe67f25781a9eab529b3a8fffbc5534771e2cbd8655620e4b40"
+    },
+    {
+      "path": "core/src/plugin_package/fs_watch.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "09950ce0f0ab4bb3dcece9fd3b2cb91f289e2df00f4b7c731a1418d2f327d263"
+    },
+    {
+      "path": "core/src/plugin_package/registry.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "ceda508a3e1271ed9b4c646cab1a51087e22f172bd8b795c494d4c9fdb194fa7",
+      "current_sha256": "9864c5c19436629fb6119096545b69a65ea1d64ce6059647bf6833be97e4b772"
+    },
+    {
+      "path": "core/tests/dependency_registry.rs",
+      "kind": "changed",
+      "category": "tests",
+      "old_sha256": "707b7f1435ec7d4616fe8e206c1afce003b641147ef451a64a2bb749a69820f3",
+      "current_sha256": "ae097a2003d85e68b6244fcc4c0fd9460996d35898dfad60b09a717433f23c05"
+    },
+    {
+      "path": "core/tests/package_fs_watch.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "1931709deed928fed40128173db814af8ed49ec43e2cda9594d208fc5ffcba35"
+    },
+    {
+      "path": "core/tests/plugin_registry_io.rs",
+      "kind": "changed",
+      "category": "tests",
+      "old_sha256": "ab4dbd0dd68b1f2f40131b720232c4d107f05ac8e172b4269207e86020df8e63",
+      "current_sha256": "f76a8ee370a8bb746644540468fcd1d8ddec8b1eaff8beb3775affb2da4e0839"
+    },
+    {
+      "path": "docs/qualification/LOCAL_CONTINUATION.md",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "cf0aea43c54faa7983cddf60c05eee06405e1dd442a23f6022ad2230a37d8f35",
+      "current_sha256": "631a00662d5414be0bae7ae1d60b917a13c75056f197dda309990aa2c4fffef4"
+    },
+    {
+      "path": "docs/qualification/PAUSED_WINDOWS_20261101.md",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "2a3d51a818d5e6574feb8fd007542fb7cd6c7d31e4b9c226fc642aedc5986851"
+    },
+    {
+      "path": "docs/qualification/RESUMED_WINDOWS_20261030.md",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "c7aea14bf3a406c73c2ae80065a05b15fd194596f178fec3742b210663309671",
+      "current_sha256": "8cee72319b74a18f63293c7db5e8b9fee544eff6600fbd3ceffb9670c8157ed8"
+    },
+    {
+      "path": "docs/qualification/current.json",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "c9d562dcaade45c71ca8937fbf443f494caa41ea9263c1792ae102cbee5d23f0",
+      "current_sha256": "4212cdcf2bca0794551f656d416b0c44180e4828307b3273222e6883c412bdfe"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1379-closed-old-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "9d224ee0c32a38f77e8e649b8a1465643d1436e487363d750bf87aebce20880a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1447-closed-p2-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4cc96281a3c2778bb466a26bd34eaa51c04b86b06996a2c422019ef9cc23362b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1484-closed-core-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4c2eca1eac6cda637c195291ea6074ed67eb76353af8e18992babaa9d25feea3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1488-recent-runtime-retained.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0dba823f37b7b1feb3ec334e2381837a015b31d6173f342aa8109f392bdb3e5e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1490-parent-marker-refusal.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "43bc7b036b3f96b290a1a2d24e0a86ca192a7d32fb217a77f02b0eb0aae4c319"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1491-closed-watch-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0934626299e65c6ed1e5bd935a62e39c535e927563d2a3c01a129032998de248"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1496-closed-parent-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "16c219896665f850aa34fe8c6ce6c1441e03a71583dc72bead89063c5fb53142"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1511-closed-watch-libraries.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7a5fb91e5f87817aa502ee81b5985ca8dc2b460333cf2cb32b1cab60e0ae6714"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1595-library-reclaim.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6a41d01c0ac725e79b1fecab8eb8218eb2117b984638e4cb3db2d2be122e75fd"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1597-lossless-compression.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "44d77480072894774ab352b72f47a6abe6adebde63402e251579bde7d9868ec5"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1599-library-reclaim.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e1786c61ae40e3cb53cedeb70b92379e47724f5f100d3a5a5842854cba144e7f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1601-label-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "24d611947bce649756e4226c5ce1cb0fade656c848b9ceb2d76bb0a55ecafac9"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1601-library-reclaim-original-label.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "078f8e22a841fa601441e903b8f99108d6da9ad8e8134e3df4f2eb40b29ad76b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1610-lossless-compression.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7add749dc31a1c0d502ac87d2579f9856b2f300fb9d8c85fdb84f84f992f98bc"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1611-lossless-compression.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3facd9a95f2f4aa6bb83c5ad1d34ab9aaf653b0dbdc353bcec9db5d37ab5e7b8"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/cache1622-pause-no-deletion.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "8daa072fef7a11a340e29e54f68eae48859b55487b31a14376a179ed531833f4"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1365-closed-pipeline.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "703672a696be6f6647d0cae331f5be963ab9ae9fc89ee44cdbd206ad8e2a4bcc"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1365-original47-nine.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "34a62c7b6e63641fb9ce43b8d1453f48f02f154aebf5fefc80722e02a3feb3ad"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1385-closed-pipeline.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b32e1914a8d5a27ddd8157dab7757aed426ee2e278ea10d7c306645b7e09d5fd"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1385-shared17.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "867414711d0aa28f9be52b3adf7d1efe458c55c1e19da56c1bab6b996b448eae"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1402-closed-pipeline.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "57fdccc5b562120c949a9e141a92f36d6c45e464a8b4479198142d8788c7fd2c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/case1402-logon-refusal.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "86e01b05e3d65b59bf00b90944de0e2c301e5353fe6142df86ca2c1d39836b22"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1412.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "a6890080f1c2f42517c936eb05bb5c5ffee2dc4de8449e7d94e2861a2c944a5a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1467.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3992d7f951363ecb971bda20f4462587df98b986dfc7950d9c66ba5fc8ebc558"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1489.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "029643c1b2a077569f5d3f6255848816eedf22a6323f75f944a79a5ec395f589"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1499.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ce62ef828e9d2e45f14e07cf4f0a39d64a209609a8e1d6849ad949398e96786a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1514.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "31cd6b4d31a33ad746ef2d5657797b97adaf59c7f62f424bcd1c31c2aca5849f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1527.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0e08c8ad31f67e7e532710f05450b2214a1e1fbd44c8d80f96f00e03937a27d3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/continuation1624.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3fcb54c1241c5487e408ce9da2fbe526752b7a43156d132bf1501c21238abdf0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/manifest.json",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "8a1aa67f88ec9a6241a49b16a47176dcfe6be4b1c53519125a0ced518fe589b5",
+      "current_sha256": "a20065056baaf790dfaf666912553558ad7124cc7d0b277e67155f85b18afe55"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/p2-case1270-predeployment-refusal.log",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "358a2de7371ddf759434e2fcbac156ee51f3e4df2630d0d6789fb3b50b92b2f7"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/p2-current-exact-methods1415.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d2ded0924b4cab3ecb89c8d572aa5ccd135c9df8db47ccf88a5ca77774ca2402"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/p2-current-matrix1413.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c31df58abecd476d4b55a0e9eae53bcbb52243d37a9172f5a7fd955c5c62b950"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/p2-current-method-review1416.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f0b9079f676aa9dbfc1c1900a0879133357595eb80c59e6ef729f97e677e758e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/p2-current-test-build1414.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3cd8c1555e5a1ec2d562a1591ca5188680279b9e799d92697f89ccd0c480096c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/roles062-cold-build.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e1f6c55ca726f8f977aad137a74ecd208747ebdba4c8e2b39bc11e1a7428d5c7"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/roles062-cold-continuation1380.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6d7b5aee00737dabfef0c990c969f9a915a0bad96f00bd575bbca48547cec3fd"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/roles062-original-space-refusal1363.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "fdd0055668780d73d4b8d3c741c91d4067608f3f107f531ed041d2ff92cc2f9b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1242-byte-five-frame.log",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "2edde50850fcf1f514a13357653cdfa8ae0f506105ca27eb0783f1fc932eaac1"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1242-event-five-frame.log",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "de577fc713f6d175099c94a000800068604e30a17ad3bbc72be0548e3e7d421e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1382-original-io-channel-directory.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "bbf12cebaf496256d3f5a8d9a79201d7056a8d547e69e287922e322e9ae0e062"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1390-discovery-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "846982294e2ac61e5bae6adef150631e5e6ff537a11ad86a3925cdc19c4a6450"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1391-original-profile-refusal.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "cd34d7d77f541524e422273e13f766400a41842f870e81d22afe4aba129d4008"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1395-default-services.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3c40802eed0c261c5ea8ad7367e2a7c12a423597167dbe5000da11f761661d5e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1396-new-optin-projects.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "26e9c92476c073aedf00e6f6cf3df025a55aeff2e4725ddac05ca3e03ca264a3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1397-default-27-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "18ac43b6d2444c13f34f66bf4faae33a9c39447d8da4d1e461945e7dae783668"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1399-new-optin-runtime.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "804fe247f820661cc49b89c25b7f6d62a69fbd5693df1a15a4916af56aa465a5"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1405-optin-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6a6d9b72ab8aee7dd0db17b95003429267c7d33a1298321012c84c04127fad0c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1407-test-integration.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3debfb302b6a5b035be8d9644bd3a1d3dc7ff47d40e31f6acd0a912cad880772"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1408-canonical-test-build.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c36432da6d67dc4bda18ef96840f8927a58d9b7a2a3a509a76fbc9fe95c3f773"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1409-canonical-runtime.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "cf4f2fa62d860f0520650d713362f9cd067b91d69879f94cca56c05959d6eeed"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1411-independent-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ac8c33427065458bd709ea0a5ae9e141b832202dcba962dbc023e9edf3f27d31"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/sdk1418-independent-watch-candidate.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "5443246450f866113da328e2072e827511d98191ad5a4f128ce03ba7b92099a9"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/vm055-case1402-saved.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "27ed54b11a4e182934521de13b0df0091a855731d68d8bec81c0c03641a44266"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/vm055-readiness1358.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4881fc901b0904886c7f7f328bb3defec016db68f78c9b3c3d055be1d50d5670"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-C_build-fs-watch-canonical-c-build-1461.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "1f2193cde7eec4902560e51e448ab077ba0dab0909967283ab439c2cc60a8377"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-C_review-fs-watch-canonical-c-review-1463.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b814543212dd708498b93012e249aeb609473a89cfdcdc17f5d099c72c5623c0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-C_runtime-fs-watch-canonical-c-runtime-1462.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4b7fe60c527d6b17a054c004953ec8b2c99d92f00eb4b385494ef1342da9fa35"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-Wasm_build-fs-watch-canonical-wasm-build-1464.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e12b7ac55115018a7b7d28e655731c52c8bf18b1b8310c906bba4a3e266a18d7"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-Wasm_runtime-fs-watch-canonical-wasm-runtime-1465.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "1c137c85d777e242fc265aa5e03afa683b10901a0b4464c341e8b2c8a1096a3d"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-codec-fs-watch-canonical-codec-1457.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "892d4fc1aa21a12c2309ffc5bb9508ccf92d85a1ce95ed12ac4cef2c5e9c849b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-integration-watch-source-integration-1456.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "df4535099a6b491613262bfeadff14420ce22b9ace162e151b56e9deae651c8e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-native_build-fs-watch-canonical-native-build-1458.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "157dd384f2857f0aca6f3aaface78772d70b5b60176c6e216c8bf118458f28a6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-native_review-fs-watch-canonical-native-review-1460.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "97675aca3a9887d682207efaff4ec0983ba00b00d96e81d94a7aaed85f87e938"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch-native_runtime-fs-watch-canonical-native-runtime-1459.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "bb61617f9a61e7754c049243d15dd9a266244bcd7177cf7a3726cecc75e35fb9"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1466-canonical-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "30e2cdffdb4b5cf3416e321f8b987d7d4985988756bf34b1e29528ef5aa4b91b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1470-declaration-registry.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c60023296ce7e8041754943031f82a6364258efa5ef587dc548aa3b0922a799b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1472-live-approval.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "8c49874142bcb13ea4cec38323fda4e686088c361ab4c96701b10aff793c05e2"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1473-authority-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "915225da8f79aed6a414ff558f543be8b678a349f50f3afca86d37be1da12960"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1475-path-dependencies.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "907fc06db9d4ed614c480c966a2410fa1f59cc0b32a7530219f20578497c82a4"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1476-build-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "204de7a2a2b584007bcdf0545f55dd1e91b3cf62a8127268e884256dc02ff4e5"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1478-test-retention-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3273af2c1e2947c9a5896411128e8e915f6718362e63d2f2bb33094b41b2f24"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1479-refusal-test-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "29111f2ac634e08a2c47ea1064eec4ef902f56640eb63c296ed614c1757fb81d"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1481-refusal-test-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ba7dad720f6bfa400f0d1f3dbc9f9ccfc789f794e9556c5e82c1ae5cb874231e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1482-terminal-state-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e50956fbd3c90ce1dbc3780710c192a850e94598db039c4ffe19a9351e5c6e15"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1485-terminal-state-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "580e51f12126641d6aa94cab33821f0fda75ba94fb5bc720c12caae0cc5947b0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1486-original-owner.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "5cd3b4b107aac77b272969cc797f706d71b1c2947fc73934128cf84d6a261a62"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1487-original-owner-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d9129383fb2041b3efb2740f2c5fee93d770e3ea0f39360719d6350670de5ba6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1492-worker-preparation.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "08f3232cb0168e00a8325ed0bb23bbe3c18780add283876f662cc41b1865614b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1493-fuel-fixture-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e23311da99b3c901cc8c15ef8bb85f4486548f8f4d700e858fe6d9468b88d106"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1495-fuel-fixture-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "15a0e07419c8e6f4e6fdf67e7a7ee0062cda9007c87bd8fb4b662e1a884925d8"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1497-managed-worker.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ba1c0ba15764effab032938e67e9c05aca81f1b9e27759d2dd2e38a01f63fdaf"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1498-managed-worker-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "fca871ad5b4cb66f5512abc8536a810f2796c1684599e4c8a5962c771cbd3d9c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1500-native-edge-preparation.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "707a0f63279fee0734ec01d1612affef2cefeeae4dc73ef87cb1c275704fef01"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1502-original-native-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d59b705271cf023b890dfef073450f36259e4726f59c7482f2644f1fd0c21b2a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1503-first-close-failure-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "5a7805406d9ad85a07f4f82bd72ac6556407056ebc7c5c4fb14c54be032176ff"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1504-native-cold-build.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b12ac238b301ef0ec3647759800a50e429515a41f20023c88d3ac64b08a93df1"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1505-native-edges.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d78f8f7b3bec861e8ba23a3ddb9eee945713e63bc231f54fa51252a017e39e8b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1506-native-edge-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "9b55e700cda00c5b25139c17f1dedc6839ccf0b323e82e341d7d3b2490d3bf7e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1507-managed-edge-preparation.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "855b0bba9d35936e84c3c9b3efbb68fbf8681fbc143bd0222aed40ccef532468"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1508-unit-compile-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ddee4ed4d83bf239ae61727d37cd9da4c5f65a09bdba83cbbaaef1e1bc4f3b18"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1510-unit-ABI-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0a2f86795323483bb1d485c3246b40112d646928a9fab2a318b28288f0e28df1"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1512-managed-edges.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e53aca22da8780e2f37d14d9a4d09028384692dca99cb0714a3654461bcf7d3f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1513-managed-edge-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ac236510a3ea38d779b285fcd3ecc368958c55b129fd659956f701d8276fce6d"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1515-native-confirmation-source.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c90f3272c494a4f1910df1e080ff1433180bc7add1121f84b23f7173ecef2a00"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1518-confirmation-callbacks.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ddae4ab2d150932a7e5a6cc430c0ca33ded901bcc59dad0e3e3cc5202d113869"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1519-confirmation-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "575021dac086428b7efe3fb479fe6650bc584cfd20f6ae8b04258a0f81e1de2f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1521-probe-lock-refusal.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "9c59e10bf99d1b51ff3eea8279d2f6e8920862ad3765061680fb9dcd42c9c1a3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1523-probe-lock-correction.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "07a81ae564b10a1bdbd8c5563c28621cb0fecb755a0e75dd40a213d90759c023"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1524-native-picker-build.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c6078df0df476a5c8eb530a5231d7470ea2cc17cbf116aaed6c209f4b5b09941"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1525-real-picker-UI-observation.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ab825f4ad46a9105c89d92f509187f424242834bc8e4565454ed45a59a43cbe3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1525-real-picker-runtime.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d37d631188c7f60ef2a47d54eeb1f63dfc43dce6f33a2a1e36a49c0761483965"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1526-real-picker-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b8e741c203b2e5a38fd091f4238f66b9cd9f72c116f7556e40720803f7e472f6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1535-protected-rust.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6cd2831fedaa552bc25c2c34c6039a85cce828af17ea882d771ebe6c5efc7cde"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1536-protected-c.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "69e70095c5652f488fb0abdd8e15fe8247265c9c9a53312ea899a8b51d322f43"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1538-protected-cancel.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "a818f299a7baccc7ef1900f466886068a687220d55681647391508a1ce857ff3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1548-protected-build-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "cbbba994627ede518c5dfdfa3499bb94c460dfed1476598acc5037fecde37870"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1556-protected-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ee2e98d036c8779be29cbcf9e65dfed6325e3d89ee0fe70827909b3dd4dccdea"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1577-expiry-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c513145118818c57fc7f02e3ce7c2f5f583a399e2cb96823f7d68dff6eed0b3e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1589-stop-reason-source.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f6896cc0da7848f15185ddc8dfadd4e52e2149274fba74e061feac0919984f84"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1590-expiry-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "2efcb009b716db1125893f97243680a7711ba0180e8335b7642c4fa7c3d2efb3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1591-picker-observation.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b1c71e8fefb0ad3ef315daae5e7c1f293f322b2e027301809c30744570806b40"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1591-protected-cpp.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6e12f50342212b80dedb7fe3c02ac0e9876046e6464ab38b12ef4236e5cb3a22"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1592-stop-reason-units.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "1e549e6374eea5ae492bb2275211037bc24a8b7ee92f5d95e428927488c3efe6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1593-cold-build-failure.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0e135a9f77ab9692acb664aa86fc20400907006c0866d5c534e0c2aaacba92cc"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-manager-analysis.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "81ed98ce3a9db622d0580740d8a9387746a192d1dbb64ca485dc5639eaf09c8a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-session.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4322228755f156bc8ff59768071d83552b32175e4314bb7392354165646e85de"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-staged-inputs.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "69266ac3a3e5c178a32312d37db4267bba6cef05e3820e18fde3f480b928567f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-test-analysis.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c5272f89379a563017aa506816266ef719a3d8fb26675ae2fb2708c6cf01ec2c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-ui-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e1799b2bc67b5d90420aea861bd654e6c7c6d3e7aee16e6b5e42fa5092fd932f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-widgets.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3101ec25d1fa4608a876a58f03ed500f226c17c309c2330470fd02c85a6b1261"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1620-wire.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7df1354f4cd469dfd2c6d30df2315da1f275327a4d00c37412a4b24cc7861018"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1621-UI-applied.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3247fca15e33f91d5b36bea18362e00d23803f1aaa19f237e879e875bafef6d1"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261030-current/watch1623-uncompiled-pause-review.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ef7cc66b2a924063910289aef0f768428512692dc1ef5e084686c99ab99263f8"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/approval/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c4e02fe91641688d2d79924ebd8d52b5fca84fa3eb8f12fe6b5d62e1e6f83368"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/approval/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "cc9c03bfbfbc5f33b6240d9a24bd6c16aa7e06ad13d0072cb19faaf5d73ff7ee"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/approval/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c5127dde1592b5a6b650f0d7114455605d0bed041ebedfee1e15e3b02e0f9956"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/approval/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/approval/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d4956d9cfb4e585427da741ac5b73eed9d8d65145a1fc25b42ffd50c8f83adae"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/bounds/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "81d9789d13e5a82c9078500784bbd51a689e2b8005a2c89a4db76d39c10a9b15"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/bounds/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e562a9140cd411d798ef401061c4e79b06ff09b556fcc91feb53b4bf2c15e9c6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/bounds/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e1f47ec54961836988e4a37d7a8c762d05585ed855e533f2bea2d88f6c3d722d"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/bounds/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/bounds/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b532c187d11d0b472878f7eda8b6dcca6fb95a3412f3c5160f0c32c821db9694"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/original-exit.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "48675ba4c3ae79ad892c775cd4135bb4f612ed246d9a75d6fd94d274be048206"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "33abc7f3f7f52a238fafd30118aab591fad078dc988a8fcd6564f28da2470dbd"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6965f4e5eea6ef9fb230864c07a09b06100850783fb4c9eb82f7a14a4d359eee"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "676182f3c342288b398349fc53ecfa7be7b7dbed2787dbca74609c69e7d6057c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "a2a476208fb9bb62e3e17a6770e9e88ef8331ec636d125b2fc9048feb53755be"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/c/window-action.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b2fc8098422a1239a14d522e3996c83e5380e8dc2e3239896d63946392cd17fc"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/original-exit.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "bb50f42a4b5c5d72571fb2f8e743f6867b791a5a90caad57e9f46bc86d310f40"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "57ae6c5ce9d960df5ae62ab719b7d3102fe860cccda7d931fad2a33e4111e8d0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "94a5f59f41787ce9bc030a66692c9e116fed2a3b3af2aa249e42cb855a57becd"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "0ef8ff375441fd84fa5419173c76415f1a2f09aeb64855ed1d8b353f6e937438"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7a273cec3fb74a3cfc8734fa2abc2bbe0e1894af6c9ec4c7f65e278409edda1e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cancel/window-action.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "54e513ec0852411eb9df42f99b893fffa8e835ae2df7ac06ce15dc862857088b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/checkpoint.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "95df5a0f711e8f48d27b71a97dde2c0a5811c207a5a0e900e34a32f785ce6cbe"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cold-source-binding.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4f59575fe9b9e1517f79d639e4c861f20d14719aa90fa4af34f3af2b5ab896c2"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cold-watch-build.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "5bf94882103e2678ae7942b6fc9b0236d6e0a43a1277e10f672c2d0c28a5fac9"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/original-exit.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7d43b9f255bfeebc0547d032e1bea8d74f4950313fc05201fe029df6c79f0575"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "463f93dda952c4c98cb4f20a11058b554599ce17fafe9d7918e08f06d79dc740"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "67b4a0dcb1b875f0f7d1b8f8159a9ad8cdd395453fc7566fb56cad1749573010"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b044da06773b7a11bb4c5a9cbd342f90bf3a6886e540ebcde6c17b4d744cc79f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "254bea4cd3ca0b27e266fb5a9ffe7350c6b853326f3a809f575f27c3d9271ba5"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/cpp/window-action.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "d99745d04581dee60b8d1893d943a34533147840d3c928689f9622ffc708233b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/dart-wire-session.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "b285cd37b842ae2afe2601d009f9bb407771502af8f5d9b341bb2ec311971043"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/decode_native_watch.dart.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "87c3500c53c1a9e2c095eade74782069b5c1bf563814f10d035a21cc014f9059"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/original-exit.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "5e3094eee9153e88aec9d03fc39c5d934563a292271867a2629251926398d5ef"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ee3a512a89cec7bad95373267509452028f07d023712064fa8bdaacb31231e4c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e5b92076b9d5efe2b63e6b5cc1053750add813db119465aceea0f16422d86ba4"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f98b373f6abf9f256f7e32390cc801ae91e1b5ff8de20cddbb4f33cf572875dc"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/expiry/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ef9dacc70bad6331f2dc5fd5abcd0198657e1f949aea8d33ef3c093feaca5c17"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/frozen-inputs.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6e446df18af37f2762769ef898a3a963b7e1a73fcbc2c2eabc5793480eb73740"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/identity-repair.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "9b9dcd5db602489cb8825eb630fb2c01239d6644bcf38f69230b41bad5d67c92"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/manifest.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "4d73c0377f138636f1b1a8c5940008ec4b2612e5b202b998dd0e221dd1eb9c4c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/native-dart-decode.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "625aa489a50b4d12dab283524a130f1d8aff6073488f8d64b06da93b284cf781"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/native-dart-decode.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3e5c427564c820740b434d7c9ec2beb4a709c6ce2a2be1839756b4e492c579f0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/original-exit.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "7304edd994147867e4242830215833092edfe4928995bd35b8f031ebb18de6e0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "15350d4f8c39073134f885f59ae866ab2615c1100bd3865f3bf2da5c52e5660b"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "a1f96e435066f6a20d025e9efeb034c3d76336505c5dce943863d7f8babaccc0"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ebfca8ee8979a73ae61d5ae734dc84c1244afa6d8f4b799b23f48e044167275d"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "8ab2465699bb588eadc6aa75a8bad68d9eb5748401c032d50c88bdd7d14a427c"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/rust/window-action.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6a704fae27955f9e9f5df77ca1ec683ff657f8bcc9ec7106147599dbe844d902"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/original-owner-finished.txt",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "07cc0c47417b1808d217be0f43ca83c75c051ed43a0cbbb47ad3d66422fc496f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/original-process-result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "3f73c0cae7bf406933a333cb462efaaaa906fb8da36a374cd7f7b216d06b04f5"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/plan.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e1c51fdf2b720fc77bf1fa8815a64f377df740f6ad71a8bc85333cddc6c1610a"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/read.capnp",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "1545fb8c9929fa8c30f467271c8559b00485b18d7e129a46a6be7b4efe8a4e67"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/ready.capnp",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c6b98690d1364a704ddb6aa4175ff675c96cdf1fefabd5b5f785db9da05b2c0f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/result.json",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "1d01358ef1f178ad85cef8e9045ec2ca6d1b004117d29fdc0768985fdaa5b6c3"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/runtime.stderr",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/runtime.stdout",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "ef82f3ade7149cb920dc8bd6ca085534b7472705cfc34e645bd949f406cb9a2f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261105-watch/wire/start.capnp",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f54c4cc89ddf7ca4880fa92bb8eb8f5abdf48e3cea5ee6c55372de0edc9060dd"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/Cargo.lock",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "548737022b1f6013449aadee8b006af46cc470d2d849dcd9b74c0481d0dae231"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "2f364bfd724316d93d2d992df2de4176828886f2c86bfa880786de39d4cedc58"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/README.md",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "3e0b56a29c236885acacf9bae9490ca4325cd60ddb054acfb03d18bf9145cf21"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/include/morrow_fs_watch_v1.h",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "f3ed0454387757eb99cd282553357b12bf43850505085237b1e6f498570007fb"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/include/morrow_fs_watch_v1.hpp",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "3599500a8f451e2a4ac881a11d6df183601ec259543de278d047bf31aab944c8"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/include/morrow_fs_watch_v1_status.hpp",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "0e1d8c591f33430dc46e96a4186f985e9e8453fd818a950c156878a37a3b7084"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/src/bin/synthetic_vectors.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "cd9f17efd6aa4f6d15b0ae96be5979e0768369bdb257309cce8e85ef6453ca06"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/src/lib.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "6c34806d2adb918fc857644023b8e79197ec2129789be670db919a96f9441c3f"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/tests/consumer.c",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "da42aa99240b507655bbaec50a060b3522192ee4c43bd91689dbe37ff05dbc5f"
+    },
+    {
+      "path": "extensions/fs-watch-ffi-v1/tests/consumer.cpp",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "47ff2b38bfc2a3aa445367d2f230ea2110b6acb8b6963faaa89bfd8422447ec9"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/Cargo.lock",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "e0be61e8302d5439e3b083858cc7d0fb186bc1a87b7fc3b57ecb1a626e1382cf"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "5ed8bcd82cfe7ab4ab893faf2a97c6faa575d64cec132f5379a36890e9e1c3ae"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/README.md",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "492c0a156fd6baffb0968fe6b0dd57652e0da8920d342f0f8a7479b53d7bc74a"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/src/bin/native_watch_probe.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "8f8204a1345f232720f60044ead2519276f3dbfd39fcd1e2907ff98e74da60b5"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/src/lib.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "e65dc80f8aca454aa198f28ac263c0e3ba3b5d2cfcd15ccd26a3d040a58757fe"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/src/notification.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "a5c25c2abbb820697c4eb26b4e35fb5175488902fc0c3d4575f3133f1dd4ce16"
+    },
+    {
+      "path": "extensions/fs-watch-native-v1/src/windows.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "ad3c4c96bc436a3914828d7e03712d1f3e27546eebb25a9f8f846785ac09638a"
+    },
+    {
+      "path": "extensions/fs-watch-v1/Cargo.lock",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "78a961b583cebfee5e1711975e706af8b6499255e622adec5d754678631405c4"
+    },
+    {
+      "path": "extensions/fs-watch-v1/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "c42dbee1f513834a3715f02b3bdb97d78738e8799140b46992e51a7e3936ee3a"
+    },
+    {
+      "path": "extensions/fs-watch-v1/README.md",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "6d1c229324129c58f26b9b7e5c8f350d0a62f80352616da46e5b6007c5cae5ec"
+    },
+    {
+      "path": "extensions/fs-watch-v1/build.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "ee0eb0ba1daf2420af54323455064e166561f1a230642a124d8749f9d9f9a986"
+    },
+    {
+      "path": "extensions/fs-watch-v1/contracts/fs_watch.capnp",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "3312e334f5d298d3c56df9c06ed3ac940bbf8fc9a058d113ac30b0d6854f346f"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/Cargo.lock",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "a85bbc3d76cca8580a8b8f6f2ee70a0794a307d5eb5073a3e09030f202e567c7"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "7f5674b4e5297a7dc34ad76b60931f2cbaa681118b412a8ea83e51be8ebefe43"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/README.md",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "332d903d0a2573fad6f34bc2867803299c5637656ef45d28fbf3b34423ace7b3"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/c/plugin.c",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "6718a8f621e1eaf042e252d4eba8f5b35b5fc79b8260dfe50303527167e3b121"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/cpp/plugin.cpp",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "10d517f21b85a0c5ce857d8335b21c16f93e7c43dbe2fd5e809799e36a504574"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/ffi-support/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "b0f53f8ba9717669c072068cfeabb199877a7d7fd33b7beeaf0f8f37856d6c7a"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/ffi-support/src/lib.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "e2fdb91eacfa06ab0a8db8b812a91a9c34671d5492e40e3913b014e6f318c693"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/host/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "89f7a568bed99b7bfd9a74da884d5b5c164e9e047d4096f39f61b75525f9f077"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/host/src/main.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "e10a9466989d19a72f6ca7c4860b86006d6a995c7cb548e44f6e76d59aa8e4eb"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/rust-guest/Cargo.toml",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "3ef30a004682cabeded7c76be56e103cd1f43344e6dccb722c89ac823544d1b0"
+    },
+    {
+      "path": "extensions/fs-watch-v1/qualification/rust-guest/src/lib.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "e18c0356259f102d83b51c8018b7fe2cc1c995308ab60dc821ce1f72c22affbb"
+    },
+    {
+      "path": "extensions/fs-watch-v1/src/lib.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "a8f5668bed9a78a618c74270554a5e4dc53dd45b4b43893410fa8e5e88f8c51b"
+    },
+    {
+      "path": "extensions/fs-watch-v1/src/state.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "b60b255946320fafd12cb372cfa64ac7cfdc956d7688351b127cd757c0d5e8b7"
+    },
+    {
+      "path": "extensions/fs-watch-v1/src/tests.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "12e3e964dfeafbcaad28e477329a48f6e530a4bf6352b30aa8912dd6d8080ff7"
+    },
+    {
+      "path": "l10n/parts/plugins.de.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "16a8e3589dd7b5a2ea86293774c51f80267b3582cac81b5c9b29e180272d3b91",
+      "current_sha256": "83c2e49e95a06b145d265e39d1fdb6913044b7691dbf8ff6414818d75aadfc37"
+    },
+    {
+      "path": "l10n/parts/plugins.en.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "4148c718268ecd20a3b268d5aa1eb894ea6f4f743e99800afea837583ac4602e",
+      "current_sha256": "e4c11fa6722cac17952c752e63ae85ccc4ad2a0a5172f649e9095974f315a0f4"
+    },
+    {
+      "path": "l10n/parts/plugins.es.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "49280b903564d753db94c8c845096a35a6dffe6b4cd6f47309edc1f2282a7678",
+      "current_sha256": "3f6e3a71e2379f4c5e4475f5a2b7003640109c4ff194f6ea4a6018b7d7aedbdf"
+    },
+    {
+      "path": "l10n/parts/plugins.fr.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "11afc803f91bb97d023f586f174c730a0f8940e4fc741abd80697bfce312fca6",
+      "current_sha256": "9196cb9c849752944e452e86b0b797a6e4b9663d39d6c6c5f22dec37abe0df6a"
+    },
+    {
+      "path": "l10n/parts/plugins.ja.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "3281bbd81bedfbed4a3ef4bec9c9e6d3114af1187870b9a8f6d6b5549fa9f2cc",
+      "current_sha256": "d708363308581ca7786b7ad696e642b6e0258bec6c96cac04eafccf7d62ccbc2"
+    },
+    {
+      "path": "l10n/parts/plugins.ko.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "6dbdb413fc995361c763c6ce055ce5e894b0ccf707c79202e4b664a9b889a49a",
+      "current_sha256": "f3492b680f0bdf26e377137aacab1d24216a8f28f1345ed5473cfec993c081ec"
+    },
+    {
+      "path": "l10n/parts/plugins.pt.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "4aa7ee5e774410f9247144ad7a47d7196efec531ff1914d8aba24925d28c58a7",
+      "current_sha256": "2d968c08fa3d21d73d5cca1cf925821081f9f814de0fb52eda80047bc022e8bb"
+    },
+    {
+      "path": "l10n/parts/plugins.ru.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "a43fa5ea8a9347d16c68a87a0e770b0ddfe0536cf37aa4d1c7d4c6e47adf390b",
+      "current_sha256": "c0232001d0403ece6916c9e04a339816266d991cdfbeccf12344bd50371f3fbc"
+    },
+    {
+      "path": "l10n/parts/plugins.zh.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "5912e5d05b082a655001e8c00cf847c5e2455cfaca855a8b80a5ab3ab66311a1",
+      "current_sha256": "0cdd9f60e9fe2ac1703cf8c5ab3a5e248adf3dc7b7686b2d92b1e023e9144c87"
+    },
+    {
+      "path": "lib/plugins/fs_watch_manager.dart",
+      "kind": "added",
+      "category": "product_dart",
+      "old_sha256": null,
+      "current_sha256": "50ef48747fd76d6c9f0cf44c7d93c181616be18ce45de0a0df3a499ee2d0ff78"
+    },
+    {
+      "path": "lib/plugins/fs_watch_models.dart",
+      "kind": "added",
+      "category": "product_dart",
+      "old_sha256": null,
+      "current_sha256": "755d6b8c0336460be46a5b118e6108a2c2122a4b579a6c3501e93747ac148665"
+    },
+    {
+      "path": "lib/plugins/fs_watch_native.dart",
+      "kind": "added",
+      "category": "product_dart",
+      "old_sha256": null,
+      "current_sha256": "b7817080305744bc1d766abdc57e3c6d7564410353e7a663862873e3150e275f"
+    },
+    {
+      "path": "lib/plugins/fs_watch_session.dart",
+      "kind": "added",
+      "category": "product_dart",
+      "old_sha256": null,
+      "current_sha256": "8edf92429e24c2accb874982d44b07ad3b4fdcde49f2e6d8af563a8bd4878a6a"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "40418c1c5870d4b604aa9ca669a20aa077fe9fc3231ba782fcaca04eeca8025a",
+      "current_sha256": "751edb01d258f2f185463d5cd1081f1c34024edda180d4ecc54a409fb75758e6"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.ids.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "4643b1dc6d050b8027f477179e8b22d528785d52421854db7d70a6ccbee64d08",
+      "current_sha256": "2e35ac4b5e63934baac0cf14dc8f4d0ea3a6be29f4530be1342d063de96ea735"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.native.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "32cafc43d095b9b7a810d34f4dbd1618f5a74f89257d81d8bd9d4b5befcce5e9",
+      "current_sha256": "94f1d9e300e30a817676f652822ec62f6c2348896d087b2b320f27cdb7bbde0c"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.web.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "34e7d249ba72bc464f59d0ba3ec612c0d57b36b967ca8d3860d4d614478c7733",
+      "current_sha256": "5f76dd0d13b1e7b67884f042622c4cd275b75476c2c7e7580825a2eaa0f37955"
+    },
+    {
+      "path": "lib/plugins/generated/identity.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "03601de369508dbd7c58e5186f419a74d1dce3f350fdefe82303a08b2b0447b8",
+      "current_sha256": "839181fc3e4560f9d742b2daf0a451b3301a87986f1425b37a55ad790a034fe9"
+    },
+    {
+      "path": "lib/plugins/http_task_manager.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "57222c58bbbb7b6804dbddd5869bc36ce2adcd0b825674195ba0fe63bbb93b7a",
+      "current_sha256": "3eb4eb2695e52ecdada91eafc5f18aa402f039b489514c1f14df48369793f48e"
+    },
+    {
+      "path": "lib/plugins/plugin_library.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "1a72f95b6b4df2907196b8530bb4b0292ae0c5a3d34780a9c4c6e7edbacec9b6",
+      "current_sha256": "c9d798368e39b803f2664d9249d3da209aaf75f03cee17ed2ca13c3186e76b25"
+    },
+    {
+      "path": "lib/plugins/workbench_native.dart",
+      "kind": "changed",
+      "category": "product_dart",
+      "old_sha256": "6b58558fd63d2d283809a56a62ab5eab78340d08ec8bb32cbb5033bb2bdb0d28",
+      "current_sha256": "3215b4d1cb6d6ee79fd6ac08dfadc3039fa088ab7b16453190cb0582121237d3"
+    },
+    {
+      "path": "network_node/tests/sdk_default_service.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "67400a7fe42c8336ab4a93c095f114cdcc386d1149b840cdcdbe019486948619"
+    },
+    {
+      "path": "network_node/tests/sdk_default_service_http.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "73459ff2ec09b27f93da973d4ecd2b399a6eecdeae42dc33f1b76dee2ab4993a"
+    },
+    {
+      "path": "network_node/tests/support/sdk_default_configured_http.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "4aea3fef3dcb9d675210505815879ac047185668cf8935f671e3808b037c76ce"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/de.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "c26ec75a548ea1d8faa6680fdb426e1c73afc206430cb99697abea6727165205",
+      "current_sha256": "5be8b09dc976e812bc2747b6d13c0629062d94ba5837332d684b882e8a173b04"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/en.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "ad1485902d51c9d75a3f43b5a9179a2ff5b466832d435531237bbf26858e33b8",
+      "current_sha256": "a40f67a8ae8b1df5eaa97eb28c967df9567f6cc2ab2e0d1cc4fb0a780b2b5038"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/es.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "7c0aff1acf6177cc9c3ea974a70d2951a789505a2cac895ee7f56db71c1a2dd3",
+      "current_sha256": "7d044b78592e5f3bfaa2d126251dacd9251d2c332e85496adddd935fc8c89f35"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/fr.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "24b94ea6a8a1c0a1e1e4484580bc1d428e6eab7290e4f5b077aeb8bb60eb395b",
+      "current_sha256": "371a84f90e531fde695c973c6522547ebb7a4c81d8dd263885231064cc4d5a77"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/ja.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "de5234425d5e30e2bb4cc3c048bd8917a919723e12bd1f5923fb1406a4db4b1b",
+      "current_sha256": "101984c3affb5256a1d2a85e5d8c648cd0039c36e7d7d30240ab948a1ea6c86a"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/ko.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "0207d62bc004942a9376c226f5af96b028b6f733ab45e236d4affa3839baf578",
+      "current_sha256": "2c087fd50c9b48d22f7584349892a610be9c2d8cd8aa9d678f443c5cdfefb8c2"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/pt.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "fbfed83f7c4cfe321372bbb01bf391d921faaec2375cf1b735af68b772948692",
+      "current_sha256": "2ad1a1f0baa428ea2e18e88764e88f53e7b65e921d37b3e4fcf8cbc8bbaf5c7d"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/ru.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "8ebd3f0cef00e2a8d7fb2bcc10b0a9ab11c9d0eaff115a703fa8c7b0ab5f0a2d",
+      "current_sha256": "0d1ac6a1bba3c723e4d236bc583b643c9d0fcb587e94214ce0f4aaa20ed5f934"
+    },
+    {
+      "path": "packages/morrow_i18n/assets/languages/zh.mlang",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "68d0172a9a0bb59c9900be2fb42b28526522bb2f2cd851ca2a1048238b044a95",
+      "current_sha256": "28d9ef42f098078d993c5c8bb9228f794534b4ec1b453ca9f595c96c50b38995"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_de.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "088b5a4c461a2a1cb39cdc41f972ce9ea9bf91011f1d38b6c911301cb8c66b21",
+      "current_sha256": "35dd201298010550cf806b59820859d37ea1e25d9b8c6f63dcff07278c73daa1"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_en.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "1bc4ca243ea01db7a663a5b4459f46d779c93ce2e15f00c51cac78b670947ec5",
+      "current_sha256": "8d0965e7453ffa2a02040a7c1b878fa2129b1aae8d3544d2dc2c10143576a17d"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_es.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "7c4d9e00f55f371eb8efa41dcb42192cf39eeea79d2bad41958f8386b08609a8",
+      "current_sha256": "578ef9b9efae0c62e6ed6d29f9609693d2d917dbe6341603d4585c33b6509963"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_fr.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "945e8e9e79edc9cc6678fccda3a5635bd024c560d9ae93f3769c4cceb3d945f4",
+      "current_sha256": "bf7252791e0f3f9fd797d005bdf440377296db93243acfa716a7bbd04a8b96b1"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ja.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "7782c2235e5578d876627d61fedc16427beaec453f1d4fa7d65735474742e719",
+      "current_sha256": "b4c9bb71bd7e8ff0c1fe2f079a65f2dc541908631d38b51434c08883696ec519"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ko.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "e2c1c4104ef7ba6c97e976047c16201c754b5b07a4d90c27d9f86368d8c38061",
+      "current_sha256": "ba038cde4a5fcb1f954342828833a236f02ed42954fd736de88af53e791c89a1"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_pt.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "0ff8b5eb748c5a54ff3391b3c2e1320d757e4d21e03c45c7f65b974df15bf0f7",
+      "current_sha256": "88951fd779470a93307fa58c0ef2cbb96754b7f6dc8c9348a1011b97c618ea80"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ru.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "91bf746b675b67c6655a335c25937a185f06f21a9d6945ca4370df35a24b2347",
+      "current_sha256": "b1fe2017de73a6b16d3761f4d7473e133b8fb37ee09cd61a9c672ce0b92a23de"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_zh.arb",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "aa3bd92896f8a37eb2d1ea5a972b9adc1dd6776ba5e50d90e063d96bb04ed074",
+      "current_sha256": "229ee3070e9833fd06c66cc888da786a8d664591c506ebde6334b2fa42c095d5"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "bc51da8fbaf9dc4a28343f7b487b5c1fe97aa09d6f033b803fd5fecd90c19059",
+      "current_sha256": "bacbe078d403114ef38fcf7cdd30ae5e616ec9b79538fc2fe0b7090f845baabb"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "a1f3ac9a949d0d6fd3f518a557592d6dac8c6e3de1a7c9db923fbba04d14bbdf",
+      "current_sha256": "eece4a931d9ab09cd11516ba874582a9035e110ae786937d20e415d225962aee"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "a96e129e2bb2cf66019337ef6c57acbf1b7fd0cc53520d82ceabbf6e9d24dfeb",
+      "current_sha256": "f5c70d9c6dfd2dfb2c295fb6f05f18112e70ab19399debf58b45edd760ebd931"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "decc0bc0188dcf61a40a7a5aaccc78fb235b237a61918e86b9df5607f05db408",
+      "current_sha256": "e826d828c9d2413e300fa600265e462f0127f4b0782132a9955ba7efd2882bec"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "9d4cef0c31f3dfb9ef2ac0d0cfce76cfa3899896e982e2251f75dc99bbe7dff8",
+      "current_sha256": "e11a92446e27c8906bcd6278e7c030d47df03168a4e581887d2359b6af17081f"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "ac544883d95ca39072aa36c7869a9917e3af6e74ef69590a79a560dfaaa53f6c",
+      "current_sha256": "3a7ce4fefacb407b1f3e2b34581f2b46f61939bcbe79f5c09c0b1f4f95042419"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "91d90005ef5324d7c52e45d3fa56275b2bac6bd68c93ed80cdee7163fc0ccd24",
+      "current_sha256": "658489d32050a04bd00147c5f9b107c3a292ba7fee098ab392b8a8f8443d9f47"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "97c740c9833b1e867812fe96ddbe31e1f0eb9e48a19f1269e22d17c8070c2cd0",
+      "current_sha256": "084dad151538c4cc235cea8cafe89380b253d1e38346b148f5d9a27a5624bf8d"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "eb184b33588628798f87550345fc938f4b42441a9da5acac4cbe74ba7b3e6752",
+      "current_sha256": "5b6cac43b01ac7da4de2bdc08debe25d3688d12e1d81f9971a70e4c5f229d6c2"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "9ded7130329d26168e00686e90318b03047943bbe619eb23e1dd818a344402f7",
+      "current_sha256": "f3c5713b68beea96fb78734194edcff93604efeb5421741cdd38912b01f2dda9"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/src/generated/language_pins.dart",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "a24778429382716ed7a8bb8199b4a4b64ca36fd4f1fb79b2540b07fe06352f68",
+      "current_sha256": "79c4554dbab0db0ae962c82f7383ccfb3841bc37260d050be1f1cf212c0ca682"
+    },
+    {
+      "path": "plugin_runtime/Cargo.lock",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "4a7e050dd3ff75ce4cf76e36e9ceedf775e12de478c80211c302ff0d0bfa4785",
+      "current_sha256": "9fa82f0f6a4668b70f429d87b471c5e46a983e1dba2c1771174044a503d09c92"
+    },
+    {
+      "path": "plugin_runtime/Cargo.toml",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "2e6bc4f1115e974b78d5fb04984b26a15d72b9a8a006bb5e1d00492eff6c142d",
+      "current_sha256": "60618d81718f9e232a4452da9faf52be589cdf2dc21dbab18af2e6a1bc2f2e90"
+    },
+    {
+      "path": "plugin_runtime/src/continuation.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "7888bbfd78e85e6e1d6c06ffe0c148edd6a45712f18019106dbe362aa739c647",
+      "current_sha256": "2df7605c66eaa9fd6b01047d2753f2c60040317d5e718441f9099308ab987644"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "d7a5d97287571748e22635e85897452a38f1f21401767676766955fb62abbc69",
+      "current_sha256": "de56bfeefe5168a0222c1af188829f4f99d5e795fee6d47fd686aba9d9ec2dc7"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/native_picker.cpp",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "ca172258a6a8081e23bcff3a738e2628095ef8e2b7e777406ee407ea1b8c37c5",
+      "current_sha256": "bd1a34795dcf5be42328421a4a9d6e842877aeff696fe357ab9bde2579cc25a1"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/native_picker.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "af6e4207a942a80d659da719abd450ded05636a336bb73d2945f1358d60bffa3",
+      "current_sha256": "0de91340ce5afc172c1916aa4122131556742b37cd31f65c460ee31d63daa6bc"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/selected_path.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "e8f2231abb9d08e6aa5510eda8c96f761352511fa342ab88fd47addecf7a5cf3",
+      "current_sha256": "bb7230bd6b446de8457db087d8232e282b3a7c56c73a5a221273dbba2c9e8655"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/watch.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "5aef9d05c66691dd1157bc57067f128ecb7540562dfe1804bb4353aab8370722"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/watch/native.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "eaf083f4f2d27d95e6c34cd1bc79d47bb915576214e3598f6c57302caf64b3ab"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/watch/picker.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "db772244ccc187d25b25e2b80fb66201ff8af78ddd1ff97556b9f1f67003ed4a"
+    },
+    {
+      "path": "plugin_runtime/src/directory_io/watch/picker_tests.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "4ea0b4a45995cddff27fd828c7d5242a52f7ada5986e056af7648c93c1603ec1"
+    },
+    {
+      "path": "plugin_runtime/src/fs_watch_binding.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "6427cc41f1d27c53e489aa0e839d93c5a2ad767808cd0b967acb1502aec5ffe7"
+    },
+    {
+      "path": "plugin_runtime/src/fs_watch_worker.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "55f523af86f021faebb6cb34fc22d0db0c187eda59c028239cea7e862f9ab3ed"
+    },
+    {
+      "path": "plugin_runtime/src/fs_watch_worker/close_refusal_tests.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "70b7ddd5d40ee93afac6f05b67565d9ddc8e76c73ce79512b666f6e325db40b1"
+    },
+    {
+      "path": "plugin_runtime/src/io_binding.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "5b09be59948b46aeea846f7196344f154442bd73d26bafc207eaa5801b92c116",
+      "current_sha256": "df874a15be46ddc08c8fb53c74e8a700d246c136905894064841cccc098db9db"
+    },
+    {
+      "path": "plugin_runtime/src/lib.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "4a0568c68fca55bb0991b1e89c603512086c854d61c974cc7983240f42e6ed8e",
+      "current_sha256": "f821dbdd922375deda90d280507a938f91dec259135bcd525d66cd74c52daa93"
+    },
+    {
+      "path": "plugin_runtime/src/manager.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "40dee91aaa131820c59c32f6515facefc20d2038e0600e4f7a554e0adea29d62",
+      "current_sha256": "defe27eb9f206194471c7c8ea192ea32aaec372aed088df8031683f95fda8d59"
+    },
+    {
+      "path": "plugin_runtime/src/package.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "0343ecdd86e57a4559c6fc52ba9371fafe98a10b84e3af2b977c9945d750eeb1",
+      "current_sha256": "9353eae0c0f19d082364514e5c220954b0bf4183b6be1b77f8152e7598ee89d2"
+    },
+    {
+      "path": "plugin_runtime/tests/fs_watch_approval.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "14351437aa3835aca9900e4cea9362ef390c37b23065b655bac311d0f282ea06"
+    },
+    {
+      "path": "plugin_runtime/tests/fs_watch_native_owner.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "dca02a5eeca51f0b78204ef2da3501331beda063b04b2bbeb9c882f1a71ec550"
+    },
+    {
+      "path": "plugin_runtime/tests/fs_watch_worker.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "ee0aa4ab9a13fde1038312d94beb6343f98ef3277861ef434fd35c7262b4a325"
+    },
+    {
+      "path": "plugin_runtime/tests/sdk_standalone_channel.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "db3e112daa68a1a09bbd1068351263ab71a86f65c9a8b2c28b628fc8cd8e76ff"
+    },
+    {
+      "path": "plugin_runtime/tests/sdk_standalone_directory.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "06e19a5b03973277b55774809c7fcc99bb22f487edde04c31fab686812d537c1"
+    },
+    {
+      "path": "plugin_runtime/tests/sdk_standalone_io.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "8a6208ae22f08678e312c009283796fdb455a53f059c4fa762e6484e03149e3e"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1348.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "429c42f0eb1cbfd9d9c8dc242c78f8f3b8fbe30560cfefc51ee2f37f4b6995be"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1412.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "c90bd21e01f686743bcd82542f951a8846b50360f8e8c8177d544bb97cd29771"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1467.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "430c9cfc82fb38e209a1567b3fd0f82e5bbc3d033c798f85a4d9142ce883f194"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1489.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "37dcdca332f74e40a7a277ff91b1606ae94b84ed31628b2e93cebbe0e1121991"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1499.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "6dc6e9e496e93a8e91cb06eb2680759645d251a23f3be2697297033e087d75f7"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1514.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "58cfe2c94902b4af0c8dd01c68d9e369b5448fefba2525eadca6badf269ddcfe"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1527.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f728f2077a5017bcb54dcf6c551fe54932c52bf58c248be560537ea06c921d62"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/history-checkpoint-1624.html",
+      "kind": "added",
+      "category": "documentation_or_evidence",
+      "old_sha256": null,
+      "current_sha256": "f49e5a5f770737b818ade715c03ddd6029956e3f5228d6d73a9eb284e0b23e1a"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/index.html",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "429c42f0eb1cbfd9d9c8dc242c78f8f3b8fbe30560cfefc51ee2f37f4b6995be",
+      "current_sha256": "172865e09b2b9d7aadf6c9130c7c93cc899a7e844a3f988b31166d2052d02da0"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/manifest.json",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "291b46e2ff9c1ab7506ab17d1c56419a396ea0ced2075730ff8840f26ec37a40",
+      "current_sha256": "4aae8b1a12e9d436b38cc13740ae67c27299fa91134f9837d026e494ae2d3299"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/report-data.json",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "8727f356000ae3a09f7f441ab2c41d673c941b0fb6000486e4f33b6adac5a052",
+      "current_sha256": "f8c3f16456b1a9e820ae506910214fbe31366bd8ec083d204604d14b8c633c62"
+    },
+    {
+      "path": "reports/project-progress-2026-10-26/verification.json",
+      "kind": "changed",
+      "category": "documentation_or_evidence",
+      "old_sha256": "cfba7a09ac568de107beda4c1e2f53bef9f8324c35fb24852f5e395f33d1b817",
+      "current_sha256": "c9cbd97becb212e872d2bd9e1d8ce24d4c9dcf8aac619e0afdcd5d310d23ea59"
+    },
+    {
+      "path": "test/fs_watch_manager_test.dart",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "1c7d6d2e4c5eba453aa1b4d23b261ed67b62b7300d075bcb854d6d31d59cad5b"
+    },
+    {
+      "path": "test/fs_watch_session_checks.dart",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "f62e149d87d374bd6102c153456c764084bd9b712488843a7b1756b40f0a2df4"
+    },
+    {
+      "path": "test/fs_watch_wire_checks.dart",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "13721a42aed3fd8c582a93400fcbe1b35899e3cee113a4b68c8493028c26ee35"
+    },
+    {
+      "path": "workbench_host/Cargo.lock",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "ab6bca70e7c6470ae94d460fde5fb6a3e93d5cc72b856bf058fead7504a78286",
+      "current_sha256": "96d96c1805f00c0e8d9124b7370d3875b8a17ea9399224e4160a473288ccc1d5"
+    },
+    {
+      "path": "workbench_host/schemas/host.capnp",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "4f3fa8f18fc629402459860c3b5085d527a633329feb869e666d0f6139207215",
+      "current_sha256": "2e2999d16a9221e88c45c9e57cf6151ec674f4ba23323a09af7e215fd78f14ab"
+    },
+    {
+      "path": "workbench_host/src/fs_watch_protocol.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "c81ab1fa88c469c4ea50e6b4c000c51f325b132d3d959728c7367393dbc6bcd1"
+    },
+    {
+      "path": "workbench_host/src/fs_watch_tasks.rs",
+      "kind": "added",
+      "category": "other_source_or_configuration",
+      "old_sha256": null,
+      "current_sha256": "f85594b73aeea0a606df3918956d27c1878cdcf2e8a885a9cd9a51cb946bcfe4"
+    },
+    {
+      "path": "workbench_host/src/io_tasks.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "38970c5791226752ed5790ac33d06a6ce3f369a87d4fe09205705e011cdd49f9",
+      "current_sha256": "2eec34022e55555e23a18149452b9cf4a31810eff327d89936e9b9780568fa60"
+    },
+    {
+      "path": "workbench_host/src/io_tasks_ad31_no_owner_tests.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "045abd1463a1c137bbe40a83e046da8f5269241f70c1a25e57de0fd7be55d87e",
+      "current_sha256": "ba969fa02d859df3a84116779bb5b7c9759cf8b24a48539a4c42c92186fc0c86"
+    },
+    {
+      "path": "workbench_host/src/io_tasks_agent_stop_tests.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "d8ac214f40a956b653c51daf66726985cc22dce03cc4943c16e21e8d53db390c",
+      "current_sha256": "7ffbafd04409d5233a4970a6495307754b120223c8c98d0b10067d3fe3bb10a1"
+    },
+    {
+      "path": "workbench_host/src/lib.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "9f4d7294b363e151b6ec59daa50dcb492835456974fa384909699f72018806d3",
+      "current_sha256": "b448d89c169d325b3027bcdd89a1e650b1c5e77dfa61d7f0fc1b63739bb8af79"
+    },
+    {
+      "path": "workbench_host/src/plugin_catalog.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "818743a15d4049adcaf2019a8f0243e957bfc465386e430b369a60bdc7aa0a92",
+      "current_sha256": "ad61c5eaedbb1add4dbdbb5177b141a7fba5289b80123d5b617ced789bcc49bb"
+    },
+    {
+      "path": "workbench_host/src/protocol.rs",
+      "kind": "changed",
+      "category": "other_source_or_configuration",
+      "old_sha256": "6b58c42bf538d43cafbc0c3a4bb737ecf2d477391a56da99343ae6c872fa0e56",
+      "current_sha256": "95bac0db9b6853d461d7129874271a36487978f508cce0143bc9558901341ab3"
+    },
+    {
+      "path": "workbench_host/tests/fs_watch_protected.rs",
+      "kind": "added",
+      "category": "tests",
+      "old_sha256": null,
+      "current_sha256": "e13f90201bc12ed94e6e00ee6142e72331537fd4f5db14d957cbbaf62f96f3f7"
+    }
+  ],
+  "counts": {
+    "other_source_or_configuration": 106,
+    "tests": 18,
+    "documentation_or_evidence": 208,
+    "product_dart": 12
+  },
+  "preserved_original_roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-062\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 27947520,
+      "sha256": "42c42e5d1a003c0745f418422a7278cbd25d9641592be48932a16705b8133c31"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-062\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 100183040,
+      "sha256": "25ac8fdac89de0d8b90e110954e15fd03540e7427aba5e302f625070e624bff0"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-062\\R\\codex-command-runner.exe",
+      "bytes": 24591360,
+      "sha256": "47c6b762f87395ffce58fee352043748d034e0f441039392ef38b53db7ce61b6"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-062\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37624832,
+      "sha256": "96a448160c428cf86339bf1112f670f7c4e63a8aa5b5ee98dbd553cbd6e8b0b8"
+    }
+  },
+  "eleven_groups": [
+    {
+      "requirement": "Refusal before resource creation",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "LogonUser explicit failure and null output",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Partial and abnormal outputs",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Token derivation and default DACL failures separately",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Setup failure after account creation",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Late creation result",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Handle close failure",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Helper and pipe created without Runner",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Concurrent close duplicate consume wrong generation",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Normal business full join ACK factory cleanup",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "More than 16 clean refusals; Unknown remains charged",
+      "full_group_final_candidate_accepted": false
+    }
+  ],
+  "historical_result_digests_unchanged": true,
+  "original_owners_contacted": 0,
+  "VM_calls": 0,
+  "canonical_source_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,28 @@
+{
+  "exit_code": 0,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\native-decode-runtime\\decode.stdout",
+    "bytes": 164,
+    "sha256": "3e5c427564c820740b434d7c9ec2beb4a709c6ce2a2be1839756b4e492c579f0"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\native-decode-runtime\\decode.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "status": "PASS_ACTUAL_NATIVE_CAPNP_DART_DECODE",
+  "decoded": {
+    "status": "PASS_ACTUAL_NATIVE_CAPNP_DART_DECODE",
+    "checks": 32,
+    "messages": 3,
+    "error": "expired",
+    "knownClosed": true,
+    "originalOwnerClosed": true,
+    "formalProductUI": false
+  },
+  "source_unchanged": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

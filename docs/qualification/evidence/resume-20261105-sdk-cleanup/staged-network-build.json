@@ -1,0 +1,62 @@
+{
+  "status": "PASS_STAGED_NETWORK_LOCK_REPAIR_COMPILED_NOT_RUNTIME",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "qualified_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+  "binaries": {
+    "managed_http": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http-ca5ccd368dc0c055.exe",
+      "bytes": 14360064,
+      "sha256": "3bad23af975d44f78cc1ab404bf2ecf3f3fbfbc2de8285b045b7157240cd75b0"
+    },
+    "sdk_service_guest": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\sdk_service_guest-fe121bfbdf9b7ea7.exe",
+      "bytes": 10177024,
+      "sha256": "76a104a9c452d699e867385c0123a5caa9fc23163f5a4d813c33d1e5b4e1553a"
+    }
+  },
+  "commands": [
+    {
+      "name": "managed_http",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http.jsonl",
+        "bytes": 267663,
+        "sha256": "e1dcc3ac70b1044d0a14b66772614c43317bde38a289e57c25c943616f48ae4c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\managed_http.stderr",
+        "bytes": 7940,
+        "sha256": "6c91967634ea90da4b940b43dad12d86e2adaaaba77d29a638b3f940cf3d15d6"
+      }
+    },
+    {
+      "name": "sdk_service_guest",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\sdk_service_guest.jsonl",
+        "bytes": 267433,
+        "sha256": "dd95701006839182a2522ba6a0d78ae7d08f6a3ef56708a7a7751a31c16e9069"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\sdk_service_guest.stderr",
+        "bytes": 203,
+        "sha256": "ffae31e0091130e966b05e3d5e690c0a896abbe76c416afe2cd6c36d4e6a1c27"
+      }
+    }
+  ],
+  "source_copy": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\source",
+  "canonical_source_unchanged": true,
+  "staged_inputs_unchanged": true,
+  "selected_programs_freshly_compiled": true,
+  "all_original_compiler_processes_returned": true,
+  "first_program_all_artifacts_cold": true,
+  "dependencies_shared_only_in_this_staged_source_build": true,
+  "frozen_inputs_unchanged": 57,
+  "guest_rebuilt": false,
+  "canonical_patch_applied": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

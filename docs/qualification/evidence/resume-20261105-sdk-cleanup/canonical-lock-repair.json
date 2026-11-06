@@ -1,0 +1,171 @@
+{
+  "status": "PASS_FIVE_CANONICAL_LOCK_REPAIRS_LOCKED_OFFLINE_METADATA",
+  "utc": "2026-11-05T01:07:13.638458+00:00",
+  "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+  "source_before": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "source_after": "8b1a903b81cd47b70116daf8ecd8609ae06e6301dc892fa38120b83850613e23",
+  "changes": [
+    {
+      "manifest": "network_node/Cargo.toml",
+      "before": {
+        "path": "C:\\ms1020\\network_node\\Cargo.lock",
+        "bytes": 71840,
+        "sha256": "ae17c374942925140634949c9ffcb08b1e3d2e03051b3dc0e59fe2f8f8bdd697"
+      },
+      "after": {
+        "path": "C:\\ms1020\\network_node\\Cargo.lock",
+        "bytes": 72139,
+        "sha256": "3485e6991a3bf9e38af0350c9e1b31855580d778965e9f859ef2a0be9a7a83fb"
+      }
+    },
+    {
+      "manifest": "extensions/agent-session-process-v1-host/Cargo.toml",
+      "before": {
+        "path": "C:\\ms1020\\extensions\\agent-session-process-v1-host\\Cargo.lock",
+        "bytes": 29261,
+        "sha256": "bc32694f269154843e421f32f4c882ea4727cf7a4f1a89e0bb5c00b818158db4"
+      },
+      "after": {
+        "path": "C:\\ms1020\\extensions\\agent-session-process-v1-host\\Cargo.lock",
+        "bytes": 30086,
+        "sha256": "3be04ab39514c5c46876cd53dfd333467c7de32d0000dfe45977b962d0efb5f6"
+      }
+    },
+    {
+      "manifest": "extensions/agent-session-exec-v1-r2-host/Cargo.toml",
+      "before": {
+        "path": "C:\\ms1020\\extensions\\agent-session-exec-v1-r2-host\\Cargo.lock",
+        "bytes": 28563,
+        "sha256": "cb87606406c7a406c3e3105a9035bfbe5fe7aa15c9ebfb0df64c97440c453b35"
+      },
+      "after": {
+        "path": "C:\\ms1020\\extensions\\agent-session-exec-v1-r2-host\\Cargo.lock",
+        "bytes": 28713,
+        "sha256": "a4cbefaf6505dcc27d0601227b94968f87e688a674b60017695d672fe0b281ea"
+      }
+    },
+    {
+      "manifest": "extensions/agent-catalog-owner-v1/Cargo.toml",
+      "before": {
+        "path": "C:\\ms1020\\extensions\\agent-catalog-owner-v1\\Cargo.lock",
+        "bytes": 29331,
+        "sha256": "db2f576fd4e9ebaf425a6fa7042e12ac51cf8dbf27616b212fc973b22248c8dc"
+      },
+      "after": {
+        "path": "C:\\ms1020\\extensions\\agent-catalog-owner-v1\\Cargo.lock",
+        "bytes": 30533,
+        "sha256": "3ebab5112d7f37351ab5ad829ac9e99055ae3629a232de7a13875f20f3f09269"
+      }
+    },
+    {
+      "manifest": "extensions/codex-session-exec-client-r2/qualification/Cargo.toml",
+      "before": {
+        "path": "C:\\ms1020\\extensions\\codex-session-exec-client-r2\\qualification\\Cargo.lock",
+        "bytes": 27541,
+        "sha256": "54d5414591de8db62893bf978dae6fbebf4e673fd20ef5e8d2c37d1dc43a0ec9"
+      },
+      "after": {
+        "path": "C:\\ms1020\\extensions\\codex-session-exec-client-r2\\qualification\\Cargo.lock",
+        "bytes": 27691,
+        "sha256": "718cb2332034bc3aface4187ac8cac28836ee6c77b4f83e0984c057f514fc7e7"
+      }
+    }
+  ],
+  "locked_offline_metadata": [
+    {
+      "manifest": "network_node/Cargo.toml",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\1-metadata.json",
+        "bytes": 926287,
+        "sha256": "b0462ea8700369820e37e67525cf22be9405d7b46bb0bd0a1328cc79b21ea4e0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\1-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "manifest": "extensions/agent-session-process-v1-host/Cargo.toml",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\2-metadata.json",
+        "bytes": 571680,
+        "sha256": "860e65aa5c6b25e4f7621871ca78a8fcd05b9b1710aa4adf8cfba8468c56d394"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\2-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "manifest": "extensions/agent-session-exec-v1-r2-host/Cargo.toml",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\3-metadata.json",
+        "bytes": 544376,
+        "sha256": "a71a3a63aa66ce3db124dd638518b3853ce95a8d3ce08097fbd8c392ab0f362e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\3-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "manifest": "extensions/agent-catalog-owner-v1/Cargo.toml",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\4-metadata.json",
+        "bytes": 579613,
+        "sha256": "b65a9d24b10411449510bd5e802f9482b737ac0d7f064a9d6cbc43a3ffdc3d0f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\4-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "manifest": "extensions/codex-session-exec-client-r2/qualification/Cargo.toml",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\5-metadata.json",
+        "bytes": 530367,
+        "sha256": "9ae2506bcfb80bc9e92837dd3f7a9a67e6a7d3e1738d91faeb32da3d6ff71360"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\canonical-lock-repair\\5-metadata.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "changed_files": [
+    "extensions/agent-catalog-owner-v1/Cargo.lock",
+    "extensions/agent-session-exec-v1-r2-host/Cargo.lock",
+    "extensions/agent-session-process-v1-host/Cargo.lock",
+    "extensions/codex-session-exec-client-r2/qualification/Cargo.lock",
+    "network_node/Cargo.lock"
+  ],
+  "unrelated_source_changes": 0,
+  "staged_consumer_compile_checks": 4,
+  "staged_network_runtime_methods": 9,
+  "staged_evidence_preserves_original_source_binding": true,
+  "new_runtime_dispatches": 0,
+  "governing_product_locks_unchanged": true,
+  "original_UI_artifacts_unchanged": true,
+  "original_UI_receipts_relabelled": false,
+  "frozen_inputs_unchanged": 57,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

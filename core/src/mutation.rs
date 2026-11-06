@@ -79,6 +79,10 @@ pub enum Action {
         content_length: u64,
         content_sha256: [u8; 32],
     },
+    Replace {
+        content_length: u64,
+        content_sha256: [u8; 32],
+    },
     Delete,
     Chunk {
         offset: u64,
@@ -95,6 +99,7 @@ impl Action {
     pub fn kind(&self) -> Kind {
         match self {
             Self::Create { .. } => Kind::PrepareCreate,
+            Self::Replace { .. } => Kind::PrepareReplace,
             Self::Delete => Kind::PrepareDelete,
             Self::Chunk { .. } => Kind::Chunk,
             Self::Commit => Kind::Commit,
@@ -108,6 +113,10 @@ impl Action {
     fn validate(&self) -> Result<()> {
         match self {
             Self::Create {
+                content_length,
+                content_sha256,
+            }
+            | Self::Replace {
                 content_length,
                 content_sha256,
             } => {
@@ -125,8 +134,8 @@ impl Action {
                     || bytes.len() > MAX_CHUNK_BYTES
                     || offset
                         .checked_add(bytes.len() as u64)
-                        .is_none_or(|end| end > MAX_CONTENT_BYTES)
-            => {
+                        .is_none_or(|end| end > MAX_CONTENT_BYTES) =>
+            {
                 return Err(Error::Limit);
             }
             _ => {}
@@ -180,6 +189,14 @@ impl Request {
                 create.set_content_length(*content_length);
                 create.set_content_sha256(content_sha256);
             }
+            Action::Replace {
+                content_length,
+                content_sha256,
+            } => {
+                let mut create = root.init_prepare_replace();
+                create.set_content_length(*content_length);
+                create.set_content_sha256(content_sha256);
+            }
             Action::Delete => root.set_prepare_delete(()),
             Action::Chunk { offset, bytes } => {
                 let mut chunk = root.init_chunk();
@@ -220,6 +237,13 @@ impl Request {
             wire::request::PrepareCreate(value) => {
                 let create = value.map_err(invalid)?;
                 Action::Create {
+                    content_length: create.get_content_length(),
+                    content_sha256: token(create.get_content_sha256())?,
+                }
+            }
+            wire::request::PrepareReplace(value) => {
+                let create = value.map_err(invalid)?;
+                Action::Replace {
                     content_length: create.get_content_length(),
                     content_sha256: token(create.get_content_sha256())?,
                 }
@@ -327,7 +351,7 @@ impl Response {
             return Ok(());
         }
         let valid = match self.kind {
-            Kind::PrepareCreate | Kind::PrepareDelete => {
+            Kind::PrepareCreate | Kind::PrepareDelete | Kind::PrepareReplace => {
                 self.phase == Phase::Prepared && no_outcome && no_metadata
             }
             Kind::Chunk => {

@@ -52,6 +52,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ]);
     manifest.mutation_schema_sha256 = mutation::schema_digest().to_vec();
     manifest.mutation_budget = Some(MutationBudget {
+        max_resources: 0,
         max_job_bytes: MAX_MUTATION_JOB_BYTES,
         max_bytes: MAX_MUTATION_BYTES,
     });

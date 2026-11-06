@@ -1,0 +1,120 @@
+{
+  "status": "PASS_CURRENT_DEFAULT_HOST_FROZEN_PACKAGE_STATIC_PREPARATION_ONLY",
+  "source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-hosts\\programs\\morrow-workbench-host.exe",
+    "bytes": 31580672,
+    "sha256": "81585a2f181f667c8df5bef7f2c2b54edea4dde1e074e2beb2605166bddd8d8b"
+  },
+  "packages": 19,
+  "frozen_inputs_unchanged": 57,
+  "all_original_processes_returned": true,
+  "all_exit_codes_zero": true,
+  "guest_executions": 0,
+  "approvals_created": 0,
+  "databases_created": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_unchanged": true,
+  "runtime_compatibility_accepted": false,
+  "formal_UI_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\01-c-dependency-result.json",
+      "bytes": 2128,
+      "sha256": "7ba11df0c40b61d7d9c5f5ea2ac2a5a4bd09d349f39c555ccd33736ee4422903"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\02-c-task-result.json",
+      "bytes": 2103,
+      "sha256": "92a571f9a01f91982ad8de3f3c301556e45267ffa22d0bedbbfef0047ef3e80c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\03-c-transform-result.json",
+      "bytes": 2123,
+      "sha256": "b2a84f98eb1377fc2112dec42e18490e4b057a9f0fc92e35396486e18328454c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\04-c-ui-result.json",
+      "bytes": 2095,
+      "sha256": "d6aa23e57f83f3c6b577e8bc46bf58a5784dedf72058ee37cd6d9e4011d27045"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\05-cpp-dependency-result.json",
+      "bytes": 2136,
+      "sha256": "9f971d4cc27271a3dccc59545230599d6c07ff1e54c557519c2fcbf7980de723"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\06-cpp-task-result.json",
+      "bytes": 2111,
+      "sha256": "2a01beb46863221e4fdef6c57cdcba68e9d468f92636b31368a3158ac78ba6c4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\07-cpp-transform-result.json",
+      "bytes": 2131,
+      "sha256": "cc9925bc983ffb0b39a1aea41b230c08260bcd2738be87fe3de769919162d1c4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\08-cpp-ui-result.json",
+      "bytes": 2104,
+      "sha256": "98c4836ff835d6fc8fd759c271440037ef97b8f7936529ef07784bce8872ed90"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\09-rust-dependency-result.json",
+      "bytes": 2140,
+      "sha256": "6c23a607d0943bd9f747c7ee46dea58226a8e68fb97e70f502633b43f9e566c2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\10-rust-provider-result.json",
+      "bytes": 2132,
+      "sha256": "b323435bdabc479a0b643fdc3df7c9e3151406b0c013556cc2c60378b00da94b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\11-rust-task-result.json",
+      "bytes": 2116,
+      "sha256": "5e472e02a3a37392827c13116a7ca69c2866c16f7dec90501a0f962036d80ab2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\12-rust-transform-result.json",
+      "bytes": 2136,
+      "sha256": "d714ca2086ba2563385063bba3aaea51039b61ce25a271ea9a5d11c4ac3ffeb1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\13-rust-ui-result.json",
+      "bytes": 2108,
+      "sha256": "1563a9d2a46f3fc1d9825904bca9acb769d6855a224e000689391ec5023d7fa4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\14-c-io-result.json",
+      "bytes": 2107,
+      "sha256": "3614a723553dc49c26f02dc7048d1d1d6df626ddb6d1c6136de538e70b098da1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\15-c-service-result.json",
+      "bytes": 2113,
+      "sha256": "473144b6b27d9b681c6853fa0f0c9fb6f4c51d4ab99f3ef042b3ead58e34e056"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\16-cpp-io-result.json",
+      "bytes": 2113,
+      "sha256": "81e74346128e2880a8f0bd0cdeb75c8cafcc59c4c11573564af9656669824ed8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\17-cpp-service-result.json",
+      "bytes": 2121,
+      "sha256": "4c32eab3262695c90fe37f24df878457478f2d988c08e4a378642d58c678c28f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\18-rust-io-result.json",
+      "bytes": 2119,
+      "sha256": "b84e9f16cac9ffa27bb6acca6c49a5eca42110518b10aa2d015d0e548fe0f41e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\19-rust-service-result.json",
+      "bytes": 2128,
+      "sha256": "a505bb08d7bb4ad7ea3dc74736a03ae2a508c55e41c48c0a57213df1a48b5f99"
+    }
+  ]
+}

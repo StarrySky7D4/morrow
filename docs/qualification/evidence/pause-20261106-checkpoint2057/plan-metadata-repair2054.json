@@ -1,0 +1,296 @@
+{
+  "status": "STRICT_PLAN_METADATA_SEPARATED_ALL_RUNTIME_GUARDS_UNCHANGED",
+  "tag": "d8b49c5a1fa34ec2b556f076c317cdd9",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "original_plan": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\stage-plan.json.original",
+    "bytes": 6833,
+    "sha256": "25d2c29452ccb1fc8617ed6bb0eeac02b0225b7dca2d9e518d8c99a6cf2bdac3"
+  },
+  "original_selection": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\vm-stage-selection-2050.json.original",
+    "bytes": 789,
+    "sha256": "67dcbbe120bfb705ef04a13801638b89047c329e9b27b38d5895bcb3c26a6d58"
+  },
+  "corrected_plan": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\stage-plan.json",
+    "bytes": 6702,
+    "sha256": "e94e922487f77aca81f66a20e8431fc938c666eb91f6abae40740a6c9890830a"
+  },
+  "corrected_selection": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm-stage-selection-2050.json",
+    "bytes": 1477,
+    "sha256": "d00f700b176ccc3788eddbe4720cd8343b8bda2be447263340c3f3ae45188ee9"
+  },
+  "qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\qualification-stage2054.json",
+    "bytes": 234,
+    "sha256": "ae472ee6d277c53622fdc4b61e6ac6be027cdac446d64eb093ec5ffd8772337b"
+  },
+  "removed_keys": [
+    "qualification_profile",
+    "p2_wire_bytes",
+    "original47_qualification"
+  ],
+  "execution_plan_keys_unchanged": true,
+  "all_other_plan_values_identical": true,
+  "immutable_files": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\Common1737.ps1",
+      "bytes": 40896,
+      "sha256": "2c25cbf580786c240ccf91570d6aa518009217eb5c870eadf8dd73510c518286"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\Invoke-Transaction1737.ps1",
+      "bytes": 22427,
+      "sha256": "19097cbe6d688a867993afc1f5be9995b5be6b5356d5153c2803310b2833bab3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\Guest-Transaction1737.ps1",
+      "bytes": 44152,
+      "sha256": "728ade68c7dd6851800fdd0cf33d6dc18a8f3607d3a26a78ac0750a7724a52b6"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\public-only-invocation.reserved",
+      "bytes": 32,
+      "sha256": "58763696d0f3af8cb5e95c19b46bfec05d1cef88bca19ee64918988246b1ab4d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\public-only.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\public-only.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "role": "P",
+      "name": "morrow-workbench-supervisor.exe",
+      "inventory": "cfcc7c0328d2aafb79dad36c17f69c7cb6695c9b659d8e797c0cf373fb8d6495",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\roles\\morrow-workbench-supervisor.exe",
+      "bytes": 27948544,
+      "sha256": "f6cc8ceff38bbc08db4da968552075b917ce26b8ff33208b4c0037e573b581a9"
+    },
+    {
+      "role": "C",
+      "name": "morrow-protected-checked-vm-harness.exe",
+      "inventory": "c9328d70c3a8681202cf89517c79167319686e1025aba36c04c2703b330e2307",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\roles\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 100651008,
+      "sha256": "2bfd5553183df908e5b7366545e57e4ae88ad3562c16283352b5c42b802a6ca6"
+    },
+    {
+      "role": "R",
+      "name": "codex-command-runner.exe",
+      "inventory": "a3631bf94493de799abe49c40adee1a1d1374335c02317755ff7ead9f9de27ed",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\roles\\codex-command-runner.exe",
+      "bytes": 24590848,
+      "sha256": "0d1ead4140f09e1a94ca788b7170f29b2330ee5c7d342409039dd54623f60d35"
+    },
+    {
+      "role": "S",
+      "name": "codex-windows-sandbox-setup.exe",
+      "inventory": "a3b2e71602d3086c459b6789b5e58b8433f93b19bd4603e23098eaabfd97a78f",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\roles\\codex-windows-sandbox-setup.exe",
+      "bytes": 37625344,
+      "sha256": "bf3675885b10db326d207742bb00b22c28d8830e757c8a1a97b6f6da1117c467"
+    },
+    {
+      "name": "Root47Controller1725.exe",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\controller\\Root47Controller1725.exe",
+      "bytes": 180736,
+      "sha256": "1fe11eee3eec44510ac91393c69e9c2f80d54101b698d47e61bf5c5488d737c6"
+    },
+    {
+      "name": "AssignPrimary1709.dll",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\policy\\AssignPrimary1709.dll",
+      "bytes": 30720,
+      "sha256": "6f39b52387ad8b1983ca2fceac7a897768acd684cd37eb0f7266fa6b0094f409"
+    },
+    {
+      "name": "RootTransactionCapture1737.dll",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\capture\\RootTransactionCapture1737.dll",
+      "bytes": 21504,
+      "sha256": "76462ddc0ca91f12e2d2aee999e16289c42f66bb8cfe89b0b0647ad5fb6a2605"
+    },
+    {
+      "kind": "controller-freeze",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\controller-source\\ROOT_RUNTIME_FREEZE2765.json",
+      "bytes": 3855,
+      "sha256": "dc3059a6f0494179e1d25cef756b3eadf66db76e62a9bbd471a23f269ee57d27"
+    },
+    {
+      "kind": "policy-freeze",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\policy-source\\ROOT_FREEZE1719.json",
+      "bytes": 1264,
+      "sha256": "d89802e8691c829d6cc76449e437215fb0f59e92305a778ef589e3b3a7a7795c"
+    },
+    {
+      "kind": "vm-boundary",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\VM_OPERATION_BOUNDARY.json",
+      "bytes": 3722,
+      "sha256": "dd2b23276cf883d5ebbc6285c28c3d87e32b70f6490c71a018dfecd6d5b0f396"
+    },
+    {
+      "kind": "human-scope",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\human-scope.md",
+      "bytes": 1236,
+      "sha256": "02703fc68a47a602f25a804bbb0bf8714226a67bd4cd5f3ef82e3e5d2c078631"
+    },
+    {
+      "kind": "controller-build-review",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\controller\\report.json",
+      "bytes": 32059,
+      "sha256": "4bd66ef0518d0e8079e8693d18823ba57858a2be6fa4a5b7769a850f6e690955"
+    },
+    {
+      "kind": "policy-build-review",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\policy\\report.json",
+      "bytes": 5027,
+      "sha256": "02caa5f3bfbedf473d4f0aad6250b58326364ce237a5db8aad90b4cb0fb52662"
+    },
+    {
+      "kind": "capture-build-review",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\capture\\report.json",
+      "bytes": 1539,
+      "sha256": "d493f90c02547a369297ee2e5a8828da0e880e15c570b47c0beafc3918fc984f"
+    },
+    {
+      "kind": "readiness-source",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\Guest-Readiness1737.ps1",
+      "bytes": 12855,
+      "sha256": "5a40821baad48ba9c03a0712398ec9241cd580118badfcea9d3c6f5da8b79015"
+    },
+    {
+      "kind": "capture-source",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\RootTransactionCapture1737.cs",
+      "bytes": 10297,
+      "sha256": "10107dd59e9faba8bd7ecaf1282928b4f4ad6a24e8587f3b4d52de4f48a80896"
+    },
+    {
+      "kind": "capture-metadata-source",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\RootTransactionCapture1737.Metadata.cs",
+      "bytes": 8554,
+      "sha256": "120defd56b363d0ec5ccbc39925aa8d19cd4b6144eb189667bfd7ecd26f93079"
+    },
+    {
+      "kind": "guest-source",
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\Guest-Transaction1737.ps1",
+      "bytes": 44152,
+      "sha256": "728ade68c7dd6851800fdd0cf33d6dc18a8f3607d3a26a78ac0750a7724a52b6"
+    }
+  ],
+  "rows": [
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\prepare_vm_stage_2050.py",
+        "bytes": 32767,
+        "sha256": "ad6fc3d4d2d6bcae7e36417279ef0e7dfa731b05a1ad5baca4114cd6a25d5c1d"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\prepare_vm_stage_2054.py",
+        "bytes": 33177,
+        "sha256": "3f1ac8211160fbebd2cc7f83cb51d12e5f5aff24b731772c3be7d9dd5777aeb4"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\prepare_vm_stage_2054.py.diff",
+        "bytes": 1577,
+        "sha256": "50bd09b85abe17c785aacd594d8e09cd30ef8799a168f483cb237a90bb64f593"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\verify_roles070_stage2050.py",
+        "bytes": 16066,
+        "sha256": "5e00e3fb42fe1ae471ae768a360902f2a5b5576ffd94f43175c24723e12e876c"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\verify_roles070_stage2054.py",
+        "bytes": 16235,
+        "sha256": "7d1e5ffa734e9b6377376d2cc4e10deda490ad8cb0ad033ac933efc6cb5f2e11"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\verify_roles070_stage2054.py.diff",
+        "bytes": 630,
+        "sha256": "56cee4a4ed83d3ea64b4046eadf95248eb1110021edcb8258603278723a12b2e"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\review_stage_2050.py",
+        "bytes": 2789,
+        "sha256": "61dec04e64674feb79aff0aa0702bb3f9b38ff6daf2bf71767c13cbd608ce717"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\review_stage_2054.py",
+        "bytes": 3011,
+        "sha256": "2a74a4e4bd1dd97ab332721c4e67ae37feb78047fde54e3853c239c97f7e0e8b"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\review_stage_2054.py.diff",
+        "bytes": 1434,
+        "sha256": "f94dac4ee2205fc5ed8f7c9b769389b91ac176abd416a9a84b376c27ca47f333"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\prepare_isolated_case_2050.py",
+        "bytes": 4149,
+        "sha256": "5d4306ec4ca086af1e7f6933070019b5862a3133ad5a52586eceda05030c6839"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\prepare_isolated_case_2054.py",
+        "bytes": 4450,
+        "sha256": "eeec525dbf7d80367e3b9fe369d3ae865ca7bceea6e9da6dcfad60bf1f2eab42"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\prepare_isolated_case_2054.py.diff",
+        "bytes": 1949,
+        "sha256": "2f772580571d64c9da52a928289f7751a042ab817b849c98885c752ec239b50d"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\run_isolated_case_2050.py",
+        "bytes": 5253,
+        "sha256": "d9b0a52a9446db75fde02be7d13aee2b1b0df5a7827f695a7ca88afce9fab6cb"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\run_isolated_case_2054.py",
+        "bytes": 5646,
+        "sha256": "9c3012cd816610baf3097c53a637886e46be2fd7f9538d3f734e84aa7ac32dac"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\run_isolated_case_2054.py.diff",
+        "bytes": 1757,
+        "sha256": "82c992e35165235138de2d78ce19e7b503d27d8ede499e2006ad9d45836cf596"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\run_cold_guarded_2050.py",
+        "bytes": 5069,
+        "sha256": "a6fe704843758d4f22d0b3337c570932504cbd56d469e0f925713efb16ddeb57"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\run_cold_guarded_2054.py",
+        "bytes": 5189,
+        "sha256": "fcc5bf28dbee80dd4a3929d198042e2b9ce7156c7c57bd0216d836b952c1db2a"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-plan-repair-2054\\run_cold_guarded_2054.py.diff",
+        "bytes": 2044,
+        "sha256": "25be8c6d233d4a413d8ac24ac9660836f7d858acc1f0a185d788912852562464"
+      }
+    }
+  ],
+  "prior_pipeline_failure_preserved": true,
+  "original_failed_exit_not_inferred": true,
+  "vm_calls": 0,
+  "credential_reads": 0,
+  "policy_changes": 0,
+  "canonical_source_edits": 0,
+  "release_eligible": false
+}

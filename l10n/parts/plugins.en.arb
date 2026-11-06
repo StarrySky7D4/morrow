@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "Check the full folder path. Every limit must be positive and within the plugin limits.",
-  "pluginsWatchOtherPanel": "The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel."
+  "pluginsWatchOtherPanel": "The directory observation is not yet confirmed complete. Review the original task in the Directory changes panel.",
+  "pluginsFileMutationExecuteReplaceConfirm": "Replace this file’s contents permanently",
+  "pluginsGuestExecutionResourceBudget": "Approved simultaneous resources",
+  "pluginsGuestExecutionResourceDeclaration": "Declared resource limit"
 }
