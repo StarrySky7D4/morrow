@@ -32,11 +32,47 @@ namespace C28.RootP1682 {
   internal int OpenAttempts,KnownAbsenceProbes;
   internal FileImage1725(string name){Handle=new Slot(name);}
  }
+ // Pure labels from bytes already copied by the original reader. These bits
+ // describe observed text, never a causal verdict or a release/exit witness.
+ // Bits: 1 stack overflow, 2 panic, 4 runtime drop in async, 8 nested runtime,
+ // 16 thread spawn, 32 allocation, 64 parent retention, 128 entry retention.
+ internal sealed class CachedStderrMarkers1727 {
+  static readonly string[] Text={"has overflowed its stack","fatal runtime error: stack overflow","panicked at",
+   "Cannot drop a runtime in a context where blocking is not allowed","Cannot start a runtime from within a runtime",
+   "failed to spawn thread","OS can't spawn worker thread","memory allocation of","out of memory",
+   "ORIGINAL_PARENT_SESSION_UNKNOWN_RETAINED_NO_NEXT_ATTEMPT","ORIGINAL_PARENT_SESSION_ENTRY_UNKNOWN_RETAINED"};
+  static readonly uint[] Bits={1,1,2,4,8,16,16,32,32,64,128};
+  bool Observed,Valid=true;int Length;uint Markers;
+  internal void Observe(byte[] bytes,int count){
+   if(!Valid)return;Observed=true;
+   if(bytes==null||count<Length||count<0||count>bytes.Length||count>2097152){Valid=false;return;}
+   if(count==Length)return;
+   // Only appended bytes and a fixed overlap are inspected. No string/exception
+   // body is copied into public evidence, and no IO or owner query occurs here.
+   int first=Math.Max(0,Length-127);
+   for(int k=0;k<Text.Length;k++){
+    if((Markers&Bits[k])!=0)continue;
+    string marker=Text[k];
+    for(int at=first;at<=count-marker.Length;at++){
+     bool same=true;for(int j=0;j<marker.Length;j++)if(bytes[at+j]!=(byte)marker[j]){same=false;break;}
+     if(same){Markers|=Bits[k];break;}
+    }
+   }
+   Length=count;
+  }
+  internal Dictionary<string,object> Data(){
+   return !Observed?null:new Dictionary<string,object>{{"bytes",Length},{"marker_bits",Markers},{"valid",Valid},{"raw_body_exported",false}};
+  }
+ }
  internal sealed class Io1725 {
   internal string Stage="NOT_STARTED";internal int TargetRole=-1;
   string NativeApi,NativeStage,FailureStage;int NativeRole=-1,FailureRole=-1;
   bool? NativeReturned;int? NativeError;uint? NativeValue;
   Dictionary<string,object> FailureNative,FailureProgress;
+  readonly CachedStderrMarkers1727 CachedStderr=new CachedStderrMarkers1727();
+  Dictionary<string,object> FailureStderr;
+  internal void CacheStderrMarkers(byte[] bytes,int count){if(!Unknown)CachedStderr.Observe(bytes,count);}
+
   string FailureJournalGuard;
   internal void CacheJournalFailure(string guard){
    if(Unknown||FailureJournalGuard!=null)return;FailureJournalGuard=SafeLabel(guard,false);
@@ -73,13 +109,19 @@ namespace C28.RootP1682 {
    ExceptionTruncated=error!=null;
   }
   internal Dictionary<string,object> DiagnosticData(string mode){return DiagnosticData(mode,null);}
+  internal Dictionary<string,object> DiagnosticData(string mode,CaptureObservation prior,CaptureObservation final){
+   // FinishAfterDeliveredExit may have captured a native failure after the last
+   // running snapshot. Prefer that already-returned final snapshot; never query
+   // the retained owner here or replace missing observations with clean values.
+   return DiagnosticData(mode,final??prior);
+  }
   internal Dictionary<string,object> DiagnosticData(string mode,CaptureObservation capture){
    return new Dictionary<string,object>{{"schema","ROOT_CACHED_FAILURE1832_V1"},{"mode",mode=="gather"||mode=="run"?mode:"REDACTED"},
     {"unknown",Unknown},{"no_replay",true},{"first_guard",FirstError=="ROOT_CONTROLLER_UNCERTAINTY_RETAINED"?null:SafeLabel(FirstError,false)},
     {"retention_guard",FirstError=="ROOT_CONTROLLER_UNCERTAINTY_RETAINED"?FirstError:null},{"source_stage",SafeLabel(FailureStage,false)},
     {"target_role_index",FailureRole},{"last_native",FailureNative},{"exception_captured",ExceptionCaptured},
     {"exceptions",ExceptionData.ToArray()},{"exception_chain_truncated",ExceptionTruncated},{"exception_body","NOT_EXPORTED"},
-    {"resource_release_or_native_exit_proven",false},{"cached_shared_progress",FailureProgress},{"helper_capture",CachedHelper(capture)},{"journal_first_guard",FailureJournalGuard}};
+    {"resource_release_or_native_exit_proven",false},{"cached_shared_progress",FailureProgress},{"helper_capture",CachedHelper(capture)},{"journal_first_guard",FailureJournalGuard},{ "cached_stderr_markers",FailureStderr}};
   }
   // Only the already-observed snapshot is projected. Do not query the retained
   // session, touch a native handle, or infer an exit/cleanup from missing data.
@@ -116,6 +158,7 @@ namespace C28.RootP1682 {
   }
   internal void Fail(string code){
    Unknown=true;if(FirstError!=null)return;FirstError=code;
+   try{FailureStderr=CachedStderr.Data();}catch{}
    try{if(ProgressAvailable)FailureProgress=new Dictionary<string,object>{
     {"schema","CACHED_SHARED_PROGRESS043_V1"},{"round_index_zero_based",ProgressRound},{"step_index_zero_based",ProgressStep},
     {"delivered",ProgressDelivered},{"main_polls",ProgressPolls},{"journal_read_calls",ProgressReads},

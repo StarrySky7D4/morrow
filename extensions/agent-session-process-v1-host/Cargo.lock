@@ -73,9 +73,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.6.0"
+version = "1.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f74872d07caf508b30a21f6836e7d7016a2eaf7d9ff4f48deaa58cd8a0407630"
+checksum = "005ec2760ca554fae18df7a11195552ec576cd665632a881bc011d5bb2fd4d80"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -460,6 +460,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-blob-transfer-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-proposal-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-request-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-core"
 version = "0.1.9-test.50"
 dependencies = [
@@ -499,13 +528,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-fs-watch-native-v1"
+version = "0.1.0"
+dependencies = [
+ "morrow-fs-watch-v1",
+ "windows-sys",
+]
+
+[[package]]
+name = "morrow-fs-watch-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "cc",
  "getrandom",
+ "morrow-blob-transfer-v1",
+ "morrow-blob-upload-proposal-v1",
+ "morrow-blob-upload-request-v1",
  "morrow-core",
  "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",
+ "morrow-fs-watch-native-v1",
+ "morrow-fs-watch-v1",
  "prost",
  "sha2 0.10.9",
  "wasmi",

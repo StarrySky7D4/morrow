@@ -1,0 +1,133 @@
+{
+  "status": "FIVE_CURRENT_SCOPED_RUNTIME_ROWS_FULL_ELEVEN_GROUP_P2_OPEN",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "previous_matrix": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\checkpoint1971\\current-p2-matrix.json",
+    "bytes": 5614,
+    "sha256": "9852088fd6a3db1b23512c66ab699864822b0c4f889432d9dd743477f3b2f299"
+  },
+  "historical_results_not_relabelled": true,
+  "rows": [
+    {
+      "requirement": "Refusal before resource creation",
+      "current_runtime_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\p2-native-refusal-current-1966\\result.json",
+          "bytes": 3277,
+          "sha256": "f4608d96032421707b857eebd567ae3fe133277455bf254865b517e298ba4fd0"
+        }
+      ],
+      "scoped_current_runtime_present": true,
+      "scope": "Current-source read-only real caller refusal and local registry path before native launch. Eleven exact methods; seventeen real caller refusals and thirty-four checked token closes. Not full SDK or product qualification.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "LogonUser explicit failure and null output",
+      "current_runtime_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1950-summary.json",
+          "bytes": 1321,
+          "sha256": "cc3275ede6bd02bc986b55d92022fd41d4317cf749003fbeb70bc1d3083f8dfe"
+        }
+      ],
+      "scoped_current_runtime_present": true,
+      "scope": "Actual current-source Windows LogonUser rejection 1326 with null output, one original refusal join, factory/setup cleanup and same-owner policy restoration; not a normal terminal completion.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Partial and abnormal outputs",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Token derivation and default DACL failures separately",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Setup failure after account creation",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Late creation result",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Handle close failure",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Helper and pipe created without Runner",
+      "current_runtime_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case2028-summary.json",
+          "bytes": 1481,
+          "sha256": "feab4ec1527342c3fc508bc8139265f0626ebf7585ac3a5a03d298830907e14b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\vm058-case2028-retained-checkpoint-review-2044\\result.json",
+          "bytes": 4706,
+          "sha256": "2b85e71e61e0dd205d13c572e53ad606329547d60ff762fd699fe538422621a3"
+        }
+      ],
+      "scoped_current_runtime_present": true,
+      "scope": "Current-source actual helper-stop fault after original helper resources and before Runner; 380 evidence checks. Original result remains Unknown, not clean completion. Same policy owner restored its proven delta; original uncertain owner was not contacted. Saved state retained in a separately verified checkpoint before restoring the clean baseline.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Concurrent close duplicate consume wrong generation",
+      "current_runtime_evidence": [],
+      "scoped_current_runtime_present": false,
+      "scope": "No complete current-source runtime qualification for this group.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "Normal business full join ACK factory cleanup",
+      "current_runtime_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1910-summary.json",
+          "bytes": 1285,
+          "sha256": "6d86e211d31568d1a7a49f1562bdc6b1c0a763970f28d167b52a8b4295e7b2cd"
+        }
+      ],
+      "scoped_current_runtime_present": true,
+      "scope": "Current original47/nine groups with original native retirement, case cleanup and same-owner policy restoration.",
+      "full_group_final_candidate_accepted": false
+    },
+    {
+      "requirement": "More than 16 clean refusals; Unknown remains charged",
+      "current_runtime_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1938-summary.json",
+          "bytes": 1316,
+          "sha256": "08185387fd580c9174956c9c07ee9f5a797490a1101dacb95e66ca658298c926"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\p2-native-refusal-current-1966\\result.json",
+          "bytes": 3277,
+          "sha256": "f4608d96032421707b857eebd567ae3fe133277455bf254865b517e298ba4fd0"
+        }
+      ],
+      "scoped_current_runtime_present": true,
+      "scope": "Current shared-owner seventeen full Windows refusals, plus a separate current local-native registry run with seven charged uncertainty controls. The local fixture does not establish SDK negative-control capacity or full product acceptance.",
+      "full_group_final_candidate_accepted": false
+    }
+  ],
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "current_scoped_runtime_rows": 5
+}

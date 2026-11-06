@@ -164,6 +164,22 @@ void main() {
     }
     expect(b.calls['start'], isNull);
   });
+  for (final entry in {
+    'en': 'Plugin limits: 2 records, 4096 bytes, 29000 milliseconds.',
+    'zh': '插件上限：2 条记录、4096 字节、29000 毫秒。',
+  }.entries) {
+    testWidgets(
+      '${entry.key} shows plugin frame and byte limits with their correct units',
+      (t) async {
+        final b = Fake();
+        await t.pumpWidget(page(b, language: entry.key));
+        await t.pumpAndSettle();
+        await fill(t);
+        expect(find.text(entry.value), findsOneWidget);
+        expect(b.calls['start'], isNull);
+      },
+    );
+  }
   testWidgets('FileList alone cannot select or start the watch declaration', (
     t,
   ) async {

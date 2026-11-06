@@ -1,0 +1,51 @@
+{
+  "status": "COMPILED_BYTE_BOUND_FAULT_VARIANT_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 27948544,
+      "sha256": "f6cc8ceff38bbc08db4da968552075b917ce26b8ff33208b4c0037e573b581a9"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 100651008,
+      "sha256": "2bfd5553183df908e5b7366545e57e4ae88ad3562c16283352b5c42b802a6ca6"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\R\\codex-command-runner.exe",
+      "bytes": 24590848,
+      "sha256": "0d1ead4140f09e1a94ca788b7170f29b2330ee5c7d342409039dd54623f60d35"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37625344,
+      "sha256": "bf3675885b10db326d207742bb00b22c28d8830e757c8a1a97b6f6da1117c467"
+    }
+  },
+  "s_table_hex": "433238413154414201000000010000002bfd5553183df908e5b7366545e57e4ae88ad3562c16283352b5c42b802a6ca60d1ead4140f09e1a94ca788b7170f29b2330ee5c7d342409039dd54623f60d35",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37479936,
+    "flags": 1073741888
+  },
+  "qualification_fault": "SETUP_AFTER_OWNED_ACCOUNTS",
+  "fault_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\S-fault-derivation.json",
+    "bytes": 1494,
+    "sha256": "62a3a78823b9433179e23176f916724f733c9a628de6109fb93ac59832d602e1"
+  },
+  "cold_output_isolation": true,
+  "all_four_roles_freshly_compiled": false,
+  "all_selected_roles_have_verified_cold_origin": true,
+  "fresh_S": true,
+  "original_PCR_bytes_unchanged": true,
+  "original_PCR_compiler_records_retained": true,
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "product_executions": 0,
+  "production_acceptance": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

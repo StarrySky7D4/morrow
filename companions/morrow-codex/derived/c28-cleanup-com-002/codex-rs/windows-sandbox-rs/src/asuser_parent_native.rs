@@ -21,6 +21,8 @@ mod refusal_qualification;
 pub use refusal_qualification::CallerRefusalQualification;
 #[path="asuser_parent_session_admission.rs"]
 mod session_admission;
+#[path="asuser_parent_wait.rs"]
+mod parent_wait;
 
 const PREFIX:&str="--c28-parent-launch-p1";
 const SESSION_PREFIX:&str="--c28-parent-refusal-session-p1";
@@ -337,7 +339,7 @@ impl Parent {
             "--helper-sha256".into(),hex_text(selection.c),"--phase".into(),
             if selection.refusal_session {"live-guest-refusal-session-interactive".into()}else{"live-guest-interactive".into()},
             "--inventory-shell".into(),shell,"--inventory-shell-sha256".into(),hex_text(selection.shell),
-            "--expected-guest-uuid".into(),"a704e61e-a729-43c7-a370-9f147a00e647".into()];
+            "--expected-guest-uuid".into(),"11346330-cd64-4f13-a983-c0f293318838".into()];
         self.diagnostic.completed(Stage::NamespaceInputs);
         // C is the SAME trusted high caller role, not private T. Its NULL
         // creation SAs use this P's independently observed safe primary-token
@@ -424,13 +426,16 @@ impl Parent {
         self.diagnostic.completed(Stage::InheritedAliasClose);
         self.diagnostic.enter(Stage::WaitChild);
         self.deadline=Instant::now()+Duration::from_secs(90*60);
-        let process=self.original_child.original_process()?.as_raw_handle() as isize;
-        let milliseconds=self.deadline.checked_duration_since(Instant::now()).ok_or_else(bad)?.as_millis()
-            .min(u128::from(u32::MAX-1)) as u32;
-        match unsafe{WaitForSingleObject(process,milliseconds)} {
-            0 if Instant::now()<self.deadline=>{},258|0=>return Err(io::Error::new(io::ErrorKind::TimedOut,"A1 original C native lifetime budget")),
-            _=>return Err(os_error())}
+        let original_process=self.original_child.original_process()?;
+        let process=original_process.as_raw_handle() as isize;
+        parent_wait::wait_original(original_process,self.deadline)?;
         self.diagnostic.completed(Stage::WaitChild);
+        // Process signal alone does not discharge the independent primary-thread
+        // obligation. Wait on the same original owner's hThread before its one
+        // final non-blocking observation pass; never restart the lifetime budget.
+        self.diagnostic.enter(Stage::WaitPrimaryThread);
+        parent_wait::wait_original(self.original_child.original_primary_thread()?,self.deadline)?;
+        self.diagnostic.completed(Stage::WaitPrimaryThread);
         self.diagnostic.enter(Stage::ObserveChild);
         if identity(process)?!=(created.pid,created.creation_filetime){return Err(ParentExitFailure::error(ParentExitPredicate::ChildIdentity));}
         self.diagnostic.completed(Stage::ObserveChild);self.diagnostic.enter(Stage::ObserveRetainedChild);

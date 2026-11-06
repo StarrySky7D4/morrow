@@ -1,0 +1,12 @@
+{
+  "status": "PASS_ORIGINAL_UNTOUCHED_BYTES_PRESERVED_LF_EQUIVALENT_TO_COMPILED_SOURCE",
+  "file": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\live.rs",
+  "compiled_source_sha256": "b86b42d7373bd912869763d87a0d320aa2763ba1f9b3535bb040c0e9c161567d",
+  "current_source_sha256": "3f825082383b3dbd9cccfd40d285a6b06e33ce5929423cf20153899327156065",
+  "current_source_bytes": 55008,
+  "normalized_LF_sha256": "b86b42d7373bd912869763d87a0d320aa2763ba1f9b3535bb040c0e9c161567d",
+  "unchanged_remainder_preserves_baseline_bytes": true,
+  "only_line_endings_changed_after_compile": true,
+  "runtime_rerun": false,
+  "VM_calls": 0
+}

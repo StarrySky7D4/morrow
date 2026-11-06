@@ -1,0 +1,1804 @@
+{
+  "status": "PASS_PUBLIC_REPLACE_SCOPED_NATIVE_AND_CODEC_TESTS",
+  "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+  "canonical_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "source_unchanged": true,
+  "builds": [
+    {
+      "name": "runtime",
+      "exit_code": 0
+    },
+    {
+      "name": "core",
+      "exit_code": 0
+    },
+    {
+      "name": "sdk",
+      "exit_code": 0
+    }
+  ],
+  "runs": [
+    {
+      "group": "runtime",
+      "name": "mutation_budget_binding",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.16s"
+      ]
+    },
+    {
+      "group": "runtime",
+      "name": "mutation_history_binding",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.84s"
+      ]
+    },
+    {
+      "group": "runtime",
+      "name": "conditional_replace",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.39s"
+      ]
+    },
+    {
+      "group": "runtime",
+      "name": "morrow_plugin_runtime",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 139 filtered out; finished in 0.88s"
+      ]
+    },
+    {
+      "group": "runtime",
+      "name": "managed_file_io",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 84 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.89s"
+      ]
+    },
+    {
+      "group": "runtime",
+      "name": "mutation_owner",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 36 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 22.43s"
+      ]
+    },
+    {
+      "group": "core",
+      "name": "package_mutation",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "group": "core",
+      "name": "mutation_wire",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "group": "sdk",
+      "name": "mutation",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "group": "sdk",
+      "name": "mutation_ffi",
+      "exit_code": 0,
+      "summaries": [
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    }
+  ],
+  "binaries": {
+    "runtime-mutation_budget_binding": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-mutation_budget_binding.exe",
+      "bytes": 7851520,
+      "sha256": "cd9460def05b23f91bc1f7762e9a3b2a20399baed4eb7a8355b6d9a6badc6759",
+      "compiler_fresh": false
+    },
+    "runtime-mutation_history_binding": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-mutation_history_binding.exe",
+      "bytes": 9651200,
+      "sha256": "a0722679cfd576b8003c96eb2c4526c403d0bb7821d426e85069ae807cb22da0",
+      "compiler_fresh": false
+    },
+    "runtime-conditional_replace": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-conditional_replace.exe",
+      "bytes": 8268288,
+      "sha256": "6c21e510f18aba4a80229aad01215cde188ce5d133bb3df30215c7b174b74300",
+      "compiler_fresh": false
+    },
+    "runtime-morrow_plugin_runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-morrow_plugin_runtime.exe",
+      "bytes": 10892800,
+      "sha256": "ee9bca993848e9d4c3e622d1206b1fee871143648957233d3157a032d44c270e",
+      "compiler_fresh": false
+    },
+    "runtime-managed_file_io": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-managed_file_io.exe",
+      "bytes": 11446272,
+      "sha256": "0147145dfb4593c5393ceab4d72ae51fbc290293538649b7b015011f66d1a2db",
+      "compiler_fresh": false
+    },
+    "runtime-mutation_owner": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-mutation_owner.exe",
+      "bytes": 10298880,
+      "sha256": "1ae307adf3ffb87699e874f5de8fb79b1baf9e456c4f0ab11496751fd607850c",
+      "compiler_fresh": false
+    },
+    "core-package_mutation": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\core-package_mutation.exe",
+      "bytes": 3766272,
+      "sha256": "9d6e8e261cc8b331c3267f46ca15029828cf3d3368563a85dfe2d4b49ada05d2",
+      "compiler_fresh": false
+    },
+    "core-mutation_wire": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\core-mutation_wire.exe",
+      "bytes": 2440192,
+      "sha256": "08a2033890247199f8846502598770365b1443ce0b9028e1473fccf6bf72b003",
+      "compiler_fresh": false
+    },
+    "sdk-mutation": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\sdk-mutation.exe",
+      "bytes": 803840,
+      "sha256": "5ccb90c12e29bed54a1f80e4eb008d3a01fd19cb80b8e649234d9dc8fadcfbf4",
+      "compiler_fresh": false
+    },
+    "sdk-mutation_ffi": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\sdk-mutation_ffi.exe",
+      "bytes": 779264,
+      "sha256": "d901d79afc9f577debd0efca9cde7802f6130c23e6b7db59e676e7c257c64204",
+      "compiler_fresh": false
+    }
+  },
+  "artifacts": [
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.24",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#synstructure@0.13.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.14.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-derive@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom-derive@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@3.0.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom@0.1.8",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yoke-derive@0.8.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#stable_deref_trait@1.2.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#yoke@0.8.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerovec-derive@0.11.6",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.1.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-syntax@0.8.11",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-automata@0.4.18",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.15.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerovec@0.11.8",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#displaydoc@0.2.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fixedbitset@0.5.7",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#find-msvc-tools@0.1.12",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shlex@2.0.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cc@1.4.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#petgraph@0.8.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex@1.13.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.4.14",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heck@0.5.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-s390_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.16.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-win32@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-ppcle_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#multimap@0.10.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_32@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-build@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustc_version@0.4.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tinystr@0.8.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#writeable@0.6.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#litemap@0.8.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pkg-config@0.3.34",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#vcpkg@0.2.15",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_core@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.11.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zerotrie@0.2.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#potential_utf@0.1.6",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-transfer-v1#morrow-blob-transfer-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.2.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#utf8_iter@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_collections@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_provider@2.3.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-v1#morrow-fs-directory-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-v1#morrow-fs-watch-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek-derive@0.1.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmparser@0.239.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#subtle@2.6.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#signature@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_core@1.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-reflect@0.16.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-transfer-v1#morrow-blob-transfer-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer_data@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashlink@0.12.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-request-v1#morrow-blob-upload-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-proposal-v1#morrow-blob-upload-proposal-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-request-v1#morrow-fs-directory-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-streaming-iterator@0.1.9",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-iterator@0.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rusqlite@0.40.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_normalizer@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties@2.3.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_ir@1.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-v1#morrow-fs-directory-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-v1#morrow-fs-watch-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmparser@0.239.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/windows_user_directories#morrow-windows-user-directories@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi_collections@1.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasm-encoder@0.239.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lz4_flex@0.14.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#spin@0.9.9",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasmi@1.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-watch-native-v1#morrow-fs-watch-native-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/fs-directory-request-v1#morrow-fs-directory-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#idna_adapter@1.2.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-request-v1#morrow-blob-upload-request-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/extensions/blob-upload-proposal-v1#morrow-blob-upload-proposal-v1@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#aho-corasick@1.1.5",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-syntax@0.8.11",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#leb128fmt@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#form_urlencoded@1.2.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wasm-encoder@0.239.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-automata@0.4.18",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#idna@1.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugins/workbench#morrow-workbench-plugin@0.1.9-test.54.8",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/examples/blob-upload-common#morrow-blob-upload-sample@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bumpalo@3.20.3",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.2.2",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wast@239.0.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#url@2.5.8",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex@1.13.1",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugins/workbench#morrow-workbench-plugin@0.1.9-test.54.8",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/examples/blob-upload-common#morrow-blob-upload-sample@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#wat@1.239.0",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "runtime",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.24",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.14.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-derive@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.4.14",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#shlex@2.0.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#find-msvc-tools@0.1.12",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-syntax@0.8.11",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.1.5",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.15.5",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex-automata@0.4.18",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustc_version@0.4.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cc@1.4.5",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fixedbitset@0.5.7",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#vcpkg@0.2.15",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#pkg-config@0.3.34",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#petgraph@0.8.3",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.11.3",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prettyplease@0.2.37",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#regex@1.13.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-ppcle_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.3.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-s390_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-win32@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#heck@0.5.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-x86_32@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-linux-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#multimap@0.10.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored-macos-aarch_64@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-link@0.2.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#protoc-bin-vendored@3.2.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-build@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek-derive@0.1.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#signature@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#subtle@2.6.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@5.0.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#libsqlite3-sys@0.38.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-types@0.14.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#hashlink@0.12.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-streaming-iterator@0.1.9",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.16.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fallible-iterator@0.3.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.27.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#rusqlite@0.40.2",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@3.0.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#prost-reflect@0.16.5",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/windows_user_directories#morrow-windows-user-directories@0.1.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#lz4_flex@0.14.0",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#semver@1.0.28",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "core",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/core#morrow-core@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    },
+    {
+      "group": "sdk",
+      "package_id": "path+file:///D:/build_cache/worktrees/g04-conditional-replace-1850/sdk/rust#morrow-plugin-sdk@0.1.9-test.50",
+      "fresh": false
+    }
+  ],
+  "VM_calls": 0,
+  "full_G04_qualified": false,
+  "release_eligible": false,
+  "cache_reuse": "Cold independent workspace/profile/feature targets; original runtime Core artifacts hashed before and after standalone Core/SDK builds",
+  "cache_namespaces": "D:\\build_cache\\cargo-target\\g04-public-2019",
+  "runtime_dependency_pins": {
+    "D:\\build_cache\\cargo-target\\g04-public-2019\\runtime-packages-release\\release\\deps\\libmorrow_core.rlib": "3e4dcecdb4efa8527b3a3e3e41254b0fab3a26d482120b29c8662c44802b6dc5",
+    "D:\\build_cache\\cargo-target\\g04-public-2019\\runtime-packages-release\\release\\deps\\morrow_core.dll": "95b99f426dfd0632e445dd827e9ba6ba26a140cda50321bbfd5f4f6d4a1f51d4",
+    "D:\\build_cache\\cargo-target\\g04-public-2019\\runtime-packages-release\\release\\deps\\morrow_core.dll.lib": "027afff1668885d62e5337934e3b0c51d4b69ddd7592c3480a23a9d202e4582c",
+    "D:\\build_cache\\cargo-target\\g04-public-2019\\runtime-packages-release\\release\\deps\\morrow_core.dll.exp": "5b495c0e9045b7ceb5354041b57336bde78ed1de7117496c3979627ee1b86b94",
+    "D:\\build_cache\\cargo-target\\g04-public-2019\\runtime-packages-release\\release\\deps\\morrow_core.pdb": "11f5cee6bb48e4e53992b07de53aafa35371359dab3b7e263a8e2cd43fbb12e8"
+  },
+  "rebuild_after_other_workspaces_exit": 0
+}

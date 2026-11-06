@@ -1,0 +1,38 @@
+{
+  "status": "PASS_THREE_LANGUAGE_SDK_GUEST_SCOPES",
+  "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+  "source_unchanged": true,
+  "build_exit": 0,
+  "test_exit": 0,
+  "summaries": [
+    "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 36 filtered out; finished in 18.50s"
+  ],
+  "guests": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-sdk-guests-2022\\guests\\rust_mutation.wasm",
+      "bytes": 260534,
+      "sha256": "36e036fa2397952c93607f39aa0ee2e1bce195a34b03254de7c6478821aa7451"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-sdk-guests-2022\\guests\\c_mutation.wasm",
+      "bytes": 48901,
+      "sha256": "3a16680c4073937ab4144a2e4848bdccb1cbd844128ac41eccf9fd6666828df2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-sdk-guests-2022\\guests\\cpp_mutation.wasm",
+      "bytes": 49259,
+      "sha256": "ae891a14715a126a35b094315b2c73561d4621b1f9fb0df167e1441dccaee240"
+    }
+  ],
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\g04-public-native-2019\\runtime-mutation_owner.exe",
+    "bytes": 10298880,
+    "sha256": "1ae307adf3ffb87699e874f5de8fb79b1baf9e456c4f0ab11496751fd607850c",
+    "compiler_fresh": false
+  },
+  "scope": "Three fresh Rust/C/C++ guests; Create/Delete, maximum-content and Replace with deep ancestry, explicit resource approval, cancellation, hardlink identity and explicit replay checks; not full G04 fault qualification",
+  "full_G04_qualified": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "cache_root": "D:/build_cache"
+}

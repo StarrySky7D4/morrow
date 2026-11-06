@@ -1,0 +1,12 @@
+--- 
++++ 
+@@ -327,7 +327,8 @@
+ assert b'user.txt' not in invoke
+ save(ROOT/'manual-login-source-derivation.json',dict(status='SINGLE_USE_DPAPI_INPUT_ONLY_NOT_LOGIN_PROOF',legacy_source_sha256=hashlib.sha256(legacy_adapter).hexdigest(),manual_module=pin(LOCAL/'manual_vm058_case2050_login_adapter.py'),first_adapter_sha256=hashlib.sha256(first_manual).hexdigest(),second_adapter_sha256=hashlib.sha256(second_manual).hexdigest(),VM_id=NEW_VM,legacy_password_file_access=False,original_native_and_readiness_assertions_unchanged=True))
+ (ROOT/'Invoke-Transaction1737.ps1').write_bytes(invoke)
+-new_plan=dict(plan,qualification_profile='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION',p2_wire_bytes=3523,original47_qualification=False,tag=TAG,vm_id=NEW_VM,firmware_uuid=NEW_FIRMWARE,sid=NEW_SID,artifacts=artifacts,source_inputs=new_inputs)
++save(ROOT/'qualification-stage2054.json',dict(tag=TAG,vm_id=NEW_VM,qualification_profile='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION',p2_wire_bytes=3523,original47_qualification=False))
++new_plan=dict(plan,tag=TAG,vm_id=NEW_VM,firmware_uuid=NEW_FIRMWARE,sid=NEW_SID,artifacts=artifacts,source_inputs=new_inputs)
+ save(ROOT/'stage-plan.json',new_plan)
+ save(ROOT/'derivation.json',dict(kind='APPROVED_ISOLATED_IDENTITY_REBIND_WITH_PRE_NATIVE_BINARY_SID_GUARD', clone_vm_id=NEW_VM, observed_firmware_uuid=NEW_FIRMWARE, original_vm_preserved=OLD_VM, clone_boundary=pin(boundary), policy_selector_derivation=policy_derivation, host_security_module_pins=security_module_pins,
+     original_root=str(OLD),tag=TAG,literal_replacements=replacements,

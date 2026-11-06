@@ -1,0 +1,20 @@
+{
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "method": "file_list_is_not_watch_approval_and_stale_decisions_do_not_dispatch",
+  "fixtures": "D:\\build_cache\\wr1105a",
+  "nomination": "D:\\build_cache\\wr1105a\\category\\observed",
+  "args": [
+    "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "--exact",
+    "file_list_is_not_watch_approval_and_stale_decisions_do_not_dispatch",
+    "--test-threads=1"
+  ],
+  "case": "approval",
+  "VM_calls": 0,
+  "old_owner_contacts": 0
+}

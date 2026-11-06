@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "path": "canonical-lock-repair.json",
+      "bytes": 7101,
+      "sha256": "9d33008b7d095336032724d6644bd9602ff0ea61b54b3eff1a4469eb3e485f13"
+    },
+    {
+      "path": "checkpoint.json",
+      "bytes": 3388,
+      "sha256": "b138c2289416f072d7cd95dff51f6559a6a2fcfc2f9efa18122cd905f48a73bb"
+    },
+    {
+      "path": "disk-cleanup.json",
+      "bytes": 1803,
+      "sha256": "70c4361805ab9ea8ebcede9820ed0f62375d909ae1f79645365b9e8d011538ad"
+    },
+    {
+      "path": "disk-cleanup.txt",
+      "bytes": 1336,
+      "sha256": "af7552ec88ffc1c6c226be91381101f6926d37587847431b1415311c1f60a644"
+    },
+    {
+      "path": "frozen-guests-build.json",
+      "bytes": 1464,
+      "sha256": "4f613d88cf27a00beabacaf0582ac1b28aea0d7bdfa546298a52a4e9c1b3ce3c"
+    },
+    {
+      "path": "frozen-guests-runtime.json",
+      "bytes": 6161,
+      "sha256": "d6eea93d72f05448cdd0f5dd4f426bfae47d26b7a0111da0d94474127295b657"
+    },
+    {
+      "path": "p2-source-drift.json",
+      "bytes": 107931,
+      "sha256": "10330f2ecf880af3dbe569dc058e23200bb6f1128690091357f4ec7c5cb6f644"
+    },
+    {
+      "path": "product-component-change-review.json",
+      "bytes": 2859,
+      "sha256": "7b04f635b0336decbed64e224b5079130d4d01862fd2216a951b9c871c861c11"
+    },
+    {
+      "path": "product-ui-pending.json",
+      "bytes": 536,
+      "sha256": "e8c03704c4a562d8a4fe7a0e2f848a157a4d0ecb14538bb71f60f4d64bbc8986"
+    },
+    {
+      "path": "related-lock-compile.json",
+      "bytes": 4074,
+      "sha256": "5798b70cd92773d0b978271080fe17dd1494bda349d6229d75e5a3f092289c7f"
+    },
+    {
+      "path": "related-lock-review.json",
+      "bytes": 677,
+      "sha256": "40faa29442adfe814f51e481e73b11b4ae86bba9fa9bdc690d619abb9fc1524f"
+    },
+    {
+      "path": "sdk-independent-review.json",
+      "bytes": 2240,
+      "sha256": "5b60b8aeed452af181958c3733533c4a5ac260fc7b3d386508917006e4b6e183"
+    },
+    {
+      "path": "staged-network-build.json",
+      "bytes": 2679,
+      "sha256": "8144de610acf1dfa4b471f97c5be11b67fb95623bdf275e73b947b59c3ed433d"
+    },
+    {
+      "path": "staged-network-lock.json",
+      "bytes": 2809,
+      "sha256": "2a544090dd15f61d5ee05c007060f7ab35d52349e9faef4de2547d263e095b61"
+    },
+    {
+      "path": "staged-network-runtime.json",
+      "bytes": 8130,
+      "sha256": "08217d8c1584d8a6c8214ab9d8c8e8dac69431737cfd5cfe808a3fdebd2815f2"
+    },
+    {
+      "path": "static-package-preflight.json",
+      "bytes": 5603,
+      "sha256": "c398b5d399d6faadc515b76ea2af447aa85dbb3c4f9e0433f408152d79c723e2"
+    }
+  ],
+  "scope": "Cleanup, lock repair and source-bound SDK subsets only; full product and release qualification remain open."
+}

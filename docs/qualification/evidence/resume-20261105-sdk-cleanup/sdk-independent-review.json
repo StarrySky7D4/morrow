@@ -1,0 +1,50 @@
+{
+  "status": "PASS_BOUNDED_CURRENT_SDK_AND_STAGED_NETWORK_REPAIR_REVIEW",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "current_frozen_runtime_methods": 13,
+  "transport_metadata_method_included": 1,
+  "current_default_host_static_packages": 19,
+  "staged_network_runtime_methods": 9,
+  "staged_loopback_transport_methods": 6,
+  "staged_Windows_TLS_DPAPI_methods": 3,
+  "staged_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+  "original_guest_modules_rebuilt": false,
+  "frozen_inputs_unchanged": 57,
+  "canonical_network_lock_fix_applied": false,
+  "source_unchanged": true,
+  "evidence": {
+    "current-frozen-guests-runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-frozen-guests-runtime\\result.json",
+      "bytes": 6161,
+      "sha256": "d6eea93d72f05448cdd0f5dd4f426bfae47d26b7a0111da0d94474127295b657"
+    },
+    "current-sdk-package-preflight": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\current-sdk-package-preflight\\result.json",
+      "bytes": 5603,
+      "sha256": "c398b5d399d6faadc515b76ea2af447aa85dbb3c4f9e0433f408152d79c723e2"
+    },
+    "network-lock-repair": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-lock-repair\\result.json",
+      "bytes": 2809,
+      "sha256": "2a544090dd15f61d5ee05c007060f7ab35d52349e9faef4de2547d263e095b61"
+    },
+    "network-repair-build": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-build\\result.json",
+      "bytes": 2679,
+      "sha256": "8144de610acf1dfa4b471f97c5be11b67fb95623bdf275e73b947b59c3ed433d"
+    },
+    "network-repair-runtime": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\network-repair-runtime\\result.json",
+      "bytes": 8130,
+      "sha256": "08217d8c1584d8a6c8214ab9d8c8e8dac69431737cfd5cfe808a3fdebd2815f2"
+    }
+  },
+  "formal_product_UI_accepted": false,
+  "full_SDK26_accepted": false,
+  "G04_accepted": false,
+  "SDK_FREEZE_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_guest_calls": 0,
+  "old_owner_contacts": 0
+}

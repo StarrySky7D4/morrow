@@ -1,0 +1,93 @@
+{
+  "status": "UNKNOWN_ORIGINAL_SHARED17_CASE_RETAINED_NO_REPLAY",
+  "tag": "40e69d4e7a584dcf92e5f590f26fbb4b",
+  "vm_id": "016628f8-ab2b-43a2-a7d2-83493906788a",
+  "source_digest": "859b92627ec1c22772102038ee63514540f98aa0a7e8ad6de40d29f732f4d71b",
+  "git_head": "b1b46ea09937654752d4e853e7067152e37bb201",
+  "profile": "P2_SHARED_PARENT_REFUSAL_SESSION",
+  "case_clean": false,
+  "policy_clean": true,
+  "completed_attempts": 0,
+  "observed_returned_steps_in_first_attempt": 34,
+  "failed_observation_step": 35,
+  "step_name": "sealed-native-context",
+  "first_guard": "NATIVE_CONTEXT_CONSERVATIVE59S",
+  "last_cached_progress": {
+    "schema": "CACHED_SHARED_PROGRESS043_V1",
+    "round_index_zero_based": 0,
+    "step_index_zero_based": 34,
+    "delivered": 69,
+    "main_polls": 5881,
+    "journal_read_calls": 5217,
+    "journal_read_bytes": 211188914,
+    "stdout_bytes": 10486,
+    "stderr_bytes": 584,
+    "elapsed_ms": 92699,
+    "stage_start_ms": 33686,
+    "critical_start_ms": -1,
+    "context_start_ms": 33686,
+    "event_records": 218,
+    "event_bytes": 49886,
+    "journal_open_attempts": 665,
+    "observation": "LAST_CACHED_SCALARS_ONLY_NOT_OWNER_REOBSERVATION"
+  },
+  "cached_stderr_markers": {
+    "bytes": 584,
+    "marker_bits": 1,
+    "valid": true,
+    "raw_body_exported": false
+  },
+  "failure_class": "STACK_OVERFLOW_MARKER_OBSERVED_IN_ORIGINAL_CACHED_STDERR",
+  "precise_callsite": "NOT_ESTABLISHED_BY_MARKER_ONLY",
+  "native_exit_and_resource_retirement": "NOT_PROVEN",
+  "diagnostic_snapshot": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-file-snapshot1762\\manifest.json",
+    "bytes": 10977,
+    "sha256": "a407c402345a43a4921db6834088a3c1a1fb2eeda53ee0221d1c336550043865"
+  },
+  "readonly_transport_result": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-file-snapshot1762\\result.json",
+    "bytes": 1646,
+    "sha256": "9fa34bb0ae681d9bdcdf918737f0e27307d9b6db7a75a8efde0ac921b7e319c2"
+  },
+  "original_retained_record": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\c28-root-vm-transaction2769-40e69d4e7a584dcf92e5f590f26fbb4b-case\\retained.json",
+    "bytes": 3980,
+    "sha256": "43a636f61e304b1fc57fbcae4151fc764c6b4a3fa026e8240dca47b31b449392"
+  },
+  "captured_reply": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\c28-root-vm-transaction2769-40e69d4e7a584dcf92e5f590f26fbb4b-case\\guest-reply-05-run.json",
+    "bytes": 1156,
+    "sha256": "6558cb02bca680def6fce3466d7696b9f8dd2c92281cfa2c8c62dd63b4620081"
+  },
+  "evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-file-snapshot1762\\02-stderr.log",
+      "bytes": 1585,
+      "sha256": "c7f5e0ab0b88ac8a27d60620f42df50c642b8e4f17d0417cac8bb68aaad0568b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-file-snapshot1762\\03-events.jsonl",
+      "bytes": 49886,
+      "sha256": "4f2b11f04f929f40c728d47a74073ec2ca1f529d1aca56781c75ec769745e2aa"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-file-snapshot1762\\05-journal.jsonl",
+      "bytes": 45746,
+      "sha256": "b6f7b703b01988bb10af35c601efe555415dc6516a431b9dacb597a0a4f53828"
+    }
+  ],
+  "original_case_session_retained": true,
+  "retained_exec_session": 53429,
+  "retained_exec_must_not_be_polled_queried_replayed_or_terminated": true,
+  "original_owner_contacted": false,
+  "replay": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "normal1755": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1755-summary.json",
+    "bytes": 1285,
+    "sha256": "af750f94d504cf619ecc0ec05e854f10c3a112a3e5187c7c1cede1aa03e3dff8"
+  }
+}

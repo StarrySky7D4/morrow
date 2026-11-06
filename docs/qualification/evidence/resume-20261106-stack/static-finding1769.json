@@ -1,0 +1,22 @@
+{
+  "status": "STATIC_STACK_PRESSURE_CONFIRMED_EXACT_CRASH_CALLSITE_OPEN",
+  "baseline_exe_sha256": "c3bcfc2f76f3c453e767ae17eca14879fa9a73b74b1c474ec33dbf43fa2f8e5e",
+  "pe_pdb_match": true,
+  "stack_reserve": 1048576,
+  "caller_frame_bytes": 262680,
+  "workflow_step_frame_bytes": 179224,
+  "prepare_native_proposal_frame_bytes": 80392,
+  "prepare_agent_context_frame_bytes": 116792,
+  "four_directly_nested_frame_bytes": 639088,
+  "constructor_frame_remains_active_during_Workflow_step": true,
+  "runtime_stack_capture": false,
+  "previous_runtime_stack_overflow_marker": true,
+  "precise_original_crash_callsite": "NOT_ESTABLISHED",
+  "original_case1760_status": "RETAINED_UNKNOWN",
+  "retained_case_owner_queries": 0,
+  "VM_calls": 0,
+  "references": [
+    "https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170",
+    "https://learn.microsoft.com/en-us/visualstudio/debugger/debug-interface-access/idiasymbol-get-relativevirtualaddress?view=vs-2022"
+  ]
+}

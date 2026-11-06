@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-31T22:36:06.678692+00:00",
-  "state": "PAUSED_BY_USER",
+  "updated": "2026-11-06T11:52:12.719833+00:00",
+  "state": "PAUSED",
   "case098": {
     "status": "PASS_SCOPED_V4_LATE_CREATE_NATIVE_FIRST_FAILURE_PRESERVED",
     "utc": "2026-10-26T11:31:06.123608+00:00",
@@ -42,14 +42,14 @@
     "formal_picker_complete": false
   },
   "registered_vms": 4,
-  "latest_vm": "VM050",
+  "latest_vm": "VM058",
   "full_P2": "OPEN",
   "SDK26": "OPEN",
   "G04": "OPEN",
   "SDK_FREEZE": "OPEN",
   "source_accepted": false,
   "release_eligible": false,
-  "remote_publication_this_turn": false,
+  "remote_publication_this_turn": "REQUESTED_REMOTE_REF_VERIFIED_AFTER_PUSH",
   "SDK106": {
     "native_file_methods": 6,
     "related_regressions": 6,
@@ -59,45 +59,34 @@
   "storage": {
     "vms": [
       {
-        "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
         "name": "Morrow Windows Acceptance 20261023 029",
+        "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
         "state": "Saved"
       },
       {
-        "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
         "name": "Morrow Windows Acceptance 20261023 030",
+        "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
         "state": "Saved"
       },
       {
-        "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
-        "name": "Windows 11 开发环境",
+        "name": "Morrow Windows Acceptance 20261106 058",
+        "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
         "state": "Running"
       },
       {
-        "id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
-        "name": "Morrow Windows Acceptance 20261027 045",
-        "state": "Saved"
+        "name": "Windows 11 开发环境",
+        "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+        "state": "Running"
       }
     ],
-    "drives": [
-      {
-        "name": "C",
-        "free_bytes": 39255728128
-      },
-      {
-        "name": "D",
-        "free_bytes": 24050868224
-      }
-    ],
-    "utc": "2026-10-27T07:57:05.284974+00:00",
-    "registered_vms": 4,
-    "build_cache_root": "D:/build_cache",
-    "cumulative_reclaimed_logical_bytes": 66835141360,
-    "latest_large_cleanup": "retired-role-cache-316",
-    "logical_bytes_are_not_current_free_space": true
+    "free_bytes": {
+      "C": 13453221888,
+      "D": 5447323648
+    },
+    "cache_root": "D:/build_cache"
   },
-  "P2_next": "Explicit resume, cached startup/deployment diagnosis, then a fresh isolated VM; never replay case736",
-  "updated_utc": "2026-10-31T22:36:06.678692+00:00",
+  "P2_next": "Current-source full product UI, Windows P2/P3 matrix and SDK qualification; final candidate reseal remains open",
+  "updated_utc": "2026-11-05T01:09:12.332821+00:00",
   "case118": {
     "status": "PASS_SCOPED_V5_TOKEN_DERIVATION_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
     "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
@@ -476,69 +465,67 @@
     "files": 2470
   },
   "latest": {
-    "status": "PAUSED_BY_USER",
-    "utc": "2026-10-31T22:36:06.678692+00:00",
+    "status": "ACTIVE_CLEANUP_AND_FIVE_LOCK_REPAIRS_SDK_SCOPED_PRODUCT_UI_OPEN",
+    "utc": "2026-11-05T01:09:12.332821+00:00",
+    "head": "b1b46ea09937654752d4e853e7067152e37bb201",
     "branch": "codex/local-continue-20261020",
-    "parent_commit": "35357a7097f48ccf9148a0275a456886a285570f",
-    "source_digest_before_report": "57230cf6eb2b8d98109ec82c5b04e76e5132fe8379586f570e7f91a1ca62b444",
-    "previous_checkpoint": "continuation1527.json",
-    "protected_watch": {
-      "prior_source": "474842ae7fc13db4061f3eabdca0ddb33fecdc6ff4fd00f9706114d61fca8143",
-      "Rust_case": 1535,
-      "C_case": 1536,
-      "cancel_case": 1538,
-      "Cpp_case": 1591,
-      "Cpp_source": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
-      "original_native_chooser": true,
-      "original_Workbench_owner_and_receipt_acknowledgement": true,
-      "current_candidate_not_requalified": true,
-      "formal_UI": false
+    "source_before_locks": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+    "source_after_locks_before_report": "8b1a903b81cd47b70116daf8ecd8609ae06e6301dc892fa38120b83850613e23",
+    "previous_watch_checkpoint": "docs/qualification/evidence/resume-20261105-watch/checkpoint.json",
+    "cleanup": {
+      "removed_files": 69063,
+      "logical_bytes_removed": 33385939134,
+      "deletion_stage_observed_free_delta": 28448395264,
+      "cleaned_target_roots": 127,
+      "source_final_artifact_backup_VM_deletions": 0
     },
-    "expiry": {
-      "original1577": "KNOWN_CLOSED_BUT_CLASSIFIED_CANCELLED_INSTEAD_OF_EXPIRED",
-      "original_failure_preserved": true,
-      "correction1589_source": "8700b50ce311b2265c72a5831f5de2028532089b6cf27fb6a6252da69feb7bd3",
-      "pure_unit_methods": 12,
-      "pure_unit_scope_only": true,
-      "native1593": "COLD_BUILD_FAILED_DISK_FULL_OS112_BEFORE_RUNTIME",
-      "current_native_expiry": "NOT_RUN"
+    "canonical_lock_repairs": {
+      "count": 5,
+      "changed_files": [
+        "extensions/agent-catalog-owner-v1/Cargo.lock",
+        "extensions/agent-session-exec-v1-r2-host/Cargo.lock",
+        "extensions/agent-session-process-v1-host/Cargo.lock",
+        "extensions/codex-session-exec-client-r2/qualification/Cargo.lock",
+        "network_node/Cargo.lock"
+      ],
+      "locked_offline_metadata": 5,
+      "four_separately_cold_compile_checks": 4,
+      "new_canonical_runtime_dispatches": 0
     },
-    "watch_UI": {
-      "applied_case": 1621,
-      "applied_source": "d9a7e525534c9d09157097b38a3cbb57cba6f28192752f463fb898f1ebdd447b",
-      "widget_case": 1620,
-      "widget_methods": 7,
-      "locales": 9,
-      "wire_checks": 44,
-      "session_checks": 45,
-      "IPC": "CapnProto",
-      "exact_submission_and_raw_UTF16": true,
-      "unknown_never_replayed": true,
-      "one_read_and_explicit_acknowledgement": true,
-      "current_native_compilation": "NOT_RUN",
-      "formal_UI": "NOT_RUN",
-      "generated_host_digest_matches_schema": false,
-      "uncompiled_wire_regression": 1623
+    "SDK_frozen_runtime": {
+      "original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+      "methods": 13,
+      "transport_metadata_only_methods": 1,
+      "guest_modules_rebuilt": false,
+      "original_processes_returned": true
     },
-    "previous_P2": {
-      "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
-      "normal_case": 1365,
-      "shared17_case": 1385,
-      "logon_case": 1402,
-      "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
-      "guard_methods": 153,
-      "final_candidate_reseal": "OPEN",
-      "historical_Unknown_owners_untouched": true
+    "SDK_static_preflight": {
+      "packages": 19,
+      "guest_execution": false
     },
-    "previous_SDK": {
-      "default_archive_projects": 27,
-      "optin_archives": 6,
-      "canonical_methods": 17,
-      "review": 1411,
-      "original_bindings_preserved": true
+    "staged_network_runtime": {
+      "qualified_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+      "methods": 9,
+      "loopback_transport_methods": 6,
+      "real_loopback_TLS_Windows_DPAPI_methods": 3,
+      "scope": "isolated staged network lock repair; original stage binding retained",
+      "source_lock_later_applied": true,
+      "original_processes_returned": true,
+      "production_TLS_accepted": false
     },
-    "cache_root": "D:\\build_cache",
-    "cache1622": "PREPARE_INTERRUPTED_NO_DELETION",
+    "frozen_inputs_unchanged": 57,
+    "formal_product_UI": "PENDING_MANUAL_NAVIGATION_AND_ORIGINAL_CLOSURE",
+    "UI_original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+    "UI_original_receipts_relabelled": false,
+    "product_component_artifacts_unchanged": true,
+    "Windows_P2": "OPEN",
+    "current_source_P3": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "task_status": "ACTIVE",
     "registered_vms": 4,
     "VM_inventory": [
       {
@@ -562,30 +549,20 @@
         "state": "Saved"
       }
     ],
-    "VM_actions_after_pause": 0,
-    "old_owner_contacts_after_pause": 0,
-    "free_bytes_sample": {
-      "C": 57246695424,
-      "D": 4241539072
-    },
-    "new_VM_disk_preserved": true,
-    "P2_complete": false,
-    "current_formal_P3": false,
-    "SDK26": "OPEN",
-    "G04": "OPEN",
-    "SDK_FREEZE": "OPEN",
-    "source_accepted": false,
-    "release_eligible": false,
-    "publication_authorized": true,
-    "publication_branch": "codex/local-continue-20261020",
-    "remote_publication": "Verify remote head after commit; receipt remains outside committed source to avoid a self-reference.",
-    "next_on_explicit_resume": [
-      "Regenerate and verify Dart host identity against the current CapnProto schema before real UI use.",
-      "Freshly review the paused1622 inventory; no existing plan or deletion may be assumed. Require at least6GB free before the next cold native build.",
-      "Create a new source/case/role target. Include capnp=0.24.1 and the new eighth selected integration method. Never rerun failed1593 or unbound1604 drivers.",
-      "Prove native expiry and actual Dart decoding; then fresh protected Rust/C/Cpp/cancel and formal UI qualification.",
-      "Continue the remaining source-bound Windows P2/P3 and SDK matrix. Historical Unknown owners remain untouched."
-    ]
+    "free_space": [
+      {
+        "Name": "C",
+        "Free": 46388559872
+      },
+      {
+        "Name": "D",
+        "Free": 55846010880
+      }
+    ],
+    "cache_root": "D:/build_cache",
+    "VM_guest_calls": 0,
+    "old_owner_contacts": 0,
+    "remote_publication": false
   },
   "previous_latest_301": {
     "utc": "2026-10-27T05:16:00.759825+00:00",
@@ -987,7 +964,7 @@
       "limits": "Three synthetic directory fixtures only. Successful production UI guest result, not independently counted guest calls. Separate Rust cancellation. Full SDK26, P2, canonical integration and release remain open. Historical Unknowns are not rewritten."
     }
   },
-  "task_status": "PAUSED_BY_USER",
+  "task_status": "PAUSED",
   "publication_branch": "codex/local-continue-20261020",
   "publication_authorized": true,
   "previous_latest_534": {
@@ -8078,6 +8055,331 @@
         "Gate stop during actual guest execution and changed-history approval refusal need independent evidence",
         "C/C++ transform Task-ID accessor adaptation, actual three-language host route, strict Dart client and formal UI confirmation"
       ]
+    }
+  },
+  "latest_windows_continuation": {
+    "status": "ACTIVE_CLEANUP_AND_FIVE_LOCK_REPAIRS_SDK_SCOPED_PRODUCT_UI_OPEN",
+    "utc": "2026-11-05T01:09:12.332821+00:00",
+    "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+    "branch": "codex/local-continue-20261020",
+    "source_before_locks": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+    "source_after_locks_before_report": "8b1a903b81cd47b70116daf8ecd8609ae06e6301dc892fa38120b83850613e23",
+    "previous_watch_checkpoint": "docs/qualification/evidence/resume-20261105-watch/checkpoint.json",
+    "cleanup": {
+      "removed_files": 69063,
+      "logical_bytes_removed": 33385939134,
+      "deletion_stage_observed_free_delta": 28448395264,
+      "cleaned_target_roots": 127,
+      "source_final_artifact_backup_VM_deletions": 0
+    },
+    "canonical_lock_repairs": {
+      "count": 5,
+      "changed_files": [
+        "extensions/agent-catalog-owner-v1/Cargo.lock",
+        "extensions/agent-session-exec-v1-r2-host/Cargo.lock",
+        "extensions/agent-session-process-v1-host/Cargo.lock",
+        "extensions/codex-session-exec-client-r2/qualification/Cargo.lock",
+        "network_node/Cargo.lock"
+      ],
+      "locked_offline_metadata": 5,
+      "four_separately_cold_compile_checks": 4,
+      "new_canonical_runtime_dispatches": 0
+    },
+    "SDK_frozen_runtime": {
+      "original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+      "methods": 13,
+      "transport_metadata_only_methods": 1,
+      "guest_modules_rebuilt": false,
+      "original_processes_returned": true
+    },
+    "SDK_static_preflight": {
+      "packages": 19,
+      "guest_execution": false
+    },
+    "staged_network_runtime": {
+      "qualified_inputs_digest": "b7b41aaff4bd57bd68475c5534d54305e291b32227901a5f7941f480ddef1ee1",
+      "methods": 9,
+      "loopback_transport_methods": 6,
+      "real_loopback_TLS_Windows_DPAPI_methods": 3,
+      "scope": "isolated staged network lock repair; original stage binding retained",
+      "source_lock_later_applied": true,
+      "original_processes_returned": true,
+      "production_TLS_accepted": false
+    },
+    "frozen_inputs_unchanged": 57,
+    "formal_product_UI": "PENDING_MANUAL_NAVIGATION_AND_ORIGINAL_CLOSURE",
+    "UI_original_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+    "UI_original_receipts_relabelled": false,
+    "product_component_artifacts_unchanged": true,
+    "Windows_P2": "OPEN",
+    "current_source_P3": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "task_status": "ACTIVE",
+    "registered_vms": 4,
+    "VM_inventory": [
+      {
+        "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+        "name": "Morrow Windows Acceptance 20261023 029",
+        "state": "Saved"
+      },
+      {
+        "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+        "name": "Morrow Windows Acceptance 20261023 030",
+        "state": "Saved"
+      },
+      {
+        "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+        "name": "Windows 11 开发环境",
+        "state": "Running"
+      },
+      {
+        "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+        "name": "Morrow Windows Acceptance 20261031 055",
+        "state": "Saved"
+      }
+    ],
+    "free_space": [
+      {
+        "Name": "C",
+        "Free": 46388559872
+      },
+      {
+        "Name": "D",
+        "Free": 55846010880
+      }
+    ],
+    "cache_root": "D:/build_cache",
+    "VM_guest_calls": 0,
+    "old_owner_contacts": 0,
+    "remote_publication": false
+  },
+  "current_checkpoint": "resume-20261105-sdk-cleanup",
+  "previous_latest_before_20261105": {
+    "status": "PAUSED_BY_USER",
+    "utc": "2026-10-31T22:36:06.678692+00:00",
+    "branch": "codex/local-continue-20261020",
+    "parent_commit": "35357a7097f48ccf9148a0275a456886a285570f",
+    "source_digest_before_report": "57230cf6eb2b8d98109ec82c5b04e76e5132fe8379586f570e7f91a1ca62b444",
+    "previous_checkpoint": "continuation1527.json",
+    "protected_watch": {
+      "prior_source": "474842ae7fc13db4061f3eabdca0ddb33fecdc6ff4fd00f9706114d61fca8143",
+      "Rust_case": 1535,
+      "C_case": 1536,
+      "cancel_case": 1538,
+      "Cpp_case": 1591,
+      "Cpp_source": "6d3ebde2c80922846b4822ea05d02a92b500931df8a5b93f823613787654e18a",
+      "original_native_chooser": true,
+      "original_Workbench_owner_and_receipt_acknowledgement": true,
+      "current_candidate_not_requalified": true,
+      "formal_UI": false
+    },
+    "expiry": {
+      "original1577": "KNOWN_CLOSED_BUT_CLASSIFIED_CANCELLED_INSTEAD_OF_EXPIRED",
+      "original_failure_preserved": true,
+      "correction1589_source": "8700b50ce311b2265c72a5831f5de2028532089b6cf27fb6a6252da69feb7bd3",
+      "pure_unit_methods": 12,
+      "pure_unit_scope_only": true,
+      "native1593": "COLD_BUILD_FAILED_DISK_FULL_OS112_BEFORE_RUNTIME",
+      "current_native_expiry": "NOT_RUN"
+    },
+    "watch_UI": {
+      "applied_case": 1621,
+      "applied_source": "d9a7e525534c9d09157097b38a3cbb57cba6f28192752f463fb898f1ebdd447b",
+      "widget_case": 1620,
+      "widget_methods": 7,
+      "locales": 9,
+      "wire_checks": 44,
+      "session_checks": 45,
+      "IPC": "CapnProto",
+      "exact_submission_and_raw_UTF16": true,
+      "unknown_never_replayed": true,
+      "one_read_and_explicit_acknowledgement": true,
+      "current_native_compilation": "NOT_RUN",
+      "formal_UI": "NOT_RUN",
+      "generated_host_digest_matches_schema": false,
+      "uncompiled_wire_regression": 1623
+    },
+    "previous_P2": {
+      "source_digest": "887ff12fe8df8287f29f6484a5e4d4b4bd185cd98e0d199996193a07ebbe3500",
+      "normal_case": 1365,
+      "shared17_case": 1385,
+      "logon_case": 1402,
+      "current_guards_source": "56bc28381d1dcf46b36fadccad2b473cae49080af6232cd196b842fb9909b65e",
+      "guard_methods": 153,
+      "final_candidate_reseal": "OPEN",
+      "historical_Unknown_owners_untouched": true
+    },
+    "previous_SDK": {
+      "default_archive_projects": 27,
+      "optin_archives": 6,
+      "canonical_methods": 17,
+      "review": 1411,
+      "original_bindings_preserved": true
+    },
+    "cache_root": "D:\\build_cache",
+    "cache1622": "PREPARE_INTERRUPTED_NO_DELETION",
+    "registered_vms": 4,
+    "VM_inventory": [
+      {
+        "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+        "name": "Morrow Windows Acceptance 20261023 029",
+        "state": "Saved"
+      },
+      {
+        "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+        "name": "Morrow Windows Acceptance 20261023 030",
+        "state": "Saved"
+      },
+      {
+        "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+        "name": "Windows 11 开发环境",
+        "state": "Running"
+      },
+      {
+        "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+        "name": "Morrow Windows Acceptance 20261031 055",
+        "state": "Saved"
+      }
+    ],
+    "VM_actions_after_pause": 0,
+    "old_owner_contacts_after_pause": 0,
+    "free_bytes_sample": {
+      "C": 57246695424,
+      "D": 4241539072
+    },
+    "new_VM_disk_preserved": true,
+    "P2_complete": false,
+    "current_formal_P3": false,
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "publication_authorized": true,
+    "publication_branch": "codex/local-continue-20261020",
+    "remote_publication": "Verify remote head after commit; receipt remains outside committed source to avoid a self-reference.",
+    "next_on_explicit_resume": [
+      "Regenerate and verify Dart host identity against the current CapnProto schema before real UI use.",
+      "Freshly review the paused1622 inventory; no existing plan or deletion may be assumed. Require at least6GB free before the next cold native build.",
+      "Create a new source/case/role target. Include capnp=0.24.1 and the new eighth selected integration method. Never rerun failed1593 or unbound1604 drivers.",
+      "Prove native expiry and actual Dart decoding; then fresh protected Rust/C/Cpp/cancel and formal UI qualification.",
+      "Continue the remaining source-bound Windows P2/P3 and SDK matrix. Historical Unknown owners remain untouched."
+    ]
+  },
+  "latest_checkpoint": "pause-20261106-checkpoint2057",
+  "pause_20261106": {
+    "status": "PAUSED_BY_EXPLICIT_USER_REQUEST",
+    "updated": "2026-11-06T11:52:12.719833+00:00",
+    "task_status": "PAUSED",
+    "user_request": "暂停任务并推送到Github",
+    "canonical_branch": "codex/local-continue-20261020",
+    "candidate_branch": "codex/g04-conditional-replace-20261106-1850",
+    "canonical_evidence_source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+    "candidate_evidence_source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+    "publication_changes_whole_tree_digest": true,
+    "source_results_not_relabelled": true,
+    "P2_current_scoped_rows": 5,
+    "P2_total_groups": 11,
+    "full_P2_accepted": false,
+    "full_SDK_accepted": false,
+    "full_G04_accepted": false,
+    "case2050": {
+      "tag": "d8b49c5a1fa34ec2b556f076c317cdd9",
+      "status": "PREPARED_BOUND_NOT_DISPATCHED",
+      "all_nine_preparation_phases_closed": true,
+      "actual_fault_injection": false,
+      "policy_Add_calls": 0,
+      "outcome_reviewer_preregistered": false,
+      "metadata_failure": "PLAN_KEYS_NO_APPROVAL_BOOLEAN",
+      "repair": "Move three qualification metadata keys into a separately pinned sidecar; no runtime guard changed",
+      "original_failed_preflight_preserved": true
+    },
+    "VM": {
+      "vms": [
+        {
+          "name": "Morrow Windows Acceptance 20261023 029",
+          "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+          "state": "Saved"
+        },
+        {
+          "name": "Morrow Windows Acceptance 20261023 030",
+          "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+          "state": "Saved"
+        },
+        {
+          "name": "Morrow Windows Acceptance 20261106 058",
+          "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+          "state": "Running"
+        },
+        {
+          "name": "Windows 11 开发环境",
+          "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+          "state": "Running"
+        }
+      ],
+      "vm058": {
+        "disk": "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2746CA0E-A848-46FA-9C05-023D5958F4E4.avhdx",
+        "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+        "checkpoints": [
+          {
+            "name": "Morrow clean Windows P2 baseline 20261106 VM058",
+            "id": "e75dc168-6c96-4add-8596-2f1b8b16452b",
+            "state": "Off"
+          },
+          {
+            "name": "Morrow retained Unknown case2028 20261106 VM058",
+            "id": "ba264892-7fa6-4111-a9dc-9bde534f4ed2",
+            "state": "Saved"
+          }
+        ],
+        "state": "Running"
+      },
+      "registered_vms": 4,
+      "VM_mutations": 0,
+      "owner_contacts": 0
+    },
+    "cache_root": "D:/build_cache",
+    "free_bytes": {
+      "C": 13453221888,
+      "D": 5447323648
+    },
+    "compression": {
+      "files": 1159,
+      "protected_files": 6645,
+      "allocated_bytes_recovered": 1069832365,
+      "observed_D_free_change": 1071783936,
+      "deletions": 0
+    },
+    "remaining_original_release_gates": [
+      "L0_TOKEN",
+      "L1_RUNNER",
+      "L2_BUSINESS_AND_RETIREMENT",
+      "L3_FULL47_NINE",
+      "EDITOR_PERSISTENCE",
+      "SDK26",
+      "G04",
+      "SDK_FREEZE"
+    ],
+    "next_work": [
+      "Resume only on explicit user instruction. Keep case2050 undispatched until its independent outcome reviewer and preservation plan are preregistered.",
+      "Publication changes the whole-tree digest. Mechanically prove report-only equivalence, rebind the current preparation to published source identity, and do not reuse the old f55 guard without that review.",
+      "VM058 is Running with stage/bind transports closed. Recheck exact current host/guest readiness before the first case2050 dispatch; do not repeat completed stage/bind phases.",
+      "Keep retained case2028 checkpoint and owner untouched. Reuse the clean baseline after preserving each uncertain result; never reinstall Windows to obtain the same baseline.",
+      "Complete remaining source-bound Windows P2 groups, then the candidate Replace visible workflow and durable crash/Unknown matrix. Candidate SDK and canonical P2 are different source snapshots.",
+      "Integrate only deliberately, qualify the final source against all eight original gates, then consider SDK freeze and release."
+    ],
+    "source_accepted": false,
+    "release_eligible": false,
+    "automatic_goal_work": "PAUSED",
+    "publication": {
+      "requested": true,
+      "remote": "https://github.com/StarrySky7D4/morrow",
+      "strategy": "Two separate existing development branches; no merge or release",
+      "remote_ref_verification": "Performed after push and recorded in local pause-publication-2057 audit"
     }
   }
 }

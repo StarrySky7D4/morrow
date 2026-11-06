@@ -5029,6 +5029,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-fs-watch-native-v1"
+version = "0.1.0"
+dependencies = [
+ "morrow-fs-watch-v1",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "morrow-fs-watch-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
@@ -5040,6 +5057,8 @@ dependencies = [
  "morrow-core",
  "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",
+ "morrow-fs-watch-native-v1",
+ "morrow-fs-watch-v1",
  "prost",
  "sha2 0.10.9",
  "wasmi",

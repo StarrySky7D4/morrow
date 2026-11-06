@@ -79,7 +79,7 @@ byte_enum!(Stage {
     BootstrapAliasClose = 26, InheritedAliasClose = 27, WaitChild = 28,
     ObserveChild = 29, ResourceClose = 30, RetireChild = 31,
     ObserveRetainedChild = 32, ObserveThreadExit = 33, ObserveJobAccounting = 34,
-    ValidateChildExit = 35,
+    ValidateChildExit = 35, WaitPrimaryThread = 36,
     ImportAliases = 64, ImportParentIdentity = 65, ImportServerIdentity = 66,
     ImportParentImage = 67, ImportAuthPins = 68, ImportParentDigest = 69,
     ImportToken = 70, ImportSubject = 71, ImportRead = 72, ImportDecode = 73,
@@ -89,7 +89,7 @@ byte_enum!(Stage {
 impl Stage {
     fn belongs(self, scope: Scope) -> bool {
         self == Self::NotObserved || match scope {
-            Scope::Parent => (1..=35).contains(&(self as u8)),
+            Scope::Parent => (1..=36).contains(&(self as u8)),
             Scope::Import => (64..=78).contains(&(self as u8)),
         }
     }
@@ -477,6 +477,20 @@ mod tests {
     #[test] fn d2103_22_retained_history_cannot_invent_overlapping_operations(){
         let mut c=pending();c.native(Api::CreateFile,false,Some(2));let b=c.snapshot().encode().unwrap();
         let mut x=b;x[76]=1;x[78]=0;x[79]=0;put32(&mut x[84..88],0);assert!(Snapshot::decode(&x).is_err());
+    }
+
+    #[test] fn d1879_primary_wait_timeout_keeps_process_completion_separate_from_thread_signal(){
+        let mut c=Capture::new(Scope::Parent);
+        c.enter(Stage::WaitChild);c.completed(Stage::WaitChild);
+        c.enter(Stage::WaitPrimaryThread);
+        c.latch_io(&io::Error::new(io::ErrorKind::TimedOut,"original deadline"));
+        let first=c.snapshot();let decoded=Snapshot::decode(&first.encode().unwrap()).unwrap();
+        assert_eq!(decoded,first);assert_eq!(decoded.completed,Stage::WaitChild);
+        assert_eq!(decoded.stage,Stage::WaitPrimaryThread);assert!(decoded.in_flight);
+        assert_eq!(decoded.first.unwrap().kind,Kind::TimedOut);
+        assert_eq!(decoded.first.unwrap().raw,None);assert_eq!(decoded.exit_predicate,None);
+        c.completed(Stage::WaitPrimaryThread);c.returned_ok();
+        assert_eq!(c.snapshot(),first);
     }
 
 }

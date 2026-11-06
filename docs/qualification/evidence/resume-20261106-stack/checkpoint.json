@@ -1,0 +1,238 @@
+{
+  "status": "ACTIVE_CLEANUP_COMPLETE_STATIC_STACK_FIX_COLD_COMPILED_RUNTIME_PENDING",
+  "updated": "2026-11-06T02:00:16.668809+08:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+  "cache_root": "D:/build_cache",
+  "cleanup": {
+    "deleted_files": 38094,
+    "deleted_logical_bytes": 2338885139,
+    "deletion_phase_observed_D_free_gain_bytes": 2226806784,
+    "migrated_C_to_D_bytes": 1440826750,
+    "migrated_roots": 4,
+    "source_final_artifact_VM_archive_backup_deletions": 0,
+    "VM_operations": 0,
+    "all_migrated_bytes_and_compatibility_paths_sha256_verified": true,
+    "earlier_cleanup_not_counted_again": true,
+    "report": "cleanup.json"
+  },
+  "normal1755": {
+    "source_digest": "859b92627ec1c22772102038ee63514540f98aa0a7e8ad6de40d29f732f4d71b",
+    "original_steps": 47,
+    "required_groups": 9,
+    "case_clean": true,
+    "policy_clean": true,
+    "scope": "original pinned roles066; not the later refactor",
+    "report": "normal1755.json"
+  },
+  "shared1760": {
+    "source_digest": "859b92627ec1c22772102038ee63514540f98aa0a7e8ad6de40d29f732f4d71b",
+    "status": "RETAINED_UNKNOWN",
+    "returned_steps": 34,
+    "failed_step": "sealed-native-context",
+    "completed_attempts": 0,
+    "cached_stack_overflow_marker": true,
+    "precise_crash_callsite": "NOT_ESTABLISHED",
+    "native_exit_and_retirement": "NOT_PROVEN",
+    "policy_clean": true,
+    "case_clean": false,
+    "vm_id": "016628f8-ab2b-43a2-a7d2-83493906788a",
+    "vm_state": "Saved",
+    "retained_exec": 53429,
+    "report": "unknown1760.json"
+  },
+  "stack_fix": {
+    "file": "companions/morrow-codex/qualification/c28-basic-harness/src/live.rs",
+    "source_sha256": "3f825082383b3dbd9cccfd40d285a6b06e33ce5929423cf20153899327156065",
+    "source_digest_at_compile": "1619fa29c9b1118714b0d90426395c0db3af99fc53989aa5aa09ae93ae5be0a5",
+    "constructor_body_moved_without_logic_change": true,
+    "caller_frame_before": 262680,
+    "caller_frame_after": 344,
+    "reduced_stack_bytes": 262336,
+    "PE_stack_reserve_unchanged": 1048576,
+    "compiler_artifacts": 884,
+    "all_compiler_artifacts_fresh_false": true,
+    "original_compiler_exit": 0,
+    "artifact": {
+      "path": "D:\\build_cache\\qualification-targets\\stack1770-C-b66084e1803fd46b\\x86_64-pc-windows-msvc\\debug\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 100608000,
+      "sha256": "ec7fec789882ac2b3c954a90edc12433fa6c8efe2c6aad446567a21b1633f960"
+    },
+    "runtime": "NOT_RUN",
+    "VM_admissible": false,
+    "reason_not_VM_admissible": "canonical zero parent anchor; static review candidate only",
+    "report": "static-stack1772.json",
+    "source_sha256_at_compile": "b86b42d7373bd912869763d87a0d320aa2763ba1f9b3535bb040c0e9c161567d",
+    "source_after_compile": "only original CRLF endings restored outside changed lines; normalized LF bytes match compiler input exactly",
+    "source_equivalence_report": "source-ending-equivalence1774.json"
+  },
+  "evidence": [
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\disk-cleanup-20261106-001\\summary.json",
+        "bytes": 1425,
+        "sha256": "8ebf831296285f302fcbcce6dd2d5c83e9c639c305d08e814287ace85f4cf5ea"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\cleanup.json",
+        "bytes": 1425,
+        "sha256": "8ebf831296285f302fcbcce6dd2d5c83e9c639c305d08e814287ace85f4cf5ea"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1755-summary.json",
+        "bytes": 1285,
+        "sha256": "af750f94d504cf619ecc0ec05e854f10c3a112a3e5187c7c1cede1aa03e3dff8"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\normal1755.json",
+        "bytes": 1285,
+        "sha256": "af750f94d504cf619ecc0ec05e854f10c3a112a3e5187c7c1cede1aa03e3dff8"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-summary.json",
+        "bytes": 3849,
+        "sha256": "7199dc68afe8ccfc8cc2576e277926914bd05d4e01eba614f170e0dd0f9db614"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\unknown1760.json",
+        "bytes": 3849,
+        "sha256": "7199dc68afe8ccfc8cc2576e277926914bd05d4e01eba614f170e0dd0f9db614"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\static-finding1769.json",
+        "bytes": 1008,
+        "sha256": "c4e451706b440445b6f689cdbc74de472ae3454091aa53b20aa4ced521f1656a"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\static-finding1769.json",
+        "bytes": 1008,
+        "sha256": "c4e451706b440445b6f689cdbc74de472ae3454091aa53b20aa4ced521f1656a"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\candidate1770\\source-move-review.json",
+        "bytes": 628,
+        "sha256": "b8d7ef24b885f98438e4d5e39e0545757344ec81c0213dfe40b43aed916860c9"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\source-move1770.json",
+        "bytes": 628,
+        "sha256": "b8d7ef24b885f98438e4d5e39e0545757344ec81c0213dfe40b43aed916860c9"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\candidate1770\\result.json",
+        "bytes": 1089,
+        "sha256": "53ead8432805ae4084b578e4f1efd5d3914747f30d91909850e8c89c7116425a"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\cold-build1770.json",
+        "bytes": 1089,
+        "sha256": "53ead8432805ae4084b578e4f1efd5d3914747f30d91909850e8c89c7116425a"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\candidate1772-stack-review\\result.json",
+        "bytes": 2096,
+        "sha256": "c09b9f60471815461e8727a12c6e8a8bcfc9eb3eb4dac48b902386b57fbf70bd"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\static-stack1772.json",
+        "bytes": 2096,
+        "sha256": "c09b9f60471815461e8727a12c6e8a8bcfc9eb3eb4dac48b902386b57fbf70bd"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\post-review-environment1773.json",
+        "bytes": 856,
+        "sha256": "e1a9313ac46c3b112a7553a8b65a77341bf4e9f00bf8a93f323cf2c20867821e"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\environment1773.json",
+        "bytes": 856,
+        "sha256": "e1a9313ac46c3b112a7553a8b65a77341bf4e9f00bf8a93f323cf2c20867821e"
+      }
+    },
+    {
+      "source": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261105-004\\case1760-stack-analysis1765\\source-ending-equivalence1774.json",
+        "bytes": 669,
+        "sha256": "825a7b750639e8b69b6465f6b4875baf3ad4a03452a0b61a4e231aeeb6b08ff0"
+      },
+      "copy": {
+        "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261106-stack\\source-ending-equivalence1774.json",
+        "bytes": 669,
+        "sha256": "825a7b750639e8b69b6465f6b4875baf3ad4a03452a0b61a4e231aeeb6b08ff0"
+      }
+    }
+  ],
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "name": "Morrow Windows Acceptance 20261105 056",
+      "id": "016628f8-ab2b-43a2-a7d2-83493906788a",
+      "state": "Saved"
+    },
+    {
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "state": "Saved"
+    },
+    {
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "state": "Saved"
+    },
+    {
+      "name": "Windows 11 开发环境",
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "state": "Running"
+    }
+  ],
+  "free_space": [
+    {
+      "drive": "C",
+      "free_bytes": 50215419904,
+      "free_GiB": 46.77
+    },
+    {
+      "drive": "D",
+      "free_bytes": 34766123008,
+      "free_GiB": 32.38
+    }
+  ],
+  "disk_accounting": "cleanup gains refer to deletion phase; later cold compile and analysis consume D space separately",
+  "retained_owners_do_not_poll_query_replay_or_terminate": [
+    53429,
+    99895,
+    35497
+  ],
+  "fresh_VM_archive_authority": "already approved; verify complete offline export before unregister; retain original disks",
+  "Windows_P2": "OPEN",
+  "current_source_P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "task_status": "ACTIVE",
+  "new_VM_calls": 0,
+  "product_runtime_executions": 0,
+  "remote_publication": false,
+  "next_steps": [
+    "Recheck disk headroom before a fully verified offline VM056 archive; never resume its Unknown case.",
+    "Keep at most four registered VMs; bind a fresh clean environment and cold-build all four roles from the new source.",
+    "Run current-source normal47/nine and shared-parent P2 cases; preserve failure/Unknown without replay.",
+    "Continue product watch UI closure, remaining Windows P3, SDK26/G04/SDK_FREEZE with their original source/evidence boundaries."
+  ]
+}

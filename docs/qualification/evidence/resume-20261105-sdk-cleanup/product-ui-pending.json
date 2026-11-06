@@ -1,0 +1,16 @@
+{
+  "status": "WAITING_MANUAL_NAVIGATION_DUE_TO_MISMATCHED_CAPTURE",
+  "fresh_target_executable": "morrow_watch_1105b.exe",
+  "window_id": 1639688,
+  "observed_accessibility_window": "Morrow",
+  "observed_screenshot_app": "Codex",
+  "capture_attempts": 2,
+  "selection_refreshed_once": true,
+  "functional_UI_inputs_issued": 0,
+  "plugin_imports": 0,
+  "watch_starts": 0,
+  "permissions_seeded": false,
+  "screenshot_copied_to_project": false,
+  "original_process_driver_retains_handles": true,
+  "UI_acceptance": false
+}

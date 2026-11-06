@@ -1,0 +1,13 @@
+{
+  "status": "PASS_DART_SESSION_AND_CAPNP_SCOPES",
+  "source_digest": "37a89085b4fc7a7f858b69fbc83ca1e2c905d688a6746193b63d95c09391e275",
+  "source_unchanged": true,
+  "pubspec_lock_unchanged": true,
+  "pub_exit": 0,
+  "test_exit": 0,
+  "scope": "Controlled backend session and real Capn Proto codec tests; not native process or visible UI qualification",
+  "full_G04_qualified": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "cache_root": "D:/build_cache"
+}

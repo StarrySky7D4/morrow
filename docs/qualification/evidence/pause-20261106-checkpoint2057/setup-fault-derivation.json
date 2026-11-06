@@ -1,0 +1,30 @@
+{
+  "original": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+    "bytes": 138236,
+    "sha256": "2c74a994b09d3a69e043939f7f7161d4cb0652b503ceceefeb6f0d811692915c"
+  },
+  "derived": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+    "bytes": 138999,
+    "sha256": "d523301e77c9fc60f94b3d7ff710c9dc2ce2258e5702dd49ec7c7cf8694073aa"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\S-after-accounts-fault.diff",
+    "bytes": 1071,
+    "sha256": "4899feb74a83a2a7e39f9f7b3f5b89e43ff9db8d0e4023030c91a1b8f8f430a1"
+  },
+  "historical_recipe": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\build_setup_failure_roles_033.py",
+    "bytes": 7221,
+    "sha256": "6a4ef0fa99b943143388f2a131b8db798f8cb7a1c76d77396d77b350fc1f88cc"
+  },
+  "changed_files": 1,
+  "original_bytes_recovered_exactly": true,
+  "insertion_point": "After provision_owned_sandbox_users returned with actual account SID proofs, before firewall/WFP/filesystem policy and creation receipt",
+  "output_marker": "MORROW_QUALIFICATION_SETUP_AFTER_OWNED_ACCOUNTS_V1",
+  "fault": "Explicit qualification error after actual OS account creation; not an injected Win32 API failure",
+  "ipc_changes": 0,
+  "canonical_edits": 0,
+  "authority_created": false
+}

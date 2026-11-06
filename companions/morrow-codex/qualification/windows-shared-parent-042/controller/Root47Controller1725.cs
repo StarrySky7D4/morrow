@@ -184,6 +184,7 @@ namespace C28.RootP1682 {
     &&view.StdoutThrough<=Stdout.Length&&view.StderrThrough<=Stderr.Length,"HELPER_PREFIX_CURSOR");
    Buffer.BlockCopy(view.Stdout,0,Stdout,OutLength,view.Stdout.Length);OutLength+=view.Stdout.Length;
    Buffer.BlockCopy(view.Stderr,0,Stderr,ErrLength,view.Stderr.Length);ErrLength+=view.Stderr.Length;
+   Io.CacheStderrMarkers(Stderr,ErrLength);
   }
   void ObserveDelivery(InputObservation1701 input){
    Io.Need(input!=null&&input.State!="Poisoned"&&input.Delivered>=Delivered&&input.Delivered<=Delivered+1
@@ -280,7 +281,7 @@ namespace C28.RootP1682 {
    if(Session!=null){try{Session.WithholdFurtherInput();}catch{}}
    if(!DiagnosticAttempted){
     DiagnosticAttempted=true;string body="{\"schema\":\"ROOT_CACHED_FAILURE1832_V1\",\"diagnostic\":\"UNAVAILABLE\"}";
-    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
+    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture,Final));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
     // JSON first, marker LAST: parent commits preceding bytes before it sees
     // the retention marker and stops its original reader. One write attempt.
     try{Console.Error.Write(body+"\nROOT_VM_OBSERVER_UNKNOWN_RETAINED_NO_REPLAY\n");Console.Error.Flush();}catch{}
@@ -477,6 +478,7 @@ namespace C28.RootP1682 {
     &&view.StdoutThrough<=Stdout.Length&&view.StderrThrough<=Stderr.Length,"HELPER_PREFIX_CURSOR");
    Buffer.BlockCopy(view.Stdout,0,Stdout,OutLength,view.Stdout.Length);OutLength+=view.Stdout.Length;
    Buffer.BlockCopy(view.Stderr,0,Stderr,ErrLength,view.Stderr.Length);ErrLength+=view.Stderr.Length;
+   Io.CacheStderrMarkers(Stderr,ErrLength);
   }
   void ObserveDelivery(InputObservation1701 input){
    Io.Need(input!=null&&input.State!="Poisoned"&&input.Delivered>=Delivered&&input.Delivered<=Delivered+1
@@ -605,7 +607,7 @@ namespace C28.RootP1682 {
    if(Session!=null){try{Session.WithholdFurtherInput();}catch{}}
    if(!DiagnosticAttempted){
     DiagnosticAttempted=true;string body="{\"schema\":\"ROOT_CACHED_FAILURE1832_V1\",\"diagnostic\":\"UNAVAILABLE\"}";
-    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
+    try{string candidate=Json1725.Encode(Io.DiagnosticData(Mode,Last==null?null:Last.Capture,Final));if(Encoding.UTF8.GetByteCount(candidate)<=3500)body=candidate;}catch{}
     // JSON first, marker LAST: parent commits preceding bytes before it sees
     // the retention marker and stops its original reader. One write attempt.
     try{Console.Error.Write(body+"\nROOT_VM_OBSERVER_UNKNOWN_RETAINED_NO_REPLAY\n");Console.Error.Flush();}catch{}

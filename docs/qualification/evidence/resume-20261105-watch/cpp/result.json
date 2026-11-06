@@ -1,0 +1,40 @@
+{
+  "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+  "case": "cpp",
+  "method": "original_protected_owner_visible_cpp_guest",
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "original_process_returned": true,
+  "exit_code": 0,
+  "receipts": [
+    {
+      "path": "D:\\build_cache\\wr1105p\\visible-cpp-complete\\original-owner-finished.txt",
+      "bytes": 168,
+      "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+    },
+    {
+      "path": "D:\\build_cache\\wr1105p\\visible-cpp-complete\\original-exit.txt",
+      "bytes": 1704,
+      "sha256": "7d43b9f255bfeebc0547d032e1bea8d74f4950313fc05201fe029df6c79f0575"
+    }
+  ],
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cpp\\runtime.stdout",
+    "bytes": 168,
+    "sha256": "254bea4cd3ca0b27e266fb5a9ffe7350c6b853326f3a809f575f27c3d9271ba5"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cpp\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "formal_product_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

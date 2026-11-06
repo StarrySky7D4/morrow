@@ -1,0 +1,83 @@
+{
+  "status": "PIPELINE_STOPPED_ON_ORIGINAL_NONZERO_NO_RETRY",
+  "failed_phase": "review-current-stage",
+  "phase_exit": 1,
+  "completed": [
+    {
+      "phase": "resume-known-clean-vm",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\01-resume-known-clean-vm.stdout",
+        "bytes": 46,
+        "sha256": "e2c01080ef13fde4a36baf0a09b41a1d7c34136ae593cd169f121917cce3fdd2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\01-resume-known-clean-vm.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\02-authorized-protected-login-input.stdout",
+        "bytes": 56,
+        "sha256": "6bc88051e006f11c585282962acd6537afc427cb491dbab03d35766e3eaa9e98"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\02-authorized-protected-login-input.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "fresh-readiness",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\03-fresh-readiness.stdout",
+        "bytes": 599,
+        "sha256": "441643e69ea28ff60c4ef25e8de2c1a4cdc0cd17d184554a031eb85c062922fb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\03-fresh-readiness.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "exit_code": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\04-prepare-current-stage.stdout",
+        "bytes": 538,
+        "sha256": "b780338409e0961e667839e0f2003a017c8034592e34a323a8221960fe305e64"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\04-prepare-current-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "exit_code": 1,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\05-review-current-stage.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\setup2050-preparation-pipeline-2050\\05-review-current-stage.stderr",
+        "bytes": 427,
+        "sha256": "8e992e18e1071a89200c49457e639c2ed0266666be3f8901d4b0bb1ed2bb3368"
+      }
+    }
+  ],
+  "tag": "d8b49c5a1fa34ec2b556f076c317cdd9",
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "old_unknown_owner_contacts": 0,
+  "automatic_retry": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

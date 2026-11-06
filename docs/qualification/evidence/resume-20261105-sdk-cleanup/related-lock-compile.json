@@ -1,0 +1,95 @@
+{
+  "status": "PASS_FOUR_STAGED_CONSUMER_LOCKS_COMPILE_ONLY",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "qualified_inputs_digest": "4255cbe2ead91a2d44fa8d546d72c9396b0001bcaed6636b0d3242e6c0526cee",
+  "rows": [
+    {
+      "manifest": "extensions/agent-session-process-v1-host/Cargo.toml",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "seconds": 54.47,
+      "compiler_artifacts": 156,
+      "all_reported_artifacts_cold": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\1.jsonl",
+        "bytes": 152588,
+        "sha256": "042d424e61cdf12ccc5e39912b489e5402a8268b611294e84ae17e85160c87cf"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\1.stderr",
+        "bytes": 5304,
+        "sha256": "a935b55e11261b7a1d280427e0066e36e9c73cfc91cb142fe7a7d03b779527b0"
+      },
+      "target": "D:\\build_cache\\qualification-targets\\consumerlock1105-1-CHECK-ebe93b9303d57cc1"
+    },
+    {
+      "manifest": "extensions/agent-session-exec-v1-r2-host/Cargo.toml",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "seconds": 49.14,
+      "compiler_artifacts": 137,
+      "all_reported_artifacts_cold": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\2.jsonl",
+        "bytes": 147218,
+        "sha256": "acb147981a9765632db65531cb74ca5a78c188ea44058e49b7cbf6db83b12c38"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\2.stderr",
+        "bytes": 4017,
+        "sha256": "2d35b18aabc8f5dbba76818b46575887bfb85cbbeff6492194f01fabbf4fbcb7"
+      },
+      "target": "D:\\build_cache\\qualification-targets\\consumerlock1105-2-CHECK-1324f75cbba99f9f"
+    },
+    {
+      "manifest": "extensions/agent-catalog-owner-v1/Cargo.toml",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "seconds": 54.72,
+      "compiler_artifacts": 154,
+      "all_reported_artifacts_cold": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\3.jsonl",
+        "bytes": 151044,
+        "sha256": "e6e36ca248d702053bdf54a121cdf9cf1ef5e9cfb75f7f097ad33c8dcb9c87e2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\3.stderr",
+        "bytes": 5664,
+        "sha256": "5e3326ea137aeee9550036cddb89d44268470da0c01f67558c45dae99b90a20e"
+      },
+      "target": "D:\\build_cache\\qualification-targets\\consumerlock1105-3-CHECK-f2e16ba063ba2fd4"
+    },
+    {
+      "manifest": "extensions/codex-session-exec-client-r2/qualification/Cargo.toml",
+      "exit_code": 0,
+      "passed": true,
+      "original_process_returned": true,
+      "seconds": 45.7,
+      "compiler_artifacts": 129,
+      "all_reported_artifacts_cold": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\4.jsonl",
+        "bytes": 124509,
+        "sha256": "1a17013b37649287d683b75d7566d782a8dd5543e5945f5c7131a16b89aa3673"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\related-lock-compile-check\\4.stderr",
+        "bytes": 4023,
+        "sha256": "63584272d3b515986a4077dd04285fed5d8b3591b8f2449f39f3b58231bc65e7"
+      },
+      "target": "D:\\build_cache\\qualification-targets\\consumerlock1105-4-CHECK-630f9183a79ed772"
+    }
+  ],
+  "canonical_source_unchanged": true,
+  "staged_inputs_unchanged": true,
+  "all_original_processes_returned": true,
+  "canonical_patch_applied": false,
+  "test_bodies_executed": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

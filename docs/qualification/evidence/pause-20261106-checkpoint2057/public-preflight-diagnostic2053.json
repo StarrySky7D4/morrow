@@ -1,0 +1,23 @@
+{
+  "status": "PUBLIC_ONLY_DIAGNOSTIC_ORIGINAL_PROCESS_RETURNED",
+  "exit_code": 78,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\public-preflight-diagnostic-2053\\stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\public-preflight-diagnostic-2053\\stderr",
+    "bytes": 808,
+    "sha256": "f5e8f58422dc10079f2b6ba188233522c2118efaec5a45458ad48c68706fdb90"
+  },
+  "diagnostic": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\PublicPreflightDiagnostic2053.ps1",
+    "bytes": 5672,
+    "sha256": "a92290707aa47d86cb47869cdfb4bd45f5c9ce66641f52cde13c66e1291c9f3e"
+  },
+  "vm_calls": 0,
+  "private_reads": 0,
+  "policy_mutations": 0,
+  "original_preflight_exit_code": "NOT_RECORDED_NOT_INFERRED"
+}

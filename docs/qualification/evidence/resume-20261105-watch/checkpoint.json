@@ -1,0 +1,421 @@
+{
+  "status": "ACTIVE_WATCH_IDENTITY_NATIVE_AND_CAPNP_VERIFIED_FORMAL_UI_OPEN",
+  "utc": "2026-11-04T23:21:25.319850+00:00",
+  "branch": "codex/local-continue-20261020",
+  "head": "b1b46ea09937654752d4e853e7067152e37bb201",
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "generated_identity_matches_schema": true,
+  "identity_repair": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\result.json",
+    "bytes": 25576,
+    "sha256": "9b9dcd5db602489cb8825eb630fb2c01239d6644bcf38f69230b41bad5d67c92"
+  },
+  "cold_build": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\result.json",
+    "bytes": 4117,
+    "sha256": "5bf94882103e2678ae7942b6fc9b0236d6e0a43a1277e10f672c2d0c28a5fac9"
+  },
+  "compiler_artifacts": 883,
+  "all_compiler_artifacts_cold": true,
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "bytes": 31661056,
+    "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+  },
+  "native_methods": 8,
+  "runtime_cases": [
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "approval",
+      "method": "file_list_is_not_watch_approval_and_stale_decisions_do_not_dispatch",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-approval\\runtime.stdout",
+        "bytes": 192,
+        "sha256": "d4956d9cfb4e585427da741ac5b73eed9d8d65145a1fc25b42ffd50c8f83adae"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-approval\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "bounds",
+      "method": "exact_bounds_handler_revision_and_host_nomination_preflight",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-bounds\\runtime.stdout",
+        "bytes": 184,
+        "sha256": "b532c187d11d0b472878f7eda8b6dcca6fb95a3412f3c5160f0c32c821db9694"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-bounds\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "expiry",
+      "method": "original_protected_owner_picker_expiry_has_no_native_capture",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105e\\visible-rust-expire\\original-owner-finished.txt",
+          "bytes": 168,
+          "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105e\\visible-rust-expire\\original-exit.txt",
+          "bytes": 772,
+          "sha256": "5e3094eee9153e88aec9d03fc39c5d934563a292271867a2629251926398d5ef"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-expiry\\runtime.stdout",
+        "bytes": 186,
+        "sha256": "ef9dacc70bad6331f2dc5fd5abcd0198657e1f949aea8d33ef3c093feaca5c17"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-expiry\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "wire",
+      "method": "original_protected_owner_capnp_expiry_and_one_receipt",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105w\\wire-expiry\\original-owner-finished.txt",
+          "bytes": 197,
+          "sha256": "07cc0c47417b1808d217be0f43ca83c75c051ed43a0cbbb47ad3d66422fc496f"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105w\\wire-expiry\\start.capnp",
+          "bytes": 680,
+          "sha256": "f54c4cc89ddf7ca4880fa92bb8eb8f5abdf48e3cea5ee6c55372de0edc9060dd"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105w\\wire-expiry\\ready.capnp",
+          "bytes": 640,
+          "sha256": "c6b98690d1364a704ddb6aa4175ff675c96cdf1fefabd5b5f785db9da05b2c0f"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105w\\wire-expiry\\read.capnp",
+          "bytes": 712,
+          "sha256": "1545fb8c9929fa8c30f467271c8559b00485b18d7e129a46a6be7b4efe8a4e67"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-wire\\runtime.stdout",
+        "bytes": 179,
+        "sha256": "ef82f3ade7149cb920dc8bd6ca085534b7472705cfc34e645bd949f406cb9a2f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-wire\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "rust",
+      "method": "original_protected_owner_visible_rust_guest",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105r\\visible-rust-complete\\original-owner-finished.txt",
+          "bytes": 168,
+          "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105r\\visible-rust-complete\\original-exit.txt",
+          "bytes": 1708,
+          "sha256": "7304edd994147867e4242830215833092edfe4928995bd35b8f031ebb18de6e0"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-rust\\runtime.stdout",
+        "bytes": 169,
+        "sha256": "8ab2465699bb588eadc6aa75a8bad68d9eb5748401c032d50c88bdd7d14a427c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-rust\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "c",
+      "method": "original_protected_owner_visible_c_guest",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105c\\visible-c-complete\\original-owner-finished.txt",
+          "bytes": 168,
+          "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105c\\visible-c-complete\\original-exit.txt",
+          "bytes": 1709,
+          "sha256": "48675ba4c3ae79ad892c775cd4135bb4f612ed246d9a75d6fd94d274be048206"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-c\\runtime.stdout",
+        "bytes": 166,
+        "sha256": "a2a476208fb9bb62e3e17a6770e9e88ef8331ec636d125b2fc9048feb53755be"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-c\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "cpp",
+      "method": "original_protected_owner_visible_cpp_guest",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105p\\visible-cpp-complete\\original-owner-finished.txt",
+          "bytes": 168,
+          "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105p\\visible-cpp-complete\\original-exit.txt",
+          "bytes": 1704,
+          "sha256": "7d43b9f255bfeebc0547d032e1bea8d74f4950313fc05201fe029df6c79f0575"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cpp\\runtime.stdout",
+        "bytes": 168,
+        "sha256": "254bea4cd3ca0b27e266fb5a9ffe7350c6b853326f3a809f575f27c3d9271ba5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cpp\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    {
+      "status": "PASS_SELECTED_ORIGINAL_WATCH_CASE",
+      "case": "cancel",
+      "method": "original_protected_owner_cancel_after_guest_delivery",
+      "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+        "bytes": 31661056,
+        "sha256": "15383961e143560ad29301cced0c9d22eb4ac02e64944dd07e5cdab60a837da6"
+      },
+      "original_process_returned": true,
+      "exit_code": 0,
+      "receipts": [
+        {
+          "path": "D:\\build_cache\\wr1105x\\visible-rust-cancel\\original-owner-finished.txt",
+          "bytes": 168,
+          "sha256": "e2042de2a6aae638db8cc2323fb39e9e972c718884046a2acca71c50d5b44110"
+        },
+        {
+          "path": "D:\\build_cache\\wr1105x\\visible-rust-cancel\\original-exit.txt",
+          "bytes": 1451,
+          "sha256": "bb50f42a4b5c5d72571fb2f8e743f6867b791a5a90caad57e9f46bc86d310f40"
+        }
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cancel\\runtime.stdout",
+        "bytes": 178,
+        "sha256": "7a273cec3fb74a3cfc8734fa2abc2bbe0e1894af6c9ec4c7f65e278409edda1e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cancel\\runtime.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "formal_product_UI": false,
+      "VM_calls": 0,
+      "old_owner_contacts": 0,
+      "source_accepted": false,
+      "release_eligible": false
+    }
+  ],
+  "all_original_processes_returned": true,
+  "native_expiry": "PASS_ORIGINAL_EXPIRED_NOT_CANCELLED",
+  "CapnProto_expiry_read_once_replay_refusal": "PASS",
+  "actual_native_Dart_decode": {
+    "exit_code": 0,
+    "original_process_returned": true,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\native-decode-runtime\\decode.stdout",
+      "bytes": 164,
+      "sha256": "3e5c427564c820740b434d7c9ec2beb4a709c6ce2a2be1839756b4e492c579f0"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\native-decode-runtime\\decode.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+    "status": "PASS_ACTUAL_NATIVE_CAPNP_DART_DECODE",
+    "decoded": {
+      "status": "PASS_ACTUAL_NATIVE_CAPNP_DART_DECODE",
+      "checks": 32,
+      "messages": 3,
+      "error": "expired",
+      "knownClosed": true,
+      "originalOwnerClosed": true,
+      "formalProductUI": false
+    },
+    "source_unchanged": true,
+    "source_accepted": false,
+    "release_eligible": false
+  },
+  "canonical_Dart_wire_checks": 44,
+  "canonical_Dart_session_checks": 45,
+  "original_frozen_inputs_unchanged": 57,
+  "formal_product_UI": "NOT_RUN",
+  "Windows_P2": "OPEN",
+  "current_formal_P3": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "registered_vms": 4,
+  "VM_inventory": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "ba69bae0-32f6-4c58-95f8-462edb67b9b0",
+      "name": "Morrow Windows Acceptance 20261031 055",
+      "state": "Saved"
+    }
+  ],
+  "free_space": [
+    {
+      "Name": "C",
+      "Free": 46829981696
+    },
+    {
+      "Name": "D",
+      "Free": 31200374784
+    }
+  ],
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "historical_failures_preserved": true,
+  "previous_checkpoint": "continuation1624.json",
+  "no_progress_audit": "PROGRESS: canonical identity corrected and eight fresh native cases plus actual Dart decoding completed",
+  "next": [
+    "Build and qualify current full Morrow approval, watch, result review and acknowledgement UI with fresh original owners.",
+    "Complete source-bound Windows P2/P3 matrix and remaining SDK capabilities; reseal one final candidate before freeze or release."
+  ]
+}

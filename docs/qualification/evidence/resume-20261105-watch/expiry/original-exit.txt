@@ -1,0 +1,4 @@
+language=rust
+cancel=false
+expire=true
+result=WatchResult { outcome: Err(Expired), unknown: false, original_worker_joined: true, native_retirement_complete: true, disconnect: Some(Ok(())), maintenance: Some(Ok(())), snapshot: Some(Snapshot { phase: Finished, native: Some(Snapshot { ancestors: DirectoryRetirementSnapshot { objects: 0, close_calls: 0, confirmed_closed: 0, unknown: 0, worker_bound: true, picker_started: true, picker_closed: true }, native: None, held_resources: 0, job_held: false, relative_open_calls: 0, polls: 0, consumer_phase: None, first_error: Some(Directory(Cancelled)), unknown: false, retired: true }), delivered: 0, fuel_remaining: 20000000, task_calls_remaining: 16 }), usage: Usage { resources: 0, jobs: 0, bytes: 157978 }, deliveries: [] }

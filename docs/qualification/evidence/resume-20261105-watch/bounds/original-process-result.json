@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-bounds\\runtime.stdout",
+    "bytes": 184,
+    "sha256": "b532c187d11d0b472878f7eda8b6dcca6fb95a3412f3c5160f0c32c821db9694"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-bounds\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

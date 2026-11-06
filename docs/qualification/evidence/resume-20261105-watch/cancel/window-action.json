@@ -1,0 +1,18 @@
+{
+  "window": {
+    "app": "process:D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-build\\fs-watch-protected.exe",
+    "id": 524778,
+    "title": "Morrow - select directory"
+  },
+  "nominationLines": [
+    "\t\t56 编辑 (settable, string) 文件夹: Value: D:\\build_cache\\wr1105x\\visible-rust-cancel\\observed ID: 1152"
+  ],
+  "actions": [
+    {
+      "action": "click",
+      "element": 57,
+      "label": "选择文件夹"
+    }
+  ],
+  "windowsAfter": []
+}

@@ -1,0 +1,32 @@
+{
+  "source_digest": "bf70522c7c830ffa927c7cbdf0103a25d844251d80ff6ed01ba66405bc8bfb37",
+  "input_digest": "d615fd34cee45cd289842fbfc939c53bbd921014233aea5278a2925ab787022d",
+  "inputs": {
+    "Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-harness\\Cargo.toml",
+      "bytes": 1051,
+      "sha256": "60f85504149966773a44f5e60a3acaded0d165ac3e568852f3daa208a17f0f8d"
+    },
+    "Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\watch-harness\\Cargo.lock",
+      "bytes": 234819,
+      "sha256": "93ea0c267b10b1b84ec4db041f592321e448edd6341ecb3434e7e8fc1cdaab67"
+    },
+    "selected_test": {
+      "path": "C:\\ms1020\\workbench_host\\tests\\fs_watch_protected.rs",
+      "bytes": 20078,
+      "sha256": "e13f90201bc12ed94e6e00ee6142e72331537fd4f5db14d957cbbaf62f96f3f7"
+    }
+  },
+  "target": "D:\\build_cache\\qualification-targets\\watch20261105a-HOST-d615fd34cee45cd2",
+  "initially_empty": true,
+  "lossless_NTFS_compression": true,
+  "generated_identity": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\identity\\result.json",
+    "bytes": 25576,
+    "sha256": "9b9dcd5db602489cb8825eb630fb2c01239d6644bcf38f69230b41bad5d67c92"
+  },
+  "third_party_versions_sources_checksums_retained": true,
+  "VM_calls": 0,
+  "old_owner_contacts": 0
+}

@@ -1,0 +1,20 @@
+--- 
++++ 
+@@ -9,7 +9,7 @@
+  p=Path(row['path']);assert not p.is_symlink() and not p.is_junction();assert cold.pin(p)==row
+ prepared=load(B/'case2050-preparation.json')
+ for key in ('fault_roles','cold_stage_verifier','source_equivalence'):verify(prepared[key])
+-roles=load(B/'roles-070/result.json');review=load(B/'roles070-stage2050-binding-review/result.json')
++roles=load(B/'roles-070/result.json');review=load(B/'roles070-stage2054-binding-review/result.json')
+ assert roles['source_digest']==prepared['source_digest'] and roles['cold_output_isolation'] and roles['all_selected_roles_have_verified_cold_origin'] and roles['fresh_S'] and roles['qualification_fault']=='SETUP_AFTER_OWNED_ACCOUNTS'
+ assert review['status']=='PASS_MECHANICAL_ROLE_AND_COMPILER_INPUT_BINDING' and review['source_digest']==roles['source_digest']
+ assert review['all_four_cold_compiler_outputs_verified'] and review['all_overlay_differences_verified']
+@@ -33,7 +33,7 @@
+  if role=='S':
+   required=(b'MORROW_QUALIFICATION_SETUP_AFTER_OWNED_ACCOUNTS_V1',);forbidden.remove(required[0])
+  cold.verify_markers(Path(artifact['path']),required=required,forbidden=tuple(forbidden));proofs.append(dict(role=role,target=str(target),compiler_artifacts=len(artifacts),proof=row['cold_compiler_proof']))
+-driver=B/('run_vm_stage_2050.py' if phase=='stage' else 'run_isolated_case_2050.py');matches=[r['derived'] for r in prepared['rows'] if Path(r['derived']['path'])==driver]
++driver=B/('run_vm_stage_2050.py' if phase=='stage' else 'run_isolated_case_2054.py');repair=load(B/'setup2050-plan-repair-2054/result.json');matches=[r['derived'] for r in (prepared['rows']+repair['rows']) if Path(r['derived']['path'])==driver]
+ assert len(matches)==1;verify(matches[0])
+ selection=load(B/('vm-stage-selection-2050.json' if phase=='stage' else 'vm-case-selection-2050.json'));assert selection['tag']==prepared['tag'];root=Path(selection['root'])
+ verify(selection['script']);verify(selection['plan']);assert not (root/(phase+'-invocation.reserved')).exists()

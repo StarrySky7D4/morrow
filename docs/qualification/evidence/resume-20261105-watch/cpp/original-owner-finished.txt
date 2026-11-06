@@ -1,0 +1,5 @@
+original_worker_joined=true
+native_retirement_complete=true
+explicit_result_acknowledged=true
+original_owner_finished=true
+known_closed_existing_session_integrity=true

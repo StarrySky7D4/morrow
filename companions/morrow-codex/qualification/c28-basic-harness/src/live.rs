@@ -672,6 +672,33 @@ impl Session {
         }
         Ok(())
     }
+    // Keep constructor temporaries off the stack of later original-owner steps.
+    // In the unoptimized Windows harness, combining these branches reserved
+    // 262,680 bytes even while only reclaiming/preparing a native context.
+    // The original owner and all journal/confirmation boundaries stay on the
+    // same thread; this helper returns before any subsequent sealed step.
+    #[inline(never)]
+    fn select_formal_workflow(&mut self, step: &str) -> Result<serde_json::Value> {
+        ensure!(
+            self.formal.is_none() && self.backend.is_some(),
+            "one witness workflow per fresh lifecycle/factory"
+        );
+        let native_basic=step=="basic" && self.backend.as_ref().is_some_and(ProductionBackend::is_native_close_v8);
+        self.formal = Some(if native_basic {
+            crate::formal::Workflow::new_basic_native_v8(&self.lifecycle,&self.files.helper)?
+        }else if step == "basic" {
+            crate::formal::Workflow::new_basic(&self.lifecycle, &self.files.helper,
+                self.sid_query.as_ref().ok_or_else(|| anyhow!("guest whoami full path/SHA NOT_READY; no basic effects"))?)?
+        } else {
+            crate::formal::Workflow::new(self.lifecycle.synthetic_root(), &self.files.helper, step == "pty")?
+        });
+        Ok(
+            serde_json::json!({"witness":step,"authority_created":false,"system_test_executed":false,"fresh_basic_sentinel_files_created":step == "basic", "owned_loopback_listener_baseline":step == "basic",
+                "identity_source":if step!="basic" {None}else if native_basic {Some("current_process_primary_token")}else{Some("fixed_guest_whoami_child")},
+                "guest_sid_query_pin":if native_basic || step!="basic" {None}else{self.sid_query.as_ref().map(|pin|serde_json::json!({"path":pin.path,"sha256":crate::preflight::hex(&pin.sha256)}))},
+                "token_restricted_flags_read":false}),
+        )
+    }
     fn formal_step(&mut self, step: &str, reader: &mut impl BufRead) -> Result<()> {
         ensure!(!self.lifecycle.has_asuser_origin()||!matches!(step,"pipe"|"pty"),
             "A1 parent qualification requires the original sealed-basic chain; extensions remain deferred");
@@ -742,25 +769,7 @@ impl Session {
         }
         let result = (|| -> Result<serde_json::Value> {
             if matches!(step, "basic" | "pipe" | "pty") {
-                ensure!(
-                    self.formal.is_none() && self.backend.is_some(),
-                    "one witness workflow per fresh lifecycle/factory"
-                );
-                let native_basic=step=="basic" && self.backend.as_ref().is_some_and(ProductionBackend::is_native_close_v8);
-                self.formal = Some(if native_basic {
-                    crate::formal::Workflow::new_basic_native_v8(&self.lifecycle,&self.files.helper)?
-                }else if step == "basic" {
-                    crate::formal::Workflow::new_basic(&self.lifecycle, &self.files.helper,
-                        self.sid_query.as_ref().ok_or_else(|| anyhow!("guest whoami full path/SHA NOT_READY; no basic effects"))?)?
-                } else {
-                    crate::formal::Workflow::new(self.lifecycle.synthetic_root(), &self.files.helper, step == "pty")?
-                });
-                return Ok(
-                    serde_json::json!({"witness":step,"authority_created":false,"system_test_executed":false,"fresh_basic_sentinel_files_created":step == "basic", "owned_loopback_listener_baseline":step == "basic",
-                        "identity_source":if step!="basic" {None}else if native_basic {Some("current_process_primary_token")}else{Some("fixed_guest_whoami_child")},
-                        "guest_sid_query_pin":if native_basic || step!="basic" {None}else{self.sid_query.as_ref().map(|pin|serde_json::json!({"path":pin.path,"sha256":crate::preflight::hex(&pin.sha256)}))},
-                        "token_restricted_flags_read":false}),
-                );
+                return self.select_formal_workflow(step);
             }
             let workflow = self
                 .formal

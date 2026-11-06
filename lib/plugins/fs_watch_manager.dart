@@ -306,8 +306,8 @@ class _FsWatchManagerState extends State<FsWatchManager>
         if (selected != null)
           _note(
             l.pluginsWatchBounds(
-              selected.plugin.fsWatchLimits!.frames.toString(),
               selected.plugin.fsWatchLimits!.wireBytes.toString(),
+              selected.plugin.fsWatchLimits!.frames.toString(),
               selected.plugin.fsWatchLimits!.windowMs.toString(),
             ),
           ),

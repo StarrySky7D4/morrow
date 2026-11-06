@@ -1,0 +1,63 @@
+{
+  "status": "PASS_FIVE_OTHER_WORKSPACE_LOCKS_ONLY_COMPONENT_ARTIFACTS_UNCHANGED",
+  "original_UI_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "canonical_source_after": "8b1a903b81cd47b70116daf8ecd8609ae06e6301dc892fa38120b83850613e23",
+  "changed_files": [
+    "extensions/agent-catalog-owner-v1/Cargo.lock",
+    "extensions/agent-session-exec-v1-r2-host/Cargo.lock",
+    "extensions/agent-session-process-v1-host/Cargo.lock",
+    "extensions/codex-session-exec-client-r2/qualification/Cargo.lock",
+    "network_node/Cargo.lock"
+  ],
+  "governing_Rust_locks": [
+    {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+      "bytes": 236536,
+      "sha256": "96d96c1805f00c0e8d9124b7370d3875b8a17ea9399224e4160a473288ccc1d5"
+    },
+    {
+      "path": "C:\\ms1020\\plugins\\workbench\\Cargo.lock",
+      "bytes": 22766,
+      "sha256": "4c4e06ac9dd372c5129c3db38592ceac6d7d402b04ea882d1a7c4cb78aeb7b55"
+    }
+  ],
+  "current_compiled_product_artifacts": {
+    "executable": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-watch-b\\app\\morrow_watch_1105b.exe",
+      "bytes": 2398720,
+      "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+    },
+    "kernel": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-watch-b\\app\\data\\flutter_assets\\kernel_blob.bin",
+      "bytes": 113956504,
+      "sha256": "d7ee864ee8410e01ccd6a1420616108240dbfdd6d13e3571e05267585c8be20f"
+    },
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-watch-b\\app\\morrow-workbench-host.exe",
+      "bytes": 31580672,
+      "sha256": "81585a2f181f667c8df5bef7f2c2b54edea4dde1e074e2beb2605166bddd8d8b"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-watch-b\\app\\morrow-workbench-supervisor.exe",
+      "bytes": 13954048,
+      "sha256": "60c39db5930c295a0d8f9327005f137f519a6dd85c03bf8571c5dcd877968fe9"
+    },
+    "builtin": {
+      "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\product-watch-b\\app\\plugins\\workbench.morrowplugin",
+      "bytes": 922052,
+      "sha256": "6407a1c4059c8bdccc53984dafbaa3b424ec04f1ec535946685798d75d501d4a"
+    },
+    "watch_package": {
+      "path": "D:\\build_cache\\pw1105b\\imports\\watch-rust.mplugin",
+      "bytes": 49465,
+      "sha256": "e78f5b3b92c7873e332b346c1dbd3f13d2709d03303b205fdd43157d27684815"
+    }
+  },
+  "canonical_other_files_byte_unchanged": true,
+  "native_launcher_inputs_unchanged": 26,
+  "original_UI_receipts_relabelled": false,
+  "original_UI_completion": "PENDING_MANUAL_NAVIGATION_AND_ORIGINAL_CLOSURE",
+  "full_source_qualification": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

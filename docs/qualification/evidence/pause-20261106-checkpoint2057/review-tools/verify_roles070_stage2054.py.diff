@@ -1,0 +1,11 @@
+--- 
++++ 
+@@ -2,7 +2,7 @@
+ from pathlib import Path
+ STATIC=Path('D:/build_cache/_audit/windows-restriction-lineage-20261022-019')
+ import ast,hashlib,importlib.util,json,os,re,struct,subprocess,sys,tomllib,types
+-B=Path(__file__).parent;ROOT=Path('C:/ms1020');BUILD=B/'roles-070';OUT=B/'roles070-stage2050-binding-review'
++B=Path(__file__).parent;ROOT=Path('C:/ms1020');BUILD=B/'roles-070';OUT=B/'roles070-stage2054-binding-review'
+ sys.path.insert(0,str(ROOT/'tool'));import windows_qualification_build_cache as cold
+ def load(p):return json.loads(p.read_bytes())
+ def sha(raw):return hashlib.sha256(raw).hexdigest()

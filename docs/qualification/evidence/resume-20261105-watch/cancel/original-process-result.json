@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "original_process_returned": true,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cancel\\runtime.stdout",
+    "bytes": 178,
+    "sha256": "7a273cec3fb74a3cfc8734fa2abc2bbe0e1894af6c9ec4c7f65e278409edda1e"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-resume-20261105-001\\runtime-cancel\\runtime.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

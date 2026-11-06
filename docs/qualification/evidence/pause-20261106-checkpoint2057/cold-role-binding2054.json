@@ -1,0 +1,93 @@
+{
+  "status": "PASS_MECHANICAL_ROLE_AND_COMPILER_INPUT_BINDING",
+  "tag": "d8b49c5a1fa34ec2b556f076c317cdd9",
+  "vm_id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\stage-plan.json",
+    "bytes": 6702,
+    "sha256": "e94e922487f77aca81f66a20e8431fc938c666eb91f6abae40740a6c9890830a"
+  },
+  "controller": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\c28-isolated-stage-current-20261021-d8b49c5a1fa34ec2b556f076c317cdd9\\controller\\Root47Controller1725.exe",
+    "bytes": 180736,
+    "sha256": "1fe11eee3eec44510ac91393c69e9c2f80d54101b698d47e61bf5c5488d737c6"
+  },
+  "parent_harness_firmware_uuid": "11346330-cd64-4f13-a983-c0f293318838",
+  "vm_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "current_stage_repair": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case1910-stage-repair-1926\\correction.json",
+    "bytes": 3852,
+    "sha256": "a70f4d4da2c544ca362275860fe5e3668d6ee3ef25944b4f6fe31220c4ea6e63"
+  },
+  "current_additional_pure_suite": 96,
+  "source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "checkout_source_digest": "f55b582b8e183a729b6a79292ec760ab2d7ed9d7b3403ba46ffa116459ce5b9e",
+  "exact_current_source_identity": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\source-identity-1910\\result.json",
+    "bytes": 1083,
+    "sha256": "e9ff610d6532c092cfe1df73a40f4d3e4bfdb45c296dfee715871a4350e9b26f"
+  },
+  "all_current_code_bytes_verified": true,
+  "actual_role_input_bindings_verified": 4,
+  "original_firmware_and_compiler_checks_preserved": true,
+  "all_four_cold_compiler_outputs_verified": true,
+  "all_overlay_differences_verified": true,
+  "setup_fault_marker_only_S": true,
+  "unexpected_nonsetup_fault_markers_absent": true,
+  "original_PCR_bytes_reused": true,
+  "roles": [
+    {
+      "role": "P",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\P\\morrow-workbench-supervisor.exe",
+        "bytes": 27948544,
+        "sha256": "f6cc8ceff38bbc08db4da968552075b917ce26b8ff33208b4c0037e573b581a9"
+      },
+      "input_sha256": "cfcc7c0328d2aafb79dad36c17f69c7cb6695c9b659d8e797c0cf373fb8d6495",
+      "compiler_artifacts": 883
+    },
+    {
+      "role": "C",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\C\\morrow-protected-checked-vm-harness.exe",
+        "bytes": 100651008,
+        "sha256": "2bfd5553183df908e5b7366545e57e4ae88ad3562c16283352b5c42b802a6ca6"
+      },
+      "input_sha256": "c9328d70c3a8681202cf89517c79167319686e1025aba36c04c2703b330e2307",
+      "compiler_artifacts": 884
+    },
+    {
+      "role": "R",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-069\\R\\codex-command-runner.exe",
+        "bytes": 24590848,
+        "sha256": "0d1ead4140f09e1a94ca788b7170f29b2330ee5c7d342409039dd54623f60d35"
+      },
+      "input_sha256": "a3631bf94493de799abe49c40adee1a1d1374335c02317755ff7ead9f9de27ed",
+      "compiler_artifacts": 620
+    },
+    {
+      "role": "S",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles-070\\S\\codex-windows-sandbox-setup.exe",
+        "bytes": 37625344,
+        "sha256": "bf3675885b10db326d207742bb00b22c28d8830e757c8a1a97b6f6da1117c467"
+      },
+      "input_sha256": "a3b2e71602d3086c459b6789b5e58b8433f93b19bd4603e23098eaabfd97a78f",
+      "compiler_artifacts": 620
+    }
+  ],
+  "verifier_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\roles070-stage2054-binding-review\\derivation.json",
+    "bytes": 1795,
+    "sha256": "c5703150e4b8f67b5bd2aebc7f0e15011b2a5018286cc01e092e61b3613aad64"
+  },
+  "VM_calls": 0,
+  "original_owner_contacts": 0
+}

@@ -1,0 +1,23 @@
+--- 
++++ 
+@@ -8,7 +8,9 @@
+ assert tag=='d8b49c5a1fa34ec2b556f076c317cdd9'
+ plan=json.loads(Path(selected['plan']['path']).read_bytes())
+ assert plan['phase']=='apply-run-restore' and plan['tag']==tag
+-assert plan['qualification_profile']=='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION' and plan['p2_wire_bytes']==3523 and not plan['original47_qualification']
++stage_profile=json.loads((root/'qualification-stage2054.json').read_bytes())
++assert stage_profile['tag']==tag and stage_profile['vm_id']==plan['vm_id']
++assert stage_profile['qualification_profile']=='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION' and stage_profile['p2_wire_bytes']==3523 and not stage_profile['original47_qualification']
+ assert plan['vm_id']=='59c31486-5a5e-4d88-bd06-69a0f23a9337'
+ assert plan['firmware_uuid']=='11346330-cd64-4f13-a983-c0f293318838'
+ assert plan['sid']=='S-1-5-21-2073478578-1898399014-2731348798-1000'
+@@ -21,7 +23,8 @@
+ assert qualification['tag']==tag and qualification['vm_id']==plan['vm_id']
+ assert qualification['qualification_profile']=='P2_SETUP_AFTER_ACCOUNTS_QUALIFICATION'
+ assert qualification['original47_qualification'] is False and qualification['authority'] is False
+-pins.extend([selected['qualification'],qualification['source_roles'],qualification['qualification_fault_derivation']])
++assert qualification['p2_wire_bytes']==3523 and qualification['stage_profile']['path']==str(root/'qualification-stage2054.json')
++pins.extend([selected['qualification'],qualification['stage_profile'],qualification['source_roles'],qualification['qualification_fault_derivation']])
+ pins+=json.loads((root/'host-security-module-pins.json').read_bytes())
+ for row in pins:
+     p=Path(row['path']);assert not p.is_symlink() and not p.is_junction()

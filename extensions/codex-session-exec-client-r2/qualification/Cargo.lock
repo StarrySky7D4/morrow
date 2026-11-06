@@ -73,9 +73,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.6.0"
+version = "1.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f74872d07caf508b30a21f6836e7d7016a2eaf7d9ff4f48deaa58cd8a0407630"
+checksum = "005ec2760ca554fae18df7a11195552ec576cd665632a881bc011d5bb2fd4d80"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -456,6 +456,7 @@ dependencies = [
  "ed25519-dalek",
  "libc",
  "lz4_flex",
+ "morrow-windows-user-directories",
  "prost",
  "prost-build",
  "prost-reflect",
@@ -470,8 +471,16 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "cc",
  "wasmi",
  "wasmparser",
+]
+
+[[package]]
+name = "morrow-windows-user-directories"
+version = "0.1.0"
+dependencies = [
+ "windows-sys",
 ]
 
 [[package]]

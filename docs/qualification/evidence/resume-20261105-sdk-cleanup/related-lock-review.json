@@ -1,0 +1,14 @@
+{
+  "status": "PASS_STAGED_FOUR_LOCKS_MATCH_CURRENT_MANIFESTS_METADATA_ONLY",
+  "canonical_source_digest": "190b0dd0c8bf8c5ed16edf82cc56662175ad7234cedae5e59e988b0b8d744e6e",
+  "reviewed_locks": 4,
+  "only_registry_version_change": "cc 1.6.0 to 1.4.5, required exactly by current plugin_runtime manifest",
+  "manifest_sha256": "60618d81718f9e232a4452da9faf52be589cdf2dc21dbab18af2e6a1bc2f2e90",
+  "new_other_packages": "current local path packages only",
+  "all_metadata_processes_returned": true,
+  "locked_offline_metadata_passed": 4,
+  "canonical_patch_applied": false,
+  "compile_acceptance": false,
+  "runtime_acceptance": false,
+  "release_eligible": false
+}
