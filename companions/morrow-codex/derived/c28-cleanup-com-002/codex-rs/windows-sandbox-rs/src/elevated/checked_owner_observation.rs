@@ -113,6 +113,7 @@ pub(super) struct ObservedOwnerState {
 pub(super) struct StateGuard<'a> {
     raw:Option<MutexGuard<'a,OwnerState>>,
     state:&'a ObservedOwnerState,
+    panicking_at_acquisition:bool,
 }
 impl ObservedOwnerState {
     pub(super) fn new(value:OwnerState,startup_id:StartupId,has_local_registry:bool)->Self {
@@ -131,14 +132,14 @@ impl ObservedOwnerState {
         self.history.begin_access();
         self.host_facts.begin_access();
         match self.inner.lock() {
-            Ok(raw)=>Ok(StateGuard{raw:Some(raw),state:self}),
+            Ok(raw)=>Ok(StateGuard{raw:Some(raw),state:self,panicking_at_acquisition:std::thread::panicking()}),
             Err(error)=>{
                 self.history.poison();
                 self.host_facts.mark_poisoned();
                 let mut inner=error.into_inner();
                 inner.owner_mutex_poison_observed=true;
                 inner.no_replay_seal=true;
-                Err(PoisonError::new(StateGuard{raw:Some(inner),state:self}))
+                Err(PoisonError::new(StateGuard{raw:Some(inner),state:self,panicking_at_acquisition:std::thread::panicking()}))
             }
         }
     }
@@ -146,7 +147,7 @@ impl ObservedOwnerState {
         self.history.begin_access();
         self.host_facts.begin_access();
         match self.inner.try_lock() {
-            Ok(raw)=>Ok(StateGuard{raw:Some(raw),state:self}),
+            Ok(raw)=>Ok(StateGuard{raw:Some(raw),state:self,panicking_at_acquisition:std::thread::panicking()}),
             Err(std::sync::TryLockError::WouldBlock)=>{
                 self.history.end_access();
                 self.host_facts.end_access();
@@ -159,7 +160,7 @@ impl ObservedOwnerState {
                 inner.owner_mutex_poison_observed=true;
                 inner.no_replay_seal=true;
                 Err(std::sync::TryLockError::Poisoned(PoisonError::new(
-                    StateGuard{raw:Some(inner),state:self})))
+                    StateGuard{raw:Some(inner),state:self,panicking_at_acquisition:std::thread::panicking()})))
             }
         }
     }
@@ -191,7 +192,10 @@ impl DerefMut for StateGuard<'_> {
 }
 impl Drop for StateGuard<'_> {
     fn drop(&mut self) {
-        let panicking=std::thread::panicking();
+        // Match the original MutexGuard: a guard acquired by unwind cleanup
+        // does not poison an otherwise healthy mutex merely because it drops
+        // during that same unwind. A panic beginning while held still poisons.
+        let panicking=std::thread::panicking() && !self.panicking_at_acquisition;
         if panicking {
             self.state.history.poison();
             if let Some(ref mut raw)=self.raw {
@@ -312,5 +316,65 @@ mod tests {
         );
         assert!(host_poisoned.debt_poison_and_sticky_unknown.owner_mutex_poisoned);
         assert!(host_poisoned.debt_poison_and_sticky_unknown.no_replay_sealed);
+    }
+
+    #[test]
+    fn cleanup_acquired_observed_guards_do_not_invent_original_mutex_poison() {
+        struct Cleanup<'a> { state: &'a ObservedOwnerState, use_try_lock: bool }
+        impl Drop for Cleanup<'_> {
+            fn drop(&mut self) {
+                assert!(std::thread::panicking());
+                let mut guard = if self.use_try_lock {
+                    self.state.try_lock().expect("healthy original try_lock during cleanup")
+                } else {
+                    self.state.lock().expect("healthy original lock during cleanup")
+                };
+                guard.protocol_exit_code = Some(7);
+            }
+        }
+        for use_try_lock in [false, true] {
+            let owner = owner();
+            let reader = owner.runner_observation();
+            let host_reader = owner.host_native_close_facts_reader();
+            let caught = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let _cleanup = Cleanup { state: &owner.state, use_try_lock };
+                panic!("unwind begins before cleanup acquires the original mutex");
+            }));
+            assert!(caught.is_err());
+            assert!(!owner.state.inner.is_poisoned(), "original Mutex itself is healthy");
+            {
+                let guard = owner.state.lock().expect("original mutex remains usable");
+                assert_eq!(guard.protocol_exit_code, Some(7));
+                assert!(!guard.owner_mutex_poison_observed);
+                assert!(!guard.no_replay_seal);
+                assert!(guard.sticky_unknown.is_none() && guard.first_error_fact.is_none());
+            }
+            let observed = reader.read();
+            assert_ne!(observed.availability, A::Poisoned);
+            assert!(!observed.snapshot.expect("healthy original data").no_replay_sealed);
+            let facts = host_reader.read();
+            assert_ne!(facts.observation_availability, HostFactsObservationAvailability::PoisonedOwnerMutex);
+            assert!(!facts.debt_poison_and_sticky_unknown.owner_mutex_poisoned);
+            assert!(!facts.debt_poison_and_sticky_unknown.no_replay_sealed);
+        }
+    }
+
+    #[test]
+    fn try_lock_guard_held_before_panic_still_seals_actual_mutex_poison() {
+        let owner = owner();
+        let reader = owner.runner_observation();
+        let host_reader = owner.host_native_close_facts_reader();
+        let caught = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _guard = owner.state.try_lock().expect("original try_lock before panic");
+            panic!("panic starts with original guard held");
+        }));
+        assert!(caught.is_err());
+        assert!(owner.state.inner.is_poisoned());
+        assert!(owner.state.try_lock().is_err());
+        assert_eq!(reader.read().availability, A::Poisoned);
+        let facts = host_reader.read();
+        assert_eq!(facts.observation_availability, HostFactsObservationAvailability::PoisonedOwnerMutex);
+        assert!(facts.debt_poison_and_sticky_unknown.owner_mutex_poisoned);
+        assert!(facts.debt_poison_and_sticky_unknown.no_replay_sealed);
     }
 }

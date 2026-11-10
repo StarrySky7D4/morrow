@@ -125,7 +125,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     }
     // SAFETY: A passing prefix promises the complete aligned descriptor exists.
     let raw = unsafe { &*raw };
-    if !(1..=8).contains(&raw.kind) {
+    if !(1..=9).contains(&raw.kind) {
         return Err(Error::Invalid);
     }
     if raw.call_id == 0 || raw.deadline_ms == 0 {
@@ -146,7 +146,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     {
         return Err(Error::Invalid);
     }
-    if (raw.kind == 1 && raw.content_length > mutation::MAX_CONTENT_BYTES)
+    if (matches!(raw.kind, 1 | 9) && raw.content_length > mutation::MAX_CONTENT_BYTES)
         || (raw.kind == 3
             && raw
                 .offset
@@ -157,12 +157,14 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     }
     // Reject variant garbage before copying any caller span. The default form
     // is strict even when the span length is zero but its pointer is non-null.
-    if (raw.kind != 1 && (raw.content_length != 0 || !empty(raw.content_sha256)))
+    if (!matches!(raw.kind, 1 | 9) && (raw.content_length != 0 || !empty(raw.content_sha256)))
         || (raw.kind != 3 && (raw.offset != 0 || !empty(raw.bytes)))
     {
         return Err(Error::Invalid);
     }
-    if raw.kind == 1 && (raw.content_sha256.length != 32 || raw.content_sha256.data.is_null()) {
+    if matches!(raw.kind, 1 | 9)
+        && (raw.content_sha256.length != 32 || raw.content_sha256.data.is_null())
+    {
         return Err(Error::Invalid);
     }
     if raw.kind == 3 && (raw.bytes.length == 0 || raw.bytes.data.is_null()) {
@@ -175,6 +177,10 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
             .map_err(|_| Error::Invalid)?;
     let action = match raw.kind {
         1 => Action::Create {
+            content_length: raw.content_length,
+            content_sha256: unsafe { fixed32(raw.content_sha256) }?,
+        },
+        9 => Action::Replace {
             content_length: raw.content_length,
             content_sha256: unsafe { fixed32(raw.content_sha256) }?,
         },

@@ -1,0 +1,24 @@
+{
+  "status": "PASS_OFFLINE_OLD_VHDX_NTFS_COMPRESSED_ALL_BYTES_AND_STATES_PRESERVED",
+  "candidate": {
+    "path": "C:\\MorrowQA\\windows-acceptance-20261025-033\\acceptance.vhdx",
+    "bytes": 36085694464,
+    "sha256": "93b16232281386a8197c320dff00da8caf325d0af9ffc4b9ea8b14751015595c",
+    "mtime_ns": 1792923562375477900,
+    "nlink": 1,
+    "attrs": 2080
+  },
+  "allocation_before": 36085694464,
+  "allocation_after": 14661001216,
+  "allocated_bytes_released": 21424693248,
+  "observed_C_free_gain": -14802554880,
+  "free_C_now": 12428111872,
+  "protected_archive_files_unchanged": 4,
+  "registered_vms": 4,
+  "registered_VM_and_checkpoint_states_unchanged": true,
+  "deleted_files": 0,
+  "old_owner_contacts": 0,
+  "VM_mutations": 0,
+  "requires_decompression_before_future_HyperV_use": true,
+  "original_Unknown_unchanged": true
+}

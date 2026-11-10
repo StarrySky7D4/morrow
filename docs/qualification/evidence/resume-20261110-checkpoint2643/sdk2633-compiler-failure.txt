@@ -1,0 +1,9 @@
+error: failed to run custom build command for `morrow-blob-transfer-v1 v0.1.0 (D:\build_cache\worktrees\windows-integrated-2610\extensions\blob-transfer-v1)`
+
+Caused by:
+  process didn't exit successfully: `D:\build_cache\qualification-targets\integrated-sdk2633-RUNTIME-54287dc98f88a7fa\release\build\morrow-blob-transfer-v1-5e060b021f445dd4\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rerun-if-changed=contracts/blob_transfer.capnp
+
+  --- stderr
+  Error: "blob-transfer-v1 exact raw contract mismatch"

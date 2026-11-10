@@ -53,8 +53,8 @@ class MutationVectorTests(unittest.TestCase):
         names = [v["name"] for v in vectors]
         self.assertEqual(len(names), len(set(names)))
         self.assertEqual({p.stem for p in folder.glob("*.bin")}, set(names))
-        self.assertEqual(sum(v["valid"] and v["type"] == "Request" for v in vectors), 9)
-        self.assertEqual(sum(not v["valid"] and v["type"] == "Request" for v in vectors), 7)
+        self.assertEqual(sum(v["valid"] and v["type"] == "Request" for v in vectors), 11)
+        self.assertEqual(sum(not v["valid"] and v["type"] == "Request" for v in vectors), 8)
         self.assertEqual(sum(v["valid"] and v["type"] == "Response" for v in vectors), 3)
         self.assertEqual(sum(not v["valid"] and v["type"] == "Response" for v in vectors), 2)
         for v in vectors:

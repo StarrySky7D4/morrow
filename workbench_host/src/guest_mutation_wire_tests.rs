@@ -92,6 +92,7 @@ fn start(
                 let mut approved = start.init_approved_budget();
                 approved.set_max_job_bytes(budget.max_job_bytes);
                 approved.set_max_bytes(budget.max_bytes);
+                approved.set_max_resources(budget.max_resources);
             }
         },
     )
@@ -661,6 +662,7 @@ fn private_guest_wire_rejects_missing_budget_and_conflicting_start_identity() {
     );
     assert!(!row(&wrong_target).get_error().unwrap().is_empty());
     let lower = MutationBudget {
+        max_resources: 0,
         max_job_bytes: 16 * 1024 * 1024,
         max_bytes: 64 * 1024 * 1024,
     };
@@ -710,6 +712,7 @@ fn private_guest_wire_exports_owner_issue_failure_without_approval() {
     // Admission can select and build a plan, but the IssueGuest preflight
     // cannot promise the remaining complete mutation recipe in this budget.
     let tight = MutationBudget {
+        max_resources: 0,
         max_job_bytes: 1024 * 1024,
         max_bytes: 1024 * 1024,
     };
@@ -858,6 +861,7 @@ fn private_guest_wire_rejects_cross_domain_and_irrelevant_payloads() {
             let mut budget = guest.init_approved_budget();
             budget.set_max_job_bytes(BUDGET.max_job_bytes);
             budget.set_max_bytes(BUDGET.max_bytes);
+            budget.set_max_resources(BUDGET.max_resources);
         },
     );
     assert!(!row(&mixed_start).get_error().unwrap().is_empty());

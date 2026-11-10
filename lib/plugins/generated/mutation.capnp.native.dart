@@ -14,6 +14,7 @@ enum Kind {
   query,
   cancelPlan,
   release,
+  prepareReplace,
 }
 
 const EnumSchemaInfo kindSchema = EnumSchemaInfo(
@@ -30,6 +31,7 @@ const EnumSchemaInfo kindSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'query', codeOrder: 6, ordinal: 6),
     EnumerantSchemaInfo(name: 'cancelPlan', codeOrder: 7, ordinal: 7),
     EnumerantSchemaInfo(name: 'release', codeOrder: 8, ordinal: 8),
+    EnumerantSchemaInfo(name: 'prepareReplace', codeOrder: 9, ordinal: 9),
   ],
 );
 
@@ -322,6 +324,11 @@ final class RequestReader extends StructReader {
     4,
     (r) => ChunkReader(r, capabilities: capabilityTable),
   );
+
+  CreateReader? get prepareReplace => getStructFieldWith(
+    4,
+    (r) => CreateReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -406,6 +413,13 @@ final class RequestBuilder extends StructBuilder {
   void selectRelease() {
     setUint16Field(2, 7);
   }
+
+  CreateBuilder initPrepareReplace() {
+    setUint16Field(2, 8);
+    return initStructFieldWith(4, (r) => CreateBuilder(r), 1, 1);
+  }
+
+  bool hasPrepareReplace() => hasPointerField(4);
 }
 
 final class _RequestFactory
@@ -433,7 +447,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   shortName: 'Request',
   dataWords: 2,
   pointerWords: 5,
-  discriminantCount: 8,
+  discriminantCount: 9,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -562,6 +576,15 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 0,
         type: PrimitiveTypeSchemaInfo('Void'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'prepareReplace',
+      codeOrder: 15,
+      discriminantValue: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: StructRefTypeSchemaInfo(0xf3363fa0e76d0ec6),
       ),
     ),
   ],

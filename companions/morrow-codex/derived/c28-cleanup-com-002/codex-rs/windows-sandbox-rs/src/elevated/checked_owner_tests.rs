@@ -10,6 +10,68 @@ use std::time::{Duration, Instant};
 use windows_sys::Win32::Foundation::{DUPLICATE_SAME_ACCESS, DuplicateHandle, HANDLE};
 use windows_sys::Win32::System::Threading::{GetCurrentProcess, GetCurrentThread};
 
+#[test]
+fn native_completion_duplicate_request_refuses_before_finalizer_or_resource_access() {
+    // This fixture owns no native resource and cannot manufacture a completion.
+    // A spent request must reject without even entering the original finalizer.
+    let owner = Arc::new(CheckedRunnerOwner::new(
+        StartupId(2340), Instant::now() + Duration::from_secs(1),
+        None, None, &SCOPED_CONNECT_OWNER, None,
+    ));
+    owner.native_completion_attempted.store(true, Ordering::Release);
+    let before = owner.state.lock().unwrap().finalizer_epoch;
+    let error = owner.take_native_host_completion(Instant::now() + Duration::from_millis(10))
+        .expect_err("a duplicate request cannot reach the unstarted owner");
+    assert_eq!(error.kind(), io::ErrorKind::AlreadyExists);
+    assert_eq!(owner.state.lock().unwrap().finalizer_epoch, before);
+    assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed());
+    let state = owner.state.lock().unwrap();
+    assert!(state.first_error_fact.is_none());
+    assert!(!state.native_desktop_closed);
+    assert!(state.native_desktop_close_debt.is_none());
+}
+
+#[test]
+fn native_completion_failed_first_request_remains_spent_without_reentering_finalizer() {
+    let owner = Arc::new(CheckedRunnerOwner::new(
+        StartupId(2341), Instant::now() + Duration::from_secs(1),
+        None, None, &SCOPED_CONNECT_OWNER, None,
+    ));
+    let first = owner.take_native_host_completion(Instant::now() + Duration::from_millis(10))
+        .expect_err("an unstarted owner cannot produce a native completion");
+    assert_ne!(first.kind(), io::ErrorKind::AlreadyExists);
+    assert!(owner.native_completion_attempted.load(Ordering::Acquire));
+    let before = owner.state.lock().unwrap().finalizer_epoch;
+    let next = owner.take_native_host_completion(Instant::now() + Duration::from_millis(10))
+        .expect_err("a failed original attempt must not be retried");
+    assert_eq!(next.kind(), io::ErrorKind::AlreadyExists);
+    assert_eq!(owner.state.lock().unwrap().finalizer_epoch, before);
+}
+
+#[test]
+fn native_completion_competing_requests_enter_only_one_original_attempt() {
+    // Actual Rust threads exercise reservation contention. No process, token,
+    // desktop, completion receipt, or native resource is supplied by this test.
+    let owner = Arc::new(CheckedRunnerOwner::new(
+        StartupId(2342), Instant::now() + Duration::from_secs(1),
+        None, None, &SCOPED_CONNECT_OWNER, None,
+    ));
+    let barrier = Arc::new(std::sync::Barrier::new(8));
+    let contenders: Vec<_> = (0..8).map(|_| {
+        let owner = Arc::clone(&owner);
+        let barrier = Arc::clone(&barrier);
+        std::thread::spawn(move || {
+            barrier.wait();
+            owner.take_native_host_completion(Instant::now() + Duration::from_millis(10))
+                .expect_err("no native completion can exist for this unstarted owner").kind()
+        })
+    }).collect();
+    let outcomes: Vec<_> = contenders.into_iter().map(|thread| thread.join().unwrap()).collect();
+    assert_eq!(outcomes.iter().filter(|kind| **kind == io::ErrorKind::AlreadyExists).count(), 7);
+    assert!(owner.native_completion_attempted.load(Ordering::Acquire));
+}
+
 fn dummy_artifact() -> Arc<MatchedRunnerArtifact> {
     let exe = std::env::current_exe().expect("current_exe");
     let sha: [u8; 32] = Sha256::digest(std::fs::read(&exe).expect("read current_exe")).into();
@@ -1494,6 +1556,7 @@ async fn worker_slots_restore_after_panic_unwind_and_cancelled_finalize_async_fu
     assert!(!owner.is_finalization_in_progress());
     assert!(owner.has_installed_runtime_workers());
     assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed(), "cleanup must not invent mutex poison");
 
     // 2. Dropping/cancelling `finalize_async` at `.await` while `InputSlotLoanGuard` is held
     // must restore the async input slot and release the finalizer gate without sealing Unknown.
@@ -1517,6 +1580,7 @@ async fn worker_slots_restore_after_panic_unwind_and_cancelled_finalize_async_fu
         "dropping cancelled finalize_async future must restore input_worker to Installed"
     );
     assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed(), "cleanup must not invent mutex poison");
 
     // 3. Once the input worker completes, a subsequent finalizer cleanly reaps all workers and the process.
     let _ = input_gate_tx.send(());
@@ -1742,4 +1806,46 @@ fn original_finalizer_wait_absence_stays_unobserved() {
     let snapshot = owner.host_native_close_facts();
     assert_eq!(snapshot.runner_process_wait_and_exit, HostOriginalRunnerProcessWaitAndExitFact::NoProcessHandlePresent);
     assert_eq!(snapshot.to_v8_receiver_physical_close_facts().runner_exit_code_dword, None);
+}
+
+#[test]
+fn busy_finalizer_does_not_probe_another_callers_asuser_cell() {
+    // A resource-free reserved cell is deliberately not adopted. A contender
+    // must wait at the existing finalizer gate without inspecting that cell.
+    let owner = Arc::new(CheckedRunnerOwner::new(
+        StartupId(2350), Instant::now() + Duration::from_secs(1),
+        None, None, &SCOPED_CONNECT_OWNER, None,
+    ));
+    assert!(owner.asuser_a1.set(crate::asuser_a1_native::Cell::new(
+        2350, Instant::now() + Duration::from_secs(1),
+    )).is_ok());
+    let claim = owner.try_claim_finalizer_for_poll().expect("original gate claim");
+    let error = owner.finalize(Instant::now() + Duration::from_millis(20))
+        .expect_err("a competing call cannot enter the original A1 cell");
+    assert_eq!(error.kind(), io::ErrorKind::WouldBlock);
+    assert!(error.to_string().contains("finalization already in progress"));
+    assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed());
+    assert!(owner.state.lock().unwrap().first_error_fact.is_none());
+    drop(claim);
+}
+
+#[tokio::test(flavor = "current_thread")]
+async fn busy_async_finalizer_does_not_probe_another_callers_asuser_cell() {
+    let owner = Arc::new(CheckedRunnerOwner::new(
+        StartupId(2351), Instant::now() + Duration::from_secs(1),
+        None, None, &SCOPED_CONNECT_OWNER, None,
+    ));
+    assert!(owner.asuser_a1.set(crate::asuser_a1_native::Cell::new(
+        2351, Instant::now() + Duration::from_secs(1),
+    )).is_ok());
+    let claim = owner.try_claim_finalizer_for_poll().expect("original gate claim");
+    let error = owner.finalize_async(Instant::now() + Duration::from_millis(20)).await
+        .expect_err("an async contender cannot enter the original A1 cell");
+    assert_eq!(error.kind(), io::ErrorKind::WouldBlock);
+    assert!(error.to_string().contains("finalization already in progress"));
+    assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed());
+    assert!(owner.state.lock().unwrap().first_error_fact.is_none());
+    drop(claim);
 }

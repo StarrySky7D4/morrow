@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "完全なフォルダーパスを確認してください。各上限は正の値で、プラグインの上限以内である必要があります。",
-  "pluginsWatchOtherPanel": "ディレクトリ監視の終了はまだ確認されていません。「ディレクトリの変更」パネルで元のタスクを確認してください。"
+  "pluginsWatchOtherPanel": "ディレクトリ監視の終了はまだ確認されていません。「ディレクトリの変更」パネルで元のタスクを確認してください。",
+  "pluginsFileMutationExecuteReplaceConfirm": "このファイルの内容を完全に置き換える",
+  "pluginsGuestExecutionResourceBudget": "同時に使用を許可するリソース数の上限",
+  "pluginsGuestExecutionResourceDeclaration": "プラグインが宣言したリソース上限"
 }

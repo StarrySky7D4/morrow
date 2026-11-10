@@ -11,8 +11,10 @@ final class ApprovedGuestBudget {
   const ApprovedGuestBudget({
     required this.maxJobBytes,
     required this.maxBytes,
+    this.maxResources = 0,
   });
   final BigInt maxJobBytes, maxBytes;
+  final int maxResources;
 }
 
 final class GuestMutationStartRequest {
@@ -78,6 +80,7 @@ enum GuestMutationFrameKind {
   query,
   cancelPlan,
   release,
+  prepareReplace,
 }
 
 enum GuestMutationFrameStatus {
@@ -377,22 +380,23 @@ abstract final class GuestMutationValidation {
     u64(value.maxBytes, positive: true);
     if (value.maxJobBytes > BigInt.from(maxApprovedJobBytes) ||
         value.maxBytes > BigInt.from(maxApprovedBytes) ||
-        value.maxBytes < value.maxJobBytes) {
+        value.maxBytes < value.maxJobBytes ||
+        value.maxResources < 0 ||
+        value.maxResources > 128) {
       throw const FormatException('Invalid approved guest budget');
     }
   }
 
   static void start(GuestMutationStartRequest value) {
     MutationTaskValidation.validateStart(value.selection);
-    if (value.selection.disposition == MutationDisposition.replace ||
-        value.selection.subject.runes.any(
-          (r) =>
-              r < 32 ||
-              (r >= 127 && r <= 159) ||
-              r == 0x2f ||
-              r == 0x5c ||
-              r == 0x3a,
-        )) {
+    if (value.selection.subject.runes.any(
+      (r) =>
+          r < 32 ||
+          (r >= 127 && r <= 159) ||
+          r == 0x2f ||
+          r == 0x5c ||
+          r == 0x3a,
+    )) {
       throw const FormatException('Invalid guest mutation scope');
     }
     budget(value.approvedBudget);
@@ -424,9 +428,7 @@ abstract final class GuestMutationValidation {
     } else if (frame) {
       operation(value.operationId);
       if (value.kind == GuestMutationCommandKind.prepare) {
-        if (value.planSha256 == null ||
-            value.disposition == null ||
-            value.disposition == MutationDisposition.replace) {
+        if (value.planSha256 == null || value.disposition == null) {
           throw const FormatException('Missing guest Prepare identity');
         }
         identity(value.planSha256!);
@@ -469,6 +471,9 @@ abstract final class GuestMutationValidation {
     GuestMutationCommandKind.prepare
         when disposition == MutationDisposition.delete =>
       GuestMutationFrameKind.prepareDelete,
+    GuestMutationCommandKind.prepare
+        when disposition == MutationDisposition.replace =>
+      GuestMutationFrameKind.prepareReplace,
     GuestMutationCommandKind.chunk => GuestMutationFrameKind.chunk,
     GuestMutationCommandKind.commitContent => GuestMutationFrameKind.commit,
     GuestMutationCommandKind.execute => GuestMutationFrameKind.execute,
@@ -497,9 +502,7 @@ abstract final class GuestMutationValidation {
       operation(value.operationId);
     }
     if (value.kind == GuestMutationCommandKind.prepare) {
-      if (value.disposition == null ||
-          value.disposition == MutationDisposition.replace ||
-          value.expectedGuestReference != null) {
+      if (value.disposition == null || value.expectedGuestReference != null) {
         throw const FormatException('Invalid guest Prepare receipt');
       }
     } else {
@@ -574,6 +577,7 @@ abstract final class GuestMutationValidation {
     switch (value.kind) {
       case GuestMutationFrameKind.prepareCreate:
       case GuestMutationFrameKind.prepareDelete:
+      case GuestMutationFrameKind.prepareReplace:
         if (value.phase != GuestMutationFramePhase.prepared ||
             value.effect != GuestMutationFrameEffect.unspecified ||
             value.stagedBytes != BigInt.zero ||

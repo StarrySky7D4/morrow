@@ -63,6 +63,7 @@ pub struct PluginEntry {
 pub struct MutationBudgetDeclaration {
     pub max_job_bytes: u64,
     pub max_bytes: u64,
+    pub max_resources: u32,
 }
 #[derive(Debug)]
 pub struct PluginHandler {
@@ -191,7 +192,12 @@ impl WorkbenchState {
         }
         Ok(r)
     }
-    pub(crate) fn external_package(&self, id: &str, digest: &[u8], revision: u64) -> Result<Package> {
+    pub(crate) fn external_package(
+        &self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+    ) -> Result<Package> {
         self.catalog_revision(Some(revision))?;
         if self.builtin_id(id) {
             return Err("内置工作台插件请使用原设置入口。".into());
@@ -258,19 +264,35 @@ impl WorkbenchState {
                 .io_declaration()
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
             mutation_supported: p.mutation_enabled(),
-            directory_supported: m.required_features.iter().any(|feature|
-                feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
+            directory_supported: m
+                .required_features
+                .iter()
+                .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
             blob_upload_supported: p.blob_upload_declaration().is_some(),
             blob_upload_approved: selected.is_some_and(|s| s.approved_blob_upload),
-            blob_upload_handlers: p.blob_upload_declaration().map_or_else(Vec::new, |d| d.handlers.clone()),
-            blob_upload_max_bytes: p.blob_upload_declaration().map_or(0, |d| d.max_object_bytes),
+            blob_upload_handlers: p
+                .blob_upload_declaration()
+                .map_or_else(Vec::new, |d| d.handlers.clone()),
+            blob_upload_max_bytes: p
+                .blob_upload_declaration()
+                .map_or(0, |d| d.max_object_bytes),
             fs_watch_supported: p.fs_watch_declaration().is_some(),
             fs_watch_approved: selected.is_some_and(|s| s.approved_fs_watch),
-            fs_watch_handlers: p.fs_watch_declaration().map_or_else(Vec::new, |d| d.handlers.clone()),
+            fs_watch_handlers: p
+                .fs_watch_declaration()
+                .map_or_else(Vec::new, |d| d.handlers.clone()),
             fs_watch_max_frames: p.fs_watch_declaration().map_or(0, |d| d.max_frames),
             fs_watch_max_wire_bytes: p.fs_watch_declaration().map_or(0, |d| d.max_wire_bytes),
             fs_watch_max_window_ms: p.fs_watch_declaration().map_or(0, |d| d.max_window_ms),
-            blob_planners: m.blob_upload_proposal_declaration.as_ref().map_or_else(Vec::new, |d| d.handlers.iter().map(|h| (h.handler.clone(), h.upload_handler.clone())).collect()),
+            blob_planners: m
+                .blob_upload_proposal_declaration
+                .as_ref()
+                .map_or_else(Vec::new, |d| {
+                    d.handlers
+                        .iter()
+                        .map(|h| (h.handler.clone(), h.upload_handler.clone()))
+                        .collect()
+                }),
             channel_supported: p.channel_declaration().is_some(),
             channel_handlers: p
                 .channel_declaration()
@@ -283,6 +305,7 @@ impl WorkbenchState {
                 .and_then(|d| d.budget.as_ref())
                 .and_then(|b| morrow_core::channel::Budget::from_proto(b).ok()),
             mutation_budget: p.mutation_budget().map(|budget| MutationBudgetDeclaration {
+                max_resources: budget.max_resources,
                 max_job_bytes: budget.max_job_bytes,
                 max_bytes: budget.max_bytes,
             }),
@@ -479,32 +502,50 @@ impl WorkbenchState {
     }
     /// Category approval only: no endpoint, path, credential, object grant or enable decision.
     pub fn configure_external_blob_upload(
-        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+        &mut self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+        approved: bool,
     ) -> Result<()> {
         self.catalog_revision(Some(revision))?;
-        if self.builtin_id(id) { return Err("内置插件需要专用设置入口。".into()); }
+        if self.builtin_id(id) {
+            return Err("内置插件需要专用设置入口。".into());
+        }
         let manager = self.manager.as_mut().ok_or("插件目录不可用。")?;
         let selection = manager.selection(id).ok_or("插件未选择。")?;
-        if digest != selection.digest { return Err("插件摘要已变化，请重新确认。".into()); }
+        if digest != selection.digest {
+            return Err("插件摘要已变化，请重新确认。".into());
+        }
         let exact = selection.digest;
         let result = manager.approve_blob_upload(id, exact, approved, revision);
         let cleanup = self.maintain_external();
-        result?; cleanup
+        result?;
+        cleanup
     }
     /// Independent category ceiling; grants no directory or observation window.
     #[cfg(windows)]
     pub fn configure_external_fs_watch(
-        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+        &mut self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+        approved: bool,
     ) -> Result<()> {
         self.catalog_revision(Some(revision))?;
-        if self.builtin_id(id) { return Err("内置插件需要专用设置入口。".into()); }
+        if self.builtin_id(id) {
+            return Err("内置插件需要专用设置入口。".into());
+        }
         let manager = self.manager.as_mut().ok_or("插件目录不可用。")?;
         let selection = manager.selection(id).ok_or("插件未选择。")?;
-        if digest != selection.digest { return Err("插件摘要已变化，请重新确认。".into()); }
+        if digest != selection.digest {
+            return Err("插件摘要已变化，请重新确认。".into());
+        }
         let exact = selection.digest;
         let result = manager.approve_fs_watch(id, exact, approved, revision);
         let cleanup = self.maintain_external();
-        result?; cleanup
+        result?;
+        cleanup
     }
     /// Category approval only: no endpoint, path, credential, object grant or enable decision.
     pub fn configure_external_io(
@@ -883,15 +924,25 @@ impl Workbench {
     }
     #[cfg(not(target_arch = "wasm32"))]
     pub fn configure_external_blob_upload(
-        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+        &mut self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+        approved: bool,
     ) -> Result<()> {
-        self.local_state_mut()?.configure_external_blob_upload(id, digest, revision, approved)
+        self.local_state_mut()?
+            .configure_external_blob_upload(id, digest, revision, approved)
     }
     #[cfg(windows)]
     pub fn configure_external_fs_watch(
-        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+        &mut self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+        approved: bool,
     ) -> Result<()> {
-        self.local_state_mut()?.configure_external_fs_watch(id, digest, revision, approved)
+        self.local_state_mut()?
+            .configure_external_fs_watch(id, digest, revision, approved)
     }
     pub fn configure_external(
         &mut self,

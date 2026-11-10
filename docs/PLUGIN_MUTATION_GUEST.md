@@ -1,5 +1,9 @@
 # 文件变更 guest 扩展草案
 
+2026-11-06 候选实现追加 `PrepareReplace`（kind 9、request union 15），旧编号不变；Core 与三语言 SDK 使用同一 Cap’n Proto 契约及新摘要。替换内容仍受原长度、摘要、30 秒期限和一次性执行许可约束，不接收客体自选路径。Windows 原目标和全部祖先由原事务持有，准备和内容提交不改写目标；明确取消并释放后才可重新读取被独占锁定的原件。
+
+`MutationBudget.max_resources` 是独立的、显式审批的资源上限。零值保留原 IO 额度（包括小于 8 的原额度）；正值要求包声明 FileReplace，最大 128，实际批准不得超过声明。该字段参与原提交身份，并在确认页展示；资源审批不授予任何未批准的文件操作。普通 IO 的 8 项上限不变。当前源码与范围测试不构成完整 G04、正式窗口或 SDK 冻结资格。
+
 2026-09-27 [Guest 审批期限与收尾修复](../reports/guest-mutation-expiry-2026-09-27.md)：首次 Start 前按单调时间计时，到期后禁止新 Prepare/Chunk/Commit/Execute 和提交重试，保留已有回执核对及 Stop→实际退出→必要 Repair/ACK。弹窗到期禁用确认，确认返回后重新观察原任务；撤权／换库精确关闭旧弹窗，不误关其他对话框。九语言提示同步。最终会话 18、Widget 9、真实原生 4，共 **31/31** 通过，包含两次真实 30 秒到期后的独立 Discovery/Reconcile。修复尚未纳入上一轮 Windows ZIP；下一步为系统选择器与人工审批验收、新应用产物及其他平台资格。SDK 未冻结，未提交／推送／发布。
 
 这是独立实验性 Cap’n Proto 契约，现有独立 Wasm import 和受控原 owner 接入；SDK 尚未冻结。`core/schemas/mutation.capnp` 为权威源，`sdk/rust/contracts/mutation.capnp` 为独立 SDK 镜像；既有 IO v1／transport 原件不变。当前只覆盖 Create／Delete，不提供 Replace 降级替代。
@@ -61,11 +65,11 @@ Rust 提供 `mutation::wasm_call_frame`／`Request::wasm_call`、C 提供 `mp_wa
 
 运行时逐次预留请求与最大响应字节，并收取实际选择能力的额度。16 MiB 是协议的单内容上限；分块帧、响应预留、输入、准备和执行审批同样消耗额度。旧 IO 的单次 16 MiB／累计 64 MiB 限额保留，不能容纳最大内容的完整 guest 流程。
 
-大内容包须额外声明 `mutation-budget-v1` 与 Manifest 字段 20 `MutationBudget`，单次／累计声明上限分别为 32／256 MiB，仅允许 Create／Delete，不混入依赖或服务 profile。可信宿主使用 `Manager::bind_budgeted_mutation` 批准不超过声明的实际额度，并使用 `JobLimits::mutation` 启动原 worker；普通 `bind_io` 拒绝新 profile。每个实例只能绑定一次，Release 或丢弃绑定不退还累计额度。包声明不构成授权，目标选择、精确计划审批与一次性执行许可仍分别强制执行。
+大内容包须额外声明 `mutation-budget-v1` 与 Manifest 字段 20 `MutationBudget`，单次／累计声明上限分别为 32／256 MiB，仅允许 Create／Replace／Delete，不混入依赖或服务 profile。可信宿主使用 `Manager::bind_budgeted_mutation` 批准不超过声明的实际额度，并使用 `JobLimits::mutation` 启动原 worker；普通 `bind_io` 拒绝新 profile。每个实例只能绑定一次，Release 或丢弃绑定不退还累计额度。包声明不构成授权，目标选择、精确计划审批与一次性执行许可仍分别强制执行。
 
 签发 guest 租约前，`MutationBudgetEstimate::for_plan` 对标准无重试流程计算两层账本、单次准入及 submission 上界；不够则在 Prepare 前拒绝。预检是快照，不预留整个流程，也不保证之后的并发用量、权限或时间。实际动作继续逐次检查。请求期限与任务／撤权取消关联，重复提交不能延长原有 30 秒期限；期限不能强制中断已经进入的同步 OS 调用，迟到效果需查询原历史。
 
-可重复验证入口为 `tool/verify_plugin_mutation_wasm.ps1`。它编译三语言 Wasm，严格确认六个测试均已注册，再通过 Release 原受管 owner 运行普通与完整 16 MiB 临时目录用例。正文采用高熵内容，核对实际文件摘要、Observed、Release、预检上界与余量拒绝；仅编译成功、零匹配测试或旧原件哈希一致均不等于执行验收。
+可重复验证入口为 `tool/verify_plugin_mutation_wasm.ps1`。它编译三语言 Wasm，严格确认九个测试均已注册，再通过 Release 原受管 owner 运行普通与完整 16 MiB 临时目录用例。正文采用高熵内容，核对实际文件摘要、Observed、Release、预检上界与余量拒绝；仅编译成功、零匹配测试或旧原件哈希一致均不等于执行验收。
 
 Windows 三语言实际执行与范围见 [Wasm 接入报告](../reports/mutation-guest-wasm-2026-09-27.md)。
 

@@ -51,6 +51,7 @@ class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
   BigInt? plannedLength;
   Uint8List? plannedHash;
   Future<void> Function()? beforeStatus;
+  Object? prepareFailure, cancelFailure;
 
   IoTaskSnapshot _snapshot() => IoTaskSnapshot(
     key: key,
@@ -158,6 +159,10 @@ class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
     GuestMutationCommand command,
   ) async {
     lastCommand = command;
+    if (command.kind == GuestMutationCommandKind.prepare &&
+        prepareFailure != null) {
+      throw prepareFailure!;
+    }
     commandId += BigInt.one;
     kind = command.kind;
     delivery = GuestMutationDelivery.ready;
@@ -227,6 +232,7 @@ class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
 
   @override
   Future<IoTaskSnapshot> cancelIo(Uint8List key) async {
+    if (cancelFailure != null) throw cancelFailure!;
     storage = IoStoragePhase.stopping;
     return _snapshot();
   }
@@ -259,49 +265,65 @@ class _HangingContent extends XFile {
   Stream<Uint8List> openRead([int? start, int? end]) => controller.stream;
 }
 
-PluginLibraryEntry _plugin({bool authorized = true, bool budgeted = true}) =>
-    PluginLibraryEntry(
-      id: 'test.guest',
-      name: 'Guest package',
-      version: '1',
-      digest: _id(2),
-      enabled: true,
-      builtin: false,
-      available: true,
-      declared: const [],
-      approved: const [],
-      dependencies: const [],
-      handlers: const [],
-      issue: '',
-      declaredIo: const ['file-create', 'file-delete'],
-      approvedIo: authorized ? const ['file-create', 'file-delete'] : const [],
-      mutationSupported: true,
-      mutationBudget: budgeted
-          ? PluginMutationBudget(
-              maxJobBytes: BigInt.from(32 * 1024 * 1024),
-              maxBytes: BigInt.from(256 * 1024 * 1024),
-            )
-          : null,
-    );
+PluginLibraryEntry _plugin({
+  bool authorized = true,
+  bool budgeted = true,
+  int resources = 0,
+}) => PluginLibraryEntry(
+  id: 'test.guest',
+  name: 'Guest package',
+  version: '1',
+  digest: _id(2),
+  enabled: true,
+  builtin: false,
+  available: true,
+  declared: const [],
+  approved: const [],
+  dependencies: const [],
+  handlers: const [],
+  issue: '',
+  declaredIo: const ['file-create', 'file-replace', 'file-delete'],
+  approvedIo: authorized
+      ? const ['file-create', 'file-replace', 'file-delete']
+      : const [],
+  mutationSupported: true,
+  mutationBudget: budgeted
+      ? PluginMutationBudget(
+          maxJobBytes: BigInt.from(32 * 1024 * 1024),
+          maxBytes: BigInt.from(256 * 1024 * 1024),
+          maxResources: resources,
+        )
+      : null,
+);
 
 Widget _screen(
   _Backend backend, {
   bool authorized = true,
   bool budgeted = true,
+  int resources = 0,
   BigInt? revision,
   Future<String?> Function()? pickDirectory,
   Future<XFile?> Function()? pickContent,
+  Future<XFile?> Function()? pickFile,
   VoidCallback? onOpenRecovery,
+  Key? scrollKey,
 }) => MaterialApp(
   locale: const Locale('en'),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
     body: SingleChildScrollView(
+      key: scrollKey,
       child: GuestMutationExecutionManager(
         backend: backend,
         ioBackend: backend,
-        plugins: [_plugin(authorized: authorized, budgeted: budgeted)],
+        plugins: [
+          _plugin(
+            authorized: authorized,
+            budgeted: budgeted,
+            resources: resources,
+          ),
+        ],
         registryRevision: revision ?? BigInt.one,
         ink: Colors.black,
         muted: Colors.grey,
@@ -309,6 +331,7 @@ Widget _screen(
         radius: BorderRadius.circular(8),
         pickDirectory: pickDirectory,
         pickContent: pickContent,
+        pickFile: pickFile,
         onOpenRecovery: onOpenRecovery,
       ),
     ),
@@ -323,9 +346,9 @@ bool _enabled(WidgetTester tester, String id) =>
 Future<void> _tap(WidgetTester tester, String id) async {
   FocusManager.instance.primaryFocus?.unfocus();
   tester.testTextInput.hide();
-  await tester.pump();
+  await tester.pumpAndSettle();
   await tester.ensureVisible(_key(id));
-  await tester.pump();
+  await tester.pumpAndSettle();
   await tester.tap(_key(id));
   await tester.pump();
 }
@@ -357,6 +380,83 @@ Future<void> _create(WidgetTester tester, {bool budgeted = true}) async {
 }
 
 void main() {
+  testWidgets('declared job and total limits retain their distinct labels', (
+    tester,
+  ) async {
+    final backend = _Backend();
+    await tester.pumpWidget(
+      _screen(backend, pickDirectory: () async => r'C:\approved'),
+    );
+    await tester.pump();
+    await _create(tester);
+    final l = AppLocalizations.of(tester.element(_key('package')))!;
+    expect(
+      find.text(
+        l.pluginsGuestMutationBudget(
+          '${256 * 1024 * 1024}',
+          '${32 * 1024 * 1024}',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(backend.starts, 0);
+  });
+
+  testWidgets(
+    'scrolled prepare failure keeps independent readable diagnostics',
+    (tester) async {
+      final backend = _Backend()
+        ..prepareFailure = StateError('prepare rejected for test')
+        ..cancelFailure = StateError('cleanup rejected for test');
+      await tester.pumpWidget(
+        _screen(
+          backend,
+          scrollKey: const PageStorageKey('guest-panel-scroll'),
+          pickDirectory: () async => r'C:\approved',
+          pickContent: () async =>
+              XFile.fromData(Uint8List.fromList([4, 5, 6]), name: 'source.bin'),
+        ),
+      );
+      await tester.pump();
+      await _create(tester);
+      await _tap(tester, 'pick-content');
+      await _tap(tester, 'draft');
+      await _waitForDialog(tester, 'draft');
+      await tester.tap(_key('confirm-draft'));
+      await tester.pumpAndSettle();
+      await _tap(tester, 'prepare');
+      final scrollContext = tester.element(
+        find.byType(SingleChildScrollView).first,
+      );
+      final bucket = PageStorage.of(scrollContext);
+      expect(bucket.readState(scrollContext), isA<double>());
+      expect(bucket.readState(scrollContext) as double, greaterThan(0));
+      await tester.tap(_key('confirm-prepare'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_key('operation-error'), findsOneWidget);
+      await _tap(tester, 'stop');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_key('cleanup-error'), findsOneWidget);
+      await _tap(tester, 'operation-error');
+      await tester.pumpAndSettle();
+      expect(find.text('Bad state: prepare rejected for test'), findsOneWidget);
+      await _tap(tester, 'cleanup-error');
+      await tester.pumpAndSettle();
+      expect(find.text('Bad state: cleanup rejected for test'), findsOneWidget);
+      expect(find.text('Bad state: prepare rejected for test'), findsOneWidget);
+      await _tap(tester, 'operation-error');
+      await tester.pumpAndSettle();
+      expect(find.text('Bad state: prepare rejected for test'), findsNothing);
+      expect(find.text('Bad state: cleanup rejected for test'), findsOneWidget);
+      expect(bucket.readState(scrollContext), isA<double>());
+      expect(backend.starts, 1);
+      expect(backend.executes, 0);
+      expect(backend.chunks, 0);
+    },
+  );
+
   for (final stage in ['prepare', 'execute']) {
     for (final duringDialog in [true, false]) {
       testWidgets(
@@ -646,4 +746,80 @@ void main() {
     expect(opens, 1);
     expect(backend.starts, 1); // Handoff never starts a new mutation.
   });
+  testWidgets(
+    'replacement needs explicit resource and destructive confirmations',
+    (tester) async {
+      final backend = _Backend();
+      final content = Uint8List.fromList([0, 255, 0, 128]);
+      await tester.pumpWidget(
+        _screen(
+          backend,
+          resources: 32,
+          pickFile: () async => XFile(r'C:\approved\original.bin'),
+          pickContent: () async => XFile.fromData(content, name: 'new.bin'),
+        ),
+      );
+      await tester.pump();
+      await _tap(tester, 'disposition');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Replace files').last);
+      await tester.pumpAndSettle();
+      await _tap(tester, 'package');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Guest package').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(_key('job-budget'), '${32 * 1024 * 1024}');
+      await tester.enterText(_key('total-budget'), '${256 * 1024 * 1024}');
+      expect(
+        tester.widget<TextField>(_key('resource-budget')).controller!.text,
+        isEmpty,
+      );
+      await _tap(tester, 'pick-target');
+      await _tap(tester, 'pick-content');
+      await _tap(tester, 'draft');
+      await tester.pumpAndSettle();
+      expect(backend.starts, 0);
+      expect(_key('confirm-draft'), findsNothing);
+      await tester.enterText(_key('resource-budget'), '33');
+      await _tap(tester, 'draft');
+      await tester.pumpAndSettle();
+      expect(backend.starts, 0);
+      expect(_key('confirm-draft'), findsNothing);
+      await tester.enterText(_key('resource-budget'), '24');
+      await _tap(tester, 'draft');
+      await _waitForDialog(tester, 'draft');
+      expect(
+        find.textContaining('Approved simultaneous resources: 24'),
+        findsOneWidget,
+      );
+      expect(backend.starts, 0);
+      await tester.tap(_key('confirm-draft'));
+      await tester.pumpAndSettle();
+      expect(
+        backend.request!.selection.disposition,
+        MutationDisposition.replace,
+      );
+      expect(backend.approvedBudget!.maxResources, 24);
+      expect(backend.plannedHash, sha256.convert(content).bytes);
+      expect(backend.executes, 0);
+      await _tap(tester, 'prepare');
+      await tester.tap(_key('confirm-prepare'));
+      await tester.pumpAndSettle();
+      expect(backend.body, content);
+      expect(backend.durable, isTrue);
+      expect(backend.executes, 0);
+      await _tap(tester, 'execute');
+      expect(
+        find.text('Replace this file’s contents permanently'),
+        findsWidgets,
+      );
+      await tester.tap(_key('confirm-cancel'));
+      await tester.pumpAndSettle();
+      expect(backend.executes, 0);
+      await _tap(tester, 'execute');
+      await tester.tap(_key('confirm-execute'));
+      await tester.pumpAndSettle();
+      expect(backend.executes, 1);
+    },
+  );
 }

@@ -174,6 +174,7 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
       final budget => PluginMutationBudget(
         maxJobBytes: budget.maxJobBytesBigInt,
         maxBytes: budget.maxBytesBigInt,
+        maxResources: budget.maxResources,
       ),
     },
     dependencies: texts(row.dependencies),

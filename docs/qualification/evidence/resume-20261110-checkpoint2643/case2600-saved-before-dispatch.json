@@ -1,0 +1,30 @@
+{
+    "guard":  {
+                  "path":  "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-clean-restore-2563\\host-guard.ps1",
+                  "bytes":  18516,
+                  "sha256":  "c6160f8638a84853b3356b93bc20d18fb9ca6cb90c0ae417044fbf63d4d03dd0"
+              },
+    "host_failure_records_preserved":  true,
+    "free_C":  27267010560,
+    "registered_vms":  4,
+    "state":  "Saved",
+    "active_disk":  {
+                        "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_86E1FB1A-A7CD-4F54-B1BE-190022DF9188.avhdx",
+                        "sha256":  "f6ab1467a663b2d7282cb957264bd11a056ed55edb88c0e0625494b738ca72f7",
+                        "bytes":  2156920832
+                    },
+    "case_product_dispatches":  0,
+    "other_vms_unchanged":  true,
+    "original_save_returned":  true,
+    "save_guest_connections":  0,
+    "status":  "PASS_STAGED_CASE_VM_SAVED_BEFORE_FIRST_PRODUCT_DISPATCH",
+    "utc":  "2026-11-10T10:59:09.1651483Z",
+    "vm_id":  "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+    "active_memory":  {
+                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Virtual Machines\\59C31486-5A5E-4D88-BD06-69A0F23A9337.VMRS",
+                          "sha256":  "960575100c93acc37d89573e7614d3b37ac3029d8c14cbd4d47c7cfffd1419a2",
+                          "bytes":  1579216896
+                      },
+    "old_Unknown_checkpoints":  10,
+    "stage_and_binding_completed":  true
+}

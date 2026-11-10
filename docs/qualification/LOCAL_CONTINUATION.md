@@ -1,6 +1,6 @@
 # Local continuation, 2026-10-21
 
-Status: **PAUSED by explicit user instruction on 2026-11-06. case2050 is prepared and bound, NOT_RUN; all eight final release gates remain open. See [the current pause handoff](PAUSED_WINDOWS_20261106.md). No goal work until explicit resume.**
+Status: **ACTIVE on 2026-11-10. Windows-only acceptance continues; the integrated development snapshot is being published at the user’s request. case2600 is staged and bound, but its first native dispatch has not occurred. All final release gates remain open. See [the current continuation](RESUMED_WINDOWS_20261110.md).**
 See [the current continuation](RESUMED_WINDOWS_20261030.md) and [pause/checkpoint1624](PAUSED_WINDOWS_20261101.md). The [2026-10-30 pause](PAUSED_WINDOWS_20261030.md) and historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
 `116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original

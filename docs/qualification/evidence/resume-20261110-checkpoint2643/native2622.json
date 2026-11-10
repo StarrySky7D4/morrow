@@ -1,0 +1,222 @@
+{
+  "status": "PASS_ELEVEN_COMPLETION_FINALIZER_CANCELLATION_AND_OBSERVATION_REGRESSIONS",
+  "phase": "after",
+  "source_digest": "54287dc98f88a7fa8c540b43f4c75b007c82c354146e99d8af241f835f1ba238",
+  "source_unchanged": true,
+  "canonical_checkout_mutated": false,
+  "SDK_checkout_mutated": false,
+  "methods": [
+    {
+      "label": "method-0",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-0.stdout",
+        "bytes": 238,
+        "sha256": "cc4786079af763515434d4eadcfcbe259fcf54affb22c41cec4e2ce1d15c85ca"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-0.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::native_completion_duplicate_request_refuses_before_finalizer_or_resource_access",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-1",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-1.stdout",
+        "bytes": 240,
+        "sha256": "90f0d334a8a7150ebd83de663dec01fe6a04b6bfeafe9a5f93d1268336e3cc44"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::native_completion_failed_first_request_remains_spent_without_reentering_finalizer",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-2",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-2.stdout",
+        "bytes": 227,
+        "sha256": "9fc562e8a1615d6cb798123f0c80c79c92e9d25827edcfebcea5533d92452656"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::native_completion_competing_requests_enter_only_one_original_attempt",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-3",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-3.stdout",
+        "bytes": 216,
+        "sha256": "70082d11361003d9f0c335d56ad02623d5a40ab292667d788238bea71bfdc5dd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::busy_finalizer_does_not_probe_another_callers_asuser_cell",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-4",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-4.stdout",
+        "bytes": 222,
+        "sha256": "898719b9e2c52cdfe707ff66375caacdc6ecad9d0f8dc963ce94a587e27cf9f3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-4.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::busy_async_finalizer_does_not_probe_another_callers_asuser_cell",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-5",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-5.stdout",
+        "bytes": 262,
+        "sha256": "0348320b03c8561feaee5e2d83b61e54a0801379d89dc0faafbffc96ad009fe7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-5.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::concurrent_sync_and_async_finalizers_and_input_poll_share_outcome_without_missing_slot_or_false_unknown",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-6",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-6.stdout",
+        "bytes": 234,
+        "sha256": "f715fdfd7646ed40834cbde0cbd22cf39b04a15678b4e68e80d3b65efbbd4f07"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-6.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::tests::worker_slots_restore_after_panic_unwind_and_cancelled_finalize_async_future",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-7",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-7.stdout",
+        "bytes": 246,
+        "sha256": "f02025b9a6cf8777fa6ae48bf16dbe93a4a2d65e8c6ea7e2156470d7e10ef78d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-7.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::owner_observation::tests::cleanup_acquired_observed_guards_do_not_invent_original_mutex_poison",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-8",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-8.stdout",
+        "bytes": 242,
+        "sha256": "3b86079cd712b3b107c917016f913bd037703c26c3c845af11d235b388107718"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-8.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::owner_observation::tests::try_lock_guard_held_before_panic_still_seals_actual_mutex_poison",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-9",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-9.stdout",
+        "bytes": 249,
+        "sha256": "00d6fb64c1879bb67a43d14862e0495b43690ff2744f20a383c00c18993f6085"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-9.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::owner_observation::tests::original_owner_guard_is_busy_and_retirement_preserves_only_unknown_data",
+      "passed": true,
+      "assertion_failure": false
+    },
+    {
+      "label": "method-10",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-10.stdout",
+        "bytes": 252,
+        "sha256": "cddcb97150832dd9769ff1a716ef5af3ea55677df0508d2ebba1cc9255394199"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\method-10.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "method": "elevated::checked_owner::owner_observation::tests::actual_owner_mutex_poison_is_not_clean_even_if_original_guard_is_recovered",
+      "passed": true,
+      "assertion_failure": false
+    }
+  ],
+  "compiler_artifacts": 622,
+  "all_compiler_artifacts_fresh_false": true,
+  "all_original_processes_returned": true,
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-native-regression-2622-after\\codex_windows_sandbox-0635cc529901c3d9.exe",
+    "bytes": 39411712,
+    "sha256": "9ddc2823f4878552bc97ba021afb7a629a310284bd64e3cdae766a1c8b18eb0e"
+  },
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "Runner_starts": 0,
+  "real_native_close_qualified": false,
+  "full_P2_accepted": false,
+  "release_eligible": false
+}

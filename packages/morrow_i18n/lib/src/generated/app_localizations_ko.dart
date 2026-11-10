@@ -1994,6 +1994,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => '이 파일 영구 삭제';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm => '이 파일의 내용을 영구적으로 교체';
+
+  @override
   String get pluginsFileMutationExecuteTitle => '파일 작업 확인';
 
   @override
@@ -2185,6 +2188,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => '작업 해제';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget => '동시에 사용할 수 있는 리소스 한도';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration => '플러그인이 선언한 리소스 한도';
 
   @override
   String get pluginsGuestExecutionTitle => '플러그인 파일 생성 및 삭제';

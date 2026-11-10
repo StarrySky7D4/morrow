@@ -1,0 +1,36 @@
+{
+  "status": "PASS_ALL_66_CURRENT_CONTRACTS_MATCH_CANONICAL_GIT_BYTES",
+  "source_digest": "523c9c2af5f9ee8f0e96fa864ec56bdd60b2c1173c73b23f7b5bd6509eac486e",
+  "previous_digest": "6ded6e5677bd3a4b22d1446169bc1f70284dc205cc1fb760312a4f22b7ad182d",
+  "raw_contracts_reviewed": 66,
+  "new_LF_checkout_rules": 6,
+  "runs": [
+    {
+      "command": [
+        "-m",
+        "unittest",
+        "tool.tests.test_exact_contract_checkout",
+        "tool.tests.test_capnp_web_metadata",
+        "tool.tests.test_windows_qualification_build_cache",
+        "tool.tests.test_structural_repairs",
+        "-v"
+      ],
+      "exit_code": 0,
+      "original_process_returned": true
+    },
+    {
+      "command": [
+        "tool/generate_workbench_client.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "original_process_returned": true
+    }
+  ],
+  "source_only": true,
+  "original_build_failures_retained": true,
+  "contract_checks_not_relaxed": true,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

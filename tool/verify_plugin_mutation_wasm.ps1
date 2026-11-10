@@ -21,7 +21,7 @@ try {
   # Debug-host timing failures must be retained separately, never hidden by a
   # synthetic clock or a longer binding lifetime.
   $testArguments = @('test', '--release', '--locked', '--offline', '--manifest-path', 'plugin_runtime/Cargo.toml', '--features', 'packages', '--test', 'mutation_owner', 'mutation_sdk_wasm')
-  # Cargo returns success when a filter matches zero tests. Require all six
+  # Cargo returns success when a filter matches zero tests. Require all nine
   # registered qualification tests before allowing the execution to report PASS.
   $listedTests = & cargo @testArguments -- --list --ignored
   if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate mutation SDK qualification tests.' }
@@ -29,14 +29,15 @@ try {
   $expectedTests = @('c', 'cpp', 'rust') | ForEach-Object {
     "mutation_sdk_wasm::$($_)_mutation_sdk_uses_original_approved_owner: test"
     "mutation_sdk_wasm::$($_)_mutation_sdk_creates_maximum_content: test"
+    "mutation_sdk_wasm::$($_)_mutation_sdk_replaces_original_identity_with_explicit_resources: test"
   } | Sort-Object
-  if ($actualTests.Count -ne 6 -or (Compare-Object $expectedTests $actualTests)) {
-    throw "Expected exactly six compiled SDK qualification tests, found: $($actualTests -join ', ')"
+  if ($actualTests.Count -ne 9 -or (Compare-Object $expectedTests $actualTests)) {
+    throw "Expected exactly nine compiled SDK qualification tests, found: $($actualTests -join ', ')"
   }
   Checked cargo ($testArguments + @('--', '--ignored', '--test-threads=1', '--nocapture'))
   Checked $Python @('tool/plugin_transport_baseline.py', 'verify')
   Checked $Python @('tool/verify_plugin_sdk_baseline.py')
-  Write-Output 'PASS: Release native host and three compiled SDK guests, ordinary and maximum-content flows, through the approved original Windows owner; this is not full SDK freeze or cross-platform qualification.'
+  Write-Output 'PASS: Release native host and three compiled SDK guests, ordinary, maximum-content and explicitly approved conditional-replacement flows, through the approved original Windows owner; this is not full SDK freeze or cross-platform qualification.'
 } finally {
   $env:MORROW_MUTATION_SDK_WASM_DIR = $priorDirectory
   Pop-Location

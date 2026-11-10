@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "请核对完整目录路径，并确保各项限额为正数且不超过插件上限。",
-  "pluginsWatchOtherPanel": "目录观察尚未确认结束，请在“目录变化观察”面板核对原任务。"
+  "pluginsWatchOtherPanel": "目录观察尚未确认结束，请在“目录变化观察”面板核对原任务。",
+  "pluginsFileMutationExecuteReplaceConfirm": "永久替换此文件的内容",
+  "pluginsGuestExecutionResourceBudget": "本次允许同时占用的资源上限",
+  "pluginsGuestExecutionResourceDeclaration": "插件声明的资源上限"
 }

@@ -17,6 +17,7 @@ use std::io::Read;
 const CONTENT_BYTES: usize = 16 * 1024 * 1024;
 const OPERATION: &str = "guest-max-create";
 const APPROVED: MutationBudget = MutationBudget {
+    max_resources: 0,
     max_job_bytes: MAX_MUTATION_JOB_BYTES,
     max_bytes: MAX_MUTATION_BYTES,
 };
@@ -58,6 +59,7 @@ fn manifest(wasm: &[u8]) -> morrow_core::plugin_package::proto::Manifest {
     value.required_features.push(MUTATION_BUDGET_FEATURE.into());
     value.mutation_schema_sha256 = mutation::schema_digest().to_vec();
     value.mutation_budget = Some(DeclaredMutationBudget {
+        max_resources: 0,
         max_job_bytes: MAX_MUTATION_JOB_BYTES,
         max_bytes: MAX_MUTATION_BYTES,
     });
@@ -69,18 +71,52 @@ struct BudgetFixture {
     owner: Owner,
     digest: [u8; 32],
     approved: MutationBudget,
+    capabilities: BTreeSet<IoCapability>,
 }
 impl BudgetFixture {
     fn new(wasm: Vec<u8>, approved: MutationBudget) -> Self {
+        let declaration = manifest(&wasm);
+        Self::with_manifest(wasm, approved, declaration, mutation_caps())
+    }
+    fn replacement(wasm: Vec<u8>, resources: u32) -> Self {
+        let mut declaration = manifest(&wasm);
+        declaration
+            .io_declaration
+            .as_mut()
+            .unwrap()
+            .requested_capabilities
+            .push(IoCapability::FileReplace.number());
+        declaration.mutation_budget.as_mut().unwrap().max_resources = 32;
+        Self::with_manifest(
+            wasm,
+            MutationBudget {
+                max_resources: resources,
+                ..APPROVED
+            },
+            declaration,
+            BTreeSet::from([IoCapability::FileReplace]),
+        )
+    }
+    fn with_manifest(
+        wasm: Vec<u8>,
+        approved: MutationBudget,
+        declaration: morrow_core::plugin_package::proto::Manifest,
+        capabilities: BTreeSet<IoCapability>,
+    ) -> Self {
         let dir = tempfile::tempdir().unwrap();
-        let package = Package::build(manifest(&wasm), &wasm).unwrap();
+        let package = Package::build(declaration, &wasm).unwrap();
         let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
         catalog.install(&package).unwrap();
         let registry = Registry::open(&dir.path().join("registry"), catalog).unwrap();
         let mut manager = Manager::new(registry, Limits::default());
         manager.select(&package, manager.revision()).unwrap();
         manager
-            .approve_io(ID, package.digest(), mutation_caps(), manager.revision())
+            .approve_io(
+                ID,
+                package.digest(),
+                capabilities.clone(),
+                manager.revision(),
+            )
             .unwrap();
         manager
             .set_enabled(ID, package.digest(), true, manager.revision())
@@ -99,6 +135,7 @@ impl BudgetFixture {
             },
             digest: package.digest(),
             approved,
+            capabilities,
         }
     }
 
@@ -118,7 +155,7 @@ impl BudgetFixture {
                 &instance,
                 self.digest,
                 self.owner.manager.revision(),
-                &mutation_caps(),
+                &self.capabilities,
                 30_000,
                 1,
                 self.approved,
@@ -485,10 +522,12 @@ fn budget_profile_and_maximum_plan_fail_before_durable_prepare() {
     // Neither may issue a guest lease for a recipe known not to fit.
     for (index, approved) in [
         MutationBudget {
+            max_resources: 0,
             max_job_bytes: CONTENT_BYTES as u64,
             max_bytes: MAX_MUTATION_BYTES,
         },
         MutationBudget {
+            max_resources: 0,
             max_job_bytes: MAX_MUTATION_JOB_BYTES,
             max_bytes: 64 * 1024 * 1024,
         },
@@ -565,4 +604,329 @@ fn budget_profile_and_maximum_plan_fail_before_durable_prepare() {
                 .is_none()
         );
     }
+}
+
+/// A real guest, original managed owner and deep target identity. Scope is
+/// temporary Windows test files; no host account or policy setup is involved.
+pub(super) fn exercise_replacement_module(wasm: Vec<u8>) {
+    let _serial = serial_effects();
+    const ORIGINAL: &[u8] = b"original selected bytes\x00\xff";
+    const OP: &str = "guest-conditional-replace";
+    // Both omitted and ordinary approvals must fail before a deep native open.
+    for resources in [0, 8] {
+        let (dir, mut worker, started) =
+            BudgetFixture::replacement(wasm.clone(), resources).start();
+        let parent = dir.path().join("selected/a/b/c/d/e/f/g/h/i");
+        fs::create_dir_all(&parent).unwrap();
+        let target = parent.join("target.bin");
+        fs::write(&target, ORIGINAL).unwrap();
+        let (_, mut selection) = worker
+            .select_mutation_existing(target.clone(), scope(Disposition::Replace), [231; 32])
+            .unwrap();
+        assert!(matches!(
+            read_at(&mut selection, "deny unapproved resources", started),
+            Err(TargetError::Admission(
+                morrow_plugin_runtime::io_binding::Error::Limit
+            ))
+        ));
+        assert_eq!(fs::read(&target).unwrap(), ORIGINAL);
+        let exit = reclaim(&mut worker);
+        assert_eq!(exit.disconnect, Ok(()));
+        assert!(
+            exit.owner
+                .host
+                .store_local()
+                .lookup_io_intent(SUBJECT, OP)
+                .unwrap()
+                .is_none()
+        );
+    }
+    // Cancellation after durable content staging proves that no native replace
+    // occurred before the separate Execute approval. Read only after releasing
+    // the original exclusive selection, never bypass its sharing protection.
+    {
+        let bytes = [0u8, 255];
+        let digest: [u8; 32] = Sha256::digest(bytes).into();
+        let (dir, mut worker, started) = BudgetFixture::replacement(wasm.clone(), 32).start();
+        let parent = dir.path().join("cancel/a/b/c/d/e/f/g/h/i");
+        fs::create_dir_all(&parent).unwrap();
+        let target = parent.join("original.bin");
+        fs::write(&target, ORIGINAL).unwrap();
+        let (session, mut selected) = worker
+            .select_mutation_existing(target.clone(), scope(Disposition::Replace), [234; 32])
+            .unwrap();
+        selected_at(&mut selected, "select cancellable replacement", started);
+        let plan = planned_at(
+            &mut worker
+                .build_mutation_plan(session, OP.into(), bytes.len() as u64, Some(digest))
+                .unwrap(),
+            "build cancellable replacement",
+            started,
+        );
+        let lease = match read_at(
+            &mut worker
+                .issue_mutation_guest(session, plan, [235; 32])
+                .unwrap(),
+            "issue cancellable replacement",
+            started,
+        )
+        .unwrap()
+        {
+            MutationResponse::GuestApproved(lease) => lease,
+            other => panic!("guest lease: {other:?}"),
+        };
+        let stage = MutationGuestJobMode::Stage(lease);
+        assert_eq!(
+            call(
+                &worker,
+                stage,
+                request(
+                    1,
+                    lease,
+                    OP,
+                    Action::Replace {
+                        content_length: bytes.len() as u64,
+                        content_sha256: digest
+                    }
+                )
+            )
+            .phase,
+            WirePhase::Prepared
+        );
+        assert_eq!(
+            call(
+                &worker,
+                stage,
+                request(
+                    2,
+                    lease,
+                    OP,
+                    Action::Chunk {
+                        offset: 0,
+                        bytes: bytes.to_vec()
+                    }
+                )
+            )
+            .staged_bytes,
+            2
+        );
+        assert!(call(&worker, stage, request(3, lease, OP, Action::Commit)).durable_content);
+        assert_eq!(
+            call(&worker, stage, request(4, lease, OP, Action::CancelPlan)).phase,
+            WirePhase::CancelledBeforeDispatch
+        );
+        assert_eq!(
+            call(&worker, stage, request(5, lease, OP, Action::Release)).status,
+            Status::Completed
+        );
+        assert_eq!(fs::read(&target).unwrap(), ORIGINAL);
+        let exit = reclaim(&mut worker);
+        assert_eq!(exit.disconnect, Ok(()));
+        assert_eq!(
+            exit.owner
+                .host
+                .store_local()
+                .lookup_io_intent(SUBJECT, OP)
+                .unwrap()
+                .unwrap()
+                .phase(),
+            Phase::CancelledBeforeDispatch
+        );
+        exit.owner.host.store_local().integrity_check().unwrap();
+    }
+    for bytes in [Vec::new(), vec![0, 255, 1, 0, 128], body()] {
+        let digest: [u8; 32] = Sha256::digest(&bytes).into();
+        let (dir, mut worker, started) = BudgetFixture::replacement(wasm.clone(), 32).start();
+        let parent = dir.path().join("selected/a/b/c/d/e/f/g/h/i");
+        fs::create_dir_all(&parent).unwrap();
+        let target = parent.join("target.bin");
+        fs::write(&target, ORIGINAL).unwrap();
+        let alias = parent.join("original-link.bin");
+        fs::hard_link(&target, &alias).unwrap();
+        let (session, mut selection) = worker
+            .select_mutation_existing(target.clone(), scope(Disposition::Replace), [232; 32])
+            .unwrap();
+        selected_at(&mut selection, "select deep original target", started);
+        let plan = planned_at(
+            &mut worker
+                .build_mutation_plan(session, OP.into(), bytes.len() as u64, Some(digest))
+                .unwrap(),
+            "build replacement",
+            started,
+        );
+        let estimate = MutationBudgetEstimate::for_plan(&plan).unwrap();
+        let lease = match read_at(
+            &mut worker
+                .issue_mutation_guest(session, plan, [233; 32])
+                .unwrap(),
+            "issue replacement guest",
+            started,
+        )
+        .unwrap()
+        {
+            MutationResponse::GuestApproved(lease) => lease,
+            other => panic!("guest lease: {other:?}"),
+        };
+        let stage = MutationGuestJobMode::Stage(lease);
+        let baseline = worker.mutation_budget_usage().unwrap();
+        // A Create payload cannot act on a reviewed Replace plan, even with
+        // identical bytes. The original owner rejects it before persistence.
+        let wrong = request(
+            900,
+            lease,
+            OP,
+            Action::Create {
+                content_length: bytes.len() as u64,
+                content_sha256: digest,
+            },
+        );
+        let mut job = worker
+            .submit_mutation_guest_frame(wrong.encode().unwrap(), stage, Duration::from_secs(10))
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while job.poll() == Poll::Pending {
+            assert!(Instant::now() < deadline);
+            thread::sleep(Duration::from_millis(1));
+        }
+        assert_eq!(
+            job.read(131072).unwrap().unwrap().task.execution.outcome,
+            Err(morrow_plugin_runtime::Fault::TaskProtocol)
+        );
+        assert_eq!(
+            fs::read(&target).unwrap_err().raw_os_error(),
+            Some(32),
+            "original selection remains exclusively held"
+        );
+        let prepared = call(
+            &worker,
+            stage,
+            request(
+                1,
+                lease,
+                OP,
+                Action::Replace {
+                    content_length: bytes.len() as u64,
+                    content_sha256: digest,
+                },
+            ),
+        );
+        assert_eq!(
+            (prepared.kind, prepared.status, prepared.phase),
+            (
+                mutation::Kind::PrepareReplace,
+                Status::Completed,
+                WirePhase::Prepared
+            )
+        );
+        for (i, chunk) in bytes.chunks(MAX_MUTATION_CHUNK).enumerate() {
+            let response = call(
+                &worker,
+                stage,
+                request(
+                    i as u64 + 2,
+                    lease,
+                    OP,
+                    Action::Chunk {
+                        offset: (i * MAX_MUTATION_CHUNK) as u64,
+                        bytes: chunk.to_vec(),
+                    },
+                ),
+            );
+            assert_eq!(response.status, Status::Completed);
+        }
+        let serial = 2 + bytes.chunks(MAX_MUTATION_CHUNK).count() as u64;
+        let committed = call(&worker, stage, request(serial, lease, OP, Action::Commit));
+        assert!(committed.durable_content);
+        assert_eq!(committed.staged_bytes, bytes.len() as u64);
+        assert_eq!(
+            fs::read(&target).unwrap_err().raw_os_error(),
+            Some(32),
+            "staging must retain the locked original selection"
+        );
+        let execute = request(serial + 1, lease, OP, Action::Execute);
+        assert!(
+            worker
+                .submit_mutation_guest_frame(
+                    execute.encode().unwrap(),
+                    stage,
+                    Duration::from_secs(10)
+                )
+                .is_err()
+        );
+        let permit = match read_at(
+            &mut worker
+                .authorize_mutation_guest_execution(session, lease.plan_sha256())
+                .unwrap(),
+            "authorize original replacement",
+            started,
+        )
+        .unwrap()
+        {
+            MutationResponse::GuestExecutionAuthorized(permit) => permit,
+            other => panic!("execution permit: {other:?}"),
+        };
+        let mode = MutationGuestJobMode::Execute(permit);
+        let effect = call(&worker, mode, execute.clone());
+        assert_eq!(
+            (effect.status, effect.phase, effect.effect),
+            (Status::Completed, WirePhase::Observed, Effect::OsSucceeded)
+        );
+        assert_eq!(file_sha256(&target), (digest, bytes.len() as u64));
+        assert_eq!(
+            fs::read(&alias).unwrap(),
+            ORIGINAL,
+            "an existing hard link retains the original file"
+        );
+        // Explicit retry reads the cached original observation and cannot apply
+        // the payload again after a later local edit of this synthetic file.
+        fs::write(&target, b"later independent edit").unwrap();
+        let mut retry = execute;
+        retry.call_id = 901;
+        assert_eq!(call(&worker, mode, retry).effect, Effect::OsSucceeded);
+        assert_eq!(fs::read(&target).unwrap(), b"later independent edit");
+        let history = call(
+            &worker,
+            stage,
+            request(serial + 2, lease, OP, Action::Query),
+        );
+        assert_eq!(
+            (history.phase, history.effect),
+            (WirePhase::Observed, Effect::OsSucceeded)
+        );
+        assert_eq!(
+            call(
+                &worker,
+                stage,
+                request(serial + 3, lease, OP, Action::Release)
+            )
+            .status,
+            Status::Completed
+        );
+        let used = worker.mutation_budget_usage().unwrap();
+        assert!(
+            used.worker_bytes > baseline.worker_bytes
+                && used.instance_bytes > baseline.instance_bytes
+        );
+        // Additional rejected call and explicit retry are outside the standard
+        // recipe estimate, so do not use that estimate as measured total usage.
+        assert!(estimate.max_admission_bytes <= APPROVED.max_job_bytes);
+        let exit = reclaim(&mut worker);
+        assert_eq!(exit.disconnect, Ok(()));
+        assert_eq!(
+            exit.owner
+                .host
+                .store_local()
+                .lookup_io_intent(SUBJECT, OP)
+                .unwrap()
+                .unwrap()
+                .phase(),
+            Phase::Observed
+        );
+        exit.owner.host.store_local().integrity_check().unwrap();
+    }
+}
+
+#[test]
+fn wat_guest_replaces_deep_original_identity_only_under_explicit_resource_approval() {
+    exercise_replacement_module(budget_wat());
 }

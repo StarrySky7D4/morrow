@@ -120,6 +120,7 @@ impl Fixture {
                 .required_features
                 .push(MUTATION_BUDGET_FEATURE.into());
             manifest.mutation_budget = Some(proto::MutationBudget {
+                max_resources: 0,
                 max_job_bytes: MAX_MUTATION_JOB_BYTES,
                 max_bytes: MAX_MUTATION_BYTES,
             });
@@ -269,6 +270,7 @@ fn history_binding_is_ordinary_and_cannot_select_even_via_direct_broker() {
                 30_000,
                 5,
                 MutationBudget {
+                    max_resources: 0,
                     max_job_bytes: MAX_MUTATION_JOB_BYTES,
                     max_bytes: MAX_MUTATION_BYTES
                 },

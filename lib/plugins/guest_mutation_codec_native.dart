@@ -39,6 +39,7 @@ abstract final class GuestMutationCodec {
       final row = out.initApprovedBudget();
       row.maxJobBytesBigInt = budget.maxJobBytes;
       row.maxBytesBigInt = budget.maxBytes;
+      row.maxResources = budget.maxResources;
     }
   }
 

@@ -11,3 +11,8 @@ Common values: call 7, reference 32 bytes 0x11, submission 32 bytes 0x22,
 operation mutation-vector-1, deadline 30000 ms. Chunk is 00 01 ff;
 create-content binds its length and SHA-256. create-empty binds SHA-256(empty).
 The manifest identifies positive and rejected vectors and pins exact bytes.
+
+Replace uses the same bounded content payload and the appended PrepareReplace kind.
+The new vectors include empty and binary content plus a rejected empty-content hash.
+Existing vectors were re-encoded with the current schema identity; semantic faults
+and the unused trailing word remain intact. This experimental profile is not frozen.

@@ -52,6 +52,8 @@ pub struct ServiceRunBudget {
 pub struct MutationBudget {
     pub max_job_bytes: u64,
     pub max_bytes: u64,
+    /// Zero preserves the ordinary resource ceiling, including ceilings below eight.
+    pub max_resources: u32,
 }
 /// Cumulative successful task reservations, not successful business operations.
 /// Release, cancellation, result reads and post-reservation enqueue failure never refund.
@@ -163,7 +165,10 @@ impl IoBinding {
     ) -> Result<Self> {
         self.validate_identity(manager, host, instance)?;
         self.require_capability(IoCapability::FileList)?;
-        if self.mutation_budget.is_some() || self.mutation_history || self.context.max_run_ms.is_some() {
+        if self.mutation_budget.is_some()
+            || self.mutation_history
+            || self.context.max_run_ms.is_some()
+        {
             return Err(Error::Denied);
         }
         let end = now.checked_add(window_ms).ok_or(Error::Limit)?;
@@ -172,7 +177,12 @@ impl IoBinding {
         }
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
         self.validate_time(&mut state, now)?;
-        if state.watch_claimed || !self.control.upgrade().is_some_and(|control| control.active()) {
+        if state.watch_claimed
+            || !self
+                .control
+                .upgrade()
+                .is_some_and(|control| control.active())
+        {
             return Err(Error::Denied);
         }
         state.watch_claimed = true;
@@ -184,6 +194,9 @@ impl IoBinding {
         if let Some(approved) = self.mutation_budget {
             budget.max_job_bytes = approved.max_job_bytes;
             budget.max_bytes = approved.max_bytes;
+            if approved.max_resources != 0 {
+                budget.max_resources = approved.max_resources;
+            }
         }
         budget
     }
@@ -242,7 +255,9 @@ impl IoBinding {
             && (approved.max_job_bytes == 0
                 || approved.max_job_bytes > ceiling.max_job_bytes
                 || approved.max_bytes < approved.max_job_bytes
-                || approved.max_bytes > ceiling.max_bytes)
+                || approved.max_bytes > ceiling.max_bytes
+                || approved.max_resources > ceiling.max_resources
+                || approved.max_resources > morrow_core::plugin_package::MAX_MUTATION_RESOURCES)
         {
             return Err(Error::Limit);
         }
@@ -596,7 +611,7 @@ impl IoBinding {
         if !self.mutation_history
             || !matches!(
                 capability,
-                IoCapability::FileCreate | IoCapability::FileDelete
+                IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
             )
         {
             return Err(Error::Denied);
@@ -673,6 +688,21 @@ impl IoBinding {
         capabilities: &[IoCapability],
         now: u64,
     ) -> Result<IoResourceLease> {
+        self.admit_resources(manager, host, instance, capabilities, 1, now)
+    }
+
+    /// Reserve an entire native ownership group atomically under the original
+    /// resource ceiling, before any member is opened. No job or byte grant is
+    /// created; callers separately admit each actual execution job.
+    pub(crate) fn admit_resources(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        capabilities: &[IoCapability],
+        count: u32,
+        now: u64,
+    ) -> Result<IoResourceLease> {
         // History reads charge jobs/bytes through admit; they never retain a
         // selected target, listener, or other effect-bearing resource.
         if self.mutation_history {
@@ -682,9 +712,16 @@ impl IoBinding {
         if capabilities.is_empty() || capabilities.iter().any(|c| !self.capabilities.contains(c)) {
             return Err(Error::Denied);
         }
+        if count == 0 {
+            return Err(Error::Limit);
+        }
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
         self.validate_time(&mut state, now)?;
-        let resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
+        let resources = state
+            .usage
+            .resources
+            .checked_add(count)
+            .ok_or(Error::Limit)?;
         if resources > self.budget().max_resources {
             return Err(Error::Limit);
         }
@@ -693,8 +730,32 @@ impl IoBinding {
         state.last_tick = now;
         Ok(IoResourceLease {
             binding: self.duplicate(),
-            resources: 1,
+            resources: count,
         })
+    }
+
+    /// Capture a fixed native deadline from this original live lease. A later
+    /// service renewal never extends a native owner that already captured it.
+    /// The caller authenticates host/manager/instance before this internal read.
+    pub(crate) fn native_deadline(&self, now: u64) -> Result<Instant> {
+        self.check_liveness(now)?;
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&mut state, now)?;
+        let expires = state
+            .service_run
+            .as_ref()
+            .map_or(self.expires, |run| run.expires);
+        let remaining = expires
+            .checked_sub(now)
+            .filter(|value| *value > 0)
+            .ok_or(Error::Expired)?;
+        let deadline = Instant::now()
+            .checked_add(Duration::from_millis(remaining))
+            .ok_or(Error::Limit)?;
+        Ok(state
+            .service_run
+            .as_ref()
+            .map_or(deadline, |run| deadline.min(run.deadline)))
     }
     /// Internal job admission after an exact managed owner was authenticated at
     /// worker construction. Uses the original instance context, never a new grant.
@@ -843,6 +904,9 @@ pub(crate) struct IoResourceLease {
     resources: u32,
 }
 impl IoResourceLease {
+    pub(crate) fn resources(&self) -> u32 {
+        self.resources
+    }
     pub(crate) fn binding(&self) -> &IoBinding {
         &self.binding
     }

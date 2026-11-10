@@ -1,0 +1,29 @@
+test_lf_checkout_preserves_raw_contracts (tool.tests.test_exact_contract_checkout.ExactContractCheckoutTest.test_lf_checkout_preserves_raw_contracts) ... ok
+test_windows_autocrlf_checkout_preserves_raw_contracts (tool.tests.test_exact_contract_checkout.ExactContractCheckoutTest.test_windows_autocrlf_checkout_preserves_raw_contracts) ... ok
+test_working_contracts_match_fixed_protocol_digests (tool.tests.test_exact_contract_checkout.ExactContractCheckoutTest.test_working_contracts_match_fixed_protocol_digests) ... ok
+test_exact64_splits_words_and_rejects_unknown_defaults (tool.tests.test_capnp_web_metadata.AdapterTests.test_exact64_splits_words_and_rejects_unknown_defaults) ... ok
+test_external_reference_requires_explicit_support (tool.tests.test_capnp_web_metadata.AdapterTests.test_external_reference_requires_explicit_support) ... ok
+test_native_source_and_exact_ids_preserved (tool.tests.test_capnp_web_metadata.AdapterTests.test_native_source_and_exact_ids_preserved) ... ok
+test_unknown_float_shape_refuses (tool.tests.test_capnp_web_metadata.AdapterTests.test_unknown_float_shape_refuses) ... ok
+test_unknown_large_wire_literal_refuses_instead_of_rounding (tool.tests.test_capnp_web_metadata.AdapterTests.test_unknown_large_wire_literal_refuses_instead_of_rounding) ... ok
+test_unknown_reflection_shape_refuses (tool.tests.test_capnp_web_metadata.AdapterTests.test_unknown_reflection_shape_refuses) ... ok
+test_c_drive_and_parent_traversal_are_rejected (tool.tests.test_windows_qualification_build_cache.ColdCacheChecks.test_c_drive_and_parent_traversal_are_rejected) ... ok
+test_case080_fresh_library_record_is_rejected (tool.tests.test_windows_qualification_build_cache.ColdCacheChecks.test_case080_fresh_library_record_is_rejected) ... ok
+test_invalid_identifiers_do_not_reserve_a_target (tool.tests.test_windows_qualification_build_cache.ColdCacheChecks.test_invalid_identifiers_do_not_reserve_a_target) ... ok
+test_missing_or_duplicate_compiler_completion_is_rejected (tool.tests.test_windows_qualification_build_cache.ColdCacheChecks.test_missing_or_duplicate_compiler_completion_is_rejected) ... ok
+test_discovery_precedes_disposable_fixture_with_same_exact_filter (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_discovery_precedes_disposable_fixture_with_same_exact_filter) ... ok
+test_l0_receipt_requires_named_execution_and_exact_count (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_l0_receipt_requires_named_execution_and_exact_count) ... ok
+test_l0_requires_single_fully_qualified_discovered_test (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_l0_requires_single_fully_qualified_discovered_test) ... ok
+test_only_synthetic_fixture_environment_uses_empty_cargo_home (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_only_synthetic_fixture_environment_uses_empty_cargo_home) ... ok
+test_run_temp_is_isolated_without_changing_user_or_cargo_configuration (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_run_temp_is_isolated_without_changing_user_or_cargo_configuration) ... ok
+test_windows_default_never_runs_account_fixture (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_windows_default_never_runs_account_fixture) ... ok
+test_windows_host_tests_build_all_real_guests_before_running (tool.tests.test_structural_repairs.NativeFixtureEvidenceTests.test_windows_host_tests_build_all_real_guests_before_running) ... ok
+test_every_named_tier_is_required (tool.tests.test_structural_repairs.QualificationGateTests.test_every_named_tier_is_required) ... ok
+test_old_commit_or_changed_source_does_not_qualify (tool.tests.test_structural_repairs.QualificationGateTests.test_old_commit_or_changed_source_does_not_qualify) ... ok
+test_partial_or_not_run_is_never_pass (tool.tests.test_structural_repairs.QualificationGateTests.test_partial_or_not_run_is_never_pass) ... ok
+test_portable_checks_do_not_issue_runtime_receipts_or_run_windows_account_test (tool.tests.test_structural_repairs.QualificationGateTests.test_portable_checks_do_not_issue_runtime_receipts_or_run_windows_account_test) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.498s
+
+OK

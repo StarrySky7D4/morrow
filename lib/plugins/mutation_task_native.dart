@@ -260,6 +260,7 @@ final class NativeMutationTaskClient implements MutationTaskBackend {
             MutationCommandKind.commitContent => {MutationResultKind.staged},
             MutationCommandKind.execute => {
               MutationResultKind.created,
+              MutationResultKind.replaced,
               MutationResultKind.deleted,
             },
             MutationCommandKind.query => {MutationResultKind.history},

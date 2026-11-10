@@ -1924,6 +1924,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => '永久删除此文件';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm => '永久替换此文件的内容';
+
+  @override
   String get pluginsFileMutationExecuteTitle => '确认文件操作';
 
   @override
@@ -2102,6 +2105,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => '释放任务';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget => '本次允许同时占用的资源上限';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration => '插件声明的资源上限';
 
   @override
   String get pluginsGuestExecutionTitle => '插件文件创建与删除';

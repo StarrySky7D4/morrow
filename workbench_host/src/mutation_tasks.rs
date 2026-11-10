@@ -530,6 +530,7 @@ impl Workbench {
             Ok(
                 MutationResponse::PlanCancelled(_)
                 | MutationResponse::Created(_)
+                | MutationResponse::Replaced(_)
                 | MutationResponse::Deleted(_),
             ) => {
                 mutation.terminal = true;

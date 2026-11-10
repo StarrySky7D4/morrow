@@ -1,0 +1,26 @@
+{
+  "post_run_review_correction": true,
+  "original_preregistered_trace_review_passed": false,
+  "original_runtime_case_replayed": false,
+  "status": "PASS_SCOPED_ORIGINAL_NATIVE_AND_SDK_CONTENTION_TRACE",
+  "tag": "9b01c815b5904ea9b22702eb7369d79d",
+  "vm_id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+  "source_digest": "b593e0b8b6da0b6c8422787c8778e8f0b718536abd81dd97aa87e7da070cddbf",
+  "phase_count": 3,
+  "actual_callers_per_phase": 8,
+  "peak_simultaneous_requests": {
+    "OriginalFinalizerContention": 8,
+    "OriginalHostCompletionContention": 6,
+    "OriginalSdkCompletionContention": 6
+  },
+  "finalizer_body_calls": 1,
+  "desktop_close_calls": 1,
+  "host_capabilities": 1,
+  "SDK_capabilities": 1,
+  "wrong_generation_covered": false,
+  "case_clean": true,
+  "policy_clean": true,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

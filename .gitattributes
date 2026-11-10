@@ -1,4 +1,17 @@
 # Frozen compatibility originals: preserve every byte across checkouts.
+# These extension contracts have fixed raw-byte digests. Windows checkouts
+# must retain their canonical LF bytes even when core.autocrlf is enabled.
+/extensions/blob-transfer-v1/contracts/blob_transfer.capnp text eol=lf
+/extensions/blob-upload-proposal-v1/contracts/blob_upload_proposal.capnp text eol=lf
+/extensions/blob-upload-request-v1/contracts/blob_upload_request.capnp text eol=lf
+/extensions/sse-event-v1/contracts/sse_event.capnp text eol=lf
+/extensions/ws-message-v1/contracts/ws_message.capnp text eol=lf
+/sdk/examples/blob-upload-common/contracts/sample_options.capnp text eol=lf
+/tool/tests/test_exact_contract_checkout.py text eol=lf
+
+# Public qualification receipts are pinned by raw hash in their manifest.
+/docs/qualification/evidence/resume-20261110-checkpoint2643/** -text
+
 /sdk/compat/guest-v1-rc1/** -text
 /sdk/compat/*.sha256 text eol=lf
 

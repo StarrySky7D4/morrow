@@ -2105,6 +2105,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Удалить этот файл навсегда';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm =>
+      'Безвозвратно заменить содержимое этого файла';
+
+  @override
   String get pluginsFileMutationExecuteTitle =>
       'Подтверждение операции с файлом';
 
@@ -2305,6 +2309,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => 'Освободить задание';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget =>
+      'Разрешённое число одновременных ресурсов';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration =>
+      'Заявленный лимит ресурсов';
 
   @override
   String get pluginsGuestExecutionTitle =>

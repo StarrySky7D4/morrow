@@ -18,6 +18,7 @@ enum Kind {
   query,
   cancelPlan,
   release,
+  prepareReplace,
 }
 
 Kind? kindFromUint16(int v) => v < Kind.values.length ? Kind.values[v] : null;
@@ -204,6 +205,11 @@ final class RequestReader extends StructReader {
     4,
     (r) => ChunkReader(r, capabilities: capabilityTable),
   );
+
+  CreateReader? get prepareReplace => getStructFieldWith(
+    4,
+    (r) => CreateReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -291,6 +297,13 @@ final class RequestBuilder extends StructBuilder {
   void selectRelease() {
     setUint16Field(2, 7);
   }
+
+  CreateBuilder initPrepareReplace() {
+    setUint16Field(2, 8);
+    return initStructFieldWith(4, (r) => CreateBuilder(r), 1, 1);
+  }
+
+  bool hasPrepareReplace() => hasPointerField(4);
 }
 
 final class _RequestFactory

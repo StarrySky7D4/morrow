@@ -704,11 +704,11 @@ final class GuestMutationExecutionSession {
         (content?.length ?? 0) > GuestMutationValidation.maxContentBytes) {
       throw const FormatException('Invalid guest mutation content');
     }
-    final body = request.selection.disposition == MutationDisposition.create
+    final body = request.selection.disposition != MutationDisposition.delete
         ? Uint8List.fromList(content ?? Uint8List(0))
         : Uint8List(0);
     final length = BigInt.from(body.length);
-    final digest = request.selection.disposition == MutationDisposition.create
+    final digest = request.selection.disposition != MutationDisposition.delete
         ? _copy(Uint8List.fromList(sha256.convert(body).bytes))
         : null;
     MutationTaskValidation.buildPlan(operationId, length, digest);
@@ -804,16 +804,14 @@ final class GuestMutationExecutionSession {
           disposition: disposition,
         ),
       );
-      if (!_expectFrame(
-        prepared,
-        disposition == MutationDisposition.create
-            ? GuestMutationFrameKind.prepareCreate
-            : GuestMutationFrameKind.prepareDelete,
-        phase: GuestMutationFramePhase.prepared,
-      )) {
+      if (!_expectFrame(prepared, switch (disposition) {
+        MutationDisposition.create => GuestMutationFrameKind.prepareCreate,
+        MutationDisposition.replace => GuestMutationFrameKind.prepareReplace,
+        MutationDisposition.delete => GuestMutationFrameKind.prepareDelete,
+      }, phase: GuestMutationFramePhase.prepared)) {
         return;
       }
-      if (disposition == MutationDisposition.create) {
+      if (disposition != MutationDisposition.delete) {
         if (body == null) {
           _record(
             const FormatException('Guest content was discarded'),
@@ -948,14 +946,14 @@ final class GuestMutationExecutionSession {
         return;
       }
       final frame = result.frame!;
-      final create =
-          _request!.selection.disposition == MutationDisposition.create;
+      final hasContent =
+          _request!.selection.disposition != MutationDisposition.delete;
       if (previouslyReady &&
           frame.status == GuestMutationFrameStatus.completed &&
           frame.phase == GuestMutationFramePhase.prepared &&
           _same(frame.reference, _guestReference) &&
-          frame.durableContent == create &&
-          frame.stagedBytes == (create ? _contentLength : BigInt.zero) &&
+          frame.durableContent == hasContent &&
+          frame.stagedBytes == (hasContent ? _contentLength : BigInt.zero) &&
           _state?.reconcileRequired == false &&
           _state?.terminal == false &&
           !uncertain &&
@@ -977,13 +975,13 @@ final class GuestMutationExecutionSession {
       final result = await _command(GuestMutationCommand.hostQuery());
       if (!_expectOwner(result, MutationResultKind.history)) return;
       final history = result!.owner!;
-      final create =
-          _request!.selection.disposition == MutationDisposition.create;
+      final hasContent =
+          _request!.selection.disposition != MutationDisposition.delete;
       if (previouslyReady &&
           history.phase == MutationPhase.prepared &&
           history.operationId == _operationId &&
-          history.durableContent == create &&
-          history.stagedBytes == (create ? _contentLength : BigInt.zero) &&
+          history.durableContent == hasContent &&
+          history.stagedBytes == (hasContent ? _contentLength : BigInt.zero) &&
           _guestReference != null &&
           _state?.reconcileRequired == false &&
           _state?.terminal == false &&

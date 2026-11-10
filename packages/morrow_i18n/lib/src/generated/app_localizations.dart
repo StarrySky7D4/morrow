@@ -3766,6 +3766,12 @@ abstract class AppLocalizations {
   /// **'Delete this file permanently'**
   String get pluginsFileMutationExecuteDeleteConfirm;
 
+  /// No description provided for @pluginsFileMutationExecuteReplaceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace this file’s contents permanently'**
+  String get pluginsFileMutationExecuteReplaceConfirm;
+
   /// No description provided for @pluginsFileMutationExecuteTitle.
   ///
   /// In en, this message translates to:
@@ -4113,6 +4119,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Release task'**
   String get pluginsGuestExecutionRelease;
+
+  /// No description provided for @pluginsGuestExecutionResourceBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved simultaneous resources'**
+  String get pluginsGuestExecutionResourceBudget;
+
+  /// No description provided for @pluginsGuestExecutionResourceDeclaration.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared resource limit'**
+  String get pluginsGuestExecutionResourceDeclaration;
 
   /// No description provided for @pluginsGuestExecutionTitle.
   ///

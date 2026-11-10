@@ -20,6 +20,7 @@ enum Kind {
   query @6;
   cancelPlan @7;
   release @8;
+  prepareReplace @9;
 }
 enum Status {
   invalid @0;
@@ -75,6 +76,8 @@ struct Request {
     query @12 :Void;
     cancelPlan @13 :Void;
     release @14 :Void;
+    # The original host-selected identity and approval stay outside this frame.
+    prepareReplace @15 :Create;
   }
 }
 struct Response {

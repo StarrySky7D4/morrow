@@ -1,0 +1,33 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+  "tag": "9b01c815b5904ea9b22702eb7369d79d",
+  "vm_id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+  "source_digest": "b593e0b8b6da0b6c8422787c8778e8f0b718536abd81dd97aa87e7da070cddbf",
+  "checkout_source_digest": "b593e0b8b6da0b6c8422787c8778e8f0b718536abd81dd97aa87e7da070cddbf",
+  "source_equivalence": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\source-identity-2380.json",
+    "bytes": 672,
+    "sha256": "69b414c79e9d5d677ffc5d7cf6bdebe92607a6227818d5cef70c6ee3bb38acac"
+  },
+  "commit": "78d31bbab3a9042ec0cc7bd4e6f1e879731202ff",
+  "original_steps": 47,
+  "original_delivered_lines": 92,
+  "original_input_bytes": 3523,
+  "journal_records": 107,
+  "case_clean": true,
+  "policy_clean": true,
+  "historical_unknowns_unchanged": true,
+  "full_network_isolation_qualified": false,
+  "P2_clean_refusal": "OPEN",
+  "P3_editor_full": "OPEN",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "review": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case2380-nine-review\\result.json",
+  "original_case_process_exit": 0,
+  "original_case_session_retained": false,
+  "original_owner_contacts": 0,
+  "vm_state": "Saved"
+}

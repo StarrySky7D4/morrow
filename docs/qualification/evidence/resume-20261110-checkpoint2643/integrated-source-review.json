@@ -1,0 +1,45 @@
+{
+  "status": "PASS_ISOLATED_INTEGRATED_SOURCE_AND_CAPNP_GENERATION",
+  "source_digest": "54287dc98f88a7fa8c540b43f4c75b007c82c354146e99d8af241f835f1ba238",
+  "root": "D:\\build_cache\\worktrees\\windows-integrated-2610",
+  "branch": "codex/windows-integration-20261110-2610",
+  "parents": {
+    "P2": "78d31bbab3a9042ec0cc7bd4e6f1e879731202ff",
+    "SDK": "504fd0fea7414252f3db5161d1663aea73d3849a"
+  },
+  "ten_current_fix_files_preserved": true,
+  "primary_thread_wait_preserved": true,
+  "original_candidates_unchanged": true,
+  "generated_identity": {
+    "path": "D:\\build_cache\\worktrees\\windows-integrated-2610\\lib\\plugins\\generated\\identity.dart",
+    "bytes": 2843,
+    "sha256": "62b50cc67a93b2ed40d2a0d5b2b21ab0341710180d51b3a59a3876fff671a690"
+  },
+  "merge_conflicts_remaining": 0,
+  "codegen_phases": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integration-codegen-2616\\offline-packages-returned.json",
+      "bytes": 558,
+      "sha256": "a4c15ead790707d41be929bad8d9ccc056dc59ee612faf1c6c4c8255561773f4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integration-codegen-2616\\generate-returned.json",
+      "bytes": 533,
+      "sha256": "8d39678106f872274931a8cf867423992699ffef755495fad1a69637a8ba7b46"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integration-codegen-2616\\check-returned.json",
+      "bytes": 524,
+      "sha256": "c35e23b907eb7b9975a2b578230df235c04c92cd9d94a08a0e397a7b4b37ecbe"
+    }
+  ],
+  "generated_check_passed": true,
+  "first_observer_path_separator_failure_retained": true,
+  "commits": 0,
+  "pushes": 0,
+  "VM_calls": 0,
+  "runtime_calls": 0,
+  "source_runtime_accepted": false,
+  "release_eligible": false,
+  "utc": "2026-11-10T11:04:15.378234+00:00"
+}

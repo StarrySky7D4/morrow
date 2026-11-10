@@ -46,25 +46,30 @@
       "sha256": "f49e5a5f770737b818ade715c03ddd6029956e3f5228d6d73a9eb284e0b23e1a"
     },
     {
-      "path": "index.html",
+      "path": "history-pause-20261106-checkpoint2057.html",
       "bytes": 7805,
       "sha256": "a50c1611e513f31ac9fd26865ae165a7604a843bed994ea98099962093917a62"
     },
     {
+      "path": "index.html",
+      "bytes": 6654,
+      "sha256": "197d1aed6dc0de965c243fb2ed346731877a5cb1424f1d24523da8a2c16cc40d"
+    },
+    {
       "path": "report-data.json",
-      "bytes": 366664,
-      "sha256": "23620f93f09d06ebed4ffda3d9851b7547803beac90885fa6dca6e0a52976d9a"
+      "bytes": 384745,
+      "sha256": "5827e695f610f89e84d470de535d6645ba064de1d03388dafb568512b5bf50cd"
     },
     {
       "path": "verification.json",
-      "bytes": 508,
-      "sha256": "15a512e8ed917f12519d08b9f5a6a04586c45cb2a7d021cd09993e0eb30074dc"
+      "bytes": 530,
+      "sha256": "16fd6e5bff754b3f4caf5c01653dc1eebf2d9b131a75049d7cf834eda9737171"
     }
   ],
   "evidence": {
-    "path": "../../docs/qualification/evidence/pause-20261106-checkpoint2057/manifest.json",
-    "bytes": 17171,
-    "sha256": "4e127dbc3b64c2c17d6060bc3b107b38caf4f1f4ff4c62617be91215d61cbc1a"
+    "path": "../../docs/qualification/evidence/resume-20261110-checkpoint2643/manifest.json",
+    "bytes": 3674,
+    "sha256": "0604ad0e1228e5b29176a4f4675f7666ce5f14e8245643265a212c3bf0342402"
   },
-  "scope": "Paused source-bound Windows P2 and separate SDK candidate; all final gates remain open."
+  "scope": "Active integrated Windows development checkpoint; original source and failure scopes preserved; all final release gates open"
 }

@@ -1,7 +1,7 @@
 //! Explicit qualification of freshly compiled Rust/C/C++ SDK guests. These
 //! tests run the original managed owner in a temporary directory, not a mock
 //! callback that can invent effects. Build with build_plugin_mutation_wasm.ps1.
-use super::mutation_guest_budget::exercise_maximum_module;
+use super::mutation_guest_budget::{exercise_maximum_module, exercise_replacement_module};
 use super::mutation_guest_frame::exercise_module;
 
 fn module(name: &str) -> Vec<u8> {
@@ -52,4 +52,22 @@ fn c_mutation_sdk_creates_maximum_content() {
 #[ignore = "requires freshly compiled mutation SDK guests"]
 fn cpp_mutation_sdk_creates_maximum_content() {
     exercise_maximum_module(module("cpp_mutation.wasm"));
+}
+
+#[test]
+#[ignore = "requires freshly compiled mutation SDK guests"]
+fn rust_mutation_sdk_replaces_original_identity_with_explicit_resources() {
+    exercise_replacement_module(module("rust_mutation.wasm"));
+}
+
+#[test]
+#[ignore = "requires freshly compiled mutation SDK guests"]
+fn c_mutation_sdk_replaces_original_identity_with_explicit_resources() {
+    exercise_replacement_module(module("c_mutation.wasm"));
+}
+
+#[test]
+#[ignore = "requires freshly compiled mutation SDK guests"]
+fn cpp_mutation_sdk_replaces_original_identity_with_explicit_resources() {
+    exercise_replacement_module(module("cpp_mutation.wasm"));
 }

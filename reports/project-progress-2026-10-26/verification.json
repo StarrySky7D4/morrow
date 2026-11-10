@@ -1,16 +1,16 @@
 {
-  "status": "PASS_STATIC_PAUSE_HANDOFF_AND_LINK_CHECK",
-  "updated": "2026-11-06T11:52:12.719833+00:00",
+  "status": "PASS_STATIC_ACTIVE_CHECKPOINT_AND_LINK_CHECK",
+  "updated": "2026-11-10T12:06:39.337850+00:00",
   "HTML_tags_balanced": true,
   "HTML_ids_unique": true,
-  "local_links_checked": 16,
+  "local_links_checked": 14,
   "HTML_browser_visual_review": false,
-  "evidence_files_verified": 41,
+  "evidence_files_verified": 21,
   "registered_vms": 4,
   "source_accepted": false,
   "release_eligible": false,
-  "latest_checkpoint": "pause-20261106-checkpoint2057",
-  "task_status": "PAUSED",
+  "latest_checkpoint": "resume-20261110-checkpoint2643",
+  "task_status": "ACTIVE",
   "source_scopes_preserved": true,
   "remote_publication": "VERIFY_AFTER_PUSH"
 }

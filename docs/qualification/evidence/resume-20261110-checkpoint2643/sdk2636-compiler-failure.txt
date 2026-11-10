@@ -1,0 +1,10 @@
+error: failed to run custom build command for `morrow-blob-upload-sample v0.1.0 (D:\build_cache\worktrees\windows-integrated-2610\sdk\examples\blob-upload-common)`
+
+Caused by:
+  process didn't exit successfully: `D:\build_cache\qualification-targets\integrated-sdk2636-RUNTIME-6ded6e5677bd3a4b\release\build\morrow-blob-upload-sample-b9a305cf4fb6b6c8\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rerun-if-changed=contracts/sample_options.capnp
+  cargo:rerun-if-changed=contracts/schema.sha256
+
+  --- stderr
+  Error: "sample options exact schema mismatch"

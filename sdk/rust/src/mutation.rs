@@ -84,6 +84,10 @@ pub enum Action {
         content_length: u64,
         content_sha256: [u8; 32],
     },
+    Replace {
+        content_length: u64,
+        content_sha256: [u8; 32],
+    },
     Delete,
     Chunk {
         offset: u64,
@@ -99,6 +103,7 @@ impl Action {
     pub fn kind(&self) -> Kind {
         match self {
             Self::Create { .. } => Kind::PrepareCreate,
+            Self::Replace { .. } => Kind::PrepareReplace,
             Self::Delete => Kind::PrepareDelete,
             Self::Chunk { .. } => Kind::Chunk,
             Self::Commit => Kind::Commit,
@@ -111,6 +116,10 @@ impl Action {
     pub fn validate(&self) -> Result<()> {
         match self {
             Self::Create {
+                content_length,
+                content_sha256,
+            }
+            | Self::Replace {
                 content_length,
                 content_sha256,
             } => {
@@ -182,6 +191,14 @@ impl Request {
                 create.set_content_length(*content_length);
                 create.set_content_sha256(content_sha256);
             }
+            Action::Replace {
+                content_length,
+                content_sha256,
+            } => {
+                let mut create = root.init_prepare_replace();
+                create.set_content_length(*content_length);
+                create.set_content_sha256(content_sha256);
+            }
             Action::Delete => root.set_prepare_delete(()),
             Action::Chunk { offset, bytes } => {
                 let mut chunk = root.init_chunk();
@@ -221,6 +238,13 @@ impl Request {
             wire::request::PrepareCreate(v) => {
                 let value = v.map_err(invalid)?;
                 Action::Create {
+                    content_length: value.get_content_length(),
+                    content_sha256: identity(value.get_content_sha256().map_err(invalid)?)?,
+                }
+            }
+            wire::request::PrepareReplace(v) => {
+                let value = v.map_err(invalid)?;
+                Action::Replace {
                     content_length: value.get_content_length(),
                     content_sha256: identity(value.get_content_sha256().map_err(invalid)?)?,
                 }
@@ -311,7 +335,7 @@ impl Response {
             return Err(Error::Invalid);
         }
         match self.kind {
-            Kind::PrepareCreate | Kind::PrepareDelete => {
+            Kind::PrepareCreate | Kind::PrepareDelete | Kind::PrepareReplace => {
                 if self.phase != Phase::Prepared
                     || self.effect != Effect::Unspecified
                     || self.staged_bytes != 0

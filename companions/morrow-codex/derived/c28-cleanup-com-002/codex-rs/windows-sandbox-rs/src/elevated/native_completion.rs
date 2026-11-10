@@ -34,6 +34,12 @@ impl NativeHostCompletion {
 
 impl CheckedRunnerOwner {
     pub(crate) fn take_native_host_completion(self:&Arc<Self>,deadline:Instant)->io::Result<NativeHostCompletion> {
+        // Reserve the original attempt before any finalizer or native close.
+        // Keep it spent on failure: neither duplicates nor concurrent callers
+        // may re-enter the same original resource path.
+        if self.native_completion_attempted.swap(true,std::sync::atomic::Ordering::AcqRel) {
+            return Err(io::Error::new(io::ErrorKind::AlreadyExists,"original completion attempt already reserved; no replay"));
+        }
         let outcome=self.finalize(deadline)?;
         let CheckedFinalizationOutcome::HostNativeClosedOuterScopePending{native_exit_code,..}=outcome
             else{return Err(io::Error::other("original v8 native completion unavailable"));};
@@ -41,9 +47,6 @@ impl CheckedRunnerOwner {
             return Err(io::Error::other("original v8 completion sealed Unknown"));
         }
         self.close_owned_native_desktop()?;
-        if self.native_completion_taken.swap(true,std::sync::atomic::Ordering::AcqRel) {
-            return Err(io::Error::new(io::ErrorKind::AlreadyExists,"original completion already consumed"));
-        }
         let runtime=self.native_close_runtime().ok_or_else(||io::Error::other("original v8 binding absent"))?;
         let terminal_close_ack_verified=runtime.terminal_ack_written();
         if !terminal_close_ack_verified{

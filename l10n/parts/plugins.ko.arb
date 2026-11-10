@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "전체 폴더 경로를 확인하세요. 모든 한도는 양수이고 플러그인 한도 이내여야 합니다.",
-  "pluginsWatchOtherPanel": "디렉터리 관찰의 종료가 아직 확인되지 않았습니다. 디렉터리 변경 패널에서 원래 작업을 확인하세요."
+  "pluginsWatchOtherPanel": "디렉터리 관찰의 종료가 아직 확인되지 않았습니다. 디렉터리 변경 패널에서 원래 작업을 확인하세요.",
+  "pluginsFileMutationExecuteReplaceConfirm": "이 파일의 내용을 영구적으로 교체",
+  "pluginsGuestExecutionResourceBudget": "동시에 사용할 수 있는 리소스 한도",
+  "pluginsGuestExecutionResourceDeclaration": "플러그인이 선언한 리소스 한도"
 }

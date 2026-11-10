@@ -885,5 +885,8 @@
     }
   },
   "pluginsWatchFormError": "Verifique o caminho completo da pasta. Todos os limites devem ser positivos e respeitar os máximos do plugin.",
-  "pluginsWatchOtherPanel": "A conclusão da observação ainda não foi confirmada. Revise a tarefa original no painel de alterações do diretório."
+  "pluginsWatchOtherPanel": "A conclusão da observação ainda não foi confirmada. Revise a tarefa original no painel de alterações do diretório.",
+  "pluginsFileMutationExecuteReplaceConfirm": "Substituir permanentemente o conteúdo deste arquivo",
+  "pluginsGuestExecutionResourceBudget": "Recursos simultâneos aprovados",
+  "pluginsGuestExecutionResourceDeclaration": "Limite de recursos declarado"
 }

@@ -164,7 +164,8 @@ struct PluginEntry {
  fsWatchSupported @27 :Bool; fsWatchApproved @28 :Bool; fsWatchHandlers @29 :List(Text);
  fsWatchMaxFrames @30 :UInt32; fsWatchMaxWireBytes @31 :UInt64; fsWatchMaxWindowMs @32 :UInt64;
 }
-struct MutationBudget { maxJobBytes @0 :UInt64; maxBytes @1 :UInt64; }
+# maxResources=0 retains the ordinary ceiling; a positive value is separately declared/approved.
+struct MutationBudget { maxJobBytes @0 :UInt64; maxBytes @1 :UInt64; maxResources @2 :UInt32; }
 
 # Redacted administration metadata only. No ciphertext or secret readback.
 struct CredentialInfo {
@@ -328,11 +329,12 @@ struct MutationState {
 # 5 deleted, 6 history, 7 released, 8 plan cancelled, 9 failure,
 # 10 reconciled, 11 planned (draft Core RequestRecord; no durable phase),
 # 12 plans (original plans/scanned/done only; no phase or effect projection).
+# 13 replaced (original conditional replacement response; existing codes unchanged).
 # failureLayer: 1 delivery, 2 target. record/outcome are Core containers.
 # phase: 0 no record, 1 prepared, 2 outcome unknown, 3 observed,
 # 4 cancelled before dispatch. The projection is authoritative for display.
 # effect: 0 no effect projection, 1 OS confirmed success, 2 OS rejected.
-# Result kind 4/5 alone does not establish that an OS mutation succeeded.
+# Result kind 4/5/13 alone does not establish that an OS mutation succeeded.
 struct MutationResult {
  kind @0 :UInt16; reference @1 :Data; expectedIdentity @2 :Data;
  record @3 :Data; outcome @4 :Data; stagedBytes @5 :UInt64;

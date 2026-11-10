@@ -412,6 +412,7 @@ final class MutationExecutionSession {
     final result = value.result!;
     if ((result.kind == MutationResultKind.prepared ||
             result.kind == MutationResultKind.created ||
+            result.kind == MutationResultKind.replaced ||
             result.kind == MutationResultKind.deleted) &&
         result.operationId != _operationId) {
       throw const FormatException('Mutation operation identity changed');
@@ -430,6 +431,7 @@ final class MutationExecutionSession {
     }
     _lastResult = result;
     if (result.kind == MutationResultKind.created ||
+        result.kind == MutationResultKind.replaced ||
         result.kind == MutationResultKind.deleted) {
       _outcome = result;
     } else if (result.kind == MutationResultKind.history) {
@@ -515,6 +517,7 @@ final class MutationExecutionSession {
     }
     if ((kind == MutationResultKind.prepared ||
             kind == MutationResultKind.created ||
+            kind == MutationResultKind.replaced ||
             kind == MutationResultKind.deleted) &&
         value.operationId != _operationId) {
       _record(
@@ -619,19 +622,18 @@ final class MutationExecutionSession {
     if (busy) throw StateError('Mutation execution session is busy');
     if (!canStart) throw StateError('Mutation execution start is unavailable');
     MutationTaskValidation.validateStart(request);
-    if (request.disposition == MutationDisposition.replace ||
-        (request.disposition == MutationDisposition.delete &&
+    if ((request.disposition == MutationDisposition.delete &&
             content != null) ||
         (content?.length ?? 0) > MutationTaskValidation.maxContentBytes) {
       throw const FormatException(
         'Unsupported mutation content or disposition',
       );
     }
-    final ownedContent = request.disposition == MutationDisposition.create
+    final ownedContent = request.disposition != MutationDisposition.delete
         ? Uint8List.fromList(content ?? Uint8List(0))
         : Uint8List(0);
     final length = BigInt.from(ownedContent.length);
-    final digest = request.disposition == MutationDisposition.create
+    final digest = request.disposition != MutationDisposition.delete
         ? Uint8List.fromList(sha256.convert(ownedContent).bytes)
         : null;
     MutationTaskValidation.buildPlan(operationId, length, digest);
@@ -678,7 +680,7 @@ final class MutationExecutionSession {
       )) {
         return;
       }
-      if (request.disposition == MutationDisposition.create) {
+      if (request.disposition != MutationDisposition.delete) {
         for (
           var offset = 0;
           offset < ownedContent.length;
@@ -736,9 +738,11 @@ final class MutationExecutionSession {
     _ready = false;
     try {
       final result = await _command(_Command.execute);
-      final expected = _request!.disposition == MutationDisposition.create
-          ? MutationResultKind.created
-          : MutationResultKind.deleted;
+      final expected = switch (_request!.disposition) {
+        MutationDisposition.create => MutationResultKind.created,
+        MutationDisposition.replace => MutationResultKind.replaced,
+        MutationDisposition.delete => MutationResultKind.deleted,
+      };
       if (!_expect(result, expected)) return;
       if (result!.phase != MutationPhase.observed ||
           result.effect == MutationEffect.unspecified) {
@@ -758,7 +762,7 @@ final class MutationExecutionSession {
       final result = await _command(_Command.query);
       if (_expect(result, MutationResultKind.history) &&
           (result!.phase != MutationPhase.prepared ||
-              (_request!.disposition == MutationDisposition.create &&
+              (_request!.disposition != MutationDisposition.delete &&
                   (!result.durableContent ||
                       result.stagedBytes != _contentLength)) ||
               _state?.reconcileRequired == true ||

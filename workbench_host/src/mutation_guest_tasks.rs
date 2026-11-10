@@ -359,11 +359,10 @@ fn advance_internal(mutation: &mut MutationTask, worker: &IoWorker<WorkbenchStat
                     content_sha256: plan.request().content_sha256.unwrap(),
                 },
                 Disposition::Delete => guest_wire::Action::Delete,
-                Disposition::Replace => {
-                    guest.completed = Some(Err(GuestMutationFailure::Protocol));
-                    mutation.reconcile_required = true;
-                    return;
-                }
+                Disposition::Replace => guest_wire::Action::Replace {
+                    content_length: plan.request().content_length,
+                    content_sha256: plan.request().content_sha256.unwrap(),
+                },
             };
             submit_frame(
                 worker,
@@ -553,7 +552,7 @@ impl Workbench {
                 let lease = guest.lease.ok_or("guest approval has not been delivered")?;
                 let plan = guest.plan.as_ref().ok_or("missing guest plan")?;
                 if !guest.prepared
-                    || plan.request().disposition != Disposition::Create
+                    || plan.request().disposition == Disposition::Delete
                     || offset != guest.staged_bytes
                     || bytes.is_empty()
                     || bytes.len() > guest_wire::MAX_CHUNK_BYTES
@@ -580,7 +579,7 @@ impl Workbench {
                 let plan = guest.plan.as_ref().ok_or("missing guest plan")?;
                 if !guest.prepared
                     || guest.durable_content
-                    || plan.request().disposition != Disposition::Create
+                    || plan.request().disposition == Disposition::Delete
                     || guest.staged_bytes != plan.request().content_length
                 {
                     return Err("guest content is incomplete".into());
@@ -599,7 +598,7 @@ impl Workbench {
                 if !guest.prepared
                     || guest.effect_attempted
                     || guest.plan_sha256() != Some(plan_sha256)
-                    || (plan.request().disposition == Disposition::Create && !guest.durable_content)
+                    || (plan.request().disposition != Disposition::Delete && !guest.durable_content)
                 {
                     return Err("guest execution review or content is incomplete".into());
                 }
@@ -705,7 +704,10 @@ impl Workbench {
             let result = if let Err(fault) = report.task.execution.outcome {
                 Err(GuestMutationFailure::Execution(fault))
             } else if report.task.execution.outcome != Ok(0)
-                || report.calls != 1 || report.cancelled || report.unknown {
+                || report.calls != 1
+                || report.cancelled
+                || report.unknown
+            {
                 Err(GuestMutationFailure::Protocol)
             } else if let (Some(response), Some(raw)) =
                 (report.mutation_response, report.mutation_frame)
@@ -790,8 +792,9 @@ impl Workbench {
         let handle = mutation.pending.as_mut().ok_or(AccessError::StaleTask)?;
         let mut result = match handle.read() {
             Ok(None) => return Ok(None),
-            Ok(Some(result)) => result
-                .map_err(|error| GuestMutationFailure::Owner(Failure::Target(error))),
+            Ok(Some(result)) => {
+                result.map_err(|error| GuestMutationFailure::Owner(Failure::Target(error)))
+            }
             Err(error) => Err(GuestMutationFailure::Owner(Failure::Delivery(error))),
         };
         mutation.pending = None;
@@ -816,9 +819,7 @@ impl Workbench {
                 task.stopping = true;
                 worker.stop();
             }
-            Ok(MutationResponse::PlanCancelled(_)) => {
-                mutation.terminal = true
-            }
+            Ok(MutationResponse::PlanCancelled(_)) => mutation.terminal = true,
             Ok(MutationResponse::History {
                 record,
                 staged_bytes,
@@ -863,7 +864,9 @@ impl Workbench {
             }
             Err(_) => mutation.reconcile_required = true,
         }
-        Ok(Some(result.map(|value| GuestMutationReply::Owner(Box::new(value)))))
+        Ok(Some(
+            result.map(|value| GuestMutationReply::Owner(Box::new(value))),
+        ))
     }
 }
 
@@ -896,7 +899,7 @@ impl Workbench {
             || request.timeout_ms > 30_000
             || !matches!(
                 request.disposition,
-                Disposition::Create | Disposition::Delete
+                Disposition::Create | Disposition::Replace | Disposition::Delete
             )
             || (request.disposition == Disposition::Create) != request.relative_path.is_some()
         {
@@ -912,7 +915,7 @@ impl Workbench {
             &[match request.disposition {
                 Disposition::Create => 1,
                 Disposition::Delete => 3,
-                Disposition::Replace => unreachable!(),
+                Disposition::Replace => 2,
             }],
         );
         field(&mut hash, path.as_bytes());
@@ -932,6 +935,7 @@ impl Workbench {
                 field(&mut hash, &[1]);
                 field(&mut hash, &budget.max_job_bytes.to_le_bytes());
                 field(&mut hash, &budget.max_bytes.to_le_bytes());
+                field(&mut hash, &budget.max_resources.to_le_bytes());
             }
             None => field(&mut hash, &[0]),
         }
@@ -998,7 +1002,8 @@ impl Workbench {
             .map_err(|_| "invalid legacy guest mutation budget")?,
             (Some(declared), Some(approved))
                 if approved.max_job_bytes <= declared.max_job_bytes
-                    && approved.max_bytes <= declared.max_bytes =>
+                    && approved.max_bytes <= declared.max_bytes
+                    && approved.max_resources <= declared.max_resources =>
             {
                 morrow_plugin_runtime::io_jobs::JobLimits::mutation(
                     8,

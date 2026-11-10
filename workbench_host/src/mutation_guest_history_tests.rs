@@ -68,6 +68,7 @@ fn tight_total_setup() -> Setup {
     ]);
     manifest.mutation_schema_sha256 = wire::schema_digest().to_vec();
     manifest.mutation_budget = Some(DeclaredBudget {
+        max_resources: 0,
         max_job_bytes: BUDGET.max_job_bytes,
         max_bytes: BUDGET.max_bytes,
     });

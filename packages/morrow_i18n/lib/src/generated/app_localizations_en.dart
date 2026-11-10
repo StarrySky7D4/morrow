@@ -2088,6 +2088,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Delete this file permanently';
 
   @override
+  String get pluginsFileMutationExecuteReplaceConfirm =>
+      'Replace this file’s contents permanently';
+
+  @override
   String get pluginsFileMutationExecuteTitle => 'Confirm file operation';
 
   @override
@@ -2283,6 +2287,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsGuestExecutionRelease => 'Release task';
+
+  @override
+  String get pluginsGuestExecutionResourceBudget =>
+      'Approved simultaneous resources';
+
+  @override
+  String get pluginsGuestExecutionResourceDeclaration =>
+      'Declared resource limit';
 
   @override
   String get pluginsGuestExecutionTitle => 'Plugin file creation and deletion';

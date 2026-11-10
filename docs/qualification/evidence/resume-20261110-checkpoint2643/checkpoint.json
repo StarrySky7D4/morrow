@@ -1,0 +1,92 @@
+{
+  "status": "ACTIVE_DEVELOPMENT_CHECKPOINT_NOT_RELEASE_QUALIFIED",
+  "updated": "2026-11-10T12:06:39.337850+00:00",
+  "branch": "codex/local-continue-20261020",
+  "task_status": "ACTIVE",
+  "checkpoint": "resume-20261110-checkpoint2643",
+  "cache_root": "D:/build_cache",
+  "registered_vms": 4,
+  "VM058": "Saved",
+  "retained_Unknown_checkpoints_VM058": 10,
+  "scopes": {
+    "P2_frozen": "b593e0b8b6da0b6c8422787c8778e8f0b718536abd81dd97aa87e7da070cddbf",
+    "SDK_frozen": "c991f00634c3cc04b5ce983ff6bb5a493bd89f98d7f423f14c3287bf0123512f",
+    "integration_before_checkout_repair": "54287dc98f88a7fa8c540b43f4c75b007c82c354146e99d8af241f835f1ba238",
+    "latest_source_before_publication_metadata": "523c9c2af5f9ee8f0e96fa864ec56bdd60b2c1173c73b23f7b5bd6509eac486e"
+  },
+  "source_repairs": [
+    "Exclusive native finalizer before original forwarding loans; native completion attempted once",
+    "SDK conditional Replace original owner and crash-boundary evidence integration",
+    "Canonical LF checkout rules for six exact Capnp contracts; digest guards unchanged"
+  ],
+  "scoped_results": {
+    "P2_2380": "Original47 and contention scoped PASS on b593",
+    "P2_2450": "Genuine wrong-generation refusal with original Unknown retained on b593",
+    "P2_2500": "Unknown consumes one of16 SDK slots; next admission refused; scoped negative control PASS on b593",
+    "integration54287": {
+      "native_regressions": 11,
+      "SDK_widget_codec": 48,
+      "readonly_native_refusals": 17,
+      "checked_token_closes": 34
+    },
+    "source523c9c": {
+      "source_tests": 24,
+      "contracts_matching_canonical_bytes": 66,
+      "generated_check": "PASS"
+    }
+  },
+  "SDK_native_build": {
+    "status": "NOT_PASSED_AFTER_LATEST_FIX",
+    "first_failure": "2633 blob-transfer raw schema after autocrlf",
+    "second_failure": "2636 sample-options raw schema after autocrlf",
+    "both_original_compilers_returned": true,
+    "both_failures_retained": true,
+    "latest_fix_requires_fresh_cold_compile_and_runtime": true
+  },
+  "case2600": {
+    "status": "STAGED_AND_BOUND_NOT_NATIVE_DISPATCHED",
+    "tag": "60275a8864ed4722ac53696e60454ae9",
+    "original_pipeline_exit": 1,
+    "reason": "Original24GiB C free-space guard rejected before first native case invocation",
+    "actual_case_dispatches": 0,
+    "VM_state": "Saved",
+    "resume_minimum_C_bytes": 34359738368,
+    "remaining_driver_prepared": true
+  },
+  "SDK_manual2460": {
+    "status": "PENDING_NEW_USER_RESULT",
+    "old2328_task_end_acknowledgement_is_not_execution_proof": true,
+    "target_bytes_last_verified": 38
+  },
+  "storage": {
+    "free_bytes": {
+      "C": 12393271296,
+      "D": 6835679232
+    },
+    "total_reserved_C_bytes_last_observed": 36398915584,
+    "compression2619": "All bytes preserved; allocated size decreased but usable C free space decreased; reservation cause not proven",
+    "cache_retirement2613": {
+      "files": 2481,
+      "logical_bytes": 4351736638,
+      "observed_free_D_gain": 2139082752
+    },
+    "old_linker_cache_inventory2639": "READ_ONLY_PREPARATION_RUNNING_NO_DELETION",
+    "no_protected_VM_archive_deleted": true
+  },
+  "next_steps": [
+    "Finish storage recovery and review exact old compiler-intermediate manifest",
+    "Resume saved staged VM058 only after32GiB pre-resume guard; first actual case2600 dispatch, no stage/bind replay",
+    "Cold-build latest integrated SDK and run native managed-file/mutation-owner tests",
+    "Complete visible SDK flow and remaining Windows P2, current-source P3, G04 and SDK freeze; reseal one final candidate"
+  ],
+  "Windows_P2": "OPEN",
+  "current_source_P3": "PENDING_REQUALIFICATION",
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": "REQUESTED_VERIFY_REMOTE_REF_AFTER_PUSH",
+  "automatic_case_replays": 0,
+  "old_Unknown_owner_contacts": 0
+}

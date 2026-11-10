@@ -1009,7 +1009,7 @@ pub(crate) struct CheckedRunnerOwner {
     asuser_a1: std::sync::OnceLock<crate::asuser_a1_native::Cell>,
     native_desktop_claimed: std::sync::atomic::AtomicBool,
     native_forwarders: Mutex<native_forwarders::NativeForwarderRetention>,
-    pub(super) native_completion_taken: std::sync::atomic::AtomicBool,
+    pub(super) native_completion_attempted: std::sync::atomic::AtomicBool,
     native_local_retired:std::sync::atomic::AtomicBool,
     finalizer_cv: Condvar,
     finalizer_watch: tokio::sync::watch::Sender<u64>,
@@ -1238,7 +1238,7 @@ impl CheckedRunnerOwner {
             asuser_a1: std::sync::OnceLock::new(),
             native_desktop_claimed: std::sync::atomic::AtomicBool::new(false),
             native_forwarders:Mutex::new(native_forwarders::NativeForwarderRetention::new()),
-            native_completion_taken: std::sync::atomic::AtomicBool::new(false),
+            native_completion_attempted: std::sync::atomic::AtomicBool::new(false),
             native_local_retired:std::sync::atomic::AtomicBool::new(false),
             finalizer_cv: Condvar::new(),
             finalizer_watch,
@@ -1332,7 +1332,7 @@ impl CheckedRunnerOwner {
             asuser_a1: std::sync::OnceLock::new(),
             native_desktop_claimed: std::sync::atomic::AtomicBool::new(false),
             native_forwarders:Mutex::new(native_forwarders::NativeForwarderRetention::new()),
-            native_completion_taken: std::sync::atomic::AtomicBool::new(false),
+            native_completion_attempted: std::sync::atomic::AtomicBool::new(false),
             native_local_retired:std::sync::atomic::AtomicBool::new(false),
             finalizer_cv: Condvar::new(),
             finalizer_watch,
@@ -2543,19 +2543,20 @@ impl CheckedRunnerOwner {
         if self.station_broker.get().is_some() {
             return Err(io::Error::other("A0 requires resource-only retirement; no business completion"));
         }
-        self.check_asuser_native_adopted()?;
         let cap = Instant::now()
             .checked_add(CONNECT_TIMEOUT)
             .ok_or_else(|| io::Error::other("finalization deadline overflow"))?;
         let deadline = wait_until.min(cap);
-        self.reap_native_forwarders_blocking(deadline)?;
-        let initial_in_time = Instant::now() < deadline;
-
         let mut claim = match self.claim_finalizer_blocking(deadline)? {
             Ok(claim) => claim,
             Err(outcome) => return Ok(outcome),
         };
 
+        // A contender must not borrow the same A1 cell or original forwarding
+        // handles before it owns the exclusive finalizer claim.
+        self.check_asuser_native_adopted()?;
+        self.reap_native_forwarders_blocking(deadline)?;
+        let initial_in_time = Instant::now() < deadline;
         self.finalize_with_claim(&mut claim, deadline, initial_in_time)
     }
 
@@ -2566,19 +2567,20 @@ impl CheckedRunnerOwner {
         if self.station_broker.get().is_some() {
             return Err(io::Error::other("A0 requires resource-only retirement; no business completion"));
         }
-        self.check_asuser_native_adopted()?;
         let cap = Instant::now()
             .checked_add(CONNECT_TIMEOUT)
             .ok_or_else(|| io::Error::other("finalization deadline overflow"))?;
         let deadline = wait_until.min(cap);
-        self.reap_native_forwarders_async(deadline).await?;
-        let pre_await_in_time = Instant::now() < deadline;
-
         let mut claim = match self.claim_finalizer_async(deadline).await? {
             Ok(claim) => claim,
             Err(outcome) => return Ok(outcome),
         };
 
+        // Keep the same claim across the original forwarding loan. Cancellation
+        // restores that loan before releasing the claim to another finalizer.
+        self.check_asuser_native_adopted()?;
+        self.reap_native_forwarders_async(deadline).await?;
+        let pre_await_in_time = Instant::now() < deadline;
         if !pre_await_in_time {
             self.seal_unknown(StickyUnknownReason::FinalizationDeadlineExpired);
             return Err(io::Error::new(

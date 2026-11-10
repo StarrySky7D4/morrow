@@ -22,7 +22,10 @@ use morrow_core::{
 };
 use std::{
     collections::{BTreeMap, BTreeSet},
-    sync::{Arc, Weak, atomic::{AtomicBool, Ordering}},
+    sync::{
+        Arc, Weak,
+        atomic::{AtomicBool, Ordering},
+    },
 };
 
 const MAX_INSTANCES: usize = 128;
@@ -146,7 +149,9 @@ pub struct ManagedInstance {
 pub struct InstanceStopHandle(Weak<Control>);
 impl InstanceStopHandle {
     pub fn request_stop(&self) {
-        if let Some(control) = self.0.upgrade() { control.signal_stop(); }
+        if let Some(control) = self.0.upgrade() {
+            control.signal_stop();
+        }
     }
 }
 impl ManagedInstance {
@@ -609,12 +614,17 @@ impl Manager {
         approved: bool,
         revision: u64,
     ) -> Result<()> {
-        self.registry.validate_blob_upload_approval(id, digest, approved, revision)?;
-        if self.selection(id).is_some_and(|s| s.approved_blob_upload == approved) {
+        self.registry
+            .validate_blob_upload_approval(id, digest, approved, revision)?;
+        if self
+            .selection(id)
+            .is_some_and(|s| s.approved_blob_upload == approved)
+        {
             return Ok(());
         }
         self.revoke_required_tree(id);
-        self.registry.approve_blob_upload(id, digest, approved, revision)?;
+        self.registry
+            .approve_blob_upload(id, digest, approved, revision)?;
         Ok(())
     }
     /// Independent exact-package watch ceiling; no live path or observation is restored.
@@ -625,12 +635,17 @@ impl Manager {
         approved: bool,
         revision: u64,
     ) -> Result<()> {
-        self.registry.validate_fs_watch_approval(id, digest, approved, revision)?;
-        if self.selection(id).is_some_and(|s| s.approved_fs_watch == approved) {
+        self.registry
+            .validate_fs_watch_approval(id, digest, approved, revision)?;
+        if self
+            .selection(id)
+            .is_some_and(|s| s.approved_fs_watch == approved)
+        {
             return Ok(());
         }
         self.revoke_required_tree(id);
-        self.registry.approve_fs_watch(id, digest, approved, revision)?;
+        self.registry
+            .approve_fs_watch(id, digest, approved, revision)?;
         Ok(())
     }
     /// Bind a previously approved ceiling to this exact live host/instance. This does
@@ -745,11 +760,16 @@ impl Manager {
         budget: MutationBudget,
     ) -> Result<IoBinding> {
         if requested.is_empty()
-            || requested
-                .iter()
-                .any(|cap| !matches!(cap, IoCapability::FileCreate | IoCapability::FileDelete))
+            || requested.iter().any(|cap| {
+                !matches!(
+                    cap,
+                    IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                )
+            })
         {
-            return Err(Error::Invalid("mutation budget requires create or delete").into());
+            return Err(
+                Error::Invalid("mutation budget requires create, replace or delete").into(),
+            );
         }
         self.bind_io_kind(
             host,
@@ -780,9 +800,12 @@ impl Manager {
         now: u64,
     ) -> Result<IoBinding> {
         if requested.len() != 1
-            || !requested
-                .iter()
-                .all(|cap| matches!(cap, IoCapability::FileCreate | IoCapability::FileDelete))
+            || !requested.iter().all(|cap| {
+                matches!(
+                    cap,
+                    IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                )
+            })
             || !instance.package.package().mutation_enabled()
             || instance.package.package().mutation_budget().is_none()
         {
@@ -1026,7 +1049,9 @@ impl Manager {
     pub fn validate_preparation(&self, id: &str, digest: [u8; 32], revision: u64) -> Result<()> {
         self.check_revision(revision)?;
         let (package, selection) = self.registry.resolve_enabled(id)?;
-        if selection.digest != digest { return Err(Error::RevisionConflict.into()); }
+        if selection.digest != digest {
+            return Err(Error::RevisionConflict.into());
+        }
         PreparedPackage::new(package, self.limits)?;
         Ok(())
     }
@@ -1087,6 +1112,7 @@ impl Manager {
                             .package()
                             .mutation_budget()
                             .map(|budget| MutationBudget {
+                                max_resources: budget.max_resources,
                                 max_job_bytes: budget.max_job_bytes,
                                 max_bytes: budget.max_bytes,
                             }),
@@ -1115,9 +1141,15 @@ impl Manager {
             revocation,
             cancel: Cancellation::default(),
             #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
-            blob_upload: package.package().blob_upload_declaration().map(|declaration| {
-                Arc::new(crate::blob_upload_binding::UploadContext::new(declaration, package.limits()))
-            }),
+            blob_upload: package
+                .package()
+                .blob_upload_declaration()
+                .map(|declaration| {
+                    Arc::new(crate::blob_upload_binding::UploadContext::new(
+                        declaration,
+                        package.limits(),
+                    ))
+                }),
         });
         self.instances
             .entry(id.into())

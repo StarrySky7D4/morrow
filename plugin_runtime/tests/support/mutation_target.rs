@@ -96,7 +96,7 @@ fn selected_handle_is_exclusive_and_release_or_drop_restores_file_access() {
         Some(TargetError::InvalidSelection)
     );
     for disposition in [Disposition::Replace, Disposition::Delete] {
-        let mut f = Fixture::with_capabilities(true, 2, 1000, mutation_caps());
+        let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
         let instance = f.connect();
         let binding = binding(&f, &instance, &mutation_caps());
         let path = f._dir.path().join("selected.bin");
@@ -105,7 +105,11 @@ fn selected_handle_is_exclusive_and_release_or_drop_restores_file_access() {
         let mut broker = TargetBroker::new([0x31; 32]).unwrap();
         let selected = select(&mut broker, &f, &instance, &binding, &path, disposition);
         assert_eq!(broker.len(), 1);
-        assert_eq!(binding.usage().resources, 1);
+        if disposition == Disposition::Delete {
+            assert_eq!(binding.usage().resources, 1);
+        } else {
+            assert!(binding.usage().resources > 1);
+        }
         assert_eq!(fs::read(&path).unwrap_err().raw_os_error(), Some(32));
         assert!(fs::write(&path, b"changed").is_err());
         assert!(fs::rename(&path, &renamed).is_err());
@@ -137,7 +141,7 @@ fn selected_handle_is_exclusive_and_release_or_drop_restores_file_access() {
 
 #[test]
 fn exact_plan_binds_owner_scope_package_action_and_selected_identity() {
-    let mut f = Fixture::with_capabilities(true, 2, 1000, mutation_caps());
+    let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
     let owner = f.connect();
     let foreign = f.connect();
     let binding = binding(&f, &owner, &mutation_caps());
@@ -226,7 +230,7 @@ fn exact_plan_binds_owner_scope_package_action_and_selected_identity() {
 #[test]
 fn mutation_selection_and_read_capture_share_one_resource_budget() {
     let caps = BTreeSet::from([IoCapability::FileReplace, IoCapability::FileRead]);
-    let mut f = Fixture::with_capabilities(true, 1, 1000, caps.clone());
+    let mut f = Fixture::with_capabilities(true, 8, 1000, caps.clone());
     let instance = f.connect();
     let binding = binding(&f, &instance, &caps);
     let path = f._dir.path().join("selected.bin");
@@ -240,22 +244,38 @@ fn mutation_selection_and_read_capture_share_one_resource_budget() {
         &path,
         Disposition::Replace,
     );
+    let held = binding.usage().resources;
+    assert!(held > 1 && held <= 8);
     let mut reads = FileBroker::new([0x34; 32]);
+    for _ in held..8 {
+        reads
+            .grant_file(
+                &f.manager,
+                &f.host,
+                &instance,
+                &binding,
+                b"read".to_vec(),
+                3,
+            )
+            .unwrap();
+    }
+    assert_eq!(binding.usage().resources, 8);
     assert_eq!(
         reads.grant_file(
             &f.manager,
             &f.host,
             &instance,
             &binding,
-            b"read".to_vec(),
+            b"denied".to_vec(),
             3
         ),
         Err(AdmissionError::Limit)
     );
-    assert_eq!(binding.usage().resources, 1);
     targets
         .release(&f.manager, &f.host, &instance, selected.reference, 4)
         .unwrap();
+    assert_eq!(binding.usage().resources, 8 - held);
+    assert_eq!(fs::read(&path).unwrap(), b"original");
     let token = reads
         .grant_file(
             &f.manager,
@@ -266,8 +286,8 @@ fn mutation_selection_and_read_capture_share_one_resource_budget() {
             5,
         )
         .unwrap();
-    assert_eq!(binding.usage().resources, 1);
     assert!(!token.is_empty());
+    assert_eq!(binding.usage().resources, 9 - held);
     drop(reads);
     assert_eq!(binding.usage().resources, 0);
     instance.close(&mut f.host).unwrap();
@@ -276,7 +296,7 @@ fn mutation_selection_and_read_capture_share_one_resource_budget() {
 #[test]
 fn expired_or_stopped_selection_reaps_and_open_failure_releases_capacity() {
     for revoke in ["expiry", "stop"] {
-        let mut f = Fixture::with_capabilities(true, 1, 1000, mutation_caps());
+        let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
         let instance = f.connect();
         let binding = binding(&f, &instance, &mutation_caps());
         let path = f._dir.path().join("selected.bin");
@@ -305,7 +325,7 @@ fn expired_or_stopped_selection_reaps_and_open_failure_releases_capacity() {
             &path,
             Disposition::Replace,
         );
-        assert_eq!(binding.usage().resources, 1);
+        assert!(binding.usage().resources > 1);
         if revoke == "stop" {
             instance.stop();
             broker.reap(3);
@@ -326,7 +346,7 @@ fn expired_or_stopped_selection_reaps_and_open_failure_releases_capacity() {
 #[test]
 fn post_open_stop_or_expiry_cannot_publish_and_closes_handle() {
     for revoke in ["stop", "expiry"] {
-        let mut f = Fixture::with_capabilities(true, 1, 1000, mutation_caps());
+        let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
         let instance = f.connect();
         let binding = binding(&f, &instance, &mutation_caps());
         let path = f._dir.path().join("selected.bin");
@@ -342,7 +362,8 @@ fn post_open_stop_or_expiry_cannot_publish_and_closes_handle() {
             scope(Disposition::Replace),
             || {
                 ticks += 1;
-                if ticks == 5 {
+                // The fifth sample captures the original native deadline; the sixth is after the actual open.
+                if ticks == 6 {
                     if revoke == "stop" {
                         instance.stop();
                     } else {
@@ -352,7 +373,7 @@ fn post_open_stop_or_expiry_cannot_publish_and_closes_handle() {
                 2
             },
         );
-        assert_eq!(ticks, 5);
+        assert_eq!(ticks, 6);
         assert_eq!(
             result,
             Err(TargetError::Admission(if revoke == "stop" {
@@ -370,7 +391,7 @@ fn post_open_stop_or_expiry_cannot_publish_and_closes_handle() {
 
 #[test]
 fn invalid_original_path_spellings_are_rejected_before_open_or_reservation() {
-    let mut f = Fixture::with_capabilities(true, 1, 1000, mutation_caps());
+    let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
     let instance = f.connect();
     let binding = binding(&f, &instance, &mutation_caps());
     let path = f._dir.path().join("selected.bin");
@@ -432,7 +453,7 @@ fn invalid_original_path_spellings_are_rejected_before_open_or_reservation() {
 
 #[test]
 fn final_symlink_is_rejected_when_windows_can_create_one() {
-    let mut f = Fixture::with_capabilities(true, 1, 1000, mutation_caps());
+    let mut f = Fixture::with_capabilities(true, 8, 1000, mutation_caps());
     let instance = f.connect();
     let binding = binding(&f, &instance, &mutation_caps());
     let real = f._dir.path().join("real.bin");
@@ -470,7 +491,7 @@ fn preparation_fixture() -> (
     RequestRecord,
     std::path::PathBuf,
 ) {
-    let mut f = Fixture::with_capabilities(true, 2, 100_000, mutation_caps());
+    let mut f = Fixture::with_capabilities(true, 8, 100_000, mutation_caps());
     let instance = f.connect();
     let binding = binding(&f, &instance, &mutation_caps());
     let path = f._dir.path().join("prepared-target.bin");
@@ -567,7 +588,7 @@ fn preparation_and_staging_persist_exact_history_without_changing_selected_file(
         request.container().len() as u64 + REPLACEMENT.len() as u64
     );
     assert_eq!(binding.usage().jobs, 0);
-    assert_eq!(binding.usage().resources, 1);
+    assert!(binding.usage().resources > 1);
     let pending = store.pending(0, 10).unwrap();
     broker
         .prepare_request(&f.manager, &mut f.host, &instance, &request, || 4)
@@ -659,7 +680,7 @@ fn mismatched_plan_action_or_stage_bytes_cannot_add_history() {
         (0, 0)
     );
     assert_eq!(fs::read(&path).unwrap_err().raw_os_error(), Some(32));
-    assert_eq!(binding.usage().resources, 1);
+    assert!(binding.usage().resources > 1);
     drop(broker);
     assert_eq!(fs::read(&path).unwrap(), b"original target bytes");
     instance.close(&mut f.host).unwrap();

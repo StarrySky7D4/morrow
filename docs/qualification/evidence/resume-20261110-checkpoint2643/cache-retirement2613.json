@@ -1,0 +1,21 @@
+{
+  "status": "PASS_RETURNED_COMPILER_LIBRARIES_REMOVED_ALL_OTHER_BYTES_PRESERVED",
+  "files": 2481,
+  "logical_bytes": 4351736638,
+  "free_before": 3300421632,
+  "free_after": 5439504384,
+  "observed_D_free_gain": 2139082752,
+  "preserved_files": 10685,
+  "protected_evidence": 83,
+  "minimum_age_hours": 2,
+  "retired_complete_target_trees": [
+    "roles079-C",
+    "roles079-S"
+  ],
+  "roles077_PR_and_all080_unchanged": true,
+  "all_final_executables_DLLs_PDBs_and_evidence_preserved": true,
+  "directories_removed": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "plan_sha256": "9c45d24cd31fce18256ba7011019264a288418807ffb32f236a0d787f6ba0c35"
+}

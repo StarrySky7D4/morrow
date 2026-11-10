@@ -9,23 +9,23 @@ use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
 #[cfg(not(target_arch = "wasm32"))]
-#[path = "channel_task_protocol.rs"]
-mod channel_task;
-#[cfg(not(target_arch = "wasm32"))]
-#[path = "blob_upload_protocol.rs"]
-mod blob_upload;
+#[path = "blob_history_delivery_protocol.rs"]
+mod blob_history_delivery;
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "blob_plan_protocol.rs"]
 mod blob_plan;
 #[cfg(not(target_arch = "wasm32"))]
-#[path = "blob_history_delivery_protocol.rs"]
-mod blob_history_delivery;
-#[path = "file_task_protocol.rs"]
+#[path = "blob_upload_protocol.rs"]
+mod blob_upload;
 #[cfg(not(target_arch = "wasm32"))]
-mod file_task;
+#[path = "channel_task_protocol.rs"]
+mod channel_task;
 #[cfg(windows)]
 #[path = "directory_task_protocol.rs"]
 mod directory_task;
+#[path = "file_task_protocol.rs"]
+#[cfg(not(target_arch = "wasm32"))]
+mod file_task;
 #[cfg(windows)]
 #[path = "fs_watch_protocol.rs"]
 mod fs_watch;
@@ -288,15 +288,34 @@ pub(crate) fn is_service_admin_action(action: wire::Action) -> bool {
 mod directory_picker_tests;
 
 fn is_scheduler_action(action: wire::Action) -> bool {
-    is_history_delivery_action(action) || is_service_run_action(action)
-        || matches!(action, wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead)
-        || matches!(action, wire::Action::BlobPlanStart | wire::Action::BlobPlanStatus
-            | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
-            | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover)
-        || matches!(action, wire::Action::BlobUploadStart | wire::Action::BlobUploadStatus
-            | wire::Action::BlobUploadRead | wire::Action::BlobUploadInspect | wire::Action::BlobUploadConfirm
-            | wire::Action::BlobUploadHistoryList | wire::Action::BlobUploadHistoryInspect
-            | wire::Action::BlobUploadMetadataReview | wire::Action::BlobUploadMetadataComplete)
+    is_history_delivery_action(action)
+        || is_service_run_action(action)
+        || matches!(
+            action,
+            wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead
+        )
+        || matches!(
+            action,
+            wire::Action::BlobPlanStart
+                | wire::Action::BlobPlanStatus
+                | wire::Action::BlobPlanRead
+                | wire::Action::BlobPlanCancel
+                | wire::Action::BlobPlanAcknowledge
+                | wire::Action::BlobPlanApprove
+                | wire::Action::BlobPlanDiscover
+        )
+        || matches!(
+            action,
+            wire::Action::BlobUploadStart
+                | wire::Action::BlobUploadStatus
+                | wire::Action::BlobUploadRead
+                | wire::Action::BlobUploadInspect
+                | wire::Action::BlobUploadConfirm
+                | wire::Action::BlobUploadHistoryList
+                | wire::Action::BlobUploadHistoryInspect
+                | wire::Action::BlobUploadMetadataReview
+                | wire::Action::BlobUploadMetadataComplete
+        )
         || matches!(
             action,
             wire::Action::MutationDiscover
@@ -315,7 +334,8 @@ fn is_scheduler_action(action: wire::Action) -> bool {
                 | wire::Action::FileChunk
                 | wire::Action::FileFinish
                 | wire::Action::FileRead
-                | wire::Action::DirectoryPick | wire::Action::DirectoryStart
+                | wire::Action::DirectoryPick
+                | wire::Action::DirectoryStart
                 | wire::Action::DirectoryRead
                 | wire::Action::DirectoryRunGuest
                 | wire::Action::DirectoryReadGuest
@@ -417,12 +437,22 @@ impl ResponseTarget for Workbench {
         if is_service_run_action(action) {
             return service_run::handle(self, r, out);
         }
-        if matches!(action, wire::Action::BlobPlanStart | wire::Action::BlobPlanStatus
-            | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
-            | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover) {
+        if matches!(
+            action,
+            wire::Action::BlobPlanStart
+                | wire::Action::BlobPlanStatus
+                | wire::Action::BlobPlanRead
+                | wire::Action::BlobPlanCancel
+                | wire::Action::BlobPlanAcknowledge
+                | wire::Action::BlobPlanApprove
+                | wire::Action::BlobPlanDiscover
+        ) {
             return blob_plan::handle(self, r, out);
         }
-        if matches!(action, wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead) {
+        if matches!(
+            action,
+            wire::Action::FsWatchStart | wire::Action::FsWatchStatus | wire::Action::FsWatchRead
+        ) {
             #[cfg(windows)]
             return fs_watch::handle(self, r, out);
             #[cfg(not(windows))]
@@ -431,15 +461,23 @@ impl ResponseTarget for Workbench {
         if blob_upload::is_action(action) {
             return blob_upload::handle(self, r, out);
         }
-        if matches!(action,
-            wire::Action::DirectoryPick | wire::Action::DirectoryStart | wire::Action::DirectoryRead
-            | wire::Action::DirectoryRunGuest | wire::Action::DirectoryReadGuest
-            | wire::Action::DirectoryFinish
+        if matches!(
+            action,
+            wire::Action::DirectoryPick
+                | wire::Action::DirectoryStart
+                | wire::Action::DirectoryRead
+                | wire::Action::DirectoryRunGuest
+                | wire::Action::DirectoryReadGuest
+                | wire::Action::DirectoryFinish
         ) {
             #[cfg(windows)]
-            { return directory_task::handle(self, r, out); }
+            {
+                return directory_task::handle(self, r, out);
+            }
             #[cfg(not(windows))]
-            { return Err("selected directories are unavailable on this platform".into()); }
+            {
+                return Err("selected directories are unavailable on this platform".into());
+            }
         }
         if matches!(
             action,
@@ -586,30 +624,37 @@ impl ResponseTarget for WorkbenchState {
     }
 }
 // Explicitly compiled fault fixture only. No environment/run-ID switch or new wire capability.
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 #[doc(hidden)]
 #[derive(Default)]
-pub struct QualifiedStartupRpcFault { consumed: bool }
+pub struct QualifiedStartupRpcFault {
+    consumed: bool,
+}
 
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 #[derive(Debug, PartialEq, Eq)]
 struct QualifiedStartupRpcFixtureError;
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 impl std::fmt::Display for QualifiedStartupRpcFixtureError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str("C28 qualified first PageVersioned RPC fixture failure")
     }
 }
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 impl std::error::Error for QualifiedStartupRpcFixtureError {}
 
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 fn startup_rpc_fixture_before_dispatch(
-    fault: Option<&mut QualifiedStartupRpcFault>, request: &wire::request::Reader<'_>,
+    fault: Option<&mut QualifiedStartupRpcFault>,
+    request: &wire::request::Reader<'_>,
 ) -> Result<()> {
-    let Some(fault) = fault else { return Ok(()); };
-    if !fault.consumed && request.get_action()? == wire::Action::PageVersioned
-        && request.get_limit() == 1 {
+    let Some(fault) = fault else {
+        return Ok(());
+    };
+    if !fault.consumed
+        && request.get_action()? == wire::Action::PageVersioned
+        && request.get_limit() == 1
+    {
         // Permanent before dispatch/error allocation/encoding or any later IO failure.
         fault.consumed = true;
         return Err(Box::new(QualifiedStartupRpcFixtureError));
@@ -617,38 +662,54 @@ fn startup_rpc_fixture_before_dispatch(
     Ok(())
 }
 
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 struct StartupRpcFixtureTarget<'a, T> {
-    target: &'a mut T, fault: Option<&'a mut QualifiedStartupRpcFault>,
+    target: &'a mut T,
+    fault: Option<&'a mut QualifiedStartupRpcFault>,
 }
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 impl<T: ResponseTarget> ResponseTarget for StartupRpcFixtureTarget<'_, T> {
-    fn response_budget(&self, action: wire::Action) -> usize { self.target.response_budget(action) }
-    fn writable(&self) -> bool { self.target.writable() }
-    fn warning(&self) -> Option<&str> { self.target.warning() }
-    fn dispatch(&mut self, request: wire::request::Reader<'_>, out: wire::response::Builder<'_>) -> Result<()> {
+    fn response_budget(&self, action: wire::Action) -> usize {
+        self.target.response_budget(action)
+    }
+    fn writable(&self) -> bool {
+        self.target.writable()
+    }
+    fn warning(&self) -> Option<&str> {
+        self.target.warning()
+    }
+    fn dispatch(
+        &mut self,
+        request: wire::request::Reader<'_>,
+        out: wire::response::Builder<'_>,
+    ) -> Result<()> {
         // respond_target -> handle -> validated_request runs before this method.
         startup_rpc_fixture_before_dispatch(self.fault.as_deref_mut(), &request)?;
         self.target.dispatch(request, out)
     }
 }
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 fn respond_startup_rpc_fixture_target(
-    target: &mut impl ResponseTarget, bytes: &[u8], fault: Option<&mut QualifiedStartupRpcFault>,
+    target: &mut impl ResponseTarget,
+    bytes: &[u8],
+    fault: Option<&mut QualifiedStartupRpcFault>,
 ) -> Result<Vec<u8>> {
     respond_target(&mut StartupRpcFixtureTarget { target, fault }, bytes)
 }
 
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 fn route_qualified_startup_rpc<T>(
-    target: &mut T, bytes: &[u8], fault: &mut QualifiedStartupRpcFault,
+    target: &mut T,
+    bytes: &[u8],
+    fault: &mut QualifiedStartupRpcFault,
     original: impl FnOnce(&mut T, &[u8]) -> Result<Vec<u8>>,
     fixture: impl FnOnce(&mut T, &[u8], &mut QualifiedStartupRpcFault) -> Result<Vec<u8>>,
 ) -> Result<Vec<u8>> {
     // Keep the original private-lane dispatcher; never consume the RPC fault here.
     if bytes.starts_with(crate::agent_task_discovery::MAGIC)
         || bytes.starts_with(crate::agent_product_control::MAGIC)
-        || bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
+        || bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC)
+    {
         return original(target, bytes);
     }
     fixture(target, bytes, fault)
@@ -656,13 +717,16 @@ fn route_qualified_startup_rpc<T>(
 
 // Binary/lib visibility only, compiled out normally. The production call site is
 // exclusively QualificationSlot::respond_startup_rpc_fixture after original-owner checking.
-#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 #[doc(hidden)]
 pub fn respond_qualified_startup_rpc_fixture(
-    host: &mut Workbench, bytes: &[u8], fault: &mut QualifiedStartupRpcFault,
+    host: &mut Workbench,
+    bytes: &[u8],
+    fault: &mut QualifiedStartupRpcFault,
 ) -> Result<Vec<u8>> {
-    route_qualified_startup_rpc(host, bytes, fault, respond,
-        |host, bytes, fault| respond_startup_rpc_fixture_target(host, bytes, Some(fault)))
+    route_qualified_startup_rpc(host, bytes, fault, respond, |host, bytes, fault| {
+        respond_startup_rpc_fixture_target(host, bytes, Some(fault))
+    })
 }
 
 fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8>> {
@@ -720,15 +784,16 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
             // command frame or any mismatched outer identity stays unknown.
             if let Ok(message) = validated_request(bytes, 128 * 1024)
                 && let Ok(request) = message.get_root::<wire::request::Reader>()
-                    && matches!(
-                        request.get_action(),
-                        Ok(wire::Action::EditTasks | wire::Action::EditCard)
-                    ) && text(request.get_id()).is_ok_and(|id| id == no_commit.card_id)
-                        && text(request.get_operation())
-                            .is_ok_and(|operation| operation == no_commit.operation)
-                    {
-                        out.set_ui_code(crate::tasks_content::VERSIONED_NO_COMMIT_UI_CODE);
-                    }
+                && matches!(
+                    request.get_action(),
+                    Ok(wire::Action::EditTasks | wire::Action::EditCard)
+                )
+                && text(request.get_id()).is_ok_and(|id| id == no_commit.card_id)
+                && text(request.get_operation())
+                    .is_ok_and(|operation| operation == no_commit.operation)
+            {
+                out.set_ui_code(crate::tasks_content::VERSIONED_NO_COMMIT_UI_CODE);
+            }
         }
         out.set_error(e.to_string().as_str());
     }
@@ -762,10 +827,16 @@ fn wipe_sensitive_reply(output: &mut Builder<capnp::message::HeapAllocator>) -> 
     // A nested business response can itself carry a one-time credential.
     out.reborrow().get_payload()?.zeroize();
     if out.has_blob_history_delivery_preview() {
-        out.reborrow().get_blob_history_delivery_preview()?.get_packet()?.zeroize();
+        out.reborrow()
+            .get_blob_history_delivery_preview()?
+            .get_packet()?
+            .zeroize();
     }
     if out.has_blob_history_delivery_receipt() {
-        out.reborrow().get_blob_history_delivery_receipt()?.get_output()?.zeroize();
+        out.reborrow()
+            .get_blob_history_delivery_receipt()?
+            .get_output()?
+            .zeroize();
     }
     if out.has_file_result() {
         out.reborrow().get_file_result()?.get_bytes()?.zeroize();
@@ -797,8 +868,10 @@ fn validated_request(
         return Err("host contract mismatch".into());
     }
     let action = r.get_action()?;
-    let has_delivery = r.has_blob_history_delivery_request() || r.has_blob_history_delivery_approval()
-        || r.has_blob_history_delivery_key() || r.has_blob_history_delivery_request_id();
+    let has_delivery = r.has_blob_history_delivery_request()
+        || r.has_blob_history_delivery_approval()
+        || r.has_blob_history_delivery_key()
+        || r.has_blob_history_delivery_request_id();
     if !is_history_delivery_action(action) && has_delivery {
         return Err("history delivery envelope on another action".into());
     }
@@ -811,10 +884,16 @@ fn validated_request(
     Ok(message)
 }
 fn is_history_delivery_action(action: wire::Action) -> bool {
-    matches!(action, wire::Action::BlobHistoryDeliveryPrepare | wire::Action::BlobHistoryDeliveryPreview
-        | wire::Action::BlobHistoryDeliveryApprove | wire::Action::BlobHistoryDeliveryRead
-        | wire::Action::BlobHistoryDeliveryCancel | wire::Action::BlobHistoryDeliveryAcknowledge
-        | wire::Action::BlobHistoryDeliveryDiscover)
+    matches!(
+        action,
+        wire::Action::BlobHistoryDeliveryPrepare
+            | wire::Action::BlobHistoryDeliveryPreview
+            | wire::Action::BlobHistoryDeliveryApprove
+            | wire::Action::BlobHistoryDeliveryRead
+            | wire::Action::BlobHistoryDeliveryCancel
+            | wire::Action::BlobHistoryDeliveryAcknowledge
+            | wire::Action::BlobHistoryDeliveryDiscover
+    )
 }
 fn is_command_frame(action: wire::Action) -> bool {
     matches!(
@@ -861,7 +940,7 @@ fn handle_business(
                 | wire::Action::ExportFile
                 | wire::Action::ImportEditorDraftAsset
                 | wire::Action::ExportEditorDraftAsset
-            | wire::Action::ExportEditorDraftCapture
+                | wire::Action::ExportEditorDraftCapture
                 | wire::Action::CompleteEditorDraftImport
                 | wire::Action::ExportEditorDraftImport
         ) {
@@ -943,7 +1022,8 @@ fn handle_business(
         | wire::Action::ChannelClose
         | wire::Action::ChannelReadSent => {
             return Err(
-                "local channel controls require the original protected native workbench actor".into(),
+                "local channel controls require the original protected native workbench actor"
+                    .into(),
             );
         }
         #[cfg(target_arch = "wasm32")]
@@ -1001,7 +1081,8 @@ fn handle_business(
         | wire::Action::FileChunk
         | wire::Action::FileFinish
         | wire::Action::FileRead
-        | wire::Action::DirectoryPick | wire::Action::DirectoryStart
+        | wire::Action::DirectoryPick
+        | wire::Action::DirectoryStart
         | wire::Action::DirectoryRead
         | wire::Action::DirectoryRunGuest
         | wire::Action::DirectoryReadGuest
@@ -1175,12 +1256,22 @@ fn handle_business(
         }
         wire::Action::PluginApproveFsWatch => {
             #[cfg(windows)]
-            host.configure_external_fs_watch(&id, r.get_sha256()?, r.get_revision(), r.get_fs_watch_approved())?;
+            host.configure_external_fs_watch(
+                &id,
+                r.get_sha256()?,
+                r.get_revision(),
+                r.get_fs_watch_approved(),
+            )?;
             #[cfg(not(windows))]
             return Err("directory observation is unavailable on this platform".into());
         }
         wire::Action::PluginApproveBlobUpload => {
-            host.configure_external_blob_upload(&id, r.get_sha256()?, r.get_revision(), r.get_blob_upload_approved())?;
+            host.configure_external_blob_upload(
+                &id,
+                r.get_sha256()?,
+                r.get_revision(),
+                r.get_blob_upload_approved(),
+            )?;
         }
         wire::Action::PluginApproveIo => {
             let values = r.get_approved_io_capabilities()?;
@@ -1581,7 +1672,8 @@ fn handle_business(
                 return Err("editor recovery source revision changed".into());
             }
             let result = host.resume_editor_recovery(&id, &operation, r.get_sha256()?)?;
-            let record = crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
+            let record =
+                crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
             out.set_revision(result.receipt.revision);
             out.set_payload(&crate::content_api::encode_envelope(
                 crate::content_api_capnp::EnvelopeKind::Commit,
@@ -1626,7 +1718,8 @@ fn handle_business(
             let snapshot = editor_snapshot(upload.get_snapshot()?)?;
             let result =
                 host.edit_card_captured(&operation, &target, revision, &fields, &scope, snapshot)?;
-            let record = crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
+            let record =
+                crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
             out.set_revision(result.receipt.revision);
             out.set_payload(&crate::content_api::encode_envelope(
                 crate::content_api_capnp::EnvelopeKind::Commit,
@@ -1709,7 +1802,7 @@ fn handle_business(
         | wire::Action::DiscardEditorDraft
         | wire::Action::ImportEditorDraftAsset
         | wire::Action::ExportEditorDraftAsset
-            | wire::Action::ExportEditorDraftCapture
+        | wire::Action::ExportEditorDraftCapture
         | wire::Action::BeginEditorDraftImport
         | wire::Action::CompleteEditorDraftImport
         | wire::Action::InspectEditorDraftImport
@@ -1879,22 +1972,33 @@ fn plugin_catalog_reply(
         row.set_fs_watch_max_wire_bytes(entry.fs_watch_max_wire_bytes);
         row.set_fs_watch_max_window_ms(entry.fs_watch_max_window_ms);
         {
-            let mut values = row.reborrow().init_fs_watch_handlers(entry.fs_watch_handlers.len() as u32);
-            for (i, handler) in entry.fs_watch_handlers.iter().enumerate() { values.set(i as u32, handler.as_str()); }
+            let mut values = row
+                .reborrow()
+                .init_fs_watch_handlers(entry.fs_watch_handlers.len() as u32);
+            for (i, handler) in entry.fs_watch_handlers.iter().enumerate() {
+                values.set(i as u32, handler.as_str());
+            }
         }
         row.set_blob_upload_supported(entry.blob_upload_supported);
         row.set_blob_upload_approved(entry.blob_upload_approved);
         row.set_blob_upload_max_bytes(entry.blob_upload_max_bytes);
         {
-            let mut values = row.reborrow().init_blob_planners(entry.blob_planners.len() as u32);
+            let mut values = row
+                .reborrow()
+                .init_blob_planners(entry.blob_planners.len() as u32);
             for (i, (handler, upload_handler)) in entry.blob_planners.iter().enumerate() {
                 let mut value = values.reborrow().get(i as u32);
-                value.set_handler(handler.as_str()); value.set_upload_handler(upload_handler.as_str());
+                value.set_handler(handler.as_str());
+                value.set_upload_handler(upload_handler.as_str());
             }
         }
         {
-            let mut values = row.reborrow().init_blob_upload_handlers(entry.blob_upload_handlers.len() as u32);
-            for (i, value) in entry.blob_upload_handlers.iter().enumerate() { values.set(i as u32, value); }
+            let mut values = row
+                .reborrow()
+                .init_blob_upload_handlers(entry.blob_upload_handlers.len() as u32);
+            for (i, value) in entry.blob_upload_handlers.iter().enumerate() {
+                values.set(i as u32, value);
+            }
         }
         row.set_channel_supported(entry.channel_supported);
         {
@@ -1926,6 +2030,7 @@ fn plugin_catalog_reply(
             let mut declared = row.reborrow().init_mutation_budget();
             declared.set_max_job_bytes(budget.max_job_bytes);
             declared.set_max_bytes(budget.max_bytes);
+            declared.set_max_resources(budget.max_resources);
         }
         for (index, value) in entry.declared.iter().enumerate() {
             if index == 0 {
@@ -2102,15 +2207,25 @@ mod editor_draft_route_tests {
 }
 
 // Synthetic request/encoder tests only: no Workbench, Store, owner, process or OS IO.
-#[cfg(all(test, windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[cfg(all(test, windows, feature = "c28-qualified-startup-rpc-fault-fixture"))]
 mod startup_rpc_fixture_tests {
     use super::*;
     #[derive(Default)]
-    struct DispatchProbe { calls: usize }
+    struct DispatchProbe {
+        calls: usize,
+    }
     impl ResponseTarget for DispatchProbe {
-        fn writable(&self) -> bool { true }
-        fn warning(&self) -> Option<&str> { None }
-        fn dispatch(&mut self, _: wire::request::Reader<'_>, mut out: wire::response::Builder<'_>) -> Result<()> {
+        fn writable(&self) -> bool {
+            true
+        }
+        fn warning(&self) -> Option<&str> {
+            None
+        }
+        fn dispatch(
+            &mut self,
+            _: wire::request::Reader<'_>,
+            mut out: wire::response::Builder<'_>,
+        ) -> Result<()> {
             self.calls += 1;
             out.reborrow().init_ids(1).set(0, "synthetic-dispatch");
             Ok(())
@@ -2118,47 +2233,93 @@ mod startup_rpc_fixture_tests {
     }
     fn request(action: wire::Action, limit: u32, version: u16, hash: &[u8]) -> Vec<u8> {
         let mut message = Builder::new_default();
-        { let mut r = message.init_root::<wire::request::Builder>();
-          r.set_version(version); r.set_digest(hash); r.set_action(action); r.set_limit(limit); }
+        {
+            let mut r = message.init_root::<wire::request::Builder>();
+            r.set_version(version);
+            r.set_digest(hash);
+            r.set_action(action);
+            r.set_limit(limit);
+        }
         serialize::write_message_to_words(&message)
     }
     fn response(raw: &[u8]) -> capnp::message::Reader<serialize::BufferSegments<&[u8]>> {
         let mut rest = raw;
-        let result = serialize::read_message_from_flat_slice(&mut rest, ReaderOptions::new()).unwrap();
-        assert!(rest.is_empty()); result
+        let result =
+            serialize::read_message_from_flat_slice(&mut rest, ReaderOptions::new()).unwrap();
+        assert!(rest.is_empty());
+        result
     }
     #[test]
     fn absent_qualification_state_never_injects() {
         let mut probe = DispatchProbe::default();
-        let raw = respond_startup_rpc_fixture_target(&mut probe,
-            &request(wire::Action::PageVersioned, 1, 1, &digest()), None).unwrap();
-        let message = response(&raw); let r = message.get_root::<wire::response::Reader>().unwrap();
-        assert!(r.get_error().unwrap().is_empty()); assert_eq!(probe.calls, 1);
+        let raw = respond_startup_rpc_fixture_target(
+            &mut probe,
+            &request(wire::Action::PageVersioned, 1, 1, &digest()),
+            None,
+        )
+        .unwrap();
+        let message = response(&raw);
+        let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert!(r.get_error().unwrap().is_empty());
+        assert_eq!(probe.calls, 1);
     }
     #[test]
     fn non_page_and_other_limits_do_not_consume_once() {
-        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
-        for (action, limit) in [(wire::Action::Read, 1), (wire::Action::PageVersioned, 0),
-            (wire::Action::PageVersioned, 2)] {
-            let raw = respond_startup_rpc_fixture_target(&mut probe,
-                &request(action, limit, 1, &digest()), Some(&mut fault)).unwrap();
-            assert!(response(&raw).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
+        let mut probe = DispatchProbe::default();
+        let mut fault = QualifiedStartupRpcFault::default();
+        for (action, limit) in [
+            (wire::Action::Read, 1),
+            (wire::Action::PageVersioned, 0),
+            (wire::Action::PageVersioned, 2),
+        ] {
+            let raw = respond_startup_rpc_fixture_target(
+                &mut probe,
+                &request(action, limit, 1, &digest()),
+                Some(&mut fault),
+            )
+            .unwrap();
+            assert!(
+                response(&raw)
+                    .get_root::<wire::response::Reader>()
+                    .unwrap()
+                    .get_error()
+                    .unwrap()
+                    .is_empty()
+            );
             assert!(!fault.consumed);
         }
         assert_eq!(probe.calls, 3);
     }
     #[test]
     fn invalid_request_validation_does_not_consume_once() {
-        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
-        for raw in [vec![], request(wire::Action::PageVersioned, 1, 2, &digest()),
-            request(wire::Action::PageVersioned, 1, 1, &[0; 32])] {
-            let reply = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
-            assert!(!response(&reply).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
-            assert!(!fault.consumed); assert_eq!(probe.calls, 0);
+        let mut probe = DispatchProbe::default();
+        let mut fault = QualifiedStartupRpcFault::default();
+        for raw in [
+            vec![],
+            request(wire::Action::PageVersioned, 1, 2, &digest()),
+            request(wire::Action::PageVersioned, 1, 1, &[0; 32]),
+        ] {
+            let reply =
+                respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
+            assert!(
+                !response(&reply)
+                    .get_root::<wire::response::Reader>()
+                    .unwrap()
+                    .get_error()
+                    .unwrap()
+                    .is_empty()
+            );
+            assert!(!fault.consumed);
+            assert_eq!(probe.calls, 0);
         }
-        let _ = respond_startup_rpc_fixture_target(&mut probe,
-            &request(wire::Action::PageVersioned, 1, 1, &digest()), Some(&mut fault)).unwrap();
-        assert!(fault.consumed); assert_eq!(probe.calls, 0);
+        let _ = respond_startup_rpc_fixture_target(
+            &mut probe,
+            &request(wire::Action::PageVersioned, 1, 1, &digest()),
+            Some(&mut fault),
+        )
+        .unwrap();
+        assert!(fault.consumed);
+        assert_eq!(probe.calls, 0);
     }
     #[test]
     fn first_matching_request_is_typed_and_permanently_consumed() {
@@ -2167,64 +2328,136 @@ mod startup_rpc_fixture_tests {
         let request = message.get_root::<wire::request::Reader>().unwrap();
         let mut fault = QualifiedStartupRpcFault::default();
         let error = startup_rpc_fixture_before_dispatch(Some(&mut fault), &request).unwrap_err();
-        assert_eq!(error.downcast_ref::<QualifiedStartupRpcFixtureError>(), Some(&QualifiedStartupRpcFixtureError));
+        assert_eq!(
+            error.downcast_ref::<QualifiedStartupRpcFixtureError>(),
+            Some(&QualifiedStartupRpcFixtureError)
+        );
         assert!(fault.consumed);
         assert!(startup_rpc_fixture_before_dispatch(Some(&mut fault), &request).is_ok());
         assert!(fault.consumed);
     }
     #[test]
     fn original_encoder_delivers_error_without_dispatch_then_allows_later_request() {
-        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+        let mut probe = DispatchProbe::default();
+        let mut fault = QualifiedStartupRpcFault::default();
         let raw = request(wire::Action::PageVersioned, 1, 1, &digest());
         let first = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
-        let message = response(&first); let r = message.get_root::<wire::response::Reader>().unwrap();
-        assert_eq!(r.get_version(), 1); assert_eq!(r.get_digest().unwrap(), digest());
-        assert_eq!(r.get_error().unwrap().to_str().unwrap(), QualifiedStartupRpcFixtureError.to_string());
-        assert!(r.get_payload().unwrap().is_empty()); assert_eq!(r.get_ids().unwrap().len(), 0);
-        assert!(fault.consumed); assert_eq!(probe.calls, 0);
-        let second = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
-        let message = response(&second); let r = message.get_root::<wire::response::Reader>().unwrap();
-        assert!(r.get_error().unwrap().is_empty()); assert_eq!(r.get_ids().unwrap().len(), 1);
-        assert_eq!(probe.calls, 1); assert!(fault.consumed);
+        let message = response(&first);
+        let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert_eq!(r.get_version(), 1);
+        assert_eq!(r.get_digest().unwrap(), digest());
+        assert_eq!(
+            r.get_error().unwrap().to_str().unwrap(),
+            QualifiedStartupRpcFixtureError.to_string()
+        );
+        assert!(r.get_payload().unwrap().is_empty());
+        assert_eq!(r.get_ids().unwrap().len(), 0);
+        assert!(fault.consumed);
+        assert_eq!(probe.calls, 0);
+        let second =
+            respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
+        let message = response(&second);
+        let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert!(r.get_error().unwrap().is_empty());
+        assert_eq!(r.get_ids().unwrap().len(), 1);
+        assert_eq!(probe.calls, 1);
+        assert!(fault.consumed);
     }
 
     #[test]
     fn private_magic_routes_delegate_original_without_consuming_once() {
         // This proves routing, not the native owner or private service implementations.
-        let magics: [&[u8]; 3] = [crate::agent_task_discovery::MAGIC,
-            crate::agent_product_control::MAGIC, morrow_agent_catalog_admin_v1::MAGIC];
+        let magics: [&[u8]; 3] = [
+            crate::agent_task_discovery::MAGIC,
+            crate::agent_product_control::MAGIC,
+            morrow_agent_catalog_admin_v1::MAGIC,
+        ];
         for magic in magics {
-            let mut raw = magic.to_vec(); raw.extend_from_slice(b"synthetic-route-payload");
-            let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
-            let mut original_calls = 0; let mut fixture_calls = 0;
-            let reply = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
-                |_, bytes| { original_calls += 1; Ok(bytes.to_vec()) },
-                |target, bytes, fault| { fixture_calls += 1;
-                    respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
-            assert_eq!(reply, raw); assert_eq!(original_calls, 1); assert_eq!(fixture_calls, 0);
-            assert_eq!(probe.calls, 0); assert!(!fault.consumed);
+            let mut raw = magic.to_vec();
+            raw.extend_from_slice(b"synthetic-route-payload");
+            let mut probe = DispatchProbe::default();
+            let mut fault = QualifiedStartupRpcFault::default();
+            let mut original_calls = 0;
+            let mut fixture_calls = 0;
+            let reply = route_qualified_startup_rpc(
+                &mut probe,
+                &raw,
+                &mut fault,
+                |_, bytes| {
+                    original_calls += 1;
+                    Ok(bytes.to_vec())
+                },
+                |target, bytes, fault| {
+                    fixture_calls += 1;
+                    respond_startup_rpc_fixture_target(target, bytes, Some(fault))
+                },
+            )
+            .unwrap();
+            assert_eq!(reply, raw);
+            assert_eq!(original_calls, 1);
+            assert_eq!(fixture_calls, 0);
+            assert_eq!(probe.calls, 0);
+            assert!(!fault.consumed);
         }
     }
     #[test]
     fn capnp_route_uses_original_encoder_and_consumes_once() {
         let raw = request(wire::Action::PageVersioned, 1, 1, &digest());
-        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
-        let mut original_calls = 0; let mut fixture_calls = 0;
-        let first = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
-            |_, _| { original_calls += 1; Err("unexpected original private lane".into()) },
-            |target, bytes, fault| { fixture_calls += 1;
-                respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
-        let message = response(&first); let r = message.get_root::<wire::response::Reader>().unwrap();
-        assert_eq!(r.get_version(), 1); assert_eq!(r.get_digest().unwrap(), digest());
-        assert_eq!(r.get_error().unwrap().to_str().unwrap(), QualifiedStartupRpcFixtureError.to_string());
-        assert_eq!(original_calls, 0); assert_eq!(fixture_calls, 1);
-        assert!(fault.consumed); assert_eq!(probe.calls, 0);
-        let second = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
-            |_, _| { original_calls += 1; Err("unexpected original private lane".into()) },
-            |target, bytes, fault| { fixture_calls += 1;
-                respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
-        assert!(response(&second).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
-        assert_eq!(original_calls, 0); assert_eq!(fixture_calls, 2);
-        assert!(fault.consumed); assert_eq!(probe.calls, 1);
+        let mut probe = DispatchProbe::default();
+        let mut fault = QualifiedStartupRpcFault::default();
+        let mut original_calls = 0;
+        let mut fixture_calls = 0;
+        let first = route_qualified_startup_rpc(
+            &mut probe,
+            &raw,
+            &mut fault,
+            |_, _| {
+                original_calls += 1;
+                Err("unexpected original private lane".into())
+            },
+            |target, bytes, fault| {
+                fixture_calls += 1;
+                respond_startup_rpc_fixture_target(target, bytes, Some(fault))
+            },
+        )
+        .unwrap();
+        let message = response(&first);
+        let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert_eq!(r.get_version(), 1);
+        assert_eq!(r.get_digest().unwrap(), digest());
+        assert_eq!(
+            r.get_error().unwrap().to_str().unwrap(),
+            QualifiedStartupRpcFixtureError.to_string()
+        );
+        assert_eq!(original_calls, 0);
+        assert_eq!(fixture_calls, 1);
+        assert!(fault.consumed);
+        assert_eq!(probe.calls, 0);
+        let second = route_qualified_startup_rpc(
+            &mut probe,
+            &raw,
+            &mut fault,
+            |_, _| {
+                original_calls += 1;
+                Err("unexpected original private lane".into())
+            },
+            |target, bytes, fault| {
+                fixture_calls += 1;
+                respond_startup_rpc_fixture_target(target, bytes, Some(fault))
+            },
+        )
+        .unwrap();
+        assert!(
+            response(&second)
+                .get_root::<wire::response::Reader>()
+                .unwrap()
+                .get_error()
+                .unwrap()
+                .is_empty()
+        );
+        assert_eq!(original_calls, 0);
+        assert_eq!(fixture_calls, 2);
+        assert!(fault.consumed);
+        assert_eq!(probe.calls, 1);
     }
 }

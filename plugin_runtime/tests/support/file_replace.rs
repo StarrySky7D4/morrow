@@ -1,4 +1,4 @@
-//! Windows Replace must fail closed until the native effect has an atomic target precondition.
+//! Original managed conditional replacement: immutable claim, exact outcome, and no replay.
 use super::*;
 use morrow_core::{
     file_mutation::{Disposition, MutationRequest, RequestRecord, Target},
@@ -30,7 +30,7 @@ fn setup(
     PathBuf,
 ) {
     let caps = BTreeSet::from([IoCapability::FileReplace]);
-    let mut f = Fixture::with_capabilities(true, 2, 100_000, caps.clone());
+    let mut f = Fixture::with_capabilities(true, 8, 100_000, caps.clone());
     let instance = f.connect();
     let binding = f
         .manager
@@ -134,55 +134,83 @@ fn prepared(f: &Fixture, request: &RequestRecord, staged: bool) {
 }
 
 #[test]
-fn real_selected_replace_repeatedly_fails_closed_without_claim_or_file_effect() {
+fn real_selected_replace_records_exact_outcome_and_repeated_calls_cannot_dispatch_again() {
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(true);
+    let before = binding.usage();
+    let outcome = broker
+        .replace(&f.manager, &mut f.host, &instance, &request, || 5)
+        .unwrap();
+    assert_eq!(
+        outcome.result(),
+        morrow_core::file_effect::ReplaceResult::Replaced
+    );
+    assert_eq!(fs::read(&target).unwrap(), REPLACEMENT);
+    assert_eq!(fs::read(&alias).unwrap(), ORIGINAL);
+    assert_eq!(binding.usage().resources, 0);
+    assert_eq!(binding.usage().jobs, 0);
+    let command = request.command().unwrap();
+    assert_eq!(
+        binding.usage().bytes - before.bytes,
+        command.request_bytes + command.response_limit + REPLACEMENT.len() as u64
+    );
+    assert_eq!(
+        f.host
+            .store_local()
+            .lookup_io_intent(SUBJECT, OP)
+            .unwrap()
+            .unwrap()
+            .phase(),
+        Phase::Observed
+    );
+    assert_eq!(
+        f.host
+            .store_local()
+            .io_material(SUBJECT, OP, Kind::Response)
+            .unwrap()
+            .unwrap()
+            .payload(),
+        outcome.container()
+    );
     let usage = binding.usage();
     let pending = f.host.store_local().pending(0, 10).unwrap();
-    for tick in [5, 6, 7] {
+    for tick in [6, 7, 8] {
         assert!(matches!(
             broker.replace(&f.manager, &mut f.host, &instance, &request, || tick),
-            Err(ReplaceError::UnsupportedConditionalReplacement)
+            Err(ReplaceError::AlreadyDispatched)
         ));
         assert_eq!(binding.usage(), usage);
         assert_eq!(f.host.store_local().pending(0, 10).unwrap(), pending);
-        prepared(&f, &request, true);
-        assert_eq!(fs::read(&target).unwrap_err().raw_os_error(), Some(32));
+        assert_eq!(fs::read(&target).unwrap(), REPLACEMENT);
     }
-    let names: Vec<_> = fs::read_dir(f._dir.path())
-        .unwrap()
-        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
-        .collect();
-    assert!(
-        !names
-            .iter()
-            .any(|name| name.starts_with(".morrow-") && name.ends_with(".tmp"))
-    );
-    assert_eq!(broker.len(), 1);
-    assert_eq!(binding.usage().resources, 1);
-    broker
-        .release(
-            &f.manager,
-            &f.host,
-            &instance,
-            request.request().target.reference,
-            8,
-        )
-        .unwrap();
-    assert_eq!(binding.usage().resources, 0);
-    assert_eq!(fs::read(&target).unwrap(), ORIGINAL);
-    assert_eq!(fs::read(&alias).unwrap(), ORIGINAL);
+    assert!(!fs::read_dir(f._dir.path()).unwrap().any(|entry| {
+        entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with(".morrow-replace-")
+    }));
+    assert_eq!(broker.len(), 0);
+    f.host.store_local().integrity_check().unwrap();
     instance.close(&mut f.host).unwrap();
 }
 
 #[test]
-fn unsupported_replace_does_not_require_staged_bytes_or_charge_execution_budget() {
+fn missing_durable_content_keeps_prepared_and_charges_only_the_attempted_execution() {
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(false);
     let usage = binding.usage();
     assert!(matches!(
         broker.replace(&f.manager, &mut f.host, &instance, &request, || 4),
-        Err(ReplaceError::UnsupportedConditionalReplacement)
+        Err(ReplaceError::Persistence(
+            morrow_core::Error::EvidenceUnavailable
+        ))
     ));
-    assert_eq!(binding.usage(), usage);
+    assert_eq!(binding.usage().resources, usage.resources);
+    assert_eq!(binding.usage().jobs, usage.jobs);
+    let command = request.command().unwrap();
+    assert_eq!(
+        binding.usage().bytes - usage.bytes,
+        command.request_bytes + command.response_limit + REPLACEMENT.len() as u64
+    );
     prepared(&f, &request, false);
     broker
         .release(
@@ -193,13 +221,14 @@ fn unsupported_replace_does_not_require_staged_bytes_or_charge_execution_budget(
             5,
         )
         .unwrap();
+    assert_eq!(binding.usage().resources, 0);
     assert_eq!(fs::read(&target).unwrap(), ORIGINAL);
     assert_eq!(fs::read(&alias).unwrap(), ORIGINAL);
     instance.close(&mut f.host).unwrap();
 }
 
 #[test]
-fn foreign_owner_or_wrong_plan_is_rejected_before_support_status_is_revealed() {
+fn foreign_owner_or_wrong_plan_is_rejected_before_dispatch_or_budget_charge() {
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(true);
     let foreign = f.connect();
     let usage = binding.usage();

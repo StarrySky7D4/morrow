@@ -23,6 +23,7 @@ extern "C" {
 #define MP_MUTATION_QUERY 6u
 #define MP_MUTATION_CANCEL_PLAN 7u
 #define MP_MUTATION_RELEASE 8u
+#define MP_MUTATION_PREPARE_REPLACE 9u
 
 #define MP_MUTATION_STATUS_INVALID 0u
 #define MP_MUTATION_STATUS_COMPLETED 1u
@@ -54,7 +55,7 @@ extern "C" {
  * host alone binds a selection lease to current rights, target and approval.
  * No path, target, approval, scope or content authority is accepted here.
  * Every unused span must be {NULL,0}; every unused scalar must be zero:
- * only PREPARE_CREATE uses content_length/content_sha256; only CHUNK uses
+ * PREPARE_CREATE and PREPARE_REPLACE use content_length/content_sha256; CHUNK uses
  * offset/bytes. All descriptors, output slots and spans must be valid,
  * aligned where required, disjoint caller-owned memory during each call.
  * This ABI cannot make an arbitrary invalid address safe to dereference. */
