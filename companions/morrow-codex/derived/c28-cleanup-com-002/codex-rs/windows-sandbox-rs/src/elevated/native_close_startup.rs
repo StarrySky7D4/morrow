@@ -1,5 +1,6 @@
 //! Two ordered startup writes using the original pre-staged pipe alias and one
 //! bounded owned native worker at a time. No extra execution slot or global map.
+use super::native_wait::{self, NativeWaitMode};
 use std::fs::File;
 use std::io;
 use std::os::windows::io::AsRawHandle;
@@ -7,7 +8,6 @@ use std::sync::{Arc,Mutex,MutexGuard};
 use std::thread::JoinHandle;
 use std::time::Instant;
 use windows_sys::Win32::Foundation::{HANDLE,WAIT_OBJECT_0};
-use windows_sys::Win32::System::Threading::WaitForSingleObject;
 fn copy(error:&io::Error)->io::Error {
     error.raw_os_error().map(io::Error::from_raw_os_error)
         .unwrap_or_else(||io::Error::new(error.kind(),error.to_string()))
@@ -60,21 +60,24 @@ impl NativeStartupWriter {
         self.reap(deadline)
     }
     pub(super) fn reap(&self,deadline:Instant)->io::Result<()> {
+        native_wait::run_blocking(self.reap_with_mode(deadline, NativeWaitMode::Blocking))
+    }
+    pub(super) async fn reap_with_mode(&self,deadline:Instant,mode:NativeWaitMode)->io::Result<()> {
         let raw={let mut state=self.lock();
             if state.reaping || (state.in_flight && state.worker.is_none() && state.first_error.is_none()) {
                 return Err(io::Error::new(io::ErrorKind::WouldBlock,"same original startup writer is loaned/spawning"));
             }
-            state.reaping=true;state.worker.as_ref().map(|w|w.as_raw_handle() as HANDLE)
+            state.reaping=true;state.worker.as_ref().map(|w|w.as_raw_handle() as usize)
         };
         struct ReapLoan<'a>(&'a NativeStartupWriter);
         impl Drop for ReapLoan<'_> {fn drop(&mut self){self.0.lock().reaping=false;}}
         let _loan=ReapLoan(self);
         if let Some(raw)=raw {
-            let millis=super::owned_connect_worker::finite_wait_ms(deadline.saturating_duration_since(Instant::now()));
-            let wait=unsafe{WaitForSingleObject(raw,millis)};
-            if wait!=WAIT_OBJECT_0 {
-                return Err(self.fail(if wait==0x102 {io::Error::new(io::ErrorKind::TimedOut,"original v8 startup writer retained")}
-                    else{io::Error::last_os_error()}));
+            let observed=native_wait::wait_with(mode,deadline,|millis|native_wait::observe_original(raw as HANDLE,millis)).await;
+            if observed.return_value!=WAIT_OBJECT_0 {
+                return Err(self.fail(if observed.return_value==0x102 {io::Error::new(io::ErrorKind::TimedOut,"original v8 startup writer retained")}
+                    else{observed.os_error.map(io::Error::from_raw_os_error)
+                        .unwrap_or_else(||io::Error::other("unexpected original startup worker wait result"))}));
             }
             let worker=self.lock().worker.take().expect("same original startup worker");
             let outcome=worker.join().unwrap_or_else(|_|Err(io::Error::other("original v8 startup writer panicked")));
@@ -178,4 +181,38 @@ mod tests {
         assert!(!attempted.load(std::sync::atomic::Ordering::SeqCst));
         assert_eq!(owner.take_original_after_both_joins().unwrap_err().raw_os_error(),Some(5));
     }
+    #[tokio::test(flavor = "current_thread")]
+    async fn cooperative_startup_reap_keeps_original_worker_and_yields_to_release_timer() {
+        let owner=NativeStartupWriter::new(tempfile::tempfile().unwrap());
+        let original=owner.lock().original.as_ref().unwrap().as_raw_handle() as usize;
+        let (tx,rx)=std::sync::mpsc::channel::<()>();
+        let worker=std::thread::spawn(move || {rx.recv().unwrap();Ok(())});
+        {let mut state=owner.lock();state.in_flight=true;state.worker=Some(worker);}
+        let release=async move {tokio::time::sleep(Duration::from_millis(15)).await;tx.send(()).unwrap();};
+        let (result,())=tokio::join!(owner.reap_with_mode(Instant::now()+Duration::from_secs(2),NativeWaitMode::Cooperative),release);
+        result.unwrap();let state=owner.lock();assert_eq!(state.completed,1);assert!(!state.in_flight);
+        assert!(state.worker.is_none());assert!(state.first_error.is_none());
+        assert_eq!(state.original.as_ref().unwrap().as_raw_handle() as usize,original);
+    }
+
+    #[tokio::test(flavor = "current_thread")]
+    async fn cancelling_cooperative_startup_reap_restores_loan_and_original_worker() {
+        let owner=NativeStartupWriter::new(tempfile::tempfile().unwrap());
+        let (tx,rx)=std::sync::mpsc::channel::<()>();
+        let worker=std::thread::spawn(move || {rx.recv().unwrap();Ok(())});
+        let original_worker=worker.as_raw_handle() as usize;
+        {let mut state=owner.lock();state.in_flight=true;state.worker=Some(worker);}
+        {
+            let future=owner.reap_with_mode(Instant::now()+Duration::from_secs(2),NativeWaitMode::Cooperative);
+            tokio::pin!(future);
+            assert!(tokio::time::timeout(Duration::from_millis(20),&mut future).await.is_err());
+            assert!(owner.lock().reaping);
+        }
+        {let state=owner.lock();assert!(!state.reaping);assert!(state.in_flight);
+            assert!(state.first_error.is_none());assert_eq!(state.completed,0);
+            assert_eq!(state.worker.as_ref().unwrap().as_raw_handle() as usize,original_worker);}
+        tx.send(()).unwrap();owner.reap_with_mode(Instant::now()+Duration::from_secs(2),NativeWaitMode::Cooperative).await.unwrap();
+        assert_eq!(owner.lock().completed,1);assert!(owner.lock().worker.is_none());
+    }
+
 }

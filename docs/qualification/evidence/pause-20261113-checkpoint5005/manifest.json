@@ -1,0 +1,309 @@
+{
+  "status": "PUBLIC_PAUSE_RECEIPTS_SOURCE_BOUND_NOT_RELEASE_ACCEPTANCE",
+  "updated": "2026-11-12T23:20:37.035995+00:00",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "files": [
+    {
+      "path": "checkpoint.json",
+      "bytes": 192024,
+      "sha256": "3f1f6b1a1238a060385b5de877410f61fb59153ad0e78a0b9969ca4048d05319",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5007\\result.json",
+        "bytes": 192024,
+        "sha256": "3f1f6b1a1238a060385b5de877410f61fb59153ad0e78a0b9969ca4048d05319"
+      }
+    },
+    {
+      "path": "source-byte-equivalence.json",
+      "bytes": 14729,
+      "sha256": "a5b1286a8935d3e3627995e446fa5eddfaa40ff2845616038c0d8e497d009107",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5005\\source-byte-equivalence.json",
+        "bytes": 14729,
+        "sha256": "a5b1286a8935d3e3627995e446fa5eddfaa40ff2845616038c0d8e497d009107"
+      }
+    },
+    {
+      "path": "vm-at-pause.json",
+      "bytes": 602,
+      "sha256": "2624ab7e39e1835a53dc9750f7911b2f7a0d7c23123dd8743120c73dff3727a4",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5005\\vm-at-pause.json",
+        "bytes": 602,
+        "sha256": "2624ab7e39e1835a53dc9750f7911b2f7a0d7c23123dd8743120c73dff3727a4"
+      }
+    },
+    {
+      "path": "sdk4700-at-pause.json",
+      "bytes": 3124,
+      "sha256": "cf219ae921bdc1bdd8a22e50f2ea6992362f6d985342e05ad122ecc6de808905",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5005\\sdk4700-at-pause.json",
+        "bytes": 3124,
+        "sha256": "cf219ae921bdc1bdd8a22e50f2ea6992362f6d985342e05ad122ecc6de808905"
+      }
+    },
+    {
+      "path": "integrated-regressions4562.json",
+      "bytes": 2980,
+      "sha256": "3ada9093c139ea3c332cf658833693f30e0450392ff5ee265f394d245ef4e9c4",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\result.json",
+        "bytes": 2980,
+        "sha256": "3ada9093c139ea3c332cf658833693f30e0450392ff5ee265f394d245ef4e9c4"
+      }
+    },
+    {
+      "path": "L0-current4683.json",
+      "bytes": 967,
+      "sha256": "8d2235f67b34e9a2176909081fcc04397271bdb7b8de827d8b25f03d9b9b41fe",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-l0-gate-4683\\result.json",
+        "bytes": 967,
+        "sha256": "8d2235f67b34e9a2176909081fcc04397271bdb7b8de827d8b25f03d9b9b41fe"
+      }
+    },
+    {
+      "path": "L1-L2-current4690.json",
+      "bytes": 1128,
+      "sha256": "06c2bbe82d7f2e385a3772a4be129136c82c7a5d789630f4e9fa297182abc905",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-l1-l2-review-4690\\result.json",
+        "bytes": 1128,
+        "sha256": "06c2bbe82d7f2e385a3772a4be129136c82c7a5d789630f4e9fa297182abc905"
+      }
+    },
+    {
+      "path": "normal4600.json",
+      "bytes": 1281,
+      "sha256": "2d805ed257dcc3b717159287ee43d1e6f26585f8d267468f9beb37f2d153d1aa",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case4600-normal47-summary.json",
+        "bytes": 1281,
+        "sha256": "2d805ed257dcc3b717159287ee43d1e6f26585f8d267468f9beb37f2d153d1aa"
+      }
+    },
+    {
+      "path": "caller4750.json",
+      "bytes": 1329,
+      "sha256": "2ea248b3600324a65677eb928136880037ae78ad6f9e933187377e014b927636",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case4750-summary.json",
+        "bytes": 1329,
+        "sha256": "2ea248b3600324a65677eb928136880037ae78ad6f9e933187377e014b927636"
+      }
+    },
+    {
+      "path": "logon4800.json",
+      "bytes": 1321,
+      "sha256": "6e3fbed09e19a747bb115747a7e7fde360405186fd5c81c79d42a0d8d05890db",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case4800-summary.json",
+        "bytes": 1321,
+        "sha256": "6e3fbed09e19a747bb115747a7e7fde360405186fd5c81c79d42a0d8d05890db"
+      }
+    },
+    {
+      "path": "shared4850.json",
+      "bytes": 1316,
+      "sha256": "a0d35825251f2c65a4897126d9ca0be426b6a60f83f2d9e7013cc04273aabfa9",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case4850-summary.json",
+        "bytes": 1316,
+        "sha256": "a0d35825251f2c65a4897126d9ca0be426b6a60f83f2d9e7013cc04273aabfa9"
+      }
+    },
+    {
+      "path": "token4900.json",
+      "bytes": 3410,
+      "sha256": "c125faa4961519bb9cd74e5fcbb39837079b21cdc44c11c902839a6eeadb5dd5",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261106-001\\case4900-summary.json",
+        "bytes": 3410,
+        "sha256": "c125faa4961519bb9cd74e5fcbb39837079b21cdc44c11c902839a6eeadb5dd5"
+      }
+    },
+    {
+      "path": "watch47-build4951.json",
+      "bytes": 1713,
+      "sha256": "8e3ecddef6ddbf0111ded6b55dd7b80802ad26e23620821fad922350677b19e0",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-build-4951\\result.json",
+        "bytes": 1713,
+        "sha256": "8e3ecddef6ddbf0111ded6b55dd7b80802ad26e23620821fad922350677b19e0"
+      }
+    },
+    {
+      "path": "watch47-runtime4952.json",
+      "bytes": 39708,
+      "sha256": "969ab9a29df135861e8d718960a9927c0aa88b662a65028eae95a94d6ea71bcd",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-runtime-4952\\result.json",
+        "bytes": 39708,
+        "sha256": "969ab9a29df135861e8d718960a9927c0aa88b662a65028eae95a94d6ea71bcd"
+      }
+    },
+    {
+      "path": "watch-native-review4956.json",
+      "bytes": 10070,
+      "sha256": "a3611aa63790438fbc8e7079c4c3f139dfb89d29500a1bcf7488f97cfcaa0feb",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\result.json",
+        "bytes": 10070,
+        "sha256": "a3611aa63790438fbc8e7079c4c3f139dfb89d29500a1bcf7488f97cfcaa0feb"
+      }
+    },
+    {
+      "path": "dacl-build4961.json",
+      "bytes": 1941,
+      "sha256": "6db98e245de60e08dda94ea1488bc36846d44dbb7043a7df6241819ee60f1502",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-build-original-4961\\result.json",
+        "bytes": 1941,
+        "sha256": "6db98e245de60e08dda94ea1488bc36846d44dbb7043a7df6241819ee60f1502"
+      }
+    },
+    {
+      "path": "dacl-roles105.json",
+      "bytes": 2225,
+      "sha256": "026c9e51770d26bba30790f816ad4d1a45a03cd3cda56a1d15b87d3be0915949",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-105\\result.json",
+        "bytes": 2225,
+        "sha256": "026c9e51770d26bba30790f816ad4d1a45a03cd3cda56a1d15b87d3be0915949"
+      }
+    },
+    {
+      "path": "dacl5000-unexecuted-recipe.json",
+      "bytes": 1085,
+      "sha256": "d466512165b4c01c5c9f79f1cea3de60f9fa932f17af2e50f264374a1113fefb",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-recipe-5001\\result.json",
+        "bytes": 1085,
+        "sha256": "d466512165b4c01c5c9f79f1cea3de60f9fa932f17af2e50f264374a1113fefb"
+      }
+    },
+    {
+      "path": "token-memory-correction4982.json",
+      "bytes": 2519,
+      "sha256": "855add2621560e21ec2a7f2601d30c5ab1960be9dd479d2ddfb463337bf97f94",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-memory-label-correction-4982\\result.json",
+        "bytes": 2519,
+        "sha256": "855add2621560e21ec2a7f2601d30c5ab1960be9dd479d2ddfb463337bf97f94"
+      }
+    },
+    {
+      "path": "token-memory-continuation4983.json",
+      "bytes": 2320,
+      "sha256": "1c293f41b2769b128ade2c50825a1dea364df68cd13e861e8598a75f54e43317",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-continuation-4983\\result.json",
+        "bytes": 2320,
+        "sha256": "1c293f41b2769b128ade2c50825a1dea364df68cd13e861e8598a75f54e43317"
+      }
+    },
+    {
+      "path": "token-memory4941.json",
+      "bytes": 4064,
+      "sha256": "d6bea14abfb973962aadcefa12f66920d840b931e008398dc1b42269cec705c1",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-checkpoint-memory-equivalence-4941\\result.json",
+        "bytes": 4064,
+        "sha256": "d6bea14abfb973962aadcefa12f66920d840b931e008398dc1b42269cec705c1"
+      }
+    },
+    {
+      "path": "token-retained-review4945.json",
+      "bytes": 57906,
+      "sha256": "93bea26e4db7677fe5c8abc25507a00ab5961f7a01f52d1601daab0c81d6cc59",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-case4900-retained-checkpoint-review-4945\\result.json",
+        "bytes": 57906,
+        "sha256": "93bea26e4db7677fe5c8abc25507a00ab5961f7a01f52d1601daab0c81d6cc59"
+      }
+    },
+    {
+      "path": "sdk4700-zero-events.json",
+      "bytes": 106,
+      "sha256": "46d0df581f3592f9235fe81e06cd242b392c02eb635138de1a5ac45c7370aa13",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-watch-events-4702\\result.json",
+        "bytes": 106,
+        "sha256": "46d0df581f3592f9235fe81e06cd242b392c02eb635138de1a5ac45c7370aa13"
+      }
+    },
+    {
+      "path": "sdk4700-result-read.md",
+      "bytes": 670,
+      "sha256": "7425a323f30ea5c09348bda7f93cf99aef3e2da50ddf4fc70bc711ea270e144d",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\result-read.md",
+        "bytes": 670,
+        "sha256": "7425a323f30ea5c09348bda7f93cf99aef3e2da50ddf4fc70bc711ea270e144d"
+      }
+    },
+    {
+      "path": "sdk4700-ack-unconfirmed.md",
+      "bytes": 552,
+      "sha256": "9e8a28a87b0145167a65842c74ef0c2ce25ad8e6bd6ab89c70002aa4d7d6b0cd",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\retirement-attempt.md",
+        "bytes": 552,
+        "sha256": "9e8a28a87b0145167a65842c74ef0c2ce25ad8e6bd6ab89c70002aa4d7d6b0cd"
+      }
+    },
+    {
+      "path": "restore4970-native-returned.json",
+      "bytes": 152,
+      "sha256": "5cbd4d703331fe682fda90c76bce8e917e764137f6f5ff2f45f21c16fa80b89a",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-clean-restore-4970\\native-restore-returned.json",
+        "bytes": 152,
+        "sha256": "5cbd4d703331fe682fda90c76bce8e917e764137f6f5ff2f45f21c16fa80b89a"
+      }
+    },
+    {
+      "path": "restore4970.json",
+      "bytes": 56414,
+      "sha256": "0528521b50af7bffc9c8c6d769ac4ffb3839035e37473e80a97b19e17b8d2b69",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-clean-restore-4970\\result.json",
+        "bytes": 56414,
+        "sha256": "0528521b50af7bffc9c8c6d769ac4ffb3839035e37473e80a97b19e17b8d2b69"
+      }
+    },
+    {
+      "path": "restore4970-process-returned.json",
+      "bytes": 523,
+      "sha256": "6c9da004a7690f41107f1f9511abaa28406f9fe9ba1f6bf13ac6ee9333e4deef",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint-restore-original-4970\\returned.json",
+        "bytes": 523,
+        "sha256": "6c9da004a7690f41107f1f9511abaa28406f9fe9ba1f6bf13ac6ee9333e4deef"
+      }
+    },
+    {
+      "path": "current-p2-matrix.json",
+      "bytes": 14670,
+      "sha256": "9e2b90b66245067abad92bdb8851f595b553b5a457f61935a36f1d5ce4d294b0",
+      "local_original": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5007\\current-p2-matrix.json",
+        "bytes": 14670,
+        "sha256": "9e2b90b66245067abad92bdb8851f595b553b5a457f61935a36f1d5ce4d294b0"
+      }
+    }
+  ],
+  "local_raw_logs_and_VM_images_not_uploaded": true,
+  "credentials_included": false,
+  "screenshots_included": false,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "final_local_checkpoint": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\checkpoint5007\\result.json",
+    "bytes": 192024,
+    "sha256": "3f1f6b1a1238a060385b5de877410f61fb59153ad0e78a0b9969ca4048d05319"
+  }
+}

@@ -66,6 +66,8 @@ pub struct Workflow {
     proposal: Option<GuestProposal>,
     claim: Option<GuestClaim>,
     running: Option<RunningExecution>,
+    // Original claim identity for a passive failure snapshot, never a new query.
+    running_identity: Option<morrow_agent_session_exec_v1_r2::safe_exec::ToolIdentity>,
     evidence: Option<ControlEvidence>,
     joined: bool,
     attempts: std::collections::BTreeSet<String>,
@@ -106,6 +108,7 @@ impl Workflow {
             proposal: None,
             claim: None,
             running: None,
+            running_identity: None,
             evidence: None,
             joined: false,
             attempts: Default::default(),
@@ -709,6 +712,7 @@ impl Workflow {
                     runner_history,
                     native_binding,
                 ));
+                self.running_identity = Some(observation.identity.clone());
                 // The original running owner is installed before this data-only read.
                 let runner_owner = self.running.as_ref()
                     .map(|run| run.runner_observation(&observation.identity));
@@ -722,7 +726,10 @@ impl Workflow {
                 ensure!(self.basic, "basic observation requires sealed-basic selection");
                 let run = self.running.as_ref().ok_or_else(|| anyhow!("real child handle absent"))?;
                 let fixture = self.basic_fixture.as_ref().ok_or_else(|| anyhow!("owned basic fixture absent"))?;
-                let evidence = crate::basic::observe(workbench, run.key, run.handle, &self.nonce, &fixture.security)?;
+                let evidence = crate::native_observation::with_rejected_basic_history(
+                    crate::basic::observe(workbench, run.key, run.handle, &self.nonce, &fixture.security),
+                    || self.running_identity.as_ref().map(|identity| run.runner_observation(identity)),
+                )?;
                 fixture.verify(&self.nonce)?;
                 let result = serde_json::json!({"basic_only":true,"stdout_sha256":crate::preflight::hex(&morrow_agent_session_exec_v1_r2::hash(&evidence.stdout)),
                     "stderr_sha256":crate::preflight::hex(&morrow_agent_session_exec_v1_r2::hash(&evidence.stderr)),

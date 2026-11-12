@@ -135,6 +135,36 @@ Future<void> fill(WidgetTester tester) async {
 }
 
 void main() {
+  for (final language in ['en', 'zh']) {
+    testWidgets(
+      'watch receipt count and byte labels remain distinct in $language',
+      (t) async {
+        final b = Fake();
+        await t.pumpWidget(page(b, language: language));
+        await t.pumpAndSettle();
+        await fill(t);
+        await press(t, 'fs-watch-start');
+        await press(t, 'fs-watch-refresh');
+        await press(t, 'fs-watch-read');
+        final result = FsWatchSession.forBackend(b, b).result!;
+        expect(result.deliveries.length, 2);
+        expect(result.chargedBytes.toString(), '9007199254740993');
+        expect(
+          find.text(
+            language == 'zh'
+                ? '插件接收记录：2 条；已计入数据：9007199254740993 字节。'
+                : 'Records received by the plugin: 2; data charged: 9007199254740993 bytes.',
+          ),
+          findsOneWidget,
+        );
+        expect(b.calls['start'], 1);
+        expect(b.calls['read'], 1);
+        expect(b.calls['ack'], isNull);
+        expect(t.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets('all nine languages fit a narrow view without dispatch', (
     t,
   ) async {

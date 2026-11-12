@@ -1,0 +1,30 @@
+{
+  "status": "PASS_EXACT_INTEGRATED_L0_L3_SIX_OTHER_TIERS_OPEN",
+  "commit": "6461df880a6b81dc42fee3067ef2459cbc4b23af",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "source_root": "D:\\build_cache\\worktrees\\integrated-development-4560",
+  "receipts": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-l0-gate-4683\\receipts.json",
+    "bytes": 5802,
+    "sha256": "d4a536de5b454178de7d6491462d4fdd1dca9bb9325fe455923829c5946b6e07"
+  },
+  "closed_gates": [
+    "L0_TOKEN",
+    "L3_FULL47_NINE"
+  ],
+  "remaining_gates": [
+    "L1_RUNNER",
+    "L2_BUSINESS_AND_RETIREMENT",
+    "EDITOR_PERSISTENCE",
+    "SDK26",
+    "G04",
+    "SDK_FREEZE"
+  ],
+  "main_checkout_or_other_source_not_certified": true,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "original_owner_contacts": 0
+}

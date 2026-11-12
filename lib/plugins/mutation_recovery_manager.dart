@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/services.dart';
@@ -324,6 +325,22 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
     MutationEffect.osSucceeded => l.pluginsMutationSucceeded,
     MutationEffect.osRejected => l.pluginsMutationRejected,
   };
+
+  Widget _planIdentity(
+    AppLocalizations l,
+    Uint8List plan,
+    String id, {
+    bool selectable = true,
+  }) {
+    final text =
+        '${l.pluginsGuestExecutionPlanSha256}\n${sha256.convert(plan)}';
+    final key = ValueKey('mutation-recovery-$id');
+    final style = TextStyle(color: widget.muted);
+    return selectable
+        ? SelectableText(text, key: key, style: style)
+        : Text(text, key: key, style: style);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = L10n.of(context), choices = _choices(_draft.disposition);
@@ -517,7 +534,18 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
               key: ValueKey('mutation-recovery-plan-$i'),
               contentPadding: EdgeInsets.zero,
               title: Text('${l.pluginsMutationPlan} ${i + 1}'),
-              subtitle: Text(l.pluginsMutationSelectPlan),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l.pluginsMutationSelectPlan),
+                  _planIdentity(
+                    l,
+                    plans[i],
+                    'plan-$i-identity',
+                    selectable: false,
+                  ),
+                ],
+              ),
               trailing: Icon(
                 identical(_view.selectedRequest, _view.pageRequest) &&
                         listEquals(_view.selectedPlan, plans[i])
@@ -539,6 +567,7 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
         ],
         if (_view.selectedPlan != null) ...[
           _note(l.pluginsMutationSelected),
+          _planIdentity(l, _view.selectedPlan!, 'selected-plan-identity'),
           if (_view.selectedRequest != null)
             _note(
               '${_view.selectedRequest!.packageId} · ${_view.selectedRequest!.subject} · ${_disposition(l, _view.selectedRequest!.disposition)}',
@@ -560,6 +589,12 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
             l.pluginsMutationLastResult,
             style: TextStyle(color: widget.ink),
           ),
+          if (_view.lastReconciliationRequest != null)
+            _planIdentity(
+              l,
+              _view.lastReconciliationRequest!.plan,
+              'result-plan-identity',
+            ),
           if (result.operationId != null)
             SelectableText(
               result.operationId!,

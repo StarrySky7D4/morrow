@@ -1,0 +1,38 @@
+{
+  "status": "PASS_CURRENT_WATCH_OWNER_WORKER_APPROVAL_BINDING_COLD_COMPILE_ONLY",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "source_unchanged": true,
+  "compiler_returned": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-build-4951\\returned.json",
+    "bytes": 579,
+    "sha256": "db035b71f1217b767510e0712c56a394c3e57f7666f2c36bc5962592ec5e4a18"
+  },
+  "original_compiler_returned": true,
+  "all_compiler_artifacts_fresh_false": true,
+  "selected_methods": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-build-4951\\selected-methods.json",
+    "bytes": 3451,
+    "sha256": "09c67be089172f8c161f19075daedaa30989cef4c44280486c57806a9eb25432"
+  },
+  "binaries": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-build-4951\\binaries.json",
+    "bytes": 8807,
+    "sha256": "06359b0a7ed4a1cc46067b4f7c94bcd6fcb2bec34ba66b5df851b0c3abaebb37"
+  },
+  "compiler_outputs": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-watch-worker-build-4951\\all-compiler-outputs.json",
+    "bytes": 175349,
+    "sha256": "e7403180ddb6fa1531c973732a20806ce797dbe2b69b2de7b7e916f17ea97c43"
+  },
+  "frozen_inputs": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-static-4724\\frozen-inputs-before.json",
+    "bytes": 27017,
+    "sha256": "2fc3027d74eef91e0e95d946eeea48c9ed31dce1b0b7a3d200d42346049ee256"
+  },
+  "frozen_files_unchanged": 57,
+  "guest_rebuilt": false,
+  "runtime_tests": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

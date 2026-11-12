@@ -1,0 +1,77 @@
+{
+  "status": "PAUSED_EXPIRY_RESULT_READ_ACK_ACTION_UNCONFIRMED",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "original_owner_exec_session": 47049,
+  "UI_pid": 24596,
+  "UI_creation_filetime": "134389849742386162",
+  "UI_hwnd": 92802736,
+  "supervisor_pid": 27180,
+  "host_pid": 19224,
+  "form_reply_received": true,
+  "Start_actions": 1,
+  "native_folder_confirm_actions": 0,
+  "refresh_actions": 1,
+  "result_read_actions": 1,
+  "ACK_actions": 1,
+  "ACK_effect_confirmed": false,
+  "new_observation_actions": 0,
+  "window_close_actions": 0,
+  "result_outcome": "WINDOW_EXPIRED",
+  "plugin_records": 0,
+  "charged_bytes": 157308,
+  "UI_reports_native_retirement_complete": true,
+  "original_product_tree_returned": false,
+  "action_gate_written": false,
+  "fixture_events_created": 0,
+  "producer_original8881": "RETURNED_EXIT0_5b2756",
+  "target_authorization_proven": false,
+  "event_delivery_accepted": false,
+  "formal_watch_success": false,
+  "source_defect_established": false,
+  "Terra_thread": "01a1cd5b-e62a-7233-9ec6-b44d2b2dc971",
+  "Terra_status": "IDLE_PAUSED",
+  "observations": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\observation.md",
+      "bytes": 654,
+      "sha256": "6fae0cd2578c694572f3e11ab2a28d41dc28fa8f740754ecd61ca1e939dfc0c4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\native-dialog-controls.json",
+      "bytes": 5762,
+      "sha256": "2dcc7a8cab7e8259ca6473f64ddd76b6e8d6a6bb9ba7e3f1fcd690804eff32dd"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\cancel-review.md",
+      "bytes": 494,
+      "sha256": "b5e45b6db3b7abdb184172d0fe7a7989e616c45d601001095b8821119c8c47b5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\visible-review.md",
+      "bytes": 655,
+      "sha256": "ea888f81e6696c03c2ad00cc3c6a2c9917b1b0f6d43d5f55716d3207583642b8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\status-refresh.md",
+      "bytes": 535,
+      "sha256": "73cd33628fe5c961696488ed80556ef4c4410307e29cd4e4fb675ed70b949ec4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\result-read.md",
+      "bytes": 670,
+      "sha256": "7425a323f30ea5c09348bda7f93cf99aef3e2da50ddf4fc70bc711ea270e144d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\result-read-controls.json",
+      "bytes": 6573,
+      "sha256": "270fcda1c66aea191fd1a2b27c85ce705147d7f2cf2a0a381e5a5ab50976e319"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk4700-observation-4702\\retirement-attempt.md",
+      "bytes": 552,
+      "sha256": "9e8a28a87b0145167a65842c74ef0c2ce25ad8e6bd6ab89c70002aa4d7d6b0cd"
+    }
+  ],
+  "pending_form_question": false,
+  "seal4990_draft_executed": false
+}

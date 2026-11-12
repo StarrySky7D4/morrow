@@ -29,6 +29,7 @@ final class MutationRecoveryViewState {
   Uint8List? _selectedPlan;
   MutationDiscoverRequest? _selectedRequest;
   MutationResult? _lastReconciliation;
+  MutationReconcileRequest? _lastReconciliationRequest;
 
   /// The most recently delivered discovery page, including an empty page.
   MutationResult? get page => _page;
@@ -45,6 +46,11 @@ final class MutationRecoveryViewState {
 
   /// The most recently delivered reconciliation result, if any.
   MutationResult? get lastReconciliation => _lastReconciliation;
+
+  /// The exact request for [lastReconciliation], retained after acknowledgement.
+  /// A later selection does not change the identity of an earlier result.
+  MutationReconcileRequest? get lastReconciliationRequest =>
+      _lastReconciliationRequest;
 
   void addListener(void Function() listener) => _listeners.add(listener);
   void removeListener(void Function() listener) => _listeners.remove(listener);
@@ -78,10 +84,13 @@ final class MutationRecoveryViewState {
     _seenPage = deliveredPage;
 
     final deliveredReconciliation = session.reconciliation;
+    final reconciliationRequest = session.reconcileRequest;
     if (deliveredReconciliation != null &&
         !identical(deliveredReconciliation, _seenReconciliation) &&
-        deliveredReconciliation.kind == MutationResultKind.reconciled) {
+        deliveredReconciliation.kind == MutationResultKind.reconciled &&
+        reconciliationRequest != null) {
       _lastReconciliation = deliveredReconciliation;
+      _lastReconciliationRequest = reconciliationRequest;
     }
     _seenReconciliation = deliveredReconciliation;
   }

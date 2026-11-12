@@ -1,0 +1,77 @@
+{
+  "status": "PASS_INTEGRATED_SDK_MOCK_AND_WINDOWS_CHECKOUT_REGRESSIONS",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "source_unchanged": true,
+  "preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regression-preparation-4561\\result.json",
+    "bytes": 1665,
+    "sha256": "77e8dceacbc3fc908bc0b5be6aaa8e65cc5d53e6acab4e098bca06a6f3956e46"
+  },
+  "completed": [
+    {
+      "label": "checkout",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 0.9370000000053551,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\checkout.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\checkout.stderr",
+        "bytes": 110,
+        "sha256": "695e8b6186e6f81ac3a6791d6f3811e90635f8d60c00e96f4050aeb565bfddae"
+      },
+      "tests": 7
+    },
+    {
+      "label": "pure",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 4.375,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\pure.stdout",
+        "bytes": 5385,
+        "sha256": "c3c20a695f446427fda5bc59ed3d71556174052436282384fe5897a7e6b3a10c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\pure.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": 44
+    },
+    {
+      "label": "widgets",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 37.469000000011874,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\widgets.stdout",
+        "bytes": 9286,
+        "sha256": "479370b8fd9a18f4b25bf73fa50010efb7c37c8d3d00826f9b76d6d08abc4b2e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-development-regressions-4562\\widgets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests": 53
+    }
+  ],
+  "all_original_processes_returned": true,
+  "all_exit_codes_zero": true,
+  "actual_tests": 104,
+  "only_mock_backend_or_temporary_checkout_tests": true,
+  "cache_root": "D:/build_cache",
+  "fresh_worktree_build_cache": true,
+  "VM_calls": 0,
+  "Host_executions": 0,
+  "product_executions": 0,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -883,6 +883,9 @@ class _GuestMutationExecutionManagerState
     };
   }
 
+  String _failureCode(MutationFailure failure) =>
+      '${failure.layer.name} / ${failure.delivery?.name ?? failure.target?.name ?? ''}';
+
   Widget _button(String label, String id, Future<void> Function()? action) =>
       OutlinedButton(
         key: ValueKey('guest-mutation-$id'),
@@ -1209,6 +1212,13 @@ class _GuestMutationExecutionManagerState
           _note(
             '${l.pluginsGuestExecutionOwner}: ${_ownerLabel(l, result!.owner!)}',
           ),
+        if (result?.owner?.failure != null &&
+            !identical(result, _session.history))
+          _diagnostic(
+            'owner-code',
+            l.pluginsGuestExecutionOwner,
+            _failureCode(result!.owner!.failure!),
+          ),
         if (result?.frame != null &&
             !identical(result!.frame, frame) &&
             !identical(result, _session.history))
@@ -1231,6 +1241,12 @@ class _GuestMutationExecutionManagerState
         if (_session.history?.owner != null)
           _note(
             '${l.pluginsMutationLastResult}: ${_ownerLabel(l, _session.history!.owner!)}',
+          ),
+        if (_session.history?.owner?.failure != null)
+          _diagnostic(
+            'history-owner-code',
+            l.pluginsMutationLastResult,
+            _failureCode(_session.history!.owner!.failure!),
           ),
         if (result?.failure != null)
           _diagnostic(

@@ -1,3 +1,13 @@
+<!-- MORROW-LOCAL-ACCEPTANCE-20261113-BEGIN -->
+## Windows 验收进展（2026-11-13，已暂停）
+
+按用户要求暂停，并同步当前开发快照。冻结候选 `2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75` 的 L0／L1／L2／L3、原 47 步／九组门槛及部分 P2 拒绝路径已有证据；当前 SDK 目录观察 47 项验证和原生八场景独立复核通过其限定范围。默认 DACL 的 C／S 冷编译完成，实机用例尚未派发。
+
+SDK4700 已读到到时结束、0 条记录和清理完成，但一次“确认任务结束”的点击效果尚未证实，原窗口保留。case4900 的 Unknown 现场已完成完整检查点校验；不把后续通过结果用于关闭历史 Unknown。注册 VM 为 2 台，上限 4 台，缓存仍位于 `D:\build_cache`。
+
+完整 P2／P3、编辑器持久化、SDK26、G04、SDK_FREEZE 和发布门槛仍未关闭；`source_accepted=false`、`release_eligible=false`。详见 [暂停交接](docs/qualification/PAUSED_WINDOWS_20261113.md)、[资格台账](docs/qualification/current.json) 和 [HTML 进度报告](reports/project-progress-2026-10-26/index.html)。下方历史报告保留各自日期和证据范围。
+<!-- MORROW-LOCAL-ACCEPTANCE-20261113-END -->
+
 <!-- MORROW-PROGRESS-20261024-BEGIN -->
 ## 完整项目进度汇报（2026-10-24）
 

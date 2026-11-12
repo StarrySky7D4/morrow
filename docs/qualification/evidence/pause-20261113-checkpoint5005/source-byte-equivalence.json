@@ -1,0 +1,302 @@
+{
+  "status": "PASS_21_CHANGED_CODE_TEST_FILES_BYTE_IDENTICAL_TO_FROZEN_I",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "base_commit": "6461df880a6b81dc42fee3067ef2459cbc4b23af",
+  "files": [
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/checked_owner.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+        "bytes": 169136,
+        "sha256": "fdff2c749976fc06de9d83ff823ab37eb9ee683d97273a11b2eb8877f5ef7144"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+        "bytes": 169136,
+        "sha256": "fdff2c749976fc06de9d83ff823ab37eb9ee683d97273a11b2eb8877f5ef7144"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/checked_owner_tests.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_tests.rs",
+        "bytes": 85892,
+        "sha256": "21dc80b8cc83d16f2d8882d9952a4b09ce8115339d53ea9fedb385b52f1562f3"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_tests.rs",
+        "bytes": 85892,
+        "sha256": "21dc80b8cc83d16f2d8882d9952a4b09ce8115339d53ea9fedb385b52f1562f3"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/mod.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\mod.rs",
+        "bytes": 352,
+        "sha256": "946dc63138784f9208f85de33c3f13651e69c61d2a0f427cbc8f7376dfbd1f4f"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\mod.rs",
+        "bytes": 352,
+        "sha256": "946dc63138784f9208f85de33c3f13651e69c61d2a0f427cbc8f7376dfbd1f4f"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/native_close_startup.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_startup.rs",
+        "bytes": 13399,
+        "sha256": "5d820eb54f7a660f905316ebe9feda73765e7c088a33bdf86942c5b0d44516d5"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_startup.rs",
+        "bytes": 13399,
+        "sha256": "5d820eb54f7a660f905316ebe9feda73765e7c088a33bdf86942c5b0d44516d5"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/native_wait.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_wait.rs",
+        "bytes": 2428,
+        "sha256": "ce1cc9af45e3122971666089fbdb6e56275c25c7002b5901f02dfaf2965ac8ea"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_wait.rs",
+        "bytes": 2428,
+        "sha256": "ce1cc9af45e3122971666089fbdb6e56275c25c7002b5901f02dfaf2965ac8ea"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/owned_connect_worker.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker.rs",
+        "bytes": 26297,
+        "sha256": "87886019c617f4d45934fb3b3629f59b0ca904f2de8c47809ddf02f3e8ec4e36"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker.rs",
+        "bytes": 26297,
+        "sha256": "87886019c617f4d45934fb3b3629f59b0ca904f2de8c47809ddf02f3e8ec4e36"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/elevated/owned_connect_worker_tests.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker_tests.rs",
+        "bytes": 17570,
+        "sha256": "526bf641c9f31d91c32d4cbc108d099df2035439b1786cbbe9454646d848eda2"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker_tests.rs",
+        "bytes": 17570,
+        "sha256": "526bf641c9f31d91c32d4cbc108d099df2035439b1786cbbe9454646d848eda2"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/qualification/c28-basic-harness/src/formal.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\formal.rs",
+        "bytes": 48723,
+        "sha256": "9ef92b7464f537b764761f9d9353a4a6020c3345c8f96106d97addefe0214c96"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\formal.rs",
+        "bytes": 48723,
+        "sha256": "9ef92b7464f537b764761f9d9353a4a6020c3345c8f96106d97addefe0214c96"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "companions/morrow-codex/qualification/c28-basic-harness/src/native_observation.rs",
+      "working": {
+        "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\native_observation.rs",
+        "bytes": 38337,
+        "sha256": "1963774403938bfcd59b87cf2a2e20612539e960ab3bb6092bbf398ddbd2356b"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\native_observation.rs",
+        "bytes": 38337,
+        "sha256": "1963774403938bfcd59b87cf2a2e20612539e960ab3bb6092bbf398ddbd2356b"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/fs_watch_manager.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\fs_watch_manager.dart",
+        "bytes": 13664,
+        "sha256": "fff3c5472d77c6a1e018cd6ff5e3502607d957e100e36c015dd706b002f7ec50"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\fs_watch_manager.dart",
+        "bytes": 13664,
+        "sha256": "fff3c5472d77c6a1e018cd6ff5e3502607d957e100e36c015dd706b002f7ec50"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/guest_mutation_execution_manager.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\guest_mutation_execution_manager.dart",
+        "bytes": 45349,
+        "sha256": "8e7824b347d334466bbd1ff0efee6ec9b97988d03fb60951c4d0cd4b0257399f"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\guest_mutation_execution_manager.dart",
+        "bytes": 45349,
+        "sha256": "8e7824b347d334466bbd1ff0efee6ec9b97988d03fb60951c4d0cd4b0257399f"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/mutation_execution_manager.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\mutation_execution_manager.dart",
+        "bytes": 29974,
+        "sha256": "ee817e89b37e1de30e802a2d1d67742c1f78b4318680ee213f0f0da681885f39"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\mutation_execution_manager.dart",
+        "bytes": 29974,
+        "sha256": "ee817e89b37e1de30e802a2d1d67742c1f78b4318680ee213f0f0da681885f39"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/mutation_execution_session.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\mutation_execution_session.dart",
+        "bytes": 28902,
+        "sha256": "73993eeb317ab898f83091f482e8367fea975502bf3ed6f51878b6bed4677f59"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\mutation_execution_session.dart",
+        "bytes": 28902,
+        "sha256": "73993eeb317ab898f83091f482e8367fea975502bf3ed6f51878b6bed4677f59"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/mutation_recovery_manager.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\mutation_recovery_manager.dart",
+        "bytes": 21386,
+        "sha256": "e951f4a9cddcda5e7d0f710003031bd911a7eef2f0fca8f8ed1b8de4581b7ad6"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\mutation_recovery_manager.dart",
+        "bytes": 21386,
+        "sha256": "e951f4a9cddcda5e7d0f710003031bd911a7eef2f0fca8f8ed1b8de4581b7ad6"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "lib/plugins/mutation_recovery_view_state.dart",
+      "working": {
+        "path": "C:\\ms1020\\lib\\plugins\\mutation_recovery_view_state.dart",
+        "bytes": 4286,
+        "sha256": "11fe7aff437a369aee407223b5334e26d0190f5b692ba04903801031f2b1d5b0"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\lib\\plugins\\mutation_recovery_view_state.dart",
+        "bytes": 4286,
+        "sha256": "11fe7aff437a369aee407223b5334e26d0190f5b692ba04903801031f2b1d5b0"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "packages/morrow_core_client/test/mutation_execution_session_test.dart",
+      "working": {
+        "path": "C:\\ms1020\\packages\\morrow_core_client\\test\\mutation_execution_session_test.dart",
+        "bytes": 30075,
+        "sha256": "287017329df307d53021fa09fd6b41d4aa60a68a418f2e04d4ed6866f4269c86"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\packages\\morrow_core_client\\test\\mutation_execution_session_test.dart",
+        "bytes": 30075,
+        "sha256": "287017329df307d53021fa09fd6b41d4aa60a68a418f2e04d4ed6866f4269c86"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "test/fs_watch_manager_test.dart",
+      "working": {
+        "path": "C:\\ms1020\\test\\fs_watch_manager_test.dart",
+        "bytes": 11479,
+        "sha256": "0e41349cebe622c6b9def398106939ff21439a761a0646ddcf2718138512b51f"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\test\\fs_watch_manager_test.dart",
+        "bytes": 11479,
+        "sha256": "0e41349cebe622c6b9def398106939ff21439a761a0646ddcf2718138512b51f"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "test/guest_mutation_execution_manager_test.dart",
+      "working": {
+        "path": "C:\\ms1020\\test\\guest_mutation_execution_manager_test.dart",
+        "bytes": 30976,
+        "sha256": "56e1c71dc0b9ac2a720ce45abc564a0a12fe4aca4b13793c7392d5137e11e359"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\test\\guest_mutation_execution_manager_test.dart",
+        "bytes": 30976,
+        "sha256": "56e1c71dc0b9ac2a720ce45abc564a0a12fe4aca4b13793c7392d5137e11e359"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "test/mutation_execution_manager_test.dart",
+      "working": {
+        "path": "C:\\ms1020\\test\\mutation_execution_manager_test.dart",
+        "bytes": 25969,
+        "sha256": "495dda2e25a062eba2a3f2b5cacae1ac470fb335a2863195f41ad5a37ccefc16"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\test\\mutation_execution_manager_test.dart",
+        "bytes": 25969,
+        "sha256": "495dda2e25a062eba2a3f2b5cacae1ac470fb335a2863195f41ad5a37ccefc16"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "test/mutation_recovery_manager_test.dart",
+      "working": {
+        "path": "C:\\ms1020\\test\\mutation_recovery_manager_test.dart",
+        "bytes": 23344,
+        "sha256": "b506c0c5d5bf068f8cbb15b8920ed938c5881101a80ffb7a6ea70420d0969c56"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\test\\mutation_recovery_manager_test.dart",
+        "bytes": 23344,
+        "sha256": "b506c0c5d5bf068f8cbb15b8920ed938c5881101a80ffb7a6ea70420d0969c56"
+      },
+      "byte_identical": true
+    },
+    {
+      "repository_path": "tool/tests/test_windows_native_checkout.py",
+      "working": {
+        "path": "C:\\ms1020\\tool\\tests\\test_windows_native_checkout.py",
+        "bytes": 2887,
+        "sha256": "6b83fe7192ed9fdf18deaf50eb5bd8dc0673ea8000b8b833ff5af245c840adb3"
+      },
+      "frozen": {
+        "path": "D:\\build_cache\\worktrees\\integrated-development-4560\\tool\\tests\\test_windows_native_checkout.py",
+        "bytes": 2887,
+        "sha256": "6b83fe7192ed9fdf18deaf50eb5bd8dc0673ea8000b8b833ff5af245c840adb3"
+      },
+      "byte_identical": true
+    }
+  ],
+  "scope": "Code and test payload binding only; publication metadata and attributes excluded; no new acceptance or release proof"
+}

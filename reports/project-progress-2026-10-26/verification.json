@@ -1,16 +1,17 @@
 {
-  "status": "PASS_STATIC_ACTIVE_CHECKPOINT_AND_LINK_CHECK",
-  "updated": "2026-11-10T12:06:39.337850+00:00",
+  "status": "PASS_STATIC_PAUSE_CHECKPOINT_AND_LINK_CHECK",
+  "updated": "2026-11-12T23:20:37.035995+00:00",
   "HTML_tags_balanced": true,
   "HTML_ids_unique": true,
-  "local_links_checked": 14,
+  "local_links_checked": 8,
   "HTML_browser_visual_review": false,
-  "evidence_files_verified": 21,
-  "registered_vms": 4,
+  "evidence_files_verified": 29,
+  "registered_vms": 2,
   "source_accepted": false,
   "release_eligible": false,
-  "latest_checkpoint": "resume-20261110-checkpoint2643",
-  "task_status": "ACTIVE",
+  "latest_checkpoint": "pause-20261113-checkpoint5005",
+  "task_status": "PAUSED",
   "source_scopes_preserved": true,
-  "remote_publication": "VERIFY_AFTER_PUSH"
+  "remote_publication": "VERIFY_AFTER_PUSH",
+  "publication_metadata_reconciled": true
 }

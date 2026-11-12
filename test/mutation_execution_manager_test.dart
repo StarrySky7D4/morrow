@@ -303,6 +303,7 @@ Widget _screen(
   bool authorized = true,
   bool budgetedGuest = false,
   bool visible = true,
+  Key? scrollKey,
   Future<String?> Function()? pickDirectory,
   Future<XFile?> Function()? pickFile,
   Future<XFile?> Function()? pickContent,
@@ -315,6 +316,7 @@ Widget _screen(
     body: TickerMode(
       enabled: visible,
       child: SingleChildScrollView(
+        key: scrollKey,
         child: MutationExecutionManager(
           backend: backend,
           ioBackend: backend,
@@ -724,6 +726,55 @@ void main() {
     await tester.pump();
     expect(find.textContaining('status diagnostics'), findsWidgets);
   });
+
+  testWidgets(
+    'scrolled native failures keep independent readable diagnostics',
+    (tester) async {
+      final backend = _Backend()..badPrepared = true;
+      await tester.pumpWidget(
+        _screen(
+          backend,
+          scrollKey: const PageStorageKey('native-panel-scroll'),
+          pickDirectory: () async => r'C:\approved',
+        ),
+      );
+      await tester.pump();
+      await _create(tester);
+      await _tap(tester, 'review');
+      final scrollContext = tester.element(
+        find.byType(SingleChildScrollView).first,
+      );
+      final bucket = PageStorage.of(scrollContext);
+      expect(bucket.readState(scrollContext), isA<double>());
+      expect(bucket.readState(scrollContext) as double, greaterThan(0));
+      await tester.tap(_key('confirm-prepare'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_key('operation-error'), findsOneWidget);
+      expect(_enabled(tester, 'execute'), isFalse);
+      backend.failStatus = true;
+      await _tap(tester, 'refresh');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(_key('cleanup-error'), findsOneWidget);
+      await _tap(tester, 'operation-error');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('operation identity changed'), findsWidgets);
+      await _tap(tester, 'cleanup-error');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('status diagnostics'), findsWidgets);
+      expect(find.textContaining('operation identity changed'), findsWidgets);
+      await _tap(tester, 'operation-error');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('operation identity changed'), findsNothing);
+      expect(find.textContaining('status diagnostics'), findsWidgets);
+      expect(bucket.readState(scrollContext), isA<double>());
+      expect(backend.starts, 1);
+      expect(backend.executes, 0);
+      expect(backend.chunks, 0);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets('hidden panel does not poll or execute', (tester) async {
     final backend = _Backend();

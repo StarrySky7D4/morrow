@@ -1,0 +1,228 @@
+{
+  "status": "PASS_CURRENT_NATIVE8_REFERENCE_CAPNP_DECODE_AND_FIRST_CLOSE_FAILURE_REVIEW",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "build": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-build-4921\\result.json",
+    "bytes": 7932,
+    "sha256": "0572af733a38ac5146d5a38cd045d0fbae20c81269bf170a18479936e36cbab7"
+  },
+  "runtime_six": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\result.json",
+    "bytes": 9381,
+    "sha256": "ce1adb1a7f36bef8186049798b0324364413b14344542e946bd80ce6b56d7c76"
+  },
+  "runtime_edges": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-edges-4934\\result.json",
+    "bytes": 4015,
+    "sha256": "0baf49e02010f766cffb3add310ef81be8133629d376d3af415257d19973eedd"
+  },
+  "review_recipe": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-watch-native-review-recipe-4955\\result.json",
+    "bytes": 672,
+    "sha256": "27ed8972c8366f61088ba459ac1281dc943b209446c6dff7a0ad4db515cb01f4"
+  },
+  "source_copies": {
+    "extensions/fs-watch-native-v1/src/windows.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\source\\extensions\\fs-watch-native-v1\\src\\windows.rs",
+      "bytes": 25075,
+      "sha256": "ad3c4c96bc436a3914828d7e03712d1f3e27546eebb25a9f8f846785ac09638a"
+    },
+    "extensions/fs-watch-native-v1/src/bin/native_watch_probe.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\source\\extensions\\fs-watch-native-v1\\src\\bin\\native_watch_probe.rs",
+      "bytes": 20344,
+      "sha256": "8f8204a1345f232720f60044ead2519276f3dbfd39fcd1e2907ff98e74da60b5"
+    },
+    "extensions/fs-watch-native-v1/src/notification.rs": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\source\\extensions\\fs-watch-native-v1\\src\\notification.rs",
+      "bytes": 6895,
+      "sha256": "a5c25c2abbb820697c4eb26b4e35fb5175488902fc0c3d4575f3133f1dd4ce16"
+    },
+    "extensions/fs-watch-native-v1/Cargo.lock": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\source\\extensions\\fs-watch-native-v1\\Cargo.lock",
+      "bytes": 3614,
+      "sha256": "e0be61e8302d5439e3b083858cc7d0fb186bc1a87b7fc3b57ecb1a626e1382cf"
+    },
+    "extensions/fs-watch-native-v1/Cargo.toml": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\source\\extensions\\fs-watch-native-v1\\Cargo.toml",
+      "bytes": 597,
+      "sha256": "5ed8bcd82cfe7ab4ab893faf2a97c6faa575d64cec132f5379a36890e9e1c3ae"
+    }
+  },
+  "parser_methods": 8,
+  "native_scenarios": 8,
+  "native_fixture_replays": 0,
+  "frozen_files_unchanged": 57,
+  "known_native_handles_closed": 12,
+  "expected_refused_native_handles": 2,
+  "refusal_original_close_calls": 1,
+  "refusal_confirmed_closed": 0,
+  "refusal_original_error": 6,
+  "refusal_native_retirement": false,
+  "refusal_process_exited": true,
+  "second_native_close_after_unknown": false,
+  "actual_native_overflow": true,
+  "actual_native_close_refusal": true,
+  "all_original_processes_returned": true,
+  "reference_decoder": {
+    "path": "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "bytes": 3926542,
+    "sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34"
+  },
+  "reference_decodes": [
+    {
+      "case": "events",
+      "sequence": 1,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\events\\evidence\\frame-001.capnp",
+        "bytes": 160,
+        "sha256": "639b981ed749d2d80b10ae79a7f1a284ed2e45a73703af020cfc671bc75f4263"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\events-frame001.decoded",
+        "bytes": 335,
+        "sha256": "5df66ccd30d47c636aeb0fa068ee7f5885c4feadcb1fe5154740d56bde5f158f"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "events",
+      "sequence": 2,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\events\\evidence\\frame-002.capnp",
+        "bytes": 160,
+        "sha256": "05268419aa2e61e7e0e39f11a9a07ab7a605b4439de2ee860ed8282d1ba55ef6"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\events-frame002.decoded",
+        "bytes": 335,
+        "sha256": "8a07082e5c1dbf7f8d8ba3c6369d977118d83c372ce91372e0f1df924e5c4298"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "events",
+      "sequence": 3,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\events\\evidence\\frame-003.capnp",
+        "bytes": 160,
+        "sha256": "018b5d9de3487a64a97f05c2933ef8ba5c74bb7821fbf5a451169f83fd2ee3a2"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\events-frame003.decoded",
+        "bytes": 335,
+        "sha256": "518e4ad972560a7a62e71b9dee06345a4dbd17a43f287269f13fd3269618365c"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "events",
+      "sequence": 4,
+      "end": 0,
+      "change_count": 2,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\events\\evidence\\frame-004.capnp",
+        "bytes": 208,
+        "sha256": "75e839e96aa8b94d790036cd65663a9cb15a4efc007ee1aaec0a224a4d4ae1b8"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\events-frame004.decoded",
+        "bytes": 467,
+        "sha256": "3e31f3ca52b3c1488ed763769832d685df65caa7650bbb500176848288bd1d9d"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "events",
+      "sequence": 5,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\events\\evidence\\frame-005.capnp",
+        "bytes": 176,
+        "sha256": "48d081eede865a8c25531faa97cca691230027ced8dd0c212726034ef1a87cb0"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\events-frame005.decoded",
+        "bytes": 362,
+        "sha256": "a938058861152b3d32cc085100cb5e1b3cc4aee2d37ee5454b7002b21986f78c"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "unacknowledged",
+      "sequence": 1,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-runtime-4922\\cases\\unacknowledged\\evidence\\frame-001.capnp",
+        "bytes": 168,
+        "sha256": "33d55cc326796470842ec8b275be4b7b94cc2024c46b726c91532690a26ae8c5"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\unacknowledged-frame001.decoded",
+        "bytes": 344,
+        "sha256": "0cfaf30ee95499c98956cba98d7953652b7067065658d189bd66e4468acca2d5"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "actual-overflow",
+      "sequence": 1,
+      "end": 0,
+      "change_count": 1,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-edges-4934\\cases\\actual-overflow\\evidence\\frame-001.capnp",
+        "bytes": 240,
+        "sha256": "13e1b632caf57226d0ca28c884bd691c5e8c61a98b4610aa202d34440ddf22fb"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\actual-overflow-frame001.decoded",
+        "bytes": 514,
+        "sha256": "1115ceb393acea881ad5a7f4e74c997dfc09fc97a8518634d55c10da9f906949"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    },
+    {
+      "case": "actual-overflow",
+      "sequence": 2,
+      "end": 2,
+      "change_count": 0,
+      "original_payload": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-edges-4934\\cases\\actual-overflow\\evidence\\frame-002.capnp",
+        "bytes": 128,
+        "sha256": "71c7f13a5e3e7bedbc3cd499208dc691816bf0895f97a21caaf298c00ec62159"
+      },
+      "reference_decoded": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\sdk-current-native-watch-review-4956\\actual-overflow-frame002.decoded",
+        "bytes": 232,
+        "sha256": "1a1e64f8db549c4bede4f87988a91fcfb3b515a6e428b4ecde099b319245b793"
+      },
+      "original_decoder_process_returned": true,
+      "exit_code": 0
+    }
+  ],
+  "managed_worker_gap_or_close_failure": false,
+  "full_snapshot_or_recovery": false,
+  "protected_picker_selection": false,
+  "product_UI": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

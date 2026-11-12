@@ -1,0 +1,52 @@
+{
+  "status": "COMPILED_BYTE_BOUND_FAULT_VARIANT_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "checkout_source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "source_equivalence": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-105\\source-identity.json",
+    "bytes": 339,
+    "sha256": "f09d0a00a5449c649604d27f1a2614d1a0b9a6f384220fd60036efdb74010745"
+  },
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-103\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 27949056,
+      "sha256": "e4db49b5983d6512de93326c2a2da577ff20ab612954f7982b590913d9fd9d84"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-105\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 100641280,
+      "sha256": "5ba2e82f58463179ffa738d0795a551449a2ce9f38e2c20fb51e169aae482846"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-103\\R\\codex-command-runner.exe",
+      "bytes": 24615424,
+      "sha256": "0c381ec57e5ff6b3e30a5ea82fbd67c6fcbe6ab1c8ed78781e8f5321e491b85a"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-105\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37627904,
+      "sha256": "57e1b2110d38af54fc3584c6da7e58262fc523032cf281f5188f7afba9594745"
+    }
+  },
+  "s_table_hex": "433238413154414201000000010000005ba2e82f58463179ffa738d0795a551449a2ce9f38e2c20fb51e169aae4828460c381ec57e5ff6b3e30a5ea82fbd67c6fcbe6ab1c8ed78781e8f5321e491b85a",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37482496,
+    "flags": 1073741888
+  },
+  "qualification_fault": "DEFAULT_DACL",
+  "diagnostic_injection": true,
+  "fresh_C": true,
+  "fresh_S": true,
+  "cold_output_isolation": true,
+  "all_four_roles_freshly_compiled": false,
+  "all_selected_roles_have_verified_cold_origin": true,
+  "original_PR_bytes_unchanged": true,
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "product_executions": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

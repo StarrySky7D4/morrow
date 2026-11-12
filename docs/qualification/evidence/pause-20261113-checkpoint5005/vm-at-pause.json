@@ -1,0 +1,26 @@
+{
+  "utc": "2026-11-12T23:20:37.035995+00:00",
+  "VMs": [
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Off",
+      "memory": 4294967296,
+      "processors": 4,
+      "checkpoints": 3
+    },
+    {
+      "id": "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+      "name": "Morrow Windows Acceptance 20261106 058",
+      "state": "Off",
+      "memory": 4294967296,
+      "processors": 4,
+      "checkpoints": 31
+    }
+  ],
+  "registered": 2,
+  "maximum": 4,
+  "query_exit": 0,
+  "VM_mutations": 0,
+  "guest_calls": 0
+}

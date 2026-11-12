@@ -6,6 +6,11 @@
       "sha256": "fccbf8f5460efb054f60ac797b6a4641ab023cf44f815bf540535f0dd9488a7c"
     },
     {
+      "path": "history-before-pause-20261113.html",
+      "bytes": 6654,
+      "sha256": "197d1aed6dc0de965c243fb2ed346731877a5cb1424f1d24523da8a2c16cc40d"
+    },
+    {
       "path": "history-checkpoint-1348.html",
       "bytes": 43898,
       "sha256": "429c42f0eb1cbfd9d9c8dc242c78f8f3b8fbe30560cfefc51ee2f37f4b6995be"
@@ -52,24 +57,24 @@
     },
     {
       "path": "index.html",
-      "bytes": 6654,
-      "sha256": "197d1aed6dc0de965c243fb2ed346731877a5cb1424f1d24523da8a2c16cc40d"
+      "bytes": 5480,
+      "sha256": "9fe05ccf04b6c1aa545f5cd2409a70538759f383358dcb2a391e12204744d052"
     },
     {
       "path": "report-data.json",
-      "bytes": 384745,
-      "sha256": "5827e695f610f89e84d470de535d6645ba064de1d03388dafb568512b5bf50cd"
+      "bytes": 585781,
+      "sha256": "3a11f8f7404451cb7ff8f50313204e37f815f0bdd6766645bb98bfcd5462ee45"
     },
     {
       "path": "verification.json",
-      "bytes": 530,
-      "sha256": "16fd6e5bff754b3f4caf5c01653dc1eebf2d9b131a75049d7cf834eda9737171"
+      "bytes": 571,
+      "sha256": "d8595cb19b5e328e78541059ea885542f09ddfabf9f4e3131bab5ba8048ac523"
     }
   ],
   "evidence": {
-    "path": "../../docs/qualification/evidence/resume-20261110-checkpoint2643/manifest.json",
-    "bytes": 3674,
-    "sha256": "0604ad0e1228e5b29176a4f4675f7666ce5f14e8245643265a212c3bf0342402"
+    "path": "../../docs/qualification/evidence/pause-20261113-checkpoint5005/manifest.json",
+    "bytes": 12905,
+    "sha256": "65d3d8740265134624368be2fe10541c1f9e6395fca469bddb08c09800f8ff00"
   },
-  "scope": "Active integrated Windows development checkpoint; original source and failure scopes preserved; all final release gates open"
+  "scope": "Paused Windows development snapshot. Source-bound scopes and historical Unknowns preserved; full release gates remain open."
 }

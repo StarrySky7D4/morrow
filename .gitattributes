@@ -9,6 +9,13 @@
 /sdk/examples/blob-upload-common/contracts/sample_options.capnp text eol=lf
 /tool/tests/test_exact_contract_checkout.py text eol=lf
 
+# The framework manifest pins raw patch bytes; the native launcher also keeps
+# canonical source inputs across Windows and LF-only checkouts. Binary Windows
+# resources retain their original bytes through Git's automatic text detection.
+/tool/flutter_windows_semantics/semantics.patch text eol=lf
+/windows/** text=auto eol=lf
+/tool/tests/test_windows_native_checkout.py text eol=lf
+
 # Public qualification receipts are pinned by raw hash in their manifest.
 /docs/qualification/evidence/resume-20261110-checkpoint2643/** -text
 
@@ -1545,3 +1552,6 @@
 "/workbench_host/tests/blob_upload_protected.rs" -text
 "/workbench_host/tests/fs_watch_protected.rs" -text
 "/workbench_host/tests/support/blob_history_delivery_private.rs" -text
+
+# Preserve this public pause bundle by raw byte hash.
+/docs/qualification/evidence/pause-20261113-checkpoint5005/** -text

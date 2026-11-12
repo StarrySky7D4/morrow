@@ -1,0 +1,26 @@
+{
+  "status": "INTEGRATED_DACL5000_RECIPE_PREPARED_NOT_EXECUTED",
+  "source_recipe": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\prepare_integrated_token4900.py",
+    "bytes": 10832,
+    "sha256": "9f4e3e887f5e6cee2be752d2545f1fb2517f7d4ec26a5fc88a01907836cccce1"
+  },
+  "recipe": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\prepare_integrated_dacl5000.py",
+    "bytes": 12127,
+    "sha256": "2f4cbe4e869e0738898b6bec8ec431a1f12d5c57c137733cadb25ef793b5f3de"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-recipe-5001\\recipe.diff",
+    "bytes": 16732,
+    "sha256": "f9564e9bda4aa6f1691b34c61b765bdaa1bd39e118866fb59491c68c13f6ea35"
+  },
+  "required_build": "integrated-dacl-build-original-4961",
+  "required_clean_restore": "vm058-clean-restore-4970",
+  "required_host_receipt": "dacl-host-admission-4971",
+  "current_source_identity_schema_preserved": true,
+  "diagnostic_allowlist_files": 5,
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "automatic_dispatch": false
+}

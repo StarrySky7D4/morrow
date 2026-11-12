@@ -380,8 +380,8 @@ class _FsWatchManagerState extends State<FsWatchManager>
           _note(_outcome(l, result), key: 'fs-watch-result'),
           _note(
             l.pluginsWatchRecords(
-              result.deliveries.length.toString(),
               result.chargedBytes.toString(),
+              result.deliveries.length.toString(),
             ),
           ),
           if (result.knownClosed &&

@@ -9,6 +9,7 @@ use super::owned_connect_worker::{
     self, AttemptId, CONNECT_TIMEOUT, CancelObservation, JoinedErrorMeta, Observation,
     UnknownReason, finite_wait_ms,
 };
+use super::native_wait::{self, NativeWaitMode};
 use crate::MatchedRunnerArtifact;
 use crate::ipc_framed::{ControlHello, RunnerControlCapabilities};
 use std::fmt;
@@ -354,6 +355,18 @@ impl<T> StdWorkerSlot<T> {
     where
         T: Clone,
     {
+        native_wait::run_blocking(self.observe_and_join_with_mode(deadline, label, NativeWaitMode::Blocking))
+    }
+
+    async fn observe_and_join_with_mode(
+        &mut self,
+        deadline: Instant,
+        label: &'static str,
+        mode: NativeWaitMode,
+    ) -> io::Result<(Result<T, String>, bool)>
+    where
+        T: Clone,
+    {
         let call_in_time = Instant::now() < deadline;
         if let Self::Joined {
             ref outcome,
@@ -367,9 +380,9 @@ impl<T> StdWorkerSlot<T> {
         }
         let wait = match *self {
             Self::Pending(ref handle) => {
-                let wait_ms =
-                    finite_wait_ms(deadline.saturating_duration_since(Instant::now()));
-                unsafe { WaitForSingleObject(handle.as_raw_handle() as HANDLE, wait_ms) }
+                native_wait::wait_with(mode, deadline, |millis| {
+                    native_wait::observe_original(handle.as_raw_handle() as HANDLE, millis)
+                }).await.return_value
             }
             Self::Joined { .. } => WAIT_OBJECT_0,
         };
@@ -1986,7 +1999,7 @@ impl CheckedRunnerOwner {
         panic!("simulated panic while worker slots are loaned to finalizer");
     }
 
-    fn reap_helpers_outside_state_lock(&self, deadline: Instant) -> io::Result<()> {
+    async fn reap_helpers_outside_state_lock(&self, deadline: Instant, mode: NativeWaitMode) -> io::Result<()> {
         let pending_entries: [Option<HelperAttemptRecord>; 2] = {
             let state = self
                 .state
@@ -2001,7 +2014,10 @@ impl CheckedRunnerOwner {
             if entry.acknowledged {
                 continue;
             }
-            let obs = self.connect_owner.observe(entry.attempt_id, deadline)?;
+            let obs = match mode {
+                NativeWaitMode::Blocking => self.connect_owner.observe(entry.attempt_id, deadline)?,
+                NativeWaitMode::Cooperative => self.connect_owner.observe_async(entry.attempt_id, deadline).await?,
+            };
             match obs {
                 Observation::RetainedUnknown { reason, cancel } => {
                     self.seal_unknown(StickyUnknownReason::ConnectRetainedUnknown {
@@ -2055,11 +2071,12 @@ impl CheckedRunnerOwner {
         Ok(())
     }
 
-    fn finalize_with_claim(
+    async fn finalize_with_claim(
         &self,
         claim: &mut FinalizerClaimGuard<'_>,
         deadline: Instant,
         initial_in_time: bool,
+        mode: NativeWaitMode,
     ) -> io::Result<CheckedFinalizationOutcome> {
         {
             let mut state = self
@@ -2091,10 +2108,10 @@ impl CheckedRunnerOwner {
 
         if let Some(startup)=self.native_startup_writer.get() {
             // Same original join only; never resubmit a startup write.
-            startup.reap(deadline)?;
+            startup.reap_with_mode(deadline, mode).await?;
         }
         // 1. Reap and acknowledge any connect helper debt outside self.state lock.
-        self.reap_helpers_outside_state_lock(deadline)?;
+        self.reap_helpers_outside_state_lock(deadline, mode).await?;
 
         // 2. If runtime actor was started, join reader, input, and blocking writer outside self.state lock.
         let (has_runtime_workers, partial_aborted) = {
@@ -2115,7 +2132,7 @@ impl CheckedRunnerOwner {
                 let mut reader_loan = ReaderSlotLoanGuard::new(claim)?;
                 if let Some(ref mut reader_slot) = reader_loan.slot {
                     let (reader_outcome, within_deadline) = match reader_slot
-                        .observe_and_join(deadline, "checked host reader")
+                        .observe_and_join_with_mode(deadline, "checked host reader", mode).await
                     {
                         Ok(res) => res,
                         Err(err) => {
@@ -2267,7 +2284,7 @@ impl CheckedRunnerOwner {
             let mut writer_loan = WriterSlotLoanGuard::new(claim)?;
             if let Some(ref mut writer_slot) = writer_loan.slot {
                 let (writer_outcome, within_deadline) = match writer_slot
-                    .observe_and_join(deadline, "checked blocking pipe writer")
+                    .observe_and_join_with_mode(deadline, "checked blocking pipe writer", mode).await
                 {
                     Ok(res) => res,
                     Err(err) => {
@@ -2350,10 +2367,14 @@ impl CheckedRunnerOwner {
             if !pre_wait_in_time {
                 self.seal_unknown(StickyUnknownReason::FinalizationDeadlineExpired);
             }
-            let wait_ms = finite_wait_ms(deadline.saturating_duration_since(Instant::now()));
-            let raw = process.as_raw_handle() as HANDLE;
-            let wait = unsafe { WaitForSingleObject(raw, wait_ms) };
-            let wait_error = if wait == WAIT_FAILED { Some(unsafe { GetLastError() } as i32) } else { None };
+            // The Arc keeps this exact original process handle alive across
+            // suspension; readiness probes never reopen a PID or release it.
+            let raw = process.as_raw_handle() as usize;
+            let observed = native_wait::wait_with(mode, deadline, |millis| {
+                native_wait::observe_original(raw as HANDLE, millis)
+            }).await;
+            let wait = observed.return_value;
+            let wait_error = observed.os_error;
             if wait != WAIT_OBJECT_0 {
                 self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?
                     .runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::WaitTimedOutOrFailed {
@@ -2370,7 +2391,7 @@ impl CheckedRunnerOwner {
                 self.seal_unknown(StickyUnknownReason::FinalizationDeadlineExpired);
             }
             let mut raw_exit: u32 = 0;
-            let ok = unsafe { GetExitCodeProcess(raw, &mut raw_exit) };
+            let ok = unsafe { GetExitCodeProcess(raw as HANDLE, &mut raw_exit) };
             if ok == 0 {
                 let err = io::Error::last_os_error();
                 self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?
@@ -2557,7 +2578,7 @@ impl CheckedRunnerOwner {
         self.check_asuser_native_adopted()?;
         self.reap_native_forwarders_blocking(deadline)?;
         let initial_in_time = Instant::now() < deadline;
-        self.finalize_with_claim(&mut claim, deadline, initial_in_time)
+        native_wait::run_blocking(self.finalize_with_claim(&mut claim, deadline, initial_in_time, NativeWaitMode::Blocking))
     }
 
     pub(crate) async fn finalize_async(
@@ -2632,7 +2653,7 @@ impl CheckedRunnerOwner {
             drop(input_loan);
         }
 
-        self.finalize_with_claim(&mut claim, deadline, pre_await_in_time)
+        self.finalize_with_claim(&mut claim, deadline, pre_await_in_time, NativeWaitMode::Cooperative).await
     }
 }
 

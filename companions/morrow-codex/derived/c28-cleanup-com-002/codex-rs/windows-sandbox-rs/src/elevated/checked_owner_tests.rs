@@ -1849,3 +1849,164 @@ async fn busy_async_finalizer_does_not_probe_another_callers_asuser_cell() {
     assert!(owner.state.lock().unwrap().first_error_fact.is_none());
     drop(claim);
 }
+
+
+// A single runtime thread makes the dependency deterministic: the original
+// reader cannot exit until the sibling timer task releases it. A bounded native
+// wait inside finalize_async must suspend, rather than occupying that thread.
+#[tokio::test(flavor = "current_thread")]
+async fn async_native_reader_wait_allows_same_runtime_timer_to_release_original_worker() {
+    let (process, pid) = spawn_exited_child_process();
+    let identity = OriginalProcessIdentity::from_live_process(&process, pid).unwrap();
+    let owner = CheckedRunnerOwner::new_scoped_for_actor(
+        dummy_artifact(), dummy_hello(), RunnerControlCapabilities::default(), process, identity,
+    );
+    let (release_tx, release_rx) = mpsc::channel::<()>();
+    let reader_owner = Arc::clone(&owner);
+    let mut admission = owner.reserve_runtime_workers().unwrap();
+    let reader = std::thread::spawn(move || {
+        release_rx.recv().expect("same runtime releases original reader");
+        reader_owner.record_protocol_exit(0);
+        reader_owner.record_reader_physical_eof();
+        ReaderWorkerOutcome { protocol_exit: Some(0), physical_eof: true, clean: true }
+    });
+    let writer = std::thread::spawn(|| WriterWorkerOutcome { clean: true, termination_sent: false });
+    let input = tokio::spawn(async { InputWorkerOutcome { clean: true } });
+    // Make the earlier input await ready before exercising the native reader
+    // wait. This does not substitute for the original input JoinHandle await.
+    while !input.is_finished() { tokio::task::yield_now().await; }
+    admission.install_runtime_workers(reader, writer, input, Box::new(|| {}));
+    drop(admission);
+    let deadline = Instant::now() + Duration::from_secs(2);
+    let release = async move {
+        tokio::time::sleep(Duration::from_millis(15)).await;
+        release_tx.send(()).expect("original reader still retained");
+    };
+    let (first, ()) = tokio::join!(owner.finalize_async(deadline), release);
+    // Physically reap this negative fixture after the timer has run, before
+    // asserting. This never starts or replays a Runner or clears sticky Unknown.
+    let after = owner.finalize_async(Instant::now() + Duration::from_secs(2)).await;
+    assert!(after.is_ok(), "original fixture workers physically reaped: {after:?}");
+    let outcome = first.expect("cooperative finalizer must let the sibling timer release the original reader before its unchanged deadline");
+    assert_eq!(outcome, CheckedFinalizationOutcome::CleanRelease {
+        startup_id: owner.startup_id(), protocol_exit_code: 0, native_exit_code: 0, release_eligible: false,
+    });
+    assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed());
+}
+
+
+#[tokio::test(flavor = "current_thread")]
+async fn async_native_writer_wait_allows_same_runtime_timer_to_release_original_worker() {
+    let (process, pid) = spawn_exited_child_process();
+    let identity = OriginalProcessIdentity::from_live_process(&process, pid).unwrap();
+    let owner = CheckedRunnerOwner::new_scoped_for_actor(
+        dummy_artifact(), dummy_hello(), RunnerControlCapabilities::default(), process, identity,
+    );
+    let (release_tx, release_rx) = mpsc::channel::<()>();
+    let mut admission = owner.reserve_runtime_workers().unwrap();
+    let reader = std::thread::spawn(|| ReaderWorkerOutcome { protocol_exit: Some(0), physical_eof: true, clean: true });
+    let writer = std::thread::spawn(move || {
+        release_rx.recv().unwrap();
+        WriterWorkerOutcome { clean: true, termination_sent: false }
+    });
+    let input = tokio::spawn(async { InputWorkerOutcome { clean: true } });
+    while !input.is_finished() { tokio::task::yield_now().await; }
+    admission.install_runtime_workers(reader, writer, input, Box::new(|| {}));
+    drop(admission);
+    let release = async move {
+        tokio::time::sleep(Duration::from_millis(15)).await;
+        release_tx.send(()).unwrap();
+    };
+    let (result, ()) = tokio::join!(owner.finalize_async(Instant::now() + Duration::from_secs(2)), release);
+    assert_eq!(result.unwrap(), CheckedFinalizationOutcome::CleanRelease {
+        startup_id: owner.startup_id(), protocol_exit_code: 0, native_exit_code: 0, release_eligible: false,
+    });
+    assert!(!owner.is_sticky_unknown());
+}
+
+#[tokio::test(flavor = "current_thread")]
+async fn cancelling_native_reader_wait_restores_same_original_slot_before_claim_release() {
+    let (process, pid) = spawn_exited_child_process();
+    let identity = OriginalProcessIdentity::from_live_process(&process, pid).unwrap();
+    let owner = CheckedRunnerOwner::new_scoped_for_actor(
+        dummy_artifact(), dummy_hello(), RunnerControlCapabilities::default(), process, identity,
+    );
+    let (release_tx, release_rx) = mpsc::channel::<()>();
+    let mut admission = owner.reserve_runtime_workers().unwrap();
+    let reader = std::thread::spawn(move || {
+        release_rx.recv().unwrap();
+        ReaderWorkerOutcome { protocol_exit: Some(0), physical_eof: true, clean: true }
+    });
+    let original_reader = reader.as_raw_handle() as usize;
+    let writer = std::thread::spawn(|| WriterWorkerOutcome { clean: true, termination_sent: false });
+    let input = tokio::spawn(async { InputWorkerOutcome { clean: true } });
+    while !input.is_finished() { tokio::task::yield_now().await; }
+    admission.install_runtime_workers(reader, writer, input, Box::new(|| {}));
+    drop(admission);
+    {
+        let future = owner.finalize_async(Instant::now() + Duration::from_secs(2));
+        tokio::pin!(future);
+        assert!(tokio::time::timeout(Duration::from_millis(20), &mut future).await.is_err());
+        assert!(owner.is_finalization_in_progress());
+    }
+    assert!(!owner.is_finalization_in_progress());
+    assert!(owner.has_installed_runtime_workers());
+    assert!(!owner.is_sticky_unknown());
+    assert!(!owner.is_no_replay_sealed());
+    {
+        let state = owner.state.lock().unwrap();
+        match &state.reader_worker {
+            WorkerSlotState::Installed(StdWorkerSlot::Pending(handle)) => assert_eq!(handle.as_raw_handle() as usize, original_reader),
+            _ => panic!("the same unjoined reader must be restored before releasing the claim"),
+        }
+    }
+    release_tx.send(()).unwrap();
+    assert!(matches!(owner.finalize_async(Instant::now() + Duration::from_secs(2)).await.unwrap(),
+        CheckedFinalizationOutcome::CleanRelease { release_eligible: false, .. }));
+}
+
+
+#[tokio::test(flavor = "current_thread")]
+async fn async_original_process_wait_yields_to_same_runtime_exit_request() {
+    use std::io::Write;
+    let (process,pid,mut input_pipe)=spawn_controllable_child_process();
+    let identity=OriginalProcessIdentity::from_live_process(&process,pid).unwrap();
+    let owner=CheckedRunnerOwner::new_scoped_for_actor(dummy_artifact(),dummy_hello(),RunnerControlCapabilities::default(),process,identity);
+    let mut admission=owner.reserve_runtime_workers().unwrap();
+    let reader=std::thread::spawn(||ReaderWorkerOutcome{protocol_exit:Some(0),physical_eof:true,clean:true});
+    let writer=std::thread::spawn(||WriterWorkerOutcome{clean:true,termination_sent:false});
+    let input=tokio::spawn(async{InputWorkerOutcome{clean:true}});
+    admission.install_runtime_workers(reader,writer,input,Box::new(||{}));drop(admission);
+    let release=async move{tokio::time::sleep(Duration::from_millis(15)).await;input_pipe.write_all(b"done\r\n").unwrap();drop(input_pipe);};
+    let (result,())=tokio::join!(owner.finalize_async(Instant::now()+Duration::from_secs(2)),release);
+    assert!(matches!(result.unwrap(),CheckedFinalizationOutcome::CleanRelease{native_exit_code:0,release_eligible:false,..}));
+    assert_eq!(owner.host_native_close_facts().runner_process_wait_and_exit.verified_exited_raw_dword(),
+        Some(super::super::native_close_protocol::RawProcessExitCodeDword(0)));
+    assert!(!owner.is_sticky_unknown());
+}
+
+#[tokio::test(flavor = "current_thread")]
+async fn cancelling_original_process_wait_retains_same_handle_before_claim_release() {
+    use std::io::Write;
+    let (process,pid,mut input_pipe)=spawn_controllable_child_process();
+    let original=process.as_raw_handle() as usize;
+    let identity=OriginalProcessIdentity::from_live_process(&process,pid).unwrap();
+    let owner=CheckedRunnerOwner::new_scoped_for_actor(dummy_artifact(),dummy_hello(),RunnerControlCapabilities::default(),process,identity);
+    let mut admission=owner.reserve_runtime_workers().unwrap();
+    let reader=std::thread::spawn(||ReaderWorkerOutcome{protocol_exit:Some(0),physical_eof:true,clean:true});
+    let writer=std::thread::spawn(||WriterWorkerOutcome{clean:true,termination_sent:false});
+    let input=tokio::spawn(async{InputWorkerOutcome{clean:true}});
+    admission.install_runtime_workers(reader,writer,input,Box::new(||{}));drop(admission);
+    {
+        let future=owner.finalize_async(Instant::now()+Duration::from_secs(2));tokio::pin!(future);
+        assert!(tokio::time::timeout(Duration::from_millis(20),&mut future).await.is_err());
+        assert!(owner.is_finalization_in_progress());
+    }
+    assert!(!owner.is_finalization_in_progress());assert!(!owner.is_sticky_unknown());assert!(!owner.is_no_replay_sealed());
+    {let state=owner.state.lock().unwrap();assert_eq!(state.process.as_ref().unwrap().as_raw_handle() as usize,original);}
+    assert_eq!(owner.host_native_close_facts().runner_process_wait_and_exit.verified_exited_raw_dword(),None);
+    input_pipe.write_all(b"done\r\n").unwrap();drop(input_pipe);
+    assert!(matches!(owner.finalize_async(Instant::now()+Duration::from_secs(2)).await.unwrap(),
+        CheckedFinalizationOutcome::CleanRelease{native_exit_code:0,release_eligible:false,..}));
+}

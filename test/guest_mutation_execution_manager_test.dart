@@ -17,20 +17,24 @@ Uint8List _id(int value) => Uint8List.fromList(List.filled(32, value));
 final _plan = Uint8List.fromList([9, 8, 7]);
 final _planHash = Uint8List.fromList(sha256.convert(_plan).bytes);
 
-MutationResult _owner(MutationResultKind kind, {Uint8List? plan}) =>
-    MutationResult(
-      kind: kind,
-      reference: kind == MutationResultKind.selected ? _id(4) : null,
-      plan: plan,
-      stagedBytes: BigInt.zero,
-      durableContent: false,
-      phase: MutationPhase.none,
-      operationId: null,
-      effect: MutationEffect.unspecified,
-      osCode: null,
-      scanned: 0,
-      done: false,
-    );
+MutationResult _owner(
+  MutationResultKind kind, {
+  Uint8List? plan,
+  MutationFailure? failure,
+}) => MutationResult(
+  kind: kind,
+  reference: kind == MutationResultKind.selected ? _id(4) : null,
+  plan: plan,
+  stagedBytes: BigInt.zero,
+  durableContent: false,
+  phase: MutationPhase.none,
+  operationId: null,
+  effect: MutationEffect.unspecified,
+  osCode: null,
+  scanned: 0,
+  done: false,
+  failure: failure,
+);
 
 class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
   Uint8List? key, startSubmission;
@@ -52,6 +56,7 @@ class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
   Uint8List? plannedHash;
   Future<void> Function()? beforeStatus;
   Object? prepareFailure, cancelFailure;
+  MutationFailure? prepareOwnerFailure;
 
   IoTaskSnapshot _snapshot() => IoTaskSnapshot(
     key: key,
@@ -176,11 +181,19 @@ class _Backend implements GuestMutationBackend, WorkbenchIoTaskControl {
           owner: _owner(MutationResultKind.planned, plan: _plan),
         );
       case GuestMutationCommandKind.prepare:
-        approvalDelivered = true;
-        result = GuestMutationResult(
-          kind: GuestMutationResultKind.frame,
-          frame: _frame(command),
-        );
+        approvalDelivered = prepareOwnerFailure == null;
+        result = prepareOwnerFailure == null
+            ? GuestMutationResult(
+                kind: GuestMutationResultKind.frame,
+                frame: _frame(command),
+              )
+            : GuestMutationResult(
+                kind: GuestMutationResultKind.owner,
+                owner: _owner(
+                  MutationResultKind.failure,
+                  failure: prepareOwnerFailure,
+                ),
+              );
       case GuestMutationCommandKind.chunk:
         chunks++;
         staged = command.offset! + BigInt.from(command.bytes!.length);
@@ -456,6 +469,68 @@ void main() {
       expect(backend.chunks, 0);
     },
   );
+
+  for (final failure in [
+    const MutationFailure(
+      layer: MutationFailureLayer.target,
+      target: MutationTargetFailure.limit,
+    ),
+    const MutationFailure(
+      layer: MutationFailureLayer.delivery,
+      delivery: MutationDeliveryFailure.cancelled,
+    ),
+  ]) {
+    testWidgets(
+      'owner ${failure.layer.name} refusal remains readable without replay',
+      (tester) async {
+        final backend = _Backend()..prepareOwnerFailure = failure;
+        await tester.pumpWidget(
+          _screen(
+            backend,
+            scrollKey: const PageStorageKey('owner-failure-panel'),
+            pickDirectory: () async => r'C:\approved',
+            pickContent: () async => XFile.fromData(
+              Uint8List.fromList([1, 2, 3]),
+              name: 'source.bin',
+            ),
+          ),
+        );
+        await tester.pump();
+        await _create(tester);
+        await _tap(tester, 'pick-content');
+        await _tap(tester, 'draft');
+        await _waitForDialog(tester, 'draft');
+        await tester.tap(_key('confirm-draft'));
+        await tester.pumpAndSettle();
+        await _tap(tester, 'prepare');
+        await tester.tap(_key('confirm-prepare'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(_enabled(tester, 'prepare'), isFalse);
+        expect(_enabled(tester, 'execute'), isFalse);
+        expect(_key('owner-code'), findsOneWidget);
+        await _tap(tester, 'owner-code');
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            '${failure.layer.name} / ${failure.delivery?.name ?? failure.target!.name}',
+          ),
+          findsOneWidget,
+        );
+        await _tap(tester, 'operation-error');
+        await tester.pumpAndSettle();
+        expect(
+          find.textContaining('Guest mutation command failed'),
+          findsOneWidget,
+        );
+        expect(backend.starts, 1);
+        expect(backend.executes, 0);
+        expect(backend.chunks, 0);
+        expect(backend.approvalDelivered, isFalse);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   for (final stage in ['prepare', 'execute']) {
     for (final duringDialog in [true, false]) {

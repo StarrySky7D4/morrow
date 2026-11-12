@@ -91,6 +91,8 @@ fn owned_clone_survives_original_file_close_and_unknown_is_retained() {
     let (original, process) = fixture();
     let (entered_tx, entered_rx) = mpsc::sync_channel(1);
     let (release_tx, release_rx) = mpsc::sync_channel(1);
+    let clone_read = Arc::new(AtomicBool::new(false));
+    let worker_read = Arc::clone(&clone_read);
     let id = owner
         .begin_with(&original, &process, soon(), move |file| {
             entered_tx.send(()).map_err(io::Error::other)?;
@@ -101,6 +103,7 @@ fn owned_clone_survives_original_file_close_and_unknown_is_retained() {
             if bytes != b"owned-pipe-object" {
                 return Err(io::Error::other("wrong owned object"));
             }
+            worker_read.store(true, Ordering::Release);
             Ok(())
         })
         .unwrap();
@@ -129,15 +132,24 @@ fn owned_clone_survives_original_file_close_and_unknown_is_retained() {
         io::ErrorKind::WouldBlock
     );
     release_tx.send(()).unwrap();
-    let joined = owner.observe(id, soon()).unwrap();
-    assert!(matches!(
-        joined,
+    let (joined, error_meta) = owner.observe_detailed(id, soon()).unwrap();
+    // The owned clone really remained usable after the original File closed.
+    assert!(clone_read.load(Ordering::Acquire), "owned clone read the exact payload");
+    // Cancellation is authoritative even if the injected operation later
+    // returns Ok. The unchanged worker converts it to this original timeout;
+    // physical native join must not turn it into successful business work.
+    match joined {
         Observation::Joined {
-            result: Ok(()),
+            result: Err(message),
             within_deadline: false,
-            prior_unknown: Some(_)
+            prior_unknown: Some((UnknownReason::Deadline, CancelObservation::Failed(code))),
+        } => {
+            assert_eq!(message, "connect completed after deadline or cancellation");
+            assert_eq!(code, windows_sys::Win32::Foundation::ERROR_NOT_FOUND);
         }
-    ));
+        other => panic!("cancelled original join must retain its exact failure: {other:?}"),
+    }
+    assert_eq!(error_meta, Some(JoinedErrorMeta { kind: io::ErrorKind::TimedOut, raw_os_error: None }));
     owner.acknowledge_joined(id).unwrap();
 }
 
@@ -392,5 +404,51 @@ fn expired_observation_deadline_latches_unknown_even_when_worker_already_signale
             ..
         }
     ));
+    owner.acknowledge_joined(id).unwrap();
+}
+
+
+#[tokio::test(flavor = "current_thread")]
+async fn cooperative_helper_observation_yields_and_requires_original_join_then_ack() {
+    let owner=Owner::new();let (file,process)=fixture();
+    let (tx,rx)=mpsc::channel::<()>();
+    let id=owner.begin_with(&file,&process,soon(),move |_|{rx.recv().map_err(io::Error::other)?;Ok(())}).unwrap();
+    let release=async move{tokio::time::sleep(Duration::from_millis(15)).await;tx.send(()).unwrap();};
+    let (observed,())=tokio::join!(owner.observe_async(id,soon()),release);
+    assert!(matches!(observed.unwrap(),Observation::Joined{result:Ok(()),within_deadline:true,prior_unknown:None}));
+    assert!(owner.slot.lock().unwrap().active.is_some());
+    owner.acknowledge_joined(id).unwrap();assert!(owner.slot.lock().unwrap().active.is_none());
+}
+
+#[tokio::test(flavor = "current_thread")]
+async fn cancelled_cooperative_helper_observation_retains_same_worker_and_no_false_unknown() {
+    let owner=Owner::new();let (file,process)=fixture();
+    let (tx,rx)=mpsc::channel::<()>();
+    let id=owner.begin_with(&file,&process,soon(),move |_|{rx.recv().map_err(io::Error::other)?;Ok(())}).unwrap();
+    let original={let slot=owner.slot.lock().unwrap();match slot.active.as_ref().unwrap().phase.as_ref().unwrap(){
+        Phase::Pending(pending)=>pending.worker.as_raw_handle() as usize,_=>panic!("pending original")}};
+    {
+        let future=owner.observe_async(id,soon());tokio::pin!(future);
+        assert!(tokio::time::timeout(Duration::from_millis(20),&mut future).await.is_err());
+    }
+    {let slot=owner.slot.lock().unwrap();let active=slot.active.as_ref().unwrap();assert_eq!(active.id,id);
+        match active.phase.as_ref().unwrap(){Phase::Pending(pending)=>{
+            assert_eq!(pending.worker.as_raw_handle() as usize,original);assert!(pending.unknown.is_none());
+        },_=>panic!("unjoined original must remain owned")}}
+    tx.send(()).unwrap();assert!(matches!(owner.observe_async(id,soon()).await.unwrap(),
+        Observation::Joined{result:Ok(()),within_deadline:true,prior_unknown:None}));
+    owner.acknowledge_joined(id).unwrap();
+}
+
+#[tokio::test(flavor = "current_thread")]
+async fn cooperative_helper_real_deadline_remains_unknown_after_original_native_join() {
+    let owner=Owner::new();let (file,process)=fixture();
+    let (tx,rx)=mpsc::channel::<()>();
+    let id=owner.begin_with(&file,&process,soon(),move |_|{rx.recv().map_err(io::Error::other)?;Ok(())}).unwrap();
+    assert!(matches!(owner.observe_async(id,Instant::now()+Duration::from_millis(20)).await.unwrap(),
+        Observation::RetainedUnknown{reason:UnknownReason::Deadline,..}));
+    assert!(owner.slot.lock().unwrap().active.is_some());
+    tx.send(()).unwrap();assert!(matches!(owner.observe_async(id,soon()).await.unwrap(),
+        Observation::Joined{within_deadline:false,prior_unknown:Some((UnknownReason::Deadline,_)),..}));
     owner.acknowledge_joined(id).unwrap();
 }

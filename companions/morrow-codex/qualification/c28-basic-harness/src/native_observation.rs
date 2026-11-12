@@ -386,6 +386,26 @@ impl RunnerOwnerExport {
     }
 }
 
+/// Enrich the original rejected observation with one read of its passive mirror.
+/// Success never reads the mirror. Failure stays failure; this neither polls the
+/// native owner nor sends a guest command, control, acknowledgement or retry.
+pub(crate) fn with_rejected_basic_history<T>(
+    original: anyhow::Result<T>,
+    observe: impl FnOnce() -> Option<codex_exec_server::RunnerObservation>,
+) -> anyhow::Result<T> {
+    original.map_err(|error| {
+        let diagnostic = serde_json::json!({
+            "schema": "C28_REJECTED_BASIC_RUNNER_HISTORY_V1",
+            "record_point": "ORIGINAL_BASIC_OBSERVATION_REJECTED",
+            "diagnostic_only": true,
+            "runner_owner": observe().map(RunnerOwnerExport::from),
+            "accepted_terminal_evidence": false,
+            "native_cleanup_authority": false,
+        });
+        anyhow::anyhow!("{error}; original_rejected_runner_history={diagnostic}")
+    })
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct NativeObservation {
@@ -516,6 +536,48 @@ mod tests {
             original_issuer_nonce: [3;32] }, record_revision: 4, record_sha256: [5;32],
             phase: ToolPhase::Approved, invocation_started: false, latest: None,
             observation_revision: 0, accepted_report: None }
+    }
+    #[test]
+    fn successful_basic_result_does_not_read_failure_history() {
+        let actual = with_rejected_basic_history(Ok(47u32), || {
+            panic!("success must not invoke the diagnostic reader")
+        }).unwrap();
+        assert_eq!(actual, 47);
+    }
+    #[test]
+    fn rejected_basic_reads_passive_history_once_and_preserves_original_error() {
+        let reads = std::cell::Cell::new(0);
+        let result: anyhow::Result<()> = with_rejected_basic_history(
+            Err(anyhow::anyhow!("original failure with original page fingerprint")),
+            || {
+                reads.set(reads.get() + 1);
+                Some(codex_exec_server::RunnerObservationReader::unsupported().read())
+            },
+        );
+        assert_eq!(reads.get(), 1);
+        let text = result.unwrap_err().to_string();
+        let (original, raw) = text.split_once("; original_rejected_runner_history=").unwrap();
+        assert_eq!(original, "original failure with original page fingerprint");
+        assert!(raw.len() < MAX_OBSERVATION_BYTES);
+        let diagnostic: serde_json::Value = serde_json::from_str(raw).unwrap();
+        assert_eq!(diagnostic["runner_owner"]["availability"], "UNSUPPORTED");
+        assert!(diagnostic["runner_owner"]["snapshot"].is_null());
+        assert_eq!(diagnostic["record_point"], "ORIGINAL_BASIC_OBSERVATION_REJECTED");
+        assert_eq!(diagnostic["accepted_terminal_evidence"], false);
+        assert_eq!(diagnostic["native_cleanup_authority"], false);
+        assert!(decode_observation(raw.as_bytes()).is_err());
+    }
+    #[test]
+    fn absent_rejected_history_remains_a_failure_without_fabricated_owner() {
+        let result: anyhow::Result<()> = with_rejected_basic_history(
+            Err(anyhow::anyhow!("original observation rejected")), || None,
+        );
+        let text = result.unwrap_err().to_string();
+        let (_, raw) = text.split_once("; original_rejected_runner_history=").unwrap();
+        let diagnostic: serde_json::Value = serde_json::from_str(raw).unwrap();
+        assert!(diagnostic["runner_owner"].is_null());
+        assert_eq!(diagnostic["diagnostic_only"], true);
+        assert_eq!(diagnostic["accepted_terminal_evidence"], false);
     }
     #[test]
     fn bounded_schema_rejects_native_claims_authority_and_noncanonical_numbers() {

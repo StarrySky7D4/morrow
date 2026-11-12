@@ -603,10 +603,16 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
   Widget _diagnostic(String id, String title, Object error) {
     final raw = error.toString();
     final bounded = raw.length <= 2048 ? raw : raw.substring(0, 2048);
-    return ExpansionTile(
-      key: ValueKey('mutation-execution-$id'),
-      title: Text(title, style: TextStyle(color: widget.muted, fontSize: 12)),
-      children: [SelectableText(bounded)],
+    // Diagnostics can mount after the settings page has stored a scroll
+    // offset. Their expansion booleans and selectable text must not share
+    // that page's storage slot, or one diagnostic's slot with another.
+    return PageStorage(
+      bucket: PageStorageBucket(),
+      child: ExpansionTile(
+        key: ValueKey('mutation-execution-$id'),
+        title: Text(title, style: TextStyle(color: widget.muted, fontSize: 12)),
+        children: [SelectableText(bounded)],
+      ),
     );
   }
 

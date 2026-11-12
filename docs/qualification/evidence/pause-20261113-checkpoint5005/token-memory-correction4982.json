@@ -1,0 +1,55 @@
+{
+  "status": "EXACT_CHECKPOINT_DATE_CORRECTED_BEFORE_ANY_MEMORY_COMPARISON",
+  "original_script": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\compare_checkpoint_memory4941.py",
+    "bytes": 10161,
+    "sha256": "bb1f5bfe6e52e1608fa2e3d2123229a424c703e05639b3caa860e896b3f668ae"
+  },
+  "corrected_script": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\compare_checkpoint_memory4941_4982.py",
+    "bytes": 10161,
+    "sha256": "da41d48ad292314c680804c6b4e617c8eb3f4bf8a78cedf12784ef84211f6ef1"
+  },
+  "failed_returned": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\04-compare_checkpoint_memory4941-returned.json",
+    "bytes": 60,
+    "sha256": "281dd477513d57d17b3be1e06bee8c84c92d020bfdcec0a829e3d7974fdeead9"
+  },
+  "failed_stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\04-compare_checkpoint_memory4941.stderr",
+    "bytes": 321,
+    "sha256": "fd60219f5a686dc706e582ccfd7846cbaf43c17b75d7d2c2b996c12fc1d63a03"
+  },
+  "original_pipeline_session": 62463,
+  "original_pipeline_exit": 1,
+  "original_pipeline_chunk": "6e974d",
+  "completed_first_three": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\01-save_case4900_unknown4938_4944-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\02-inspect_saved_memory4939-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\03-checkpoint_case4900_unknown4940-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    }
+  ],
+  "checkpoint_creation": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-case4900-retained-checkpoint-4940\\result.json",
+    "bytes": 54412,
+    "sha256": "b1d929c0a0c4cf86de597d2d7025f3136caba6f64bd576bad257c1e527610769"
+  },
+  "only_one_date_literal_changed": true,
+  "original_memory_read_calls": 0,
+  "VM_mutations": 0,
+  "Save_VM_repeats": 0,
+  "Checkpoint_VM_repeats": 0,
+  "old_owner_contacts": 0,
+  "release_eligible": false
+}

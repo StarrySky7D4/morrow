@@ -317,6 +317,48 @@ impl Owner {
         self.observe_detailed(id, wait_until).map(|(obs, _)| obs)
     }
 
+
+    /// Yield while the retained original is pending. Only the existing observe
+    /// path consumes its native signal and JoinHandle or produces an outcome.
+    /// The helper remains in its owner's occupied slot across cancellation.
+    pub(crate) async fn observe_async(&self, id: AttemptId, wait_until: Instant) -> io::Result<Observation> {
+        let cap = Instant::now().checked_add(CONNECT_TIMEOUT)
+            .ok_or_else(|| io::Error::other("observation deadline overflow"))?;
+        let wait_until = wait_until.min(cap);
+        while !self.ready_for_async_observation(id, wait_until)? {
+            tokio::time::sleep(wait_until.saturating_duration_since(Instant::now())
+                .min(Duration::from_millis(1))).await;
+        }
+        self.observe(id, wait_until)
+    }
+
+    fn ready_for_async_observation(&self, id: AttemptId, wait_until: Instant) -> io::Result<bool> {
+        let mut slot = self.slot.try_lock()
+            .map_err(|_| io::Error::other("connect owner unavailable; resources retained"))?;
+        let active = slot.active.as_mut().filter(|active| active.id == id)
+            .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "attempt not owned"))?;
+        let phase = active.phase.as_mut().ok_or_else(|| io::Error::other("connect phase missing"))?;
+        let Phase::Pending(pending) = phase else { return Ok(true); };
+        let effective_deadline = if pending.unknown.is_some() { wait_until } else { wait_until.min(pending.deadline) };
+        if Instant::now() >= effective_deadline { return Ok(true); }
+        let wait = unsafe { WaitForSingleObject(pending.worker.as_raw_handle() as HANDLE, 0) };
+        match wait {
+            WAIT_TIMEOUT => Ok(false),
+            WAIT_OBJECT_0 => Ok(true),
+            WAIT_FAILED => {
+                let error = unsafe { GetLastError() };
+                // A failed readiness probe is real native failure. Preserve it
+                // before any later observation; it cannot be polished to clean.
+                mark_unknown(pending, UnknownReason::WaitFailed(error));
+                Ok(true)
+            }
+            unexpected => {
+                mark_unknown(pending, UnknownReason::UnexpectedWait(unexpected));
+                Ok(true)
+            }
+        }
+    }
+
     pub(crate) fn observe_detailed(
         &self,
         id: AttemptId,

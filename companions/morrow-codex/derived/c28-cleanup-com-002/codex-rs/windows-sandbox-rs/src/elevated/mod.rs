@@ -9,3 +9,5 @@ pub(crate) mod runner_pipe;
 
 pub(crate) mod native_close_startup;
 pub(crate) mod native_completion;
+
+pub(crate) mod native_wait;

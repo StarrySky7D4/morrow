@@ -265,7 +265,11 @@ final class MutationExecutionSession {
         value.key == null &&
         value.exit == null &&
         value.storage == IoStoragePhase.local) {
+      // An idle library may retain another completed task's submission.
+      // It is not an owner to adopt. A pending start, owned task or unknown
+      // acknowledgement still requires this attempt's exact identity.
       if (value.submission != null &&
+          (_request != null || _key != null || _ackUnknown) &&
           !_sameBytes(
             value.submission,
             _request?.submission ?? _lastRequest?.submission,

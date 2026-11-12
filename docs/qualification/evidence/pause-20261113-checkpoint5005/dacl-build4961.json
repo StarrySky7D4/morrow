@@ -1,0 +1,51 @@
+{
+  "status": "PASS_INTEGRATED_DEFAULT_DACL_VARIANT_COLD_COMPILED_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+  "roles": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\roles-105\\result.json",
+    "bytes": 2225,
+    "sha256": "026c9e51770d26bba30790f816ad4d1a45a03cd3cda56a1d15b87d3be0915949"
+  },
+  "completed": [
+    {
+      "role": "C",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 939.4070000000065,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-build-original-4961\\C.stdout",
+        "bytes": 1260,
+        "sha256": "c150914f5d6b75258770a4eb31a30cfabcebe4b6f4a186d0ae77ffd59e8ddb4e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-build-original-4961\\C.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "role": "S",
+      "exit_code": 0,
+      "original_process_returned": true,
+      "seconds": 640.4679999999935,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-build-original-4961\\S.stdout",
+        "bytes": 1020,
+        "sha256": "b6906c16707c7cd3615a86de639dcda82f6f90981d72f67feb3deea338759b7b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\integrated-dacl-build-original-4961\\S.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_processes_returned": true,
+  "preparation_repeated": false,
+  "VM_calls": 0,
+  "product_executions": 0,
+  "automatic_retry": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -294,6 +294,68 @@ Future<void> _discover(WidgetTester tester, String subject) async {
 }
 
 void main() {
+  testWidgets(
+    'recovery result keeps its submitted plan identity across selection and ack',
+    (tester) async {
+      const firstHash =
+          'ca358758f6d27e6cf45272937977a748fd88391db679ceda7dc7bf1f005ee879';
+      const secondHash =
+          'beead77994cf573341ec17b58bbf7eb34d2711c993c1d976b128b3188dc1829a';
+      String identity(String id) {
+        final widget = tester.widget(
+          find.byKey(ValueKey('mutation-recovery-$id')),
+        );
+        return widget is SelectableText ? widget.data! : (widget as Text).data!;
+      }
+
+      Future<void> select(int index) async {
+        final tile = find.byKey(ValueKey('mutation-recovery-plan-$index'));
+        await tester.ensureVisible(tile);
+        await tester.tap(
+          find.descendant(of: tile, matching: find.byType(Text)).first,
+        );
+        await tester.pump();
+      }
+
+      final backend = _Backend()..queuedPages.add(_page([7, 8]));
+      await tester.pumpWidget(_screen(backend));
+      await tester.pump();
+      await _discover(tester, 'original.scope');
+      await _tap(tester, 'read');
+      expect(identity('plan-0-identity'), endsWith(firstHash));
+      expect(identity('plan-1-identity'), endsWith(secondHash));
+      await select(0);
+      expect(identity('selected-plan-identity'), endsWith(firstHash));
+      await _tap(tester, 'release');
+      await _tap(tester, 'read');
+      await _tap(tester, 'stop');
+      backend.joined();
+      await _tap(tester, 'refresh');
+      await _tap(tester, 'ack');
+      await _tap(tester, 'reconcile');
+
+      // Selecting a different retained record while the request is in flight
+      // must not relabel the response as belonging to that newer selection.
+      await select(1);
+      expect(identity('selected-plan-identity'), endsWith(secondHash));
+      await _tap(tester, 'read');
+      expect(identity('result-plan-identity'), endsWith(firstHash));
+      expect(backend.reconciliationRequests.single.plan, [7]);
+      await _tap(tester, 'stop');
+      backend.joined();
+      await _tap(tester, 'refresh');
+      await _tap(tester, 'ack');
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(_screen(backend));
+      await tester.pump();
+      expect(identity('result-plan-identity'), endsWith(firstHash));
+      expect(identity('selected-plan-identity'), endsWith(secondHash));
+      expect(backend.reconciliationRequests, hasLength(1));
+      expect(backend.discoveryRequests, hasLength(1));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('workflow shortcuts prefill only and lock during recovery', (
     tester,
   ) async {

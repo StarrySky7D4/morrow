@@ -1,0 +1,51 @@
+{
+  "status": "PASS_ONE_SAVE_ONE_CHECKPOINT_AND_COMPLETE_LOGICAL_MEMORY_COMPARISON",
+  "original_pipeline_exit": 1,
+  "original_failed_before_memory_comparison": true,
+  "original_failure_preserved": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\04-compare_checkpoint_memory4941-returned.json",
+    "bytes": 60,
+    "sha256": "281dd477513d57d17b3be1e06bee8c84c92d020bfdcec0a829e3d7974fdeead9"
+  },
+  "initial_completed_first_three": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\01-save_case4900_unknown4938_4944-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\02-inspect_saved_memory4939-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-preservation-execution-4944\\03-checkpoint_case4900_unknown4940-returned.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    }
+  ],
+  "memory_comparison_original_exit": 0,
+  "memory": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-checkpoint-memory-equivalence-4941\\result.json",
+    "bytes": 4064,
+    "sha256": "d6bea14abfb973962aadcefa12f66920d840b931e008398dc1b42269cec705c1"
+  },
+  "corrected_memory_script": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\compare_checkpoint_memory4941_4982.py",
+    "bytes": 10161,
+    "sha256": "da41d48ad292314c680804c6b4e617c8eb3f4bf8a78cedf12784ef84211f6ef1"
+  },
+  "correction": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\token-memory-label-correction-4982\\result.json",
+    "bytes": 2519,
+    "sha256": "855add2621560e21ec2a7f2601d30c5ab1960be9dd479d2ddfb463337bf97f94"
+  },
+  "Save_VM_calls": 1,
+  "Checkpoint_VM_calls": 1,
+  "Save_VM_repeats": 0,
+  "Checkpoint_VM_repeats": 0,
+  "automatic_case_retries": 0,
+  "old_native_owner_contacts": 0,
+  "retained_review_pending": true,
+  "release_eligible": false
+}

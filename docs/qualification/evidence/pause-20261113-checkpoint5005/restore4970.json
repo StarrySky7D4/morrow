@@ -1,0 +1,711 @@
+{
+    "credential_reads":  0,
+    "build_source_digest":  "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+    "all_protected_hashes_unchanged":  true,
+    "Unknown_checkpoint_restores":  0,
+    "original_restore_returned":  true,
+    "restore_attempts":  1,
+    "clean_checkpoint_files":  [
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmcx",
+                                       "bytes":  48144,
+                                       "sha256":  "9ed9123e8926d23105b30a5a49cfa14622f5dc19a31ad97a296072ef31020061"
+                                   },
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmrs",
+                                       "bytes":  82010,
+                                       "sha256":  "159d94ec2cfe8d1089d097d0972ccbc9b7d1c288f50089a53da6164cc6219bdc"
+                                   },
+                                   {
+                                       "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmgs",
+                                       "bytes":  4194816,
+                                       "sha256":  "7ac51e9ef28fbb97a5286a9a7344f26f88b3df1a8a66c5d08a1631267fbf9299"
+                                   }
+                               ],
+    "free_C_after":  341964824576,
+    "strict_guest_readiness":  "PENDING_NEW_BOOT",
+    "retained_checkpoint_files":  [
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1e79c634-26d7-462c-8da9-8804384b0334.vmcx",
+                                          "bytes":  53391,
+                                          "sha256":  "2ebb4b94051241e7d8f418466a027ad3f9ca2290c690bd677cc0e5c244523ec4"
+                                      },
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1e79c634-26d7-462c-8da9-8804384b0334.vmrs",
+                                          "bytes":  2133077988,
+                                          "sha256":  "0dc31a01ab0f08bbb16193d119486c34cac2fc2c0a4285e10a77fde5d2f5c904"
+                                      },
+                                      {
+                                          "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1e79c634-26d7-462c-8da9-8804384b0334.vmgs",
+                                          "bytes":  4194816,
+                                          "sha256":  "8b50b60f3e7da9d6f8d7d4f7381daaa19dd4426f652ae8efdcf736b120099554"
+                                      }
+                                  ],
+    "retained_unknown_disk":  {
+                                  "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_8D20E4B4-9930-41DF-9C11-BB9F508D9AF8.avhdx",
+                                  "bytes":  9178185728,
+                                  "sha256":  "c832380bbd20abf4c24ae34526c68a5cdca6519049e104ca738c842abfef2af3"
+                              },
+    "status":  "PASS_CLEAN_CHECKPOINT_RESTORED_UNKNOWN_CHECKPOINT_PRESERVED",
+    "retained_checkpoint_id":  "1e79c634-26d7-462c-8da9-8804384b0334",
+    "protected_files":  [
+                            {
+                                "mtime_ticks":  639295321332097408,
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance.vhdx",
+                                "sha256":  "337904e0a7218fa67d24f17e6951b27f08a3e3e1895e71fd820e3137ffbcbcf6",
+                                "bytes":  20573061120
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmcx",
+                                "bytes":  48144,
+                                "sha256":  "9ed9123e8926d23105b30a5a49cfa14622f5dc19a31ad97a296072ef31020061"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmrs",
+                                "bytes":  82010,
+                                "sha256":  "159d94ec2cfe8d1089d097d0972ccbc9b7d1c288f50089a53da6164cc6219bdc"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\e75dc168-6c96-4add-8596-2f1b8b16452b.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "7ac51e9ef28fbb97a5286a9a7344f26f88b3df1a8a66c5d08a1631267fbf9299"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmcx",
+                                "bytes":  48933,
+                                "sha256":  "bd0db926d05f2189f6b0c9c38b0e365464f917acd3dbba92eba79c0d5dd3540a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmrs",
+                                "bytes":  2129649636,
+                                "sha256":  "9a35f38dda7d95c2b64366d0df76ca4264be33577b240fec973ad500e4f205b5"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\ba264892-7fa6-4111-a9dc-9bde534f4ed2.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "65b621db572c8bd2effc2971dcb4078c8e5c02d79cead185c166350fdc5458ad"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_0D2CD82B-53B7-4435-8936-C1B349086F19.avhdx",
+                                "bytes":  9226420224,
+                                "sha256":  "e82cd9f8bfa62cba66b81b1351d2223e28d7d7e4a81b047f6a9aaf18f1993362"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\5427287b-3521-4ba7-a8b8-e1578db811bf.vmcx",
+                                "bytes":  49051,
+                                "sha256":  "cd122210e02c7fb18ccd7eef0e27f9ca659021ddc65fd9f257efa875efe663fc"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\5427287b-3521-4ba7-a8b8-e1578db811bf.vmrs",
+                                "bytes":  2003927012,
+                                "sha256":  "760cfd4899c4acea0e8ee9a1cfcb2d46a81f5852a66b5be90dbfde0ecd6d5dca"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\5427287b-3521-4ba7-a8b8-e1578db811bf.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "bea6efc3f241c903810da5728f4a5af8c1d04ff60478850d5c99dae050fe9728"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2746CA0E-A848-46FA-9C05-023D5958F4E4.avhdx",
+                                "bytes":  9297723392,
+                                "sha256":  "e5f5fab0f6e77a46de5a4de0940ba60c4c65c90ceb014ce8f3abd68d72892efc"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\6c30da95-6d9c-48f0-a0a8-f9ff51bf7961.vmcx",
+                                "bytes":  49214,
+                                "sha256":  "14ab2f01a26f9a089241a20255bc197772869bf0d14b24f048865b351fe5e7e0"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\6c30da95-6d9c-48f0-a0a8-f9ff51bf7961.vmrs",
+                                "bytes":  2007572452,
+                                "sha256":  "309f03d1965e6ebe8f8ccfa064afa10b8bfb5ff4c994d7d68eb9bf36ec998bc9"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\6c30da95-6d9c-48f0-a0a8-f9ff51bf7961.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "a281170e8b397c7eddad4adce780e07dbbd28510be84b61e471b0c84ae5bcfb3"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_75846257-A1AF-4C90-AC99-0B3012E21F81.avhdx",
+                                "bytes":  9006219264,
+                                "sha256":  "8f3b6032d9b040a8e5392efb5e9be4948275cded881fa2af2bc4636c820e6070"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a5b7291a-983f-4883-9565-f4455e27d784.vmcx",
+                                "bytes":  49383,
+                                "sha256":  "652c632648a8c5812329d5a8d2c5172e8ae3b7e71d1b5ee4a96809bac24a5bd9"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a5b7291a-983f-4883-9565-f4455e27d784.vmrs",
+                                "bytes":  1983254500,
+                                "sha256":  "328eb4e251a12cfe8963c5656381fb2b62a4b42c63d1bc2219cddb560f5f2d6a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a5b7291a-983f-4883-9565-f4455e27d784.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "c580b4e412bb65635b5952ab41899ed38c23bbe491940d87a1b6adbd2b7f2278"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_8174C23F-98A4-4A5D-93CB-6EABECCD421C.avhdx",
+                                "bytes":  2888826880,
+                                "sha256":  "bee629384cf34b1bb9ffb110b8ae8b2efc3b89a0f3395ed6b5c8634602defd44"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a84546c5-293d-43b6-83be-251e6402729e.vmcx",
+                                "bytes":  49548,
+                                "sha256":  "de869e5db7fe1ba23281eb3342616f87a8d30b8658618038e9c324d29c185e16"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a84546c5-293d-43b6-83be-251e6402729e.vmrs",
+                                "bytes":  2120712164,
+                                "sha256":  "748a5f915eeb6eab32a5bf9c8fc2ab7aba94b0015cf3933118852e6f39f63178"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\a84546c5-293d-43b6-83be-251e6402729e.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "8cffe8054dd283404c98495e19b392fbe31645a6794bb28459c3d18daa75d5dc"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_ED3A8E41-90C8-4AE1-B76F-BC2C5D47D6EF.avhdx",
+                                "bytes":  9067036672,
+                                "sha256":  "90a6558a6c544eb96dd1006ea8cf9d3c35d3eaca70d52886b53f064c7f47291d"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\777b5b9f-8d20-403c-b4e1-949079ab9f45.vmcx",
+                                "bytes":  49178,
+                                "sha256":  "f9b800f9157b4edabe2ed272ee16bc16f63b620a6241d6f932088a86cc0420af"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\777b5b9f-8d20-403c-b4e1-949079ab9f45.vmrs",
+                                "bytes":  1788678116,
+                                "sha256":  "4267bc6a80e81278ac61bc4cb5a4c886c8e643d3de09d8796b2975ffc65dbfff"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\777b5b9f-8d20-403c-b4e1-949079ab9f45.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "4aeef92456e93aa8a3aa69dde21145fef3dba621de2e7663501f62fcf97a01a7"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_BF298FE5-C9CF-4F7D-B294-E9FC3891C492.avhdx",
+                                "bytes":  2748317696,
+                                "sha256":  "05237766af93da88603faf48d5af56e8ce7095dbf9ae40e6f8ec492c272ee2f5"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1497359a-c514-4427-8d7d-3eb1fd9994e8.vmcx",
+                                "bytes":  53559,
+                                "sha256":  "0aa33b96f5977555eedfa6a33e111a29514d61396ff4e0197b1be67803d2cfd0"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1497359a-c514-4427-8d7d-3eb1fd9994e8.vmrs",
+                                "bytes":  1902198756,
+                                "sha256":  "07c22672302d479a1efaacc1abb712e8041f23fc8958f8eda78b8b63da25e5b2"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1497359a-c514-4427-8d7d-3eb1fd9994e8.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "1ed2d719828f7a3c69132316032db3f9ee8a9e8cf6872e1f9e375b665241a16c"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_BA066BB3-5E43-44D1-9433-A199EBCD39FC.avhdx",
+                                "bytes":  2798649344,
+                                "sha256":  "07c2c5b2d222728be3f90d070cbd0d2255a003c48534df14536d389e14d1e8ee"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\766728b3-f44b-4cf1-af24-ebc1ff614b4e.vmcx",
+                                "bytes":  53868,
+                                "sha256":  "586df0548004d43de37e019951de3826aea2baac26f079bafc1b1d5eac76059d"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\766728b3-f44b-4cf1-af24-ebc1ff614b4e.vmrs",
+                                "bytes":  1971216356,
+                                "sha256":  "515c04a0438b27a3761a5187699a5b7a31f23617732384b23d1b405d80bc836b"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\766728b3-f44b-4cf1-af24-ebc1ff614b4e.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "d422b30c0fc2113c9b84bec252d8d96e11b84f9a80c859e5a003126dfb58d8a9"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_A42C3EE3-6190-4216-A36F-E2B1DF5580E0.avhdx",
+                                "bytes":  8995733504,
+                                "sha256":  "4dce462a3d2d388d292b6c73092c6eed82489900c4136e4fb654d11177dca585"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1204fd45-3936-4891-a5f5-65c0025edba3.vmcx",
+                                "bytes":  54114,
+                                "sha256":  "bfa010a8c234d3c6f33c241e48f129dad82741cf7e3478c0e7d400281454d4e7"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1204fd45-3936-4891-a5f5-65c0025edba3.vmrs",
+                                "bytes":  2109824996,
+                                "sha256":  "2e2d10069b677a5fbeb806ecba3af80360df8d890930f56edad908948bbc5755"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1204fd45-3936-4891-a5f5-65c0025edba3.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "cef37bd59c1933b07f39fec2ebfc740b0450a525a6734fb990863d1df4515754"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_D7F82C6C-E9AD-4DCA-9954-DEBC03B1BDC2.avhdx",
+                                "bytes":  9018802176,
+                                "sha256":  "b008b6c52ad2696c779f9961b7242c2537a1626620919cffe5ed755a0f9bc686"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\d2091173-df9e-41d8-8b09-134136b6d957.vmcx",
+                                "bytes":  50366,
+                                "sha256":  "12090d59e6e88ee7bc5776ef1e087022446e9d23b6cf005f5c67193acbf1113a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\d2091173-df9e-41d8-8b09-134136b6d957.vmrs",
+                                "bytes":  2084216804,
+                                "sha256":  "ee95e69164b6ee73b5e9fa889cd9ab7136d44b0d460f4026882bf65048034499"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\d2091173-df9e-41d8-8b09-134136b6d957.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "15fc6e7f47a262cca8b401865cd4ad6ef9c954a7ec54de95766596999a9a451a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_79C5EABC-AC77-4FC1-AAD2-F0E9A3042F26.avhdx",
+                                "bytes":  9234808832,
+                                "sha256":  "f431a97512f1cdf42ff80a30c6ac243be74db62e2778d60e53b88b531a0b3ea2"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d181f18-61c6-4d28-bb44-86984e40c180.vmcx",
+                                "bytes":  50503,
+                                "sha256":  "7113f54159c0add4b98bb29fa8d80c7c9ae831b90e188a1b47bf955c7bd00704"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d181f18-61c6-4d28-bb44-86984e40c180.vmrs",
+                                "bytes":  2142236644,
+                                "sha256":  "631daaef9431af8529aead4cb1954b304eaeddb87b3aba8ab9632b4cde568910"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d181f18-61c6-4d28-bb44-86984e40c180.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "4fa917eae60c00628d637148b3461efe76d44110ecf68e4ce8e6b61901a87c74"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_BE9F60F9-B49E-4266-8F95-D999CDDC2150.avhdx",
+                                "bytes":  9159311360,
+                                "sha256":  "969388ffd3ce1d3a34ff9c53ee541c053755a2b413961a583ef39198049fe8e9"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d8c8f45-749d-4373-8496-60885db6f196.vmcx",
+                                "bytes":  50668,
+                                "sha256":  "dfcfeb069970be09d5e4089c67e20df8522fdf69295b0c9282b7027189fd23b4"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d8c8f45-749d-4373-8496-60885db6f196.vmrs",
+                                "bytes":  2063020004,
+                                "sha256":  "f2013077885395b0987bd1a9fc26fc08dafe2c1c85290d1ef6a606fc693c2b30"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d8c8f45-749d-4373-8496-60885db6f196.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "59e49f1924368e0f9bf0108a213aeb3fd844f50649b67afe78f8b69a00340c2b"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_CCFB6D11-3385-467F-A331-8E9CAE28A655.avhdx",
+                                "bytes":  9167699968,
+                                "sha256":  "3e0c5e4142e44e4b532b61c7d8d7f55d5b7f2f5533e2509bdb51439ee0cd9ad9"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d481c2c-31ed-4ae4-a4a3-4f3b6ddfd5b5.vmcx",
+                                "bytes":  50784,
+                                "sha256":  "934dd21cef5d7ee6c17b9cea5fed8590fac529462f956e75580000693010ddf6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d481c2c-31ed-4ae4-a4a3-4f3b6ddfd5b5.vmrs",
+                                "bytes":  2109525988,
+                                "sha256":  "5fa63708f889bf64c3f9f25dff4a23914d4b7e1549262162083f80ae545eb051"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\4d481c2c-31ed-4ae4-a4a3-4f3b6ddfd5b5.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "94ff41208e67b56a49293ebd2ef28a7558c90f16e7da9d3e37f64e69e3946c10"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_0B6DBA06-C239-4F52-A738-DBC9FDCD021F.avhdx",
+                                "bytes":  8991539200,
+                                "sha256":  "cd6163fde06dc8d8d882cac48eeb29cbd9f036c4013941af22909602579f1a87"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\9621b478-7660-4155-bbdf-ec47a5c8f041.vmcx",
+                                "bytes":  50917,
+                                "sha256":  "69708f863dd29214cd170522a997727c728b4a24a9831c7ceefe6ae17bcf2134"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\9621b478-7660-4155-bbdf-ec47a5c8f041.vmrs",
+                                "bytes":  2077548516,
+                                "sha256":  "2cf6400fcc004267e04265d7c9860a910ea800d0f48e3a33ef8811700c2212e1"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\9621b478-7660-4155-bbdf-ec47a5c8f041.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "63071c6b9162e6298c9151d97b218de17a90fed0005efcc8d293f04aa97d269d"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_2E6DB7B8-6221-474D-897C-6C703E157153.avhdx",
+                                "bytes":  9157214208,
+                                "sha256":  "c04eedaffaeea7ad56d2e2c515eb0511f75310b87a107f34f8ba922efb6088d8"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\43766485-5444-434a-b63b-c33171627638.vmcx",
+                                "bytes":  51082,
+                                "sha256":  "5a8e1da38ad95e9ba3faff174193d827db756baa14eb99d0688fbe9bd1f1dbbc"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\43766485-5444-434a-b63b-c33171627638.vmrs",
+                                "bytes":  2098429924,
+                                "sha256":  "2817ed6c1471cb50baeb7c8fc2a87340504e1d5dd498e6033f2cbb545b31c02a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\43766485-5444-434a-b63b-c33171627638.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "e1614f868ee828b731d4b6a06f912dc924f2cfb025e4e24e1e63244521482d80"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_07BD286F-7733-4F5E-8485-E4D49DE21F73.avhdx",
+                                "bytes":  9165602816,
+                                "sha256":  "e4b53eadabbf4bdec4312b5291943b848901d03c344c8c3bfc1553c11fe0d4e7"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b78930a2-173b-4a4f-8a2d-8de9943db5ba.vmcx",
+                                "bytes":  51239,
+                                "sha256":  "3c73d7cc7249fe365ffa2d8aaf07c8224b2d41802829255d535607427ea8bac6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b78930a2-173b-4a4f-8a2d-8de9943db5ba.vmrs",
+                                "bytes":  2165551076,
+                                "sha256":  "ac26dd5124789f9d5ba5a0a2878ab2c1d631fd90c3080a1a603fe950c2b281df"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b78930a2-173b-4a4f-8a2d-8de9943db5ba.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "c101cc4fee91db44a7fa93fc2325c54b285217ed2d9b9953e7d18dbbb0f7b78a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_60678908-4C18-4F1D-986B-F854C6A6115E.avhdx",
+                                "bytes":  8735686656,
+                                "sha256":  "9b28d0861ee409ec2891a5ddbaec2cabb746eed9e161dc4d324caed31b64e961"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\bb158d35-9a27-497b-b8b1-d5acea289276.vmcx",
+                                "bytes":  51357,
+                                "sha256":  "80436fccca0ad0a61fd9ffa1d263d35c35a2a9a5e0c5978a994cba53a4598751"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\bb158d35-9a27-497b-b8b1-d5acea289276.vmrs",
+                                "bytes":  2151120868,
+                                "sha256":  "208f2c75a77b3c01e8386c5a10471f2a26339191ff02233b98a7684eed651b79"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\bb158d35-9a27-497b-b8b1-d5acea289276.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "b669cd3526ecbf63b3d3478e387cda3f983754a14ac3e9d2e818215704f9c285"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_FB7DBD43-62BF-4153-8497-BCF18E9E9FEB.avhdx",
+                                "bytes":  9176088576,
+                                "sha256":  "651a1e1ef2fdb2f1b73fbd87f5e99b4f77dfb6ae98738fbd8f726c1ac8a93898"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\62ea8b48-cec2-44c7-b176-0e4529f1cdb6.vmcx",
+                                "bytes":  51538,
+                                "sha256":  "5b7f6628ca3ce06f6c3276cb2ad90007398319f2d9732ee000b3c92d8d20cd81"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\62ea8b48-cec2-44c7-b176-0e4529f1cdb6.vmrs",
+                                "bytes":  2008248292,
+                                "sha256":  "8b9db6185e6c0742b6c9ca8d57cada0f2db7a762c594dade72601c0faed72ca5"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\62ea8b48-cec2-44c7-b176-0e4529f1cdb6.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "50e43bf7cd34d2c0280b52ed1634f76f0f3ebd216696f5486cb45e8c36b22e90"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_AED3BD8B-08D5-4C69-9027-7DB0DC35861A.avhdx",
+                                "bytes":  9117368320,
+                                "sha256":  "f1fa2de6c776f712d4bf2a551bc8b2a70e4a368acc8cf3fe6755ad170b6d7445"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\27170143-0ebf-4495-a068-db0550f57ab4.vmcx",
+                                "bytes":  51714,
+                                "sha256":  "442fcfa2c031fddabb3ffcd8f384520de23dafcbfe16b4093e0b19a329e9ce61"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\27170143-0ebf-4495-a068-db0550f57ab4.vmrs",
+                                "bytes":  2109849572,
+                                "sha256":  "c2ac993c76422eb049d139263670b66c5231ffd2b9b65dc68a01b7a212862829"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\27170143-0ebf-4495-a068-db0550f57ab4.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "86452d48fd605e56536545cb8485e0aaf8a4272b475c752205c344f12d94848f"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_9CB95BDE-0A60-48E7-BC85-56FF8A343FE7.avhdx",
+                                "bytes":  9146728448,
+                                "sha256":  "bcedc73ba1e33c5f1a585d9de861dbc16bf6a1367813e951366b9335211f8953"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b2ce4519-cb62-42f0-b4e3-77335bc96386.vmcx",
+                                "bytes":  51873,
+                                "sha256":  "456f30a8ace7344c87083a35ab7ab590c32719c958319f4d7b2ca385cc808f55"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b2ce4519-cb62-42f0-b4e3-77335bc96386.vmrs",
+                                "bytes":  2069327844,
+                                "sha256":  "82b26e70ee0c1b1a86858ff61cc7aba7d48916e847cfa11b214043c73837556c"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\b2ce4519-cb62-42f0-b4e3-77335bc96386.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "a86e7f0fb18d8a9981d2e290e00e0253f0bb0d92883678c1d2beb5df81cc9b08"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_88DC1A1E-F38A-4185-8C64-85011EF6F67C.avhdx",
+                                "bytes":  9194962944,
+                                "sha256":  "831baddc65b2f6298ab34f0708d6946eb2a3f8c0f6eb167920ba80df91e08629"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\c40abe63-9169-47a8-8d66-0235a2c68c33.vmcx",
+                                "bytes":  52036,
+                                "sha256":  "d3a77974e0fdda9306ee068242ce7498e5a55c4f79d6c4c9db482b052266a256"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\c40abe63-9169-47a8-8d66-0235a2c68c33.vmrs",
+                                "bytes":  1973579748,
+                                "sha256":  "7a9ebe8601161f4a9ddfa19b92cd58b79f50eebca386e4698f8ffd4c13d42e5e"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\c40abe63-9169-47a8-8d66-0235a2c68c33.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "e5f9a3a63eb40f98e810c91fa4a1752fa91028674516c5a5e038eb04d680f236"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_1DAE94B9-624A-4178-A0EC-393E3E1116BD.avhdx",
+                                "bytes":  8830058496,
+                                "sha256":  "5a89788b8b05240620acbc1c96878171ed84f0bff3482fe57fac792913e0edd6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\449dc7b5-ad68-4a3d-8dd1-62329bead720.vmcx",
+                                "bytes":  52165,
+                                "sha256":  "c3cf50ce151b06a6a0a702389d88b7d788f4cb51cb85b77ca9fc2279586f62e6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\449dc7b5-ad68-4a3d-8dd1-62329bead720.vmrs",
+                                "bytes":  2162786276,
+                                "sha256":  "9a196db127f8ef097304b718a10052d1157dc1234c66e9798c3f151dabbbc1d0"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\449dc7b5-ad68-4a3d-8dd1-62329bead720.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "cb734f7d085852c1347d5288e3d654c5a19e9c5580e018bcb6d257d8df00d331"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_E8AE732E-B108-41F7-BF44-2D121D643801.avhdx",
+                                "bytes":  9197060096,
+                                "sha256":  "7a9f20e22c74e206e584b2dcf81bfba93ca132f4b8f468d73dbe9121d33bacf6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\cc151a1c-01b2-4b8b-9fa6-32699e58b153.vmcx",
+                                "bytes":  52330,
+                                "sha256":  "3cc18b206b2ceaf06bdb086ff11dea39aa5c8abcf1f25fc545d23666bb53abee"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\cc151a1c-01b2-4b8b-9fa6-32699e58b153.vmrs",
+                                "bytes":  2180681700,
+                                "sha256":  "97eed345cd7598c25b5dea17cf3fb9d838ff7d5143dff6c301055e0fb5737bdd"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\cc151a1c-01b2-4b8b-9fa6-32699e58b153.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "110ff013dba7e1806806cff8d4fdaad4722a9a9b3c6b89fd0eff719b7fcd4b03"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_CFFB487D-DBC3-4B8B-A470-4839E51BE873.avhdx",
+                                "bytes":  9230614528,
+                                "sha256":  "fdbe9a65cf49117426a00b35c19a4b83cc10be85ae2ad40c7d5e691ce37480ce"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\dcc60b05-b528-41c7-b4a3-3561f85e3032.vmcx",
+                                "bytes":  52487,
+                                "sha256":  "6b553d870ad5113508a90e27049484fed8bf86e63b68c2e24120bc9b8ace1c30"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\dcc60b05-b528-41c7-b4a3-3561f85e3032.vmrs",
+                                "bytes":  2128678884,
+                                "sha256":  "dc220ae02c7b65d252f599ad609a071e4e557b8b36885470e1a93dd480b6ae7c"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\dcc60b05-b528-41c7-b4a3-3561f85e3032.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "4c3e32794030138a5bafd9e092ef3becb97251606a68d678a4b0a4c35c52b095"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_CF2E0447-F1BB-4804-99FA-72E2F8D1B865.avhdx",
+                                "bytes":  9150922752,
+                                "sha256":  "df607683b9b7db551d520fd17b76e310f2f17ddd5a67e4431248966d650fca53"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\69232ce9-9501-4d7f-b489-595d210f9079.vmcx",
+                                "bytes":  52609,
+                                "sha256":  "bf1474e89bb2f3f34018951e6965c11d7888265314c9513a4b2a55c95fce44aa"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\69232ce9-9501-4d7f-b489-595d210f9079.vmrs",
+                                "bytes":  1957138404,
+                                "sha256":  "84f50e0e0debeb64ef7fc4ba7f14467492dcbead1d21712747323bb4d43bb2eb"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\69232ce9-9501-4d7f-b489-595d210f9079.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "2dead2a4545d6f1fc3ba33241410349e43f812283e81aed7922334b743a91f19"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_E9648BC7-EDA9-429D-A079-B7D799514032.avhdx",
+                                "bytes":  8962179072,
+                                "sha256":  "76e9019e4cc6bbab2851829ee638703f0e28e9ea547983f33db1adcdf4afc66a"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\19246718-5025-4de6-ab46-fd758f998a87.vmcx",
+                                "bytes":  52774,
+                                "sha256":  "7d999cb6463920645e935a0921d76caf2181561a83ced9b1e4a924c679c6f89f"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\19246718-5025-4de6-ab46-fd758f998a87.vmrs",
+                                "bytes":  2277613540,
+                                "sha256":  "484031f56fc83142182c27a8f82a00d69b3fd703be1a65753c5186f4786221c1"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\19246718-5025-4de6-ab46-fd758f998a87.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "3c830eaad79b693604fcbea72c1fd04dd59f31ce183aaa1ceaa0e250aac77b3b"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_6D9F9D91-101F-44CC-8827-FFF23761F760.avhdx",
+                                "bytes":  9079619584,
+                                "sha256":  "92cef096e00eac78cec52092ceb125446f0b9c2e19ed180acfa30972709742d0"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\06efd64e-d34b-4ad6-9ee6-06ced728586e.vmcx",
+                                "bytes":  52947,
+                                "sha256":  "b1b73820a0768e924a487fe33005400e5df2dea6900179ba8a2328f109a03801"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\06efd64e-d34b-4ad6-9ee6-06ced728586e.vmrs",
+                                "bytes":  2133512164,
+                                "sha256":  "8d4f8266044f3e0d39b2e88e4f045f0eea915f44070a06cb55c864530da877e6"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\06efd64e-d34b-4ad6-9ee6-06ced728586e.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "98cd7e7538aa4812b90f4d82337d568b1586ab53efa93e10bd4bf4cf7ba98bdb"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_C739A3F8-057D-4941-B074-567C6DDBF1D5.avhdx",
+                                "bytes":  9129951232,
+                                "sha256":  "8caf788908de3abab857d47faeee6f14adead6935c79ea6dd6a2f02123f74101"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\fefcadd9-cfbc-43b6-aca1-b9ec1f185c41.vmcx",
+                                "bytes":  53106,
+                                "sha256":  "e7c5f5c9e16f82621c19fb810c3ab67b23c45bf0ccc1bf8fcc612b325a048ab4"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\fefcadd9-cfbc-43b6-aca1-b9ec1f185c41.vmrs",
+                                "bytes":  2134577124,
+                                "sha256":  "f24a4370daf3ec789ff2e4df77f1546597f8ea745c24aa43f5cb2c5e0f0f4f76"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\fefcadd9-cfbc-43b6-aca1-b9ec1f185c41.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "10baaff2324dc3abb21413e3add06ef8c99d375ac7160582b9d523b290a45c5e"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_F8EAFB9A-69B9-4E35-97ED-BA49DBC10DA6.avhdx",
+                                "bytes":  9062842368,
+                                "sha256":  "2efc45b85d17ad2935b64ddb07ab8adf084a87a8e5411403c49d03da0cc1337d"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\741262e2-0664-450d-8872-25d59da4f385.vmcx",
+                                "bytes":  53263,
+                                "sha256":  "b71a160f5d2155685e58afa7b40a1663dbf9a75836e9a6769b1dbd24c9da50d1"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\741262e2-0664-450d-8872-25d59da4f385.vmrs",
+                                "bytes":  2130362340,
+                                "sha256":  "b1d365db8e6b4dedc6a96d9c7f90a8eda48c4691740d0153188d6ca66a4e5b9b"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\741262e2-0664-450d-8872-25d59da4f385.vmgs",
+                                "bytes":  4194816,
+                                "sha256":  "72d598b26ca2ed9b709770e800f742bb21c4ccb356eee111a0020839e4b4872d"
+                            },
+                            {
+                                "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_F8278479-AF92-47DF-9124-5C4C1D1ADF34.avhdx",
+                                "bytes":  9215934464,
+                                "sha256":  "19d8e98912d13c2c3edea8a36cce1078f4309920155dbaf1a8a0c8988641c352"
+                            }
+                        ],
+    "guest_calls":  0,
+    "baseline":  {
+                     "mtime_ticks":  639295321332097408,
+                     "path":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance.vhdx",
+                     "sha256":  "337904e0a7218fa67d24f17e6951b27f08a3e3e1895e71fd820e3137ffbcbcf6",
+                     "bytes":  20573061120
+                 },
+    "current_disk":  "C:\\MorrowQA\\windows-acceptance-20261106-058\\acceptance_81293DB7-1C28-4622-BB8D-2DE141D2AE37.avhdx",
+    "utc":  "2026-11-12T23:17:12.9210253Z",
+    "registered_vms":  2,
+    "vm_id":  "59c31486-5a5e-4d88-bd06-69a0f23a9337",
+    "Windows_reinstallations":  0,
+    "guard":  {
+                  "path":  "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-clean-restore-4970\\host-guard.ps1",
+                  "bytes":  40237,
+                  "sha256":  "ef3895a6407a09d597ccdede8d538992675fc6726aa223fdc9e9bfdc5a81befc"
+              },
+    "existing_retained_checkpoint_ids":  [
+                                             "ba264892-7fa6-4111-a9dc-9bde534f4ed2",
+                                             "5427287b-3521-4ba7-a8b8-e1578db811bf",
+                                             "6c30da95-6d9c-48f0-a0a8-f9ff51bf7961",
+                                             "a5b7291a-983f-4883-9565-f4455e27d784",
+                                             "a84546c5-293d-43b6-83be-251e6402729e",
+                                             "777b5b9f-8d20-403c-b4e1-949079ab9f45",
+                                             "1497359a-c514-4427-8d7d-3eb1fd9994e8",
+                                             "766728b3-f44b-4cf1-af24-ebc1ff614b4e",
+                                             "1204fd45-3936-4891-a5f5-65c0025edba3",
+                                             "d2091173-df9e-41d8-8b09-134136b6d957",
+                                             "4d181f18-61c6-4d28-bb44-86984e40c180",
+                                             "4d8c8f45-749d-4373-8496-60885db6f196",
+                                             "4d481c2c-31ed-4ae4-a4a3-4f3b6ddfd5b5",
+                                             "9621b478-7660-4155-bbdf-ec47a5c8f041",
+                                             "43766485-5444-434a-b63b-c33171627638",
+                                             "b78930a2-173b-4a4f-8a2d-8de9943db5ba",
+                                             "bb158d35-9a27-497b-b8b1-d5acea289276",
+                                             "62ea8b48-cec2-44c7-b176-0e4529f1cdb6",
+                                             "27170143-0ebf-4495-a068-db0550f57ab4",
+                                             "b2ce4519-cb62-42f0-b4e3-77335bc96386",
+                                             "c40abe63-9169-47a8-8d66-0235a2c68c33",
+                                             "449dc7b5-ad68-4a3d-8dd1-62329bead720",
+                                             "cc151a1c-01b2-4b8b-9fa6-32699e58b153",
+                                             "dcc60b05-b528-41c7-b4a3-3561f85e3032",
+                                             "69232ce9-9501-4d7f-b489-595d210f9079",
+                                             "19246718-5025-4de6-ab46-fd758f998a87",
+                                             "06efd64e-d34b-4ad6-9ee6-06ced728586e",
+                                             "fefcadd9-cfbc-43b6-aca1-b9ec1f185c41",
+                                             "741262e2-0664-450d-8872-25d59da4f385"
+                                         ],
+    "original_owner_contacts":  0,
+    "free_C_before":  339833303040,
+    "original_case_clean":  false,
+    "other_vms_unchanged":  true,
+    "source_digest":  "2375d9ed341fa9549506f8df44b2be571b9ea6a6d55651fa1a47baebed93ee75",
+    "clean_checkpoint_id":  "e75dc168-6c96-4add-8596-2f1b8b16452b",
+    "state":  "Off",
+    "VM_creations":  0,
+    "release_eligible":  false
+}

@@ -780,4 +780,132 @@ void main() {
       expect(session.cleanupError, isNull);
     },
   );
+
+  test(
+    'idle session can review after an unrelated completed local task',
+    () async {
+      final backend = _Controlled()..startToken = _id(99);
+      final session = MutationExecutionSession(backend, backend);
+      await session.refresh();
+      expect(session.cleanupError, isNull);
+      expect(session.canStart, isTrue);
+      expect(session.canExecute, isFalse);
+      expect(session.canStop, isFalse);
+      expect(session.canRepair, isFalse);
+      expect(session.canAcknowledge, isFalse);
+      expect(session.canRetrySubmission, isFalse);
+      expect(backend.commands, isEmpty);
+      expect(backend.starts + backend.stops + backend.acks + backend.reads, 0);
+      await session.prepare(
+        _start(MutationDisposition.delete),
+        operationId: 'owned-op',
+      );
+      expect(session.ready, isTrue);
+      expect(backend.starts, 1);
+      expect(backend.executes, 0);
+    },
+  );
+
+  test(
+    'completed native session accepts later unrelated local history',
+    () async {
+      final backend = _Controlled()..retainAckSubmission = true;
+      final session = MutationExecutionSession(backend, backend);
+      await session.refresh();
+      await session.prepare(
+        _start(MutationDisposition.delete),
+        operationId: 'owned-op',
+      );
+      await session.stop();
+      await session.acknowledge();
+      final priorPlan = session.plan;
+      final priorResult = session.lastResult;
+      backend.startToken = _id(99);
+      await session.refresh();
+      expect(session.cleanupError, isNull);
+      expect(session.canStart, isTrue);
+      expect(session.canExecute, isFalse);
+      expect(session.canStop, isFalse);
+      expect(session.canRepair, isFalse);
+      expect(session.canAcknowledge, isFalse);
+      expect(session.canRetrySubmission, isFalse);
+      expect(session.request?.submission, _id(1));
+      expect(session.plan, same(priorPlan));
+      expect(session.lastResult, same(priorResult));
+      expect(backend.starts, 1);
+      expect(backend.stops, 1);
+      expect(backend.acks, 1);
+      expect(backend.executes, 0);
+    },
+  );
+
+  test('idle foreign running or reclaimed tasks cannot be adopted', () async {
+    for (final phase in [IoStoragePhase.running, IoStoragePhase.reclaimed]) {
+      final backend = _Controlled()
+        ..key = _id(88)
+        ..startToken = _id(99)
+        ..storage = phase;
+      if (phase == IoStoragePhase.reclaimed) {
+        backend.exit = const IoTaskExit(
+          execution: IoJobError.none,
+          disconnect: IoJobError.none,
+          maintenance: IoJobError.none,
+        );
+      }
+      final session = MutationExecutionSession(backend, backend);
+      await session.refresh();
+      expect(session.cleanupError, isA<FormatException>());
+      expect(session.canStart, isFalse);
+      expect(session.canExecute, isFalse);
+      expect(session.canStop, isFalse);
+      expect(session.canRepair, isFalse);
+      expect(session.canAcknowledge, isFalse);
+      expect(session.canRetrySubmission, isFalse);
+      expect(backend.commands, isEmpty);
+      expect(backend.starts + backend.stops + backend.acks + backend.reads, 0);
+    }
+  });
+
+  test('unresolved local admission cannot accept foreign history', () async {
+    final backend = _Controlled()..burnStart = true;
+    final session = MutationExecutionSession(backend, backend);
+    await session.refresh();
+    await session.prepare(
+      _start(MutationDisposition.delete),
+      operationId: 'owned-op',
+    );
+    backend.startToken = _id(99);
+    await session.refresh();
+    expect(session.cleanupError, isA<FormatException>());
+    expect(session.uncertain, isTrue);
+    expect(session.request?.submission, _id(1));
+    expect(session.canStart, isFalse);
+    expect(session.canRetrySubmission, isFalse);
+    expect(session.canAbandon, isFalse);
+    expect(session.canStop, isFalse);
+    expect(session.canAcknowledge, isFalse);
+    expect(backend.starts, 1);
+    expect(backend.tokens, [_id(1)]);
+    expect(backend.commands, isEmpty);
+    expect(backend.executes + backend.stops + backend.acks + backend.reads, 0);
+  });
+
+  test(
+    'idle local history still requires a valid submission identity',
+    () async {
+      for (final invalid in [Uint8List(31), Uint8List(32)]) {
+        final backend = _Controlled()..startToken = invalid;
+        final session = MutationExecutionSession(backend, backend);
+        await session.refresh();
+        expect(session.cleanupError, isA<FormatException>());
+        expect(session.canStart, isFalse);
+        expect(session.canRetrySubmission, isFalse);
+        expect(backend.commands, isEmpty);
+        expect(
+          backend.starts + backend.stops + backend.acks + backend.reads,
+          0,
+        );
+      }
+    },
+  );
 }

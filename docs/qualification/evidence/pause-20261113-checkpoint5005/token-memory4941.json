@@ -1,0 +1,122 @@
+{
+  "status": "PASS_CHECKPOINT_LOGICAL_RAM_AND_ALL_SDK_X64_REGISTERS_MATCH",
+  "original": {
+    "path": "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Virtual Machines\\59c31486-5a5e-4d88-bd06-69a0f23a9337.vmrs",
+    "bytes": 2133188608,
+    "sha256": "967a3788ea950adf1b0891817f731a7f9590a6447e10a7f43b134cbed8451649"
+  },
+  "checkpoint": {
+    "path": "C:\\MorrowQA\\windows-acceptance-20261106-058\\vm\\Morrow Windows Acceptance 20261106 058\\Snapshots\\1e79c634-26d7-462c-8da9-8804384b0334.vmrs",
+    "bytes": 2133077988,
+    "sha256": "0dc31a01ab0f08bbb16193d119486c34cac2fc2c0a4285e10a77fde5d2f5c904"
+  },
+  "checkpoint_id": "1e79c634-26d7-462c-8da9-8804384b0334",
+  "results": {
+    "original": {
+      "processors": 4,
+      "page_size": 4096,
+      "ranges": [
+        {
+          "start_page": 0,
+          "page_count": 1015808
+        },
+        {
+          "start_page": 1048576,
+          "page_count": 32768
+        }
+      ],
+      "logical_bytes_hashed": 4294967296,
+      "logical_memory_sha256": "5ef3a99437c1e4d00e1493dd81994a1c770c0ac7ae86465db30d9b12fc9e0512",
+      "processor_register_hashes": [
+        {
+          "vp": 0,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "28be327fa5a58c999a8dba99f3d2aec846eecc09b1f730f9f0e7c43491a93f45"
+        },
+        {
+          "vp": 1,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "4d55a684d5077a996201090486cb9f5dc1491dc743d955d3c08e1200b55987dd"
+        },
+        {
+          "vp": 2,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "c3702d5d5683cd0010f6ce0602590277d6faba49d85fd202a66ae783f80c48dd"
+        },
+        {
+          "vp": 3,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "80c819ae280a961eee3cb3240386010fdc1a2ff5cdc00043d4b448a244b60bc3"
+        }
+      ],
+      "error": null,
+      "provider_release": 0,
+      "original_unchanged": true,
+      "private_copy_removed": true
+    },
+    "checkpoint": {
+      "processors": 4,
+      "page_size": 4096,
+      "ranges": [
+        {
+          "start_page": 0,
+          "page_count": 1015808
+        },
+        {
+          "start_page": 1048576,
+          "page_count": 32768
+        }
+      ],
+      "logical_bytes_hashed": 4294967296,
+      "logical_memory_sha256": "5ef3a99437c1e4d00e1493dd81994a1c770c0ac7ae86465db30d9b12fc9e0512",
+      "processor_register_hashes": [
+        {
+          "vp": 0,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "28be327fa5a58c999a8dba99f3d2aec846eecc09b1f730f9f0e7c43491a93f45"
+        },
+        {
+          "vp": 1,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "4d55a684d5077a996201090486cb9f5dc1491dc743d955d3c08e1200b55987dd"
+        },
+        {
+          "vp": 2,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "c3702d5d5683cd0010f6ce0602590277d6faba49d85fd202a66ae783f80c48dd"
+        },
+        {
+          "vp": 3,
+          "architecture": 2,
+          "registers": 66,
+          "sha256": "80c819ae280a961eee3cb3240386010fdc1a2ff5cdc00043d4b448a244b60bc3"
+        }
+      ],
+      "error": null,
+      "provider_release": 0,
+      "original_unchanged": true,
+      "private_copy_removed": true
+    }
+  },
+  "container_bytes_identical": false,
+  "actual_logical_RAM_and_264_register_values_compared": true,
+  "guest_memory_bytes_exported": false,
+  "VM_mutations": 0,
+  "original_owner_contacts": 0,
+  "checkpoint_creation_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-p2-20261109-001\\vm058-case4900-retained-checkpoint-4940\\result.json",
+    "bytes": 54412,
+    "sha256": "b1d929c0a0c4cf86de597d2d7025f3136caba6f64bd576bad257c1e527610769"
+  },
+  "original_Save_VM_calls": 1,
+  "original_Checkpoint_VM_calls": 1,
+  "original_checkpoint_postconditions_verified": true,
+  "release_eligible": false
+}
