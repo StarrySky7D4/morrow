@@ -4796,6 +4796,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           editor: owner.editor,
           draftOwner: owner,
           draftRuntime: drafts,
+          autofocusTitle: false,
           isCurrent: current,
         ),
       );
@@ -5131,11 +5132,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     if (action == 'edit') {
       WorkbenchEditorSession? editor;
       EditorDraftOwner? draftOwner;
+      late final bool autofocusTitle;
       try {
         if (backend is WorkbenchEditorDraftRuntime) {
           draftOwner = (backend as WorkbenchEditorDraftRuntime)
               .retainedEditorDraft(idea.id);
         }
+        autofocusTitle = draftOwner == null;
         if (draftOwner != null) {
           editor = draftOwner.editor;
           idea = draftOwner.baseline ?? idea;
@@ -5191,6 +5194,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           initialIdea: idea,
           editor: editor,
           draftOwner: draftOwner,
+          autofocusTitle: autofocusTitle,
           draftRuntime: backend is WorkbenchEditorDraftRuntime
               ? backend as WorkbenchEditorDraftRuntime
               : null,
@@ -5342,6 +5346,7 @@ class NewIdeaDialog extends StatefulWidget {
     this.savedDraft,
     this.recoveryRuntime,
     this.canResumeSavedDraft = false,
+    this.autofocusTitle = true,
     this.targetId,
     this.initialFavorite = false,
     this.isCurrent,
@@ -5356,6 +5361,7 @@ class NewIdeaDialog extends StatefulWidget {
   final EditorDraftReview? savedDraft;
   final WorkbenchEditorDraftRecovery? recoveryRuntime;
   final bool canResumeSavedDraft;
+  final bool autofocusTitle;
   final String initialCategory;
   final Future<PastedContent> Function()? readClipboard;
   final Future<IdeaAttachment> Function(XFile)? importAttachment;
@@ -6277,7 +6283,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     controller: title,
                     readOnly: importing || _readOnly,
                     focusNode: titleFocus,
-                    autofocus: !_readOnly,
+                    // Focusing a restored field can replace its saved selection.
+                    autofocus: !_readOnly && widget.autofocusTitle,
                     maxLength: 60,
                     style: const TextStyle(
                       fontSize: 23,

@@ -323,6 +323,9 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
             t,
             () => find.byKey(const ValueKey('idea-save')).evaluate().isNotEmpty,
           );
+          // Include focus changes scheduled by the new editable route.
+          await t.pump(const Duration(milliseconds: 350));
+          await t.pump();
           final resumed = t
               .widget<NewIdeaDialog>(find.byType(NewIdeaDialog))
               .draftOwner!;

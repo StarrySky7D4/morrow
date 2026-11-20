@@ -90,6 +90,12 @@ void main() {
         final owner = t
             .widget<NewIdeaDialog>(find.byType(NewIdeaDialog))
             .draftOwner!;
+        final title = find.byKey(const ValueKey('idea-title'));
+        await native(t, owner.session.ensureJournal());
+        await until(t, () => t.widget<TextField>(title).focusNode!.hasFocus);
+        t.widget<TextField>(title).focusNode!.unfocus();
+        await t.pump();
+        t.widget<TextField>(title).controller!.value = TextEditingValue.empty;
         const value = TextEditingValue(
           text: 'blank-title 😀 draft',
           selection: TextSelection(
@@ -136,6 +142,8 @@ void main() {
         );
         final restored = t.widget<NewIdeaDialog>(find.byType(NewIdeaDialog));
         expect(restored.draftOwner, same(owner));
+        await t.pump(const Duration(milliseconds: 350));
+        await t.pump();
         expect(
           t
               .widget<TextField>(find.byKey(const ValueKey('idea-description')))
@@ -144,11 +152,8 @@ void main() {
           value,
         );
         expect(
-          t
-              .widget<TextField>(find.byKey(const ValueKey('idea-title')))
-              .controller!
-              .text,
-          isEmpty,
+          t.widget<TextField>(title).controller!.value,
+          TextEditingValue.empty,
         );
         expect(host.editorDraftWorkspace.sessions, [owner.session]);
         expect(await native(t, host.loadWorkspaceContent()), isEmpty);
