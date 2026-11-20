@@ -102,6 +102,8 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
                   child: Opacity(
                     key: const ValueKey('workspace-transition-opacity'),
                     opacity: contentOpacity,
+                    // Offstage selects the accessible page even at zero opacity.
+                    alwaysIncludeSemantics: true,
                     child: Transform.translate(
                       offset: Offset(-12 * (1 - contentOpacity), 0),
                       child: widget.content,
@@ -123,6 +125,7 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
                     child: Opacity(
                       key: const ValueKey('settings-transition-opacity'),
                       opacity: settingsOpacity,
+                      alwaysIncludeSemantics: true,
                       child: Transform.translate(
                         offset: Offset(12 * (1 - settingsOpacity), 0),
                         child: FocusScope(
