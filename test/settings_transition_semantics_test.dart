@@ -1,8 +1,47 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:morrow_studio/settings_page_transition.dart';
 
 void main() {
+  testWidgets(
+    'The fade blocks pointer hits without removing accessible actions',
+    (tester) async {
+      var activations = 0;
+      Widget action(String label) =>
+          TextButton(onPressed: () => activations++, child: Text(label));
+      Future<void> showSettings(bool show) => tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: SettingsPageTransition(
+              showSettings: show,
+              duration: const Duration(milliseconds: 320),
+              content: action('Workspace action'),
+              settings: action('Settings action'),
+            ),
+          ),
+        ),
+      );
+      Future<void> checkActive(String label) async {
+        final node = find.semantics.byLabel(label).evaluate().single;
+        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+        await tester.tapAt(tester.getCenter(find.text(label)));
+        expect(activations, 0);
+      }
+
+      await showSettings(false);
+      await showSettings(true);
+      await tester.pump(const Duration(milliseconds: 80));
+      await checkActive('Workspace action');
+      await tester.pump(const Duration(milliseconds: 160));
+      await checkActive('Settings action');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings action'));
+      expect(activations, 1);
+    },
+  );
+
   testWidgets(
     'Only the active page is announced throughout the settings fade',
     (tester) async {

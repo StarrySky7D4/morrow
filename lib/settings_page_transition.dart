@@ -97,17 +97,14 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
               excluding: settingsVisible,
               child: TickerMode(
                 enabled: !settingsVisible,
-                child: IgnorePointer(
-                  ignoring: motion.isAnimating,
-                  child: Opacity(
-                    key: const ValueKey('workspace-transition-opacity'),
-                    opacity: contentOpacity,
-                    // Offstage selects the accessible page even at zero opacity.
-                    alwaysIncludeSemantics: true,
-                    child: Transform.translate(
-                      offset: Offset(-12 * (1 - contentOpacity), 0),
-                      child: widget.content,
-                    ),
+                child: Opacity(
+                  key: const ValueKey('workspace-transition-opacity'),
+                  opacity: contentOpacity,
+                  // Offstage selects the accessible page even at zero opacity.
+                  alwaysIncludeSemantics: true,
+                  child: Transform.translate(
+                    offset: Offset(-12 * (1 - contentOpacity), 0),
+                    child: widget.content,
                   ),
                 ),
               ),
@@ -120,23 +117,26 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
                 excluding: !settingsVisible,
                 child: TickerMode(
                   enabled: settingsVisible,
-                  child: IgnorePointer(
-                    ignoring: motion.isAnimating,
-                    child: Opacity(
-                      key: const ValueKey('settings-transition-opacity'),
-                      opacity: settingsOpacity,
-                      alwaysIncludeSemantics: true,
-                      child: Transform.translate(
-                        offset: Offset(12 * (1 - settingsOpacity), 0),
-                        child: FocusScope(
-                          node: _settingsFocus,
-                          child: widget.settings,
-                        ),
+                  child: Opacity(
+                    key: const ValueKey('settings-transition-opacity'),
+                    opacity: settingsOpacity,
+                    alwaysIncludeSemantics: true,
+                    child: Transform.translate(
+                      offset: Offset(12 * (1 - settingsOpacity), 0),
+                      child: FocusScope(
+                        node: _settingsFocus,
+                        child: widget.settings,
                       ),
                     ),
                   ),
                 ),
               ),
+            ),
+          // Intercept physical clicks without rewriting the active page's
+          // accessibility actions as the transition starts and finishes.
+          if (motion.isAnimating)
+            const Positioned.fill(
+              child: ExcludeSemantics(child: AbsorbPointer()),
             ),
         ],
       );

@@ -1885,7 +1885,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                                         SingleChildScrollView(
                                                           child: Column(
                                                             children: [
-                                                              appearance(),
+                                                              appearance(
+                                                                showExpand: true,
+                                                              ),
                                                               const SizedBox(
                                                                 height: 20,
                                                               ),
@@ -3306,13 +3308,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     ),
   );
 
-  Widget appearance() {
+  Widget appearance({bool showExpand = false}) {
     final backend = widget.workbench;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        appearanceControls(),
+        appearanceControls(showExpand: showExpand),
         if (backend is WorkbenchPluginControl ||
             backend is ExternalPluginControl ||
             backend is WorkbenchProtectionBackup) ...[
@@ -3365,7 +3367,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Widget appearanceControls() => Glass(
+  Widget appearanceControls({required bool showExpand}) => Glass(
     componentId: 'appearance',
     p: p,
     radius: 22,
@@ -3416,7 +3418,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-              if (!compactSettingsOpen)
+              if (showExpand)
                 IconButton(
                   key: const ValueKey('settings-expand'),
                   tooltip: l.mainExpandSettings,

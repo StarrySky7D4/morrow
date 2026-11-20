@@ -5,6 +5,7 @@ import 'package:morrow_studio/component_material_page.dart';
 import 'package:morrow_studio/liquid_glass.dart';
 import 'package:morrow_studio/settings_surface.dart';
 import 'package:morrow_studio/storage.dart';
+
 import 'settings_surface_test.dart' show tapKey;
 
 void main() {
@@ -127,7 +128,12 @@ void main() {
           closeTo(t.getRect(heading).right - t.getCenter(rightIcon).dx, .1),
         );
       }
-      await tapKey(t, 'settings-expand');
+      await t.tap(expand);
+      await t.pump();
+      await t.pump(const Duration(milliseconds: 80));
+      expect(expand, findsOneWidget);
+      await t.pumpAndSettle();
+      expect(expand, findsNothing);
       expect(
         find.byKey(const ValueKey('page-workbench.page.overview')),
         findsNothing,
@@ -171,7 +177,12 @@ void main() {
         );
         expect(t.takeException(), isNull);
       }
-      await tapKey(t, 'compact-settings-back');
+      await t.tap(find.byKey(const ValueKey('compact-settings-back')));
+      await t.pump();
+      await t.pump(const Duration(milliseconds: 80));
+      expect(expand, findsNothing);
+      await t.pumpAndSettle();
+      expect(expand, findsOneWidget);
       expect(
         find.byKey(const ValueKey('page-workbench.page.overview')),
         findsOneWidget,
