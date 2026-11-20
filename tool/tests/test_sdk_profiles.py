@@ -92,6 +92,25 @@ def discovery(value):
 
 
 class Profiles(unittest.TestCase):
+    def test_selected_target_replacement_requires_windows_transaction_and_approval(self):
+        for os_name in ('windows', 'linux'):
+            value = detailed_descriptor(os_name)
+            profile = next(p for p in discovery(value)['profiles'] if p['id'] == 'morrow.mutation.v1')
+            sdk.validate_descriptor(value)
+            expected = dict(operation='PrepareReplace', required_io_capability='file-replace',
+                            platform_requirement='windows', implementation_compiled=os_name == 'windows',
+                            requires_native_transaction=True, requires_execution_approval=True)
+            profile['selected_target_replacement'] = expected
+            sdk.validate_descriptor(value)
+            for field, invalid in [('implementation_compiled', os_name != 'windows'),
+                                   ('requires_execution_approval', False),
+                                   ('requires_native_transaction', False),
+                                   ('required_io_capability', 'file-create'), ('automatic_execution', True)]:
+                with self.subTest(platform=os_name, field=field):
+                    profile['selected_target_replacement'] = {**expected, field: invalid}
+                    with self.assertRaisesRegex(ValueError, 'selected-target replacement'):
+                        sdk.validate_descriptor(value)
+
     def test_valid_descriptor_preserves_no_authority_and_candidate(self):
         value=sdk.validate_descriptor(descriptor())
         self.assertEqual(value['authority'],'none')

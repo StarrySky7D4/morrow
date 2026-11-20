@@ -256,17 +256,26 @@ fn mutation_profile() -> Value {
         "GeneralFilesystem",
         "NonWindowsMutationWorker"
     ]);
+    // Earlier SDK readers require the exact schema-1 operation lists.
+    value["selected_target_replacement"] = json!({
+        "operation": "PrepareReplace",
+        "required_io_capability": "file-replace",
+        "platform_requirement": "windows",
+        "implementation_compiled": cfg!(windows),
+        "requires_native_transaction": true,
+        "requires_execution_approval": true
+    });
     value["explicit_trusted_routes"] = json!([
         "IoWorker::submit_mutation_guest_frame",
         "Workbench::start_selected_mutation",
         "Workbench::submit_mutation"
     ]);
     value["host_prerequisites"] = json!([
-        "ABI2 IO declaration with FileCreate or FileDelete, exact mutation digest and Runner::new_mutation_task",
+        "ABI2 IO declaration with the requested file capability, exact mutation digest and Runner::new_mutation_task",
         "Windows managed mutation owner, current IoBinding and opaque selected-target lease; no guest path authority",
         "Current reviewed plan/content and explicit execution approval; Query does not restore execution authority",
         "mutation-budget-v1 is opt-in and mutation-only; no service/dependency combination or implicit larger budget",
-        "Conditional replacement is explicitly Unsupported; no weaker fallback or replay of unknown effects"
+        "The schema-1 operation lists describe the original Create/Delete profile. For replacement of a selected file, consult selected_target_replacement and check the target filesystem."
     ]);
     value
 }

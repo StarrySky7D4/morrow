@@ -1,5 +1,7 @@
 # 文件变更 guest 扩展草案
 
+用 `--sdk-capabilities` 查询宿主时，`morrow.mutation.v1` 的 `selected_target_replacement` 描述已选目标的 `PrepareReplace`。旧工具读取的操作列表保留原 Create/Delete 范围。新字段缺失时，这次查询无法确认替换能力。`implementation_compiled` 表示宿主已编译 Windows 后端。实际调用仍需批准 `file-replace`、在所选文件系统上成功建立原生事务，并对已审阅的计划明确确认执行。
+
 2026-11-06 候选实现追加 `PrepareReplace`（kind 9、request union 15），旧编号不变；Core 与三语言 SDK 使用同一 Cap’n Proto 契约及新摘要。替换内容仍受原长度、摘要、30 秒期限和一次性执行许可约束，不接收客体自选路径。Windows 原目标和全部祖先由原事务持有，准备和内容提交不改写目标；明确取消并释放后才可重新读取被独占锁定的原件。
 
 `MutationBudget.max_resources` 是独立的、显式审批的资源上限。零值保留原 IO 额度（包括小于 8 的原额度）；正值要求包声明 FileReplace，最大 128，实际批准不得超过声明。该字段参与原提交身份，并在确认页展示；资源审批不授予任何未批准的文件操作。普通 IO 的 8 项上限不变。当前源码与范围测试不构成完整 G04、正式窗口或 SDK 冻结资格。

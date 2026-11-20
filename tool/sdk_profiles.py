@@ -163,6 +163,18 @@ def extension_discovery(discovery, platform, base_profiles):
                     or operation.get("platform_requirement") != ("windows" if mutation else "native")
                     or operation.get("implementation_compiled") is not (windows if mutation else True)):
                 raise ValueError("invalid extension operation route or platform")
+        if "selected_target_replacement" in profile:
+            replacement = profile["selected_target_replacement"]
+            if (not mutation or not isinstance(replacement, dict)
+                    or set(replacement) != {"operation", "required_io_capability", "platform_requirement",
+                                            "implementation_compiled", "requires_native_transaction", "requires_execution_approval"}
+                    or replacement.get("operation") != "PrepareReplace"
+                    or replacement.get("required_io_capability") != "file-replace"
+                    or replacement.get("platform_requirement") != "windows"
+                    or replacement.get("implementation_compiled") is not windows
+                    or replacement.get("requires_native_transaction") is not True
+                    or replacement.get("requires_execution_approval") is not True):
+                raise ValueError("invalid selected-target replacement metadata")
         if name == "morrow.io.v1":
             expected = ["FileRead", "FileList", "FileCreate", "FileReplace", "FileDelete", "HttpRequest", "HttpListen", "HttpPublish", "CredentialUse", "WebSocketConnect"]
             capabilities = profile.get("declared_capabilities")
