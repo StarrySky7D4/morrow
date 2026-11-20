@@ -17,6 +17,7 @@ pub(crate) const TOKEN_RUNNER_READ:u32=TOKEN_QUERY|TOKEN_DUPLICATE;
 // R/OWNER_RIGHTS in the default template remain READ_CONTROL for implicit
 // threads. The extra token rights apply only to R's actual original primary.
 pub(crate) const RUNNER_TOKEN_INITIALIZATION:u32=READ_CONTROL|TOKEN_QUERY|WRITE_DAC;
+const _: () = assert!(RUNNER_TOKEN_INITIALIZATION == crate::asuser_a1_target::RUNNER_TOKEN_INITIALIZATION);
 pub(crate) const RUNNER_TOKEN_OBSERVE:u32=READ_CONTROL|TOKEN_QUERY;
 pub(crate) const RUNNER_TOKEN_DERIVE:u32=TOKEN_QUERY|TOKEN_DUPLICATE|TOKEN_IMPERSONATE;
 // The trusted creator already owns the LogonUser handle with these security

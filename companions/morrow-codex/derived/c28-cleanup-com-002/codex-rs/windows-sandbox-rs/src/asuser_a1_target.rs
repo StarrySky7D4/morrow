@@ -5,6 +5,9 @@ use std::io;
 // READ_CONTROL | TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY.
 // The native rights module checks this against the SDK constants.
 pub(crate) const TOKEN_REQUIRED:u32=0x0002000b;
+// READ_CONTROL | TOKEN_QUERY | WRITE_DAC. The Windows build checks this
+// portable representation against the mask constructed from SDK constants.
+pub(crate) const RUNNER_TOKEN_INITIALIZATION: u32 = 0x0006_0008;
 fn reject()->io::Error {io::Error::new(io::ErrorKind::PermissionDenied,"A1 original security admission rejected")}
 fn valid_sid(bytes:&[u8])->bool {
     bytes.len()>=8&&bytes.len()<=68&&bytes[0]==1&&bytes[1]<=15&&bytes.len()==8+usize::from(bytes[1])*4
@@ -199,7 +202,7 @@ impl TargetPolicy {
     }
     pub(crate) fn validate_runner_initialization(&self,f:&TargetFacts,baseline:&TargetFacts)->io::Result<()> {
         // A distinct, kernel-created primary is mandatory; never mutate T.
-        if f.granted!=crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION
+        if f.granted!=RUNNER_TOKEN_INITIALIZATION
             ||f.initial.token==baseline.initial.token{return Err(reject());}
         self.validate_launched_runner(f,baseline)
     }
@@ -217,7 +220,7 @@ mod tests {
     #[test] fn runner_initialization_requires_distinct_primary_and_exact_private_creator_grant() {
         let (policy,baseline)=facts();let mut actual=baseline.clone();
         actual.initial.token=99;actual.final_stats.token=99;
-        actual.granted=crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION;
+        actual.granted=RUNNER_TOKEN_INITIALIZATION;
         assert!(policy.validate_runner_initialization(&actual,&baseline).is_ok());
         for mask in [0x20008,0x6000a,0xe0008,0x10000000] {
             let mut wrong=actual.clone();wrong.granted=mask;
