@@ -22,6 +22,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import shutil
+import uuid
 from urllib.parse import urljoin, urlparse
 
 from windows_qualification_build_cache import CACHE_ROOT, _plain_path, pin
@@ -137,11 +138,11 @@ def validate_graph(value: dict, config: dict) -> None:
                 raise ValueError('Package graph has an unresolved dependency')
 
 
-def prepare(sdk: Path, config: Path, output: Path) -> dict:
+def prepare(sdk: Path, config: Path, output: Path, *, cache_root: Path = CACHE_ROOT) -> dict:
     if os.environ.get('MORROW_DISPOSABLE_WINDOWS_TEST'):
         raise ValueError('Do not mix build preparation with disposable VM runtime authority')
     sdk, config = sdk.absolute(), config.absolute()
-    output = _plain_path(output, CACHE_ROOT)
+    output = _plain_path(output, cache_root)
     if output.exists():
         raise FileExistsError('Each framework preparation needs a new output directory')
     manifest_path = PATCH_ROOT / 'manifest.json'
@@ -189,7 +190,7 @@ def prepare(sdk: Path, config: Path, output: Path) -> dict:
     # Validate everything before reserving a new directory. Never overwrite,
     # delete, resume, or repair an earlier preparation automatically.
     output.parent.mkdir(parents=True, exist_ok=True)
-    _plain_path(output, CACHE_ROOT)
+    _plain_path(output, cache_root)
     output.mkdir(exist_ok=False)
     for name, path in rows.items():
         target = output / 'framework' / name
@@ -236,7 +237,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--flutter-sdk', type=Path, required=True)
     parser.add_argument('--package-config', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    destination = parser.add_mutually_exclusive_group(required=True)
+    destination.add_argument('--output', type=Path)
+    destination.add_argument('--preview-build', action='store_true',
+                             help='Prepare the release compiler inputs in this checkout’s build directory.')
     args = parser.parse_args()
-    result = prepare(args.flutter_sdk, args.package_config, args.output)
+    if args.preview_build:
+        build = Path(__file__).resolve().parents[1] / 'build'
+        result = prepare(args.flutter_sdk, args.package_config, build / 'windows-framework' / uuid.uuid4().hex,
+                         cache_root=build)
+    else:
+        result = prepare(args.flutter_sdk, args.package_config, args.output)
     print(json.dumps({k: result[k] for k in ('status', 'framework', 'package_config')}))

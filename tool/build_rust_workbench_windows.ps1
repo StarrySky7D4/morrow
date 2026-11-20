@@ -61,11 +61,33 @@ $sourceCommit = (& git rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or $sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'Cannot identify source commit' }
 $sourceHash = (Get-FileHash -LiteralPath $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
 Checked python @('-X','utf8','tool/generate_workbench_client.py','--check')
-Checked flutter @('build','windows','--release','--no-pub','--target','lib/main.dart')
+$projectPackages = (Resolve-Path .dart_tool/package_config.json).Path
+$sdk = [uri]((Get-Content -LiteralPath $projectPackages -Raw | ConvertFrom-Json).flutterRoot)
+if (-not $sdk.IsFile) { throw 'The project package configuration must reference a local Flutter SDK.' }
+$frameworkJson = & python -B tool/prepare_windows_flutter_framework.py --flutter-sdk $sdk.LocalPath --package-config $projectPackages --preview-build
+if ($LASTEXITCODE -ne 0) { throw 'Could not prepare the pinned Windows framework' }
+$framework = $frameworkJson | ConvertFrom-Json
+$packages = $framework.package_config.path
+# Flutter 3.50's Windows tool_backend forwards extra front-end options to
+# assemble but does not forward the build command's PACKAGE_CONFIG.
+$compilerPackages = ([uri]$packages).AbsoluteUri
+Checked flutter @('build','windows','--release','--no-pub',"--packages=$packages",
+  "--extra-front-end-options=--packages=$compilerPackages",'--target','lib/main.dart')
+$applicationHash = (Get-FileHash build/windows/x64/runner/Release/data/app.so).Hash
+$semanticsSource = Join-Path $framework.framework 'lib/src/semantics/semantics.dart'
+$depfilePath = $semanticsSource.Replace('\','\\').Replace(' ','\ ')
+$compiledWithFramework = Get-ChildItem -LiteralPath .dart_tool/flutter_build -Directory | Where-Object {
+  $kernelDependencies = Join-Path $_.FullName 'kernel_snapshot_program.d'
+  $application = Join-Path $_.FullName 'app.so'
+  (Test-Path -LiteralPath $kernelDependencies) -and (Test-Path -LiteralPath $application) -and
+    (Select-String -LiteralPath $kernelDependencies -SimpleMatch $depfilePath -Quiet) -and
+    (Get-FileHash -LiteralPath $application).Hash -eq $applicationHash
+}
+if (-not $compiledWithFramework) { throw 'Release app.so lacks compiler evidence for the pinned Windows framework' }
 if (-not $SkipVerify) {
   $env:MORROW_WORKBENCH_HOST = (Resolve-Path build/workbench-host/release/morrow-workbench-host.exe).Path
   $env:MORROW_WORKBENCH_PACKAGE = (Resolve-Path build/workbench-host/bundle/workbench.morrowplugin).Path
-  Checked flutter @('test','--no-pub','test/rust_workbench_integration_test.dart')
+  Checked flutter @('test','--no-pub',"--packages=$packages",'test/rust_workbench_integration_test.dart')
 }
 Checked python @('-X','utf8','tool/package_preview_source.py',$sourceArchive,'--check')
 New-Item -ItemType Directory -Force -Path $destination | Out-Null

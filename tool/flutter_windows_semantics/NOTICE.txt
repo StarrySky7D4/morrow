@@ -10,7 +10,12 @@ traversal anchors, publishes the reachable native semantics tree and resends
 subtrees when they reappear, change parent or reuse a node ID. The archived
 3.44.0 product and accessibility evidence belongs to that earlier candidate.
 
-Run tool/prepare_windows_flutter_framework.py with the SDK and a freshly
-resolved project package_config.json. Use the emitted .dart_tool/package_config.json
-with flutter test --packages or flutter build windows --packages. On Windows,
-put each framework preparation under D:/build_cache in a new directory.
+The Windows preview packager prepares a fresh framework under the checkout's
+build/windows-framework directory. It supplies the emitted package configuration
+to Flutter and the Windows release compiler, then checks the compiled app.so
+against the kernel dependency record for the patched semantics source.
+
+For standalone qualification, run tool/prepare_windows_flutter_framework.py
+with the SDK, a freshly resolved project package_config.json and a new output
+directory under D:/build_cache. Use the emitted configuration with flutter
+test --packages. For release packaging use tool/build_rust_workbench_windows.ps1.
