@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/directory_task_manager.dart';
@@ -16,7 +16,10 @@ Widget page(
   Future<String?> Function()? pathPicker,
 }) => MaterialApp(
   locale: Locale(locale),
-  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    ...GlobalMaterialLocalizations.delegates,
+  ],
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
     body: TickerMode(

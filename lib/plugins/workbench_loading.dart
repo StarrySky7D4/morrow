@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import '../appearance.dart';
 import '../desktop_frame.dart';
@@ -26,9 +25,7 @@ class WorkbenchLoading extends StatelessWidget {
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       theme: ThemeData(
         brightness: dark ? Brightness.dark : Brightness.light,

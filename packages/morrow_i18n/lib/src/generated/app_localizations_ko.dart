@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3392,6 +3393,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pluginsWatchClosed => '디렉터리를 해제하고 정리를 마쳤습니다.';
+
+  @override
+  String get pluginsWatchEndedEarly =>
+      '폴더 감시가 조기에 종료되었습니다. 일부 변경 사항이 목록에서 누락되었을 수 있습니다.';
 
   @override
   String get pluginsWatchExpired => '이번 관찰이 시간 한도에 도달했습니다.';

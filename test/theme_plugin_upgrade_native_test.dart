@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 import 'package:morrow_studio/theme_plugins/theme_plugin_controller.dart';
@@ -18,6 +20,10 @@ void main() {
           'Previous theme package and version must be supplied together',
         );
       }
+      final descriptor = jsonDecode(
+        await File('plugins/mid_autumn/theme.json').readAsString(),
+      ) as Map<String, dynamic>;
+      final expectedVersion = descriptor['version'] as String;
       final directory = await Directory.systemTemp.createTemp(
         'morrow-theme-upgrade-',
       );
@@ -37,7 +43,7 @@ void main() {
         final oldPreview = await host.inspectPlugin(oldPath);
         final old = oldPreview.entries.single;
         expect(old.version, previousVersion ?? '1.0.0');
-        expect(old.version, isNot('1.0.2'));
+        expect(old.version, isNot(expectedVersion));
         await host.importPlugin(oldPath, old.digest, oldPreview.revision);
         await controller.restore();
         expect(
@@ -48,7 +54,7 @@ void main() {
         final preview = await host.inspectPlugin(nextPackage!);
         final next = preview.entries.single;
         expect(next.id, old.id);
-        expect(next.version, '1.0.2');
+        expect(next.version, expectedVersion);
         expect(next.digest, isNot(orderedEquals(old.digest)));
         expect(next.declared, isEmpty);
         expect(next.declaredIo, isEmpty);
@@ -71,7 +77,7 @@ void main() {
         controller = ThemePluginController(store: store, backend: host);
         await controller.restore();
         expect(controller.active, isTrue, reason: '${controller.error}');
-        expect(controller.entries.single.version, '1.0.2');
+        expect(controller.entries.single.version, expectedVersion);
         expect(controller.entries.single.digest, orderedEquals(next.digest));
         expect(controller.plugin!.artwork, isNotEmpty);
         final businessAfter = await host.pluginState();

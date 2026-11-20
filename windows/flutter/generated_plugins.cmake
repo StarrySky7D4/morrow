@@ -7,10 +7,10 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_acrylic
   irondash_engine_context
   media_kit_libs_windows_video
-  media_kit_video
   screen_retriever_windows
   super_native_extensions
   url_launcher_windows
+  media_kit_video
   window_manager
 )
 

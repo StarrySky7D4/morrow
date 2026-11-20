@@ -3,9 +3,7 @@ part of history_delivery_test_support;
 Uint8List id(int n) => Uint8List.fromList(List.filled(32, n));
 String hex(List<int> bytes) =>
     bytes.map((n) => n.toRadixString(16).padLeft(2, '0')).join();
-final packet = File(
-  'packages/morrow_core_client/test/fixtures/history-unknown-acknowledged.capnp',
-).readAsBytesSync();
+final packet = readRecordedHistoryPacket();
 BlobHistoryDeliveryRequest request() => BlobHistoryDeliveryRequest(
   requestId: id(2),
   submission: id(1),

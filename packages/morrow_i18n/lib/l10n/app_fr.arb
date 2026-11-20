@@ -2032,6 +2032,7 @@
   "pluginsWatchBytes": "Limite de données transmises (octets)",
   "pluginsWatchCancelled": "Cette observation a été annulée.",
   "pluginsWatchClosed": "Le dossier a été libéré et le nettoyage est terminé.",
+  "pluginsWatchEndedEarly": "La surveillance du dossier a pris fin prématurément. Certaines modifications peuvent manquer dans la liste.",
   "pluginsWatchExpired": "Cette observation a atteint sa limite de durée.",
   "pluginsWatchFormError": "Vérifiez le chemin complet. Chaque limite doit être positive et respecter les plafonds du plugin.",
   "pluginsWatchFrames": "Nombre maximal d’enregistrements transmis",

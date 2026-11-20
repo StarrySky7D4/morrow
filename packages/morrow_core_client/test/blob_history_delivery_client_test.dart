@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'dart:io';
+import 'support/recorded_history_packet.dart';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
@@ -24,9 +24,7 @@ BlobHistoryDeliveryRequest request({
   timeoutMs: timeout,
 );
 // Original Rust-produced public fixture, also consumed by C and C++.
-final packet = File(
-  'packages/morrow_core_client/test/fixtures/history-unknown-acknowledged.capnp',
-).readAsBytesSync();
+final packet = readRecordedHistoryPacket();
 String hex(Uint8List bytes) =>
     bytes.map((n) => n.toRadixString(16).padLeft(2, '0')).join();
 host.BlobHistoryDeliveryRequestBuilder preview(

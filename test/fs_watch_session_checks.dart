@@ -23,6 +23,7 @@ final class Fake implements FsWatchBackend, WorkbenchIoTaskControl {
   FsWatchRequest? lastRequest;
   String? fail;
   Completer<void>? startBarrier;
+  bool endedEarly = false;
   bool spawn = false, repaired = false, unknown = false, wrongIdentity = false;
   void count(String command) {
     calls.update(command, (n) => n + 1, ifAbsent: () => 1);
@@ -47,6 +48,10 @@ final class Fake implements FsWatchBackend, WorkbenchIoTaskControl {
         r.fsWatchResult.detail = 'Spawn';
         r.fsWatchResult.nativeRetirementComplete = true;
       }
+    } else if (endedEarly && receipt) {
+      r.fsWatchResult.success = false;
+      r.fsWatchResult.error = FsWatchError.terminalObservation.index;
+      r.fsWatchResult.detail = 'ObservationEnded(Gap)';
     } else if (unknown && receipt) {
       r.fsWatchResult.success = false;
       r.fsWatchResult.error = FsWatchError.unknown.index;

@@ -6,7 +6,7 @@ import 'package:morrow_studio/plugins/editor_session.dart';
 import 'package:morrow_studio/plugins/versioned_editor.dart';
 import 'package:morrow_studio/plugins/versioned_editor_adapter.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/plugins/studio_storage.dart';

@@ -2,6 +2,7 @@
 // ignore_for_file: annotate_overrides, unnecessary_this
 
 import 'dart:typed_data';
+
 import 'package:capnproto_dart/capnproto_dart.dart';
 
 enum TaskAction {

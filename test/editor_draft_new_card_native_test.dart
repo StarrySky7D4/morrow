@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/plugins/editor_draft.dart';
@@ -156,6 +156,18 @@ void main() {
           directory: directory,
         );
         final restored = (await host.editorDrafts.read(id, 'new-draft'))!;
+        final review = await host.inspectEditorDraft(
+          (await host.editorDrafts.list()).single,
+        );
+        expect(review.hasOriginalCommitOperation, isFalse);
+        await expectLater(
+          host.resumeEditorDraft(review),
+          throwsA(isA<StateError>().having(
+            (error) => error.message,
+            'reason',
+            'Saved draft has no original business operation to resume',
+          )),
+        );
         expect(restored.request.sourceKind, EditorDraftSourceKind.newCard);
         expect(
           restored.request.values.description.text,

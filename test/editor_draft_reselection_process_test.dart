@@ -4,8 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/main.dart';
@@ -84,9 +83,7 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: const [
               AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
+              ...GlobalMaterialLocalizations.delegates,
             ],
             home: Scaffold(
               body: NewIdeaDialog(
@@ -278,9 +275,7 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: const [
               AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
+              ...GlobalMaterialLocalizations.delegates,
             ],
             home: Scaffold(
               body: EditorDraftHistoryDialog(
@@ -404,9 +399,7 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: const [
               AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
+              ...GlobalMaterialLocalizations.delegates,
             ],
             home: Scaffold(
               body: EditorDraftHistoryDialog(
@@ -476,9 +469,9 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
             before.archivedBytes.toString(),
             saved['archived_bytes_after'],
           );
-          final button = t.widget<TextButton>(
-            find.byKey(const ValueKey('draft-history-maintain')),
-          );
+          final maintain = find.byKey(const ValueKey('draft-history-maintain'));
+          await fixture.waitFor(t, () => maintain.evaluate().isNotEmpty);
+          final button = t.widget<TextButton>(maintain);
           expect(button.onPressed, isNull);
           final repeated = await fixture.native(
             t,

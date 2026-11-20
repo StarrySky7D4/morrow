@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3270,6 +3271,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsWatchClosed => '目录已释放，本次清理已完成。';
+
+  @override
+  String get pluginsWatchEndedEarly => '目录监听提前结束，记录中可能缺少部分变更。';
 
   @override
   String get pluginsWatchExpired => '本次观察已到时停止。';

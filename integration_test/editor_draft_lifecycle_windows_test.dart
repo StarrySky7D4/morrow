@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:morrow_studio/desktop_frame.dart';
 import 'package:window_manager/window_manager.dart';

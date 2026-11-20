@@ -57,7 +57,7 @@ test.54 устраняет повторные полные проверки пр
 
 ## Запуск из исходников
 
-Нужны Flutter 3.44 / Dart 3.12 или совместимые версии. Для Windows также требуются инструменты Visual Studio для C++, Windows SDK, Rust и компилятор Cap’n Proto в PATH.
+Нужны Flutter 3.50.0 / Dart 3.14.0. Для Windows также требуются инструменты Visual Studio для C++, Windows SDK, Rust и компилятор Cap’n Proto в PATH.
 
 Полная сборка Windows Rust, интеграционные проверки и упаковка:
 

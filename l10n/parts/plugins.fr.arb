@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "Résultat lu. Vérifiez-le avant de confirmer la fin.",
   "pluginsWatchAcknowledged": "La fin de cette observation est confirmée.",
   "pluginsWatchUnknown": "Cette opération n’a pas pu être confirmée. Sa trace est conservée. Aucune relance ni nouvelle tâche automatique.",
+  "pluginsWatchEndedEarly": "La surveillance du dossier a pris fin prématurément. Certaines modifications peuvent manquer dans la liste.",
   "pluginsWatchCancelled": "Cette observation a été annulée.",
   "pluginsWatchExpired": "Cette observation a atteint sa limite de durée.",
   "pluginsWatchClosed": "Le dossier a été libéré et le nettoyage est terminé.",

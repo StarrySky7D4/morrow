@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart' hide Fake;
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/fs_watch_models.dart';
@@ -65,7 +65,10 @@ Widget page(
   bool http = false,
 }) => MaterialApp(
   locale: Locale(language),
-  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    ...GlobalMaterialLocalizations.delegates,
+  ],
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
     body: TickerMode(
@@ -164,6 +167,26 @@ void main() {
       },
     );
   }
+
+  testWidgets('early watch end stays visible after acknowledgement', (t) async {
+    final b = Fake()..endedEarly = true;
+    await t.pumpWidget(page(b, language: 'en'));
+    await t.pumpAndSettle();
+    await fill(t);
+    await press(t, 'fs-watch-start');
+    await press(t, 'fs-watch-refresh');
+    await press(t, 'fs-watch-read');
+
+    const message =
+        'Directory observation ended early. Some changes may be missing from the list.';
+    expect(t.widget<Text>(key('fs-watch-result')).data, message);
+    await press(t, 'fs-watch-ack');
+    await press(t, 'fs-watch-new');
+    expect(key('fs-watch-result'), findsNothing);
+    expect(find.textContaining(message), findsOneWidget);
+    expect(b.calls['start'], 1);
+    expect(b.calls['ack'], 1);
+  });
 
   testWidgets('all nine languages fit a narrow view without dispatch', (
     t,

@@ -1,6 +1,6 @@
 // Run after verify_plugin_ui_sdk has produced fresh, host-validated guest outputs.
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_core_client/ui.dart' show UiDocument;
 import 'package:morrow_plugin_ui/morrow_plugin_ui.dart';

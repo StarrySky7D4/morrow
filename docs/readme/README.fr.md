@@ -57,7 +57,7 @@ La dernière optimisation de lecture a été comparée à la version parallèle 
 
 ## Exécution depuis les sources
 
-Flutter 3.44 / Dart 3.12 ou versions compatibles sont nécessaires. Sous Windows : outils de compilation C++ de Visual Studio, Windows SDK, Rust et compilateur Cap’n Proto dans PATH.
+Flutter 3.50.0 / Dart 3.14.0 sont nécessaires. Sous Windows : outils de compilation C++ de Visual Studio, Windows SDK, Rust et compilateur Cap’n Proto dans PATH.
 
 Compilation complète du poste Rust Windows, tests d’intégration et empaquetage :
 

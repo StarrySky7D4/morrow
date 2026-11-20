@@ -6300,6 +6300,12 @@ abstract class AppLocalizations {
   /// **'The directory has been released and cleanup is complete.'**
   String get pluginsWatchClosed;
 
+  /// No description provided for @pluginsWatchEndedEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory observation ended early. Some changes may be missing from the list.'**
+  String get pluginsWatchEndedEarly;
+
   /// No description provided for @pluginsWatchExpired.
   ///
   /// In en, this message translates to:

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Morphs decorative glyphs inside the one native Switch. Slots stay non-null,
 /// so Material thumb geometry and drag tracking do not change with style.

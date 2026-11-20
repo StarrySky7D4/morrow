@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'support/workbench_supervision_fixture.dart';
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/workbench_supervision.dart';
 import 'package:morrow_studio/plugins/session_coordinator.dart';

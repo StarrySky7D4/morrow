@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "Ergebnis gelesen. Prüfen Sie es, bevor Sie den Abschluss bestätigen.",
   "pluginsWatchAcknowledged": "Der Abschluss dieser Beobachtung wurde bestätigt.",
   "pluginsWatchUnknown": "Dieser Vorgang konnte nicht bestätigt werden. Sein Datensatz bleibt erhalten. Es erfolgt kein automatischer Wiederholungsversuch oder neuer Task.",
+  "pluginsWatchEndedEarly": "Die Verzeichnisüberwachung wurde vorzeitig beendet. Einige Änderungen fehlen möglicherweise in der Liste.",
   "pluginsWatchCancelled": "Diese Beobachtung wurde abgebrochen.",
   "pluginsWatchExpired": "Diese Beobachtung hat ihr Zeitlimit erreicht.",
   "pluginsWatchClosed": "Das Verzeichnis wurde freigegeben und die Bereinigung ist abgeschlossen.",

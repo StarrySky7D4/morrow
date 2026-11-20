@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "Resultado leído. Revíselo antes de confirmar la finalización.",
   "pluginsWatchAcknowledged": "Se ha confirmado la finalización de esta observación.",
   "pluginsWatchUnknown": "No se pudo confirmar esta operación. Su registro se conserva. No se reintentará ni iniciará otra tarea automáticamente.",
+  "pluginsWatchEndedEarly": "La observación del directorio terminó antes de tiempo. Es posible que falten algunos cambios en la lista.",
   "pluginsWatchCancelled": "Esta observación se canceló.",
   "pluginsWatchExpired": "Esta observación alcanzó su límite de tiempo.",
   "pluginsWatchClosed": "El directorio se ha liberado y la limpieza ha terminado.",

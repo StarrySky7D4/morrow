@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "Resultado lido. Revise antes de confirmar a conclusão.",
   "pluginsWatchAcknowledged": "A conclusão desta observação foi confirmada.",
   "pluginsWatchUnknown": "Não foi possível confirmar esta operação. Seu registro foi mantido. Não haverá nova tentativa nem nova tarefa automática.",
+  "pluginsWatchEndedEarly": "O monitoramento do diretório terminou antes do previsto. Algumas alterações podem estar ausentes da lista.",
   "pluginsWatchCancelled": "Esta observação foi cancelada.",
   "pluginsWatchExpired": "Esta observação atingiu o limite de tempo.",
   "pluginsWatchClosed": "O diretório foi liberado e a limpeza foi concluída.",

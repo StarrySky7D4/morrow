@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:ui' show FrameTiming, FramePhase;
 import 'plugins/startup_probe.dart';
 import 'plugins/workbench_startup.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:path_provider/path_provider.dart';
 import 'main.dart' show MorrowApp;
@@ -341,7 +341,6 @@ Future<void> _startSession(List<String> arguments) async {
         managed: managed,
         onStarted: (backend) {
           opened = backend;
-          _draftWorkbench = backend;
           _sessions.attach(
             process: backend.process,
             library: directory.absolute.path,
@@ -382,6 +381,8 @@ Future<void> _startSession(List<String> arguments) async {
       _applicationClose.observe();
       return;
     }
+    // Editors can first acquire draft owners when the workspace is presented.
+    _draftWorkbench = backend;
     _sessions.active();
     // Reached only after desktop/close listener + original host RPC + storage.
     normalReady?.arm();

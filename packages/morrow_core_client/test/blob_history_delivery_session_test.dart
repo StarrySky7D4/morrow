@@ -2,7 +2,7 @@
 // ignore: unnecessary_library_name
 library history_delivery_test_support;
 
-import 'dart:io';
+import 'support/recorded_history_packet.dart';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import '../../../lib/plugins/io_task_models.dart';

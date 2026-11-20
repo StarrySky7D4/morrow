@@ -57,7 +57,7 @@ The final read optimization was compared with the preceding parallel version usi
 
 ## Run from source
 
-Requires Flutter 3.44 / Dart 3.12 or compatible versions. Windows also needs Visual Studio C++ desktop build tools, the Windows SDK, Rust and the Cap’n Proto compiler on PATH.
+Requires Flutter 3.50.0 / Dart 3.14.0. Windows also needs Visual Studio C++ desktop build tools, the Windows SDK, Rust and the Cap’n Proto compiler on PATH.
 
 Full Windows Rust workbench build, integration checks and packaging:
 

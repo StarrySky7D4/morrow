@@ -4,13 +4,26 @@ use morrow_plugin_sdk::channel::{
 
 #[test]
 fn discovery_is_bounded_owned_metadata() {
-    use morrow_plugin_sdk::channel::{Budget,Directory,Endpoint,Kind};
-    let endpoint=Endpoint{reference:[2;32],source_epoch:[3;32],kind:Kind::Events,budget:Budget::default()};
-    let mut directory=Directory{scope_sha256:[4;32],channels:vec![endpoint.clone()]};
-    let bytes=directory.encode().unwrap();assert_eq!(Directory::decode(&bytes).unwrap(),directory);
-    directory.channels.push(endpoint.clone());assert_eq!(directory.encode(),Err(Error::Invalid));
-    directory.channels=vec![endpoint;9];assert_eq!(directory.encode(),Err(Error::Limit));
-    let mut bytes=bytes;bytes.push(0);assert_eq!(Directory::decode(&bytes),Err(Error::Invalid));
+    use morrow_plugin_sdk::channel::{Budget, Directory, Endpoint, Kind};
+    let endpoint = Endpoint {
+        reference: [2; 32],
+        source_epoch: [3; 32],
+        kind: Kind::Events,
+        budget: Budget::default(),
+    };
+    let mut directory = Directory {
+        scope_sha256: [4; 32],
+        channels: vec![endpoint.clone()],
+    };
+    let bytes = directory.encode().unwrap();
+    assert_eq!(Directory::decode(&bytes).unwrap(), directory);
+    directory.channels.push(endpoint.clone());
+    assert_eq!(directory.encode(), Err(Error::Invalid));
+    directory.channels = vec![endpoint; 9];
+    assert_eq!(directory.encode(), Err(Error::Limit));
+    let mut bytes = bytes;
+    bytes.push(0);
+    assert_eq!(Directory::decode(&bytes), Err(Error::Invalid));
 }
 fn request() -> Request {
     Request {

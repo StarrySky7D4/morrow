@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A presentation-only overlay. The original appearance preferences stay intact.
 @immutable

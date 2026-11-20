@@ -57,7 +57,7 @@ Die letzte Leseoptimierung wurde in je vier abwechselnden Starts mit der vorheri
 
 ## Aus dem Quellcode starten
 
-Benötigt werden Flutter 3.44 / Dart 3.12 oder kompatible Versionen. Unter Windows zusätzlich Visual Studio C++-Desktop-Buildtools, Windows SDK, Rust und der Cap’n-Proto-Compiler im PATH.
+Benötigt werden Flutter 3.50.0 / Dart 3.14.0. Unter Windows zusätzlich Visual Studio C++-Desktop-Buildtools, Windows SDK, Rust und der Cap’n-Proto-Compiler im PATH.
 
 Vollständiger Windows-Rust-Build mit Integrationsprüfungen und Paketierung:
 

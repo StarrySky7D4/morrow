@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'fs_watch_models.dart';
 import 'fs_watch_session.dart';
@@ -246,6 +246,7 @@ class _FsWatchManagerState extends State<FsWatchManager>
       : switch (r.error) {
           FsWatchError.cancelled => l.pluginsWatchCancelled,
           FsWatchError.expired => l.pluginsWatchExpired,
+          FsWatchError.terminalObservation => l.pluginsWatchEndedEarly,
           _ => l.pluginsHttpTaskFailed,
         };
   String _phase(AppLocalizations l) => switch (_session.phase) {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'tip_list_editor.dart';
 import 'tip_preferences.dart';
 

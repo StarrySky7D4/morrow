@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'generated/host.capnp.dart' as host;
 import 'guest_mutation_codec_native.dart';
 import 'guest_mutation_models.dart';
+import 'mutation_task_models.dart';
 
 typedef GuestMutationExchange =
     Future<T> Function<T>(
@@ -120,11 +121,14 @@ final class NativeGuestMutationClient implements GuestMutationBackend {
         }
         if (result?.kind == GuestMutationResultKind.owner &&
             receipt.kind == GuestMutationCommandKind.select) {
-          final selected = result!.owner!.reference;
-          final current = reply.state.reference;
-          if (selected == null ||
-              current == null ||
-              !GuestMutationValidation.same(selected, current)) {
+          final owner = result!.owner!;
+          if (owner.kind == MutationResultKind.selected) {
+            final current = reply.state.reference;
+            if (current == null ||
+                !GuestMutationValidation.same(owner.reference!, current)) {
+              throw const FormatException('Guest selected target changed');
+            }
+          } else if (reply.state.selected) {
             throw const FormatException('Guest selected target changed');
           }
         }

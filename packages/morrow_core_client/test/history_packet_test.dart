@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'support/recorded_history_packet.dart';
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:test/test.dart';
@@ -10,9 +10,7 @@ Uint8List id(int n) => Uint8List.fromList(List.filled(32, n));
 String hex(Uint8List value) =>
     value.map((n) => n.toRadixString(16).padLeft(2, '0')).join();
 String taskId() => 'history-v1.${hex(id(1))}.${hex(id(9))}';
-final vector = File(
-  'packages/morrow_core_client/test/fixtures/history-unknown-acknowledged.capnp',
-).readAsBytesSync();
+final vector = readRecordedHistoryPacket();
 Uint8List sample([void Function(wire.PacketBuilder)? change]) {
   final message = MessageBuilder(), p = message.initRoot(wire.packetFactory);
   p.version = 1;

@@ -2032,6 +2032,7 @@
   "pluginsWatchBytes": "交付数据上限（字节）",
   "pluginsWatchCancelled": "本次观察已取消。",
   "pluginsWatchClosed": "目录已释放，本次清理已完成。",
+  "pluginsWatchEndedEarly": "目录监听提前结束，记录中可能缺少部分变更。",
   "pluginsWatchExpired": "本次观察已到时停止。",
   "pluginsWatchFormError": "请核对完整目录路径，并确保各项限额为正数且不超过插件上限。",
   "pluginsWatchFrames": "最多交付记录数",

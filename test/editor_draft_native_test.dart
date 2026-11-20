@@ -7,7 +7,7 @@ import 'package:morrow_studio/plugins/host_request.dart';
 import 'package:morrow_studio/plugins/versioned_content_codec.dart';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/plugins/editor_draft.dart';

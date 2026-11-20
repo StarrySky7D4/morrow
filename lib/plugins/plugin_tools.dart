@@ -1,6 +1,6 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'workbench_tool_labels.dart';
 

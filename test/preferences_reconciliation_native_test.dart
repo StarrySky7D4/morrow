@@ -65,9 +65,10 @@ void main() {
               <String, dynamic>{'ideas': [], 'uiLocale': 'fr'};
           Future<Uint8List> save(String theme) async {
             final data = {...baseline, 'theme': theme};
-            if (storage != null) {
-              await storage.write(data);
-              return encodePreferences(storage.read());
+            final currentStorage = storage;
+            if (currentStorage != null) {
+              await currentStorage.write(data);
+              return encodePreferences(currentStorage.read());
             }
             return backend!.savePreferences(encodePreferences(data));
           }

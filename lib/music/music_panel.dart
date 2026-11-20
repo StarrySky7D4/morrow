@@ -3,7 +3,7 @@ import 'audio_formats.dart';
 import 'lyrics_dialog.dart';
 import 'lyrics_service.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/foundation.dart';
 import '../appearance.dart';
 import '../collapsible_panel.dart';

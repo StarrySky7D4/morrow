@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'pending_ui_writes.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'tip_preferences.dart' show TipStore;
 import 'hold_reorder.dart' show moveRelative;

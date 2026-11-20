@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'session_coordinator.dart';
@@ -90,9 +89,7 @@ class _WorkbenchShutdownState extends State<WorkbenchShutdown> {
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       theme: ThemeData(
         useMaterial3: true,

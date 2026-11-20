@@ -12,6 +12,10 @@ $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw),'(?m)^version: ([
 if (-not $versionMatch.Success) { throw 'Missing pubspec version' }
 $version = $versionMatch.Groups[1].Value
 if ($version -notmatch '^[0-9A-Za-z][0-9A-Za-z.-]*$') { throw 'Invalid version for artifact names' }
+$gitPrefix = & git rev-parse --show-prefix 2>$null
+if ($LASTEXITCODE -ne 0 -or $gitPrefix) {
+  throw 'Preview packaging requires the project Git worktree root. For a source ZIP, follow the Windows build steps in README.md.'
+}
 $customRoot = -not [string]::IsNullOrWhiteSpace($OutputRoot)
 if ($customRoot) {
   if ([IO.Path]::IsPathRooted($OutputRoot)) {
@@ -51,6 +55,7 @@ foreach ($path in @($sourceArchive, "$sourceArchive.sha256", $destination, $arch
   if (Test-Path -LiteralPath $path) { throw "Preserving existing artifact before build: $path" }
 }
 Checked python @('-X','utf8','tool/build_i18n.py','--check')
+Checked dart @('pub','get','--enforce-lockfile','--directory','packages/morrow_core_client')
 Checked python @('-X','utf8','tool/package_preview_source.py',$sourceArchive)
 $sourceCommit = (& git rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or $sourceCommit -notmatch '^[0-9a-f]{40}$') { throw 'Cannot identify source commit' }
@@ -94,6 +99,7 @@ if (-not (Test-Path -LiteralPath $themePackage -PathType Leaf) -or
 }
 Copy-Item -LiteralPath $themePackage -Destination (Join-Path $destination "plugins/$themeName")
 Copy-Item -LiteralPath LICENSE,NOTICE -Destination $destination -Force
+Copy-Item -LiteralPath packaging/USER_GUIDE.txt -Destination (Join-Path $destination '使用说明.txt')
 Copy-Item -LiteralPath packaging/THIRD_PARTY_NOTICES.txt -Destination $destination -Force
 $sourceNotice = @"
 Morrow $version - AGPL-3.0-only
@@ -104,7 +110,8 @@ $([IO.Path]::GetFileName($sourceArchive))
 SHA-256: $sourceHash
 The snapshot was checked against the working tree before and after compilation.
 This preview does not assert that a Git tag or GitHub Release exists.
-Build instructions: README.md and tool/build_rust_workbench_windows.ps1
+To build the app from the source ZIP, follow the Windows source ZIP steps in README.md.
+The preview packaging script requires a Git checkout.
 The source is available at no charge. Third-party source locations and
 license notices are listed in THIRD_PARTY_NOTICES.txt and licenses/.
 "@
@@ -116,9 +123,13 @@ Copy-Item -Path packaging/licenses/* -Destination $licenses -Recurse -Force
 $toolchain = & rustc --print sysroot
 if ($LASTEXITCODE -ne 0) {throw 'Cannot locate Rust library notices'}
 Copy-Item -LiteralPath (Join-Path $toolchain 'share/doc/rust/COPYRIGHT-library.html') -Destination (Join-Path $licenses 'Rust-COPYRIGHT-library.html') -Force
-$metadata = & cargo metadata --offline --locked --manifest-path workbench_host/Cargo.toml --format-version 1
-if ($LASTEXITCODE -ne 0) {throw 'Cannot inventory Rust libraries'}
-$inventory = foreach ($package in ($metadata | ConvertFrom-Json).packages | Where-Object {$_.source}) {
+$manifests = @('workbench_host/Cargo.toml', 'plugins/workbench/Cargo.toml', 'plugins/mid_autumn/Cargo.toml')
+$packages = foreach ($manifest in $manifests) {
+  $metadata = & cargo metadata --offline --locked --manifest-path $manifest --format-version 1
+  if ($LASTEXITCODE -ne 0) {throw "Cannot inventory Rust libraries for $manifest"}
+  ($metadata | ConvertFrom-Json).packages | Where-Object { $_.source }
+}
+$inventory = foreach ($package in ($packages | Sort-Object -Property id -Unique)) {
   $licenseFolder = Join-Path $licenses ('cargo/'+$package.name+'-'+$package.version)
   New-Item -ItemType Directory -Force -Path $licenseFolder | Out-Null
   Get-ChildItem -LiteralPath (Split-Path $package.manifest_path) -File | Where-Object {$_.Name -match '^(LICENSE|LICENCE|COPYING|NOTICE|COPYRIGHT)'} | Copy-Item -Destination $licenseFolder -Force

@@ -57,7 +57,7 @@ test.54는 라이브러리를 열 때 중복되는 전체 검증을 줄이고, �
 
 ## 소스에서 실행
 
-Flutter 3.44 / Dart 3.12 또는 호환 버전이 필요합니다. Windows에는 Visual Studio C++ 데스크톱 빌드 도구, Windows SDK, Rust, PATH에 등록된 Cap’n Proto 컴파일러도 필요합니다.
+Flutter 3.50.0 / Dart 3.14.0이 필요합니다. Windows에는 Visual Studio C++ 데스크톱 빌드 도구, Windows SDK, Rust, PATH에 등록된 Cap’n Proto 컴파일러도 필요합니다.
 
 Windows Rust 작업 공간의 전체 빌드, 통합 검사와 패키징:
 

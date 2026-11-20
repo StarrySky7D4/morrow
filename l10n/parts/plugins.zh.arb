@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "结果已读取，请核对后确认结束。",
   "pluginsWatchAcknowledged": "本次观察已确认结束。",
   "pluginsWatchUnknown": "本次操作结果无法确认，记录已保留。不会自动重试或开始新任务。",
+  "pluginsWatchEndedEarly": "目录监听提前结束，记录中可能缺少部分变更。",
   "pluginsWatchCancelled": "本次观察已取消。",
   "pluginsWatchExpired": "本次观察已到时停止。",
   "pluginsWatchClosed": "目录已释放，本次清理已完成。",

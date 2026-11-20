@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:capnproto_dart/capnproto_dart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/channel_task_manager.dart';
 import 'package:morrow_studio/plugins/channel_task_models.dart';

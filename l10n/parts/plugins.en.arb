@@ -869,6 +869,7 @@
   "pluginsWatchReviewed": "Result read. Review it before confirming completion.",
   "pluginsWatchAcknowledged": "This observation is confirmed complete.",
   "pluginsWatchUnknown": "This operation could not be confirmed. Its record is retained. It will not retry or start a new task automatically.",
+  "pluginsWatchEndedEarly": "Directory observation ended early. Some changes may be missing from the list.",
   "pluginsWatchCancelled": "This observation was cancelled.",
   "pluginsWatchExpired": "This observation reached its time limit.",
   "pluginsWatchClosed": "The directory has been released and cleanup is complete.",

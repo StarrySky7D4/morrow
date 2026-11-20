@@ -210,15 +210,29 @@ test.54 合并重复开库校验、以有界并行计算证据，并在同一校
 
 ## 从源码运行
 
-需要 Flutter 3.44／Dart 3.12 或兼容版本；Windows 还需要 Visual Studio C++ 桌面构建工具与 Windows SDK、Rust 工具链，以及加入 PATH 的 Cap’n Proto 编译器。
+根目录的 `pubspec.yaml` 固定 Flutter 3.50.0 stable（Dart 3.14.0），两条 Flutter CI 流程从这里读取版本。Windows 还需要 Visual Studio C++ 桌面构建工具与 Windows SDK、Rust 工具链，以及加入 PATH 的 Cap’n Proto 编译器。
 
-Windows Rust 工作台完整构建、集成检查与打包：
+本机的新 SDK 位于 `D:\build_cache\f350\flutter`，可在当前 PowerShell 会话将其 `bin` 目录放在 PATH 首位。Windows 预览包的入口为 `lib/main.dart`。需要核验原生无障碍遍历树时，按 [Windows 框架说明](tool/flutter_windows_semantics/NOTICE.txt) 准备隔离框架，并将生成的包配置传给构建和测试。
+
+**从源码 ZIP 构建 Windows 应用**　将源码完整解压到较短的本地路径。在含有 `pubspec.yaml` 的根目录运行以下命令。首次构建需取得锁定依赖和原生媒体库。
 
 ```powershell
-flutter pub get
+rustup target add wasm32-unknown-unknown
+flutter pub get --enforce-lockfile
+flutter build windows --release --no-pub --target lib/main.dart
+```
+
+构建结果位于 `build/windows/x64/runner/Release`。保留整个目录，从中启动 `morrow_studio.exe`。构建会从源码编译内置工作台和主题插件。
+
+**从 Git 工作树制作 Windows 预览包**　在工程自己的 Git 工作树根目录运行以下命令，以生成包含当前源码的归档并执行集成检查。
+
+```powershell
+flutter pub get --enforce-lockfile
 rustup target add wasm32-unknown-unknown
 pwsh -File tool/build_rust_workbench_windows.ps1
 ```
+
+沿用现有版本的工作台和主题插件时，分别设置 `MORROW_RETAINED_WORKBENCH_PACKAGE`、`MORROW_RETAINED_THEME_PACKAGE`，并用对应的 `MORROW_RETAINED_WORKBENCH_SHA256`、`MORROW_RETAINED_THEME_SHA256` 提供[资格台账](docs/qualification/current.json)记录的摘要。Windows 构建会重新编译插件，并核对实际装入发布目录的包字节。
 
 打包产物不可覆盖；使用新版本或新的输出目录，`-RefreshArtifact` 不再允许覆盖。分发时必须保留完整运行目录。Web／Android 的构建和验收范围见平台文档，不以 Windows 构建结果替代。
 

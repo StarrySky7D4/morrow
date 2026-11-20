@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/blob_plan_manager.dart';
 import 'package:morrow_studio/plugins/blob_plan_models.dart';
@@ -69,9 +68,7 @@ Widget _page(
     locale: chinese ? const Locale('zh') : const Locale('en'),
     supportedLocales: const [Locale('zh'), Locale('en')],
     localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
+      ...GlobalMaterialLocalizations.delegates,
     ],
     home: direct
         ? Scaffold(body: manager())

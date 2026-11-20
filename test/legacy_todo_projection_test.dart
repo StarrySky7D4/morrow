@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/storage.dart';
@@ -36,7 +36,7 @@ void main() {
       await t.pumpAndSettle();
       await t.tap(find.byKey(ValueKey('nav-${WorkbenchPage.projects.id}')));
       await t.pumpAndSettle();
-      final menu = find.byType(PopupMenuButton<String>).first;
+      final menu = find.byTooltip('Change stage for duplicate project');
       expect(
         find.descendant(of: menu, matching: find.text('Completed')),
         findsOneWidget,

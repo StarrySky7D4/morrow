@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3621,6 +3622,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get pluginsWatchClosed =>
       'Le dossier a été libéré et le nettoyage est terminé.';
+
+  @override
+  String get pluginsWatchEndedEarly =>
+      'La surveillance du dossier a pris fin prématurément. Certaines modifications peuvent manquer dans la liste.';
 
   @override
   String get pluginsWatchExpired =>

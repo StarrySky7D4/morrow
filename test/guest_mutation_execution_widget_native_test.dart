@@ -1,11 +1,11 @@
-// Real Rust SDK guest and native Widget clicks through both separate approvals.
+// Real SDK guest and native Widget clicks through both separate approvals.
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart' show debugPrintSynchronously;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/guest_mutation_execution_manager.dart';
@@ -78,9 +78,9 @@ void main() {
   final language = env['MORROW_GUEST_MUTATION_LANGUAGE'];
   final moduleHash = env['MORROW_GUEST_MUTATION_WASM_SHA256'];
   testWidgets(
-    'real Rust guest Widget requires draft, Prepare and Execute confirmations',
+    'real SDK guest Widget requires draft, Prepare and Execute confirmations',
     (tester) async {
-      expect(language, 'rust');
+      expect(language, anyOf('rust', 'c', 'cpp'));
       expect(moduleHash, matches(RegExp(r'^[0-9a-f]{64}$')));
       for (final path in [host!, builtin!, fixture!]) {
         expect(File(path).existsSync(), isTrue, reason: path);
@@ -104,6 +104,14 @@ void main() {
           );
           final preview = await backend!.inspectPlugin(fixture);
           final candidate = preview.entries.single;
+          expect(
+            candidate.id,
+            'org.example.workbench.guest-mutation-$language',
+          );
+          expect(
+            candidate.digest,
+            sha256.convert(await File(fixture).readAsBytes()).bytes,
+          );
           expect(candidate.mutationSupported, isTrue);
           expect(
             candidate.mutationBudget?.maxJobBytes,
@@ -139,7 +147,10 @@ void main() {
         final active = backend!;
         Widget screen() => MaterialApp(
           locale: const Locale('en'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
+          ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SingleChildScrollView(
@@ -271,7 +282,7 @@ void main() {
         expect(_key('operation-error'), findsNothing);
         expect(_key('cleanup-error'), findsNothing);
         // ignore: avoid_print
-        print('GUEST_WIDGET_PASS=rust');
+        print('GUEST_WIDGET_PASS=$language');
       } catch (error, stack) {
         debugPrintSynchronously('Real guest Widget failed: $error\n$stack');
         rethrow;

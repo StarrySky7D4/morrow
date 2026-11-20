@@ -1,6 +1,6 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'texture_repository.dart';
@@ -162,13 +162,16 @@ class _TextureBackdropState extends State<TextureBackdrop>
     if (failed || resolved == null) return const SizedBox.expand();
     if (video != null) {
       return IgnorePointer(
-        child: Video(
-          controller: video!,
-          fit: BoxFit.cover,
-          controls: NoVideoControls,
-          fill: Colors.transparent,
-          wakelock: false,
-          pauseUponEnteringBackgroundMode: false,
+        // ignore: deprecated_member_use
+        child: MaterialUiCompatibilityBridge(
+          child: Video(
+            controller: video!,
+            fit: BoxFit.cover,
+            controls: NoVideoControls,
+            fill: Colors.transparent,
+            wakelock: false,
+            pauseUponEnteringBackgroundMode: false,
+          ),
         ),
       );
     }

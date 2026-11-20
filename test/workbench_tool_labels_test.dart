@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_core_client/ui.dart' as core;
 import 'package:morrow_core_client/src/generated/ui.capnp.dart' as wire;

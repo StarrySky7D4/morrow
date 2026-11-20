@@ -29,7 +29,6 @@ import 'save_recovery_dialog.dart';
 import 'fonts/font_repository.dart';
 import 'fonts/font_settings.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'plugins/workbench_ids.dart';
 import 'plugins/host_notices.dart';
 import 'plugins/workbench_labels.dart';
@@ -85,7 +84,7 @@ import 'media/texture_repository.dart';
 import 'media/texture_backdrop.dart';
 import 'media/texture_link_dialog.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'storage.dart';
@@ -530,9 +529,7 @@ class _MorrowAppState extends State<MorrowApp> {
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: messages,
@@ -4769,7 +4766,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       builder: (_) => NewIdeaDialog(
         savedDraft: review,
         recoveryRuntime: runtime,
-        canResumeSavedDraft: retained != null || backend is WorkbenchEditorDraftResumeSupport,
+        canResumeSavedDraft: retained != null ||
+            (backend is WorkbenchEditorDraftResumeSupport &&
+                review.hasOriginalCommitOperation),
         isCurrent: current,
       ),
     );

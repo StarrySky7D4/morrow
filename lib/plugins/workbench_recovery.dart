@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'host_notices.dart';
 import 'workbench_supervision.dart';
 import 'workbench_owner_management.dart';
 import 'session_coordinator.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 String workbenchFailureMessage(
@@ -322,9 +321,7 @@ class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         L10n.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       theme: ThemeData(
         useMaterial3: true,

@@ -24,7 +24,7 @@ pwsh -File tool/verify_core.ps1 -Web
 pwsh -File tool/verify_core_client.ps1 -Web -Python python
 ```
 
-需要 Flutter／Dart 3.12、Rust、Cap’n Proto compiler 1.4.0、Rust wasm32-unknown-unknown 目标、Node 和 Chrome／Chromium（可指定 CHROME_BIN）。编译和探针文件均落入 build/core-test.10。生成绑定纳入版本控制；`--check` 在临时目录生成并比较，不修改已有绑定。
+需要 Flutter 3.50.0／Dart 3.14.0、Rust、Cap’n Proto compiler 1.4.0、Rust wasm32-unknown-unknown 目标、Node 和 Chrome／Chromium（可指定 CHROME_BIN）。编译和探针文件均落入 build/core-test.10。生成绑定纳入版本控制；`--check` 在临时目录生成并比较，不修改已有绑定。
 
 验证脚本通过 Flutter 分析入口检查本包，以避开本机 Dart 3.12 独立 analyze 在退出时清理 perf socket 的竞态。编译、分析和测试任一失败仍中止，不跳过错误。
 

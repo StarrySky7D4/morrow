@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'pending_ui_writes.dart';
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local presentation text, independent of the business plugin's wire contract.

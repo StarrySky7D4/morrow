@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/blob_plan_manager.dart';
 import 'package:morrow_studio/plugins/blob_plan_models.dart';

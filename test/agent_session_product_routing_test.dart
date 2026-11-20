@@ -1,7 +1,7 @@
 // SOURCE ONLY. ROOT runs this with ordinary Python and an independent retained
 // fixture directory. No application/host PE, protected database or VM is used.
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/agent_session_control.dart';
 import 'package:morrow_studio/plugins/agent_session_manager.dart';

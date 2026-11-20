@@ -7,7 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
@@ -379,8 +379,10 @@ void main() {
                 key: screenshot,
                 child: MaterialApp(
                   locale: const Locale('zh'),
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    ...GlobalMaterialLocalizations.delegates,
+                  ],
                   supportedLocales: AppLocalizations.supportedLocales,
                   home: Scaffold(
                     body: SingleChildScrollView(
@@ -534,8 +536,10 @@ void main() {
                 key: screenshot,
                 child: MaterialApp(
                   locale: const Locale('zh'),
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    ...GlobalMaterialLocalizations.delegates,
+                  ],
                   supportedLocales: AppLocalizations.supportedLocales,
                   home: Scaffold(
                     body: SingleChildScrollView(

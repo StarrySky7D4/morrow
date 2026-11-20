@@ -79,23 +79,20 @@ try {
         $logText.Contains('Skip:')) {
       throw "Real $language guest Session did not execute a passing case."
     }
+    $widgetLog = Join-Path $run "$language-widget.log"
+    & $Flutter test --no-pub --reporter expanded test/guest_mutation_execution_widget_native_test.dart 2>&1 | Tee-Object -FilePath $widgetLog
+    if ($LASTEXITCODE -ne 0) { throw "Real $language guest Widget test failed; see $widgetLog." }
+    $widgetText = Get-Content -LiteralPath $widgetLog -Raw
+    if (-not $widgetText.Contains("GUEST_WIDGET_PASS=$language") -or
+        -not $widgetText.Contains('All tests passed!') -or
+        $widgetText.Contains('Skip:')) {
+      throw "Real $language guest Widget did not execute a passing case."
+    }
     if ((Get-FileHash -LiteralPath $module -Algorithm SHA256).Hash.ToLowerInvariant() -ne $moduleHash -or
         (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant() -ne $packageHash) {
       throw "Guest fixture changed during $language qualification."
     }
-    $rows += [ordered]@{ language = $language; wasm_sha256 = $moduleHash; package_sha256 = $packageHash; session = 'passed' }
-    if ($language -eq 'rust') {
-      $widgetLog = Join-Path $run 'rust-widget.log'
-      & $Flutter test --no-pub --reporter expanded test/guest_mutation_execution_widget_native_test.dart 2>&1 | Tee-Object -FilePath $widgetLog
-      if ($LASTEXITCODE -ne 0) { throw "Real Rust guest Widget test failed; see $widgetLog." }
-      $widgetText = Get-Content -LiteralPath $widgetLog -Raw
-      if (-not $widgetText.Contains('GUEST_WIDGET_PASS=rust') -or
-          -not $widgetText.Contains('All tests passed!') -or
-          $widgetText.Contains('Skip:')) {
-        throw 'Real Rust guest Widget did not execute a passing case.'
-      }
-      $rows[-1].widget = 'passed'
-    }
+    $rows += [ordered]@{ language = $language; wasm_sha256 = $moduleHash; package_sha256 = $packageHash; session = 'passed'; widget = 'passed' }
   }
   if ((Get-FileHash -LiteralPath $hostBinary -Algorithm SHA256).Hash.ToLowerInvariant() -ne $hostHashAfterBuild -or
       (Get-FileHash -LiteralPath $packager -Algorithm SHA256).Hash.ToLowerInvariant() -ne $packagerHashAfterBuild -or
@@ -104,13 +101,13 @@ try {
   }
   [ordered]@{
     status = 'passed'; started_utc = $started
-    scope = 'Windows real Flutter native guest mutation Session for Rust/C/C++ and real Rust Widget two-stage approval; isolated temporary libraries only'
+    scope = 'Windows real Flutter native guest mutation Session for Rust/C/C++ and two-stage Widget approval for all three languages; isolated temporary libraries only'
     host_sha256_before_build = $hostHashBefore; host_sha256_after_build = $hostHashAfterBuild
     packager_sha256_before_build = $packagerHashBefore; packager_sha256_after_build = $packagerHashAfterBuild
     builtin_package_sha256_before = $builtinHashBefore; builtin_package_sha256_after = (Get-FileHash -LiteralPath $builtin -Algorithm SHA256).Hash.ToLowerInvariant()
     run_directory = $run; guests = $rows
   } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $summaryPath -Encoding utf8
-  Write-Output 'PASS: three real SDK guest mutation Sessions and Rust two-stage approval Widget.'
+  Write-Output 'PASS: three real SDK guest mutation Sessions and three two-stage approval Widget cases.'
 } catch {
   if ($evidenceRoot) {
     [ordered]@{ status = 'failed'; started_utc = $started; error = $_.Exception.Message } |

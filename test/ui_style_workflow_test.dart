@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/storage.dart';
 import 'package:morrow_studio/component_material_page.dart';
@@ -134,9 +133,7 @@ void main() {
           supportedLocales: L10n.supportedLocales,
           localizationsDelegates: const [
             L10n.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
           ],
           home: AppearanceScope(
             palette: p,

@@ -1,6 +1,6 @@
 import 'surface_paint_boundary.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 Duration _motionDuration(BuildContext context, int milliseconds) =>
     MediaQuery.disableAnimationsOf(context) ||

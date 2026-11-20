@@ -15,6 +15,9 @@ final class EditorDraftReview {
   final List<EditorDraftAssetView> views;
   final String? captureArchive;
   final EditorDraftCommitEvidence? commit;
+
+  // A fresh editor must reserve the previous editor's business operation.
+  bool get hasOriginalCommitOperation => record.request.commitOperation.isNotEmpty;
 }
 
 abstract interface class WorkbenchEditorDraftRecovery {

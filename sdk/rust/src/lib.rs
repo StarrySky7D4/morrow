@@ -1,7 +1,7 @@
 //! Guest transport and typed protocol. No trusted core linkage or loader.
-pub mod dependency_call;
 pub mod channel;
 mod channel_ffi;
+pub mod dependency_call;
 #[allow(clippy::all)]
 pub mod channel_capnp {
     include!(concat!(env!("OUT_DIR"), "/channel_capnp.rs"));
@@ -27,8 +27,8 @@ pub mod io_capnp {
 pub mod mutation_capnp {
     include!(concat!(env!("OUT_DIR"), "/mutation_capnp.rs"));
 }
-mod ffi;
 mod descriptor_prefix;
+mod ffi;
 mod io_ffi;
 mod mutation_ffi;
 pub mod protocol;

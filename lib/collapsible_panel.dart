@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Keeps one live child through reversals: scroll, focus and player state survive.
 class CollapsiblePanel extends StatefulWidget {

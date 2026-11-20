@@ -1,7 +1,7 @@
 """Prepare a pinned, isolated Windows Flutter framework candidate.
 
 Example (all outputs stay on D:):
-  python -B tool/prepare_windows_flutter_framework.py --flutter-sdk C:/flutter \
+  python -B tool/prepare_windows_flutter_framework.py --flutter-sdk D:/build_cache/f350/flutter \
     --package-config D:/build_cache/project/.dart_tool/package_config.json \
     --output D:/build_cache/flutter-framework/run-001
 

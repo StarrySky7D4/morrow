@@ -2032,6 +2032,7 @@
   "pluginsWatchBytes": "Datenlimit der Übermittlung (Bytes)",
   "pluginsWatchCancelled": "Diese Beobachtung wurde abgebrochen.",
   "pluginsWatchClosed": "Das Verzeichnis wurde freigegeben und die Bereinigung ist abgeschlossen.",
+  "pluginsWatchEndedEarly": "Die Verzeichnisüberwachung wurde vorzeitig beendet. Einige Änderungen fehlen möglicherweise in der Liste.",
   "pluginsWatchExpired": "Diese Beobachtung hat ihr Zeitlimit erreicht.",
   "pluginsWatchFormError": "Prüfen Sie den vollständigen Ordnerpfad. Alle Limits müssen positiv sein und innerhalb der Plugin-Limits liegen.",
   "pluginsWatchFrames": "Maximal übermittelte Datensätze",

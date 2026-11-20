@@ -82,7 +82,7 @@ import 'dart:math' show Random;
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:capnproto_dart/capnproto_dart.dart';
-import 'package:flutter/material.dart' show Color;
+import 'package:material_ui/material_ui.dart' show Color;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import '../main.dart' show Idea;
 import '../fonts/font_choice.dart';
@@ -275,6 +275,11 @@ class RustWorkbench
   final _draftResumes = <(String, String), _NativeDraftResumeAttempt>{};
   @override
   Future<EditorDraftOwner> resumeEditorDraft(EditorDraftReview original) {
+    if (!original.hasOriginalCommitOperation) {
+      return Future.error(
+        StateError('Saved draft has no original business operation to resume'),
+      );
+    }
     final record = original.record;
     final key = (record.request.cardId, record.request.draftId);
     final attempt = _draftResumes.putIfAbsent(

@@ -2032,6 +2032,7 @@
   "pluginsWatchBytes": "Limite de dados entregues (bytes)",
   "pluginsWatchCancelled": "Esta observação foi cancelada.",
   "pluginsWatchClosed": "O diretório foi liberado e a limpeza foi concluída.",
+  "pluginsWatchEndedEarly": "O monitoramento do diretório terminou antes do previsto. Algumas alterações podem estar ausentes da lista.",
   "pluginsWatchExpired": "Esta observação atingiu o limite de tempo.",
   "pluginsWatchFormError": "Verifique o caminho completo da pasta. Todos os limites devem ser positivos e respeitar os máximos do plugin.",
   "pluginsWatchFrames": "Máximo de registros entregues",

@@ -2032,6 +2032,7 @@
   "pluginsWatchBytes": "配信データ量の上限（バイト）",
   "pluginsWatchCancelled": "今回の監視はキャンセルされました。",
   "pluginsWatchClosed": "ディレクトリを解放し、後処理を完了しました。",
+  "pluginsWatchEndedEarly": "フォルダーの監視が途中で終了しました。一部の変更が一覧に含まれていない可能性があります。",
   "pluginsWatchExpired": "今回の監視は制限時間に達しました。",
   "pluginsWatchFormError": "完全なフォルダーパスを確認してください。各上限は正の値で、プラグインの上限以内である必要があります。",
   "pluginsWatchFrames": "配信する記録数の上限",

@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/settings_surface.dart';
+
+// The outer MaterialApp owns its own route transitions. Inspect the settings Navigator.
+Finder settingsSnapshots(Key navigation) => find.descendant(
+  of: find.byKey(navigation),
+  matching: find.byType(SnapshotWidget),
+);
 
 void main() {
   testWidgets('Settings enter immediately and return the exact edited result', (
@@ -37,7 +43,7 @@ void main() {
     final early = t.widget<Opacity>(fade).opacity;
     expect(early, greaterThan(0), reason: 'no delayed entrance interval');
     expect(early, lessThan(1));
-    expect(find.byType(SnapshotWidget), findsNothing);
+    expect(settingsSnapshots(navigation), findsNothing);
     await t.pump(const Duration(milliseconds: 48));
     expect(t.widget<Opacity>(fade).opacity, greaterThan(early));
     await t.pumpAndSettle();
@@ -65,7 +71,7 @@ void main() {
     navigation.currentState!.pop(controller.text);
     await t.pump();
     await t.pump(const Duration(milliseconds: 32));
-    expect(find.byType(SnapshotWidget), findsNothing);
+    expect(settingsSnapshots(navigation), findsNothing);
     await t.pumpAndSettle();
     expect(await result, input.text);
     expect(find.byKey(const ValueKey('home')), findsOneWidget);
@@ -104,7 +110,7 @@ void main() {
       ),
       findsNothing,
     );
-    expect(find.byType(SnapshotWidget), findsNothing);
+    expect(settingsSnapshots(navigation), findsNothing);
     navigation.currentState!.pop();
     await t.pumpAndSettle();
     expect(t.takeException(), isNull);

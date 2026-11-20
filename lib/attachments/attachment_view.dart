@@ -1,7 +1,7 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import '../appearance.dart';
@@ -195,7 +195,11 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
           : resolved == null
           ? const Center(child: CircularProgressIndicator())
           : video != null
-          ? Video(controller: video!, controls: MaterialVideoControls)
+          // media_kit_video controls still use the in-framework Material theme.
+          // ignore: deprecated_member_use
+          ? MaterialUiCompatibilityBridge(
+              child: Video(controller: video!, controls: MaterialVideoControls),
+            )
           : InteractiveViewer(
               child: Image.memory(
                 resolved!.bytes!,

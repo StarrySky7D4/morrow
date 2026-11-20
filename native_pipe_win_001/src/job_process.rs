@@ -121,7 +121,8 @@ impl JobChild {
         }
     }
 
-    fn try_wait(&mut self) -> io::Result<Option<ExitStatus>> {
+    /// Check the owned process handle once without waiting for an exit.
+    pub fn try_wait(&mut self) -> io::Result<Option<ExitStatus>> {
         if let Some(status) = self.exit_status {
             return Ok(Some(status));
         }

@@ -1,7 +1,7 @@
 import 'surface_paint_boundary.dart';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'appearance.dart';
 import 'experimental_controls.dart';

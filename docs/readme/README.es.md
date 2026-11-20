@@ -57,7 +57,7 @@ La última optimización de lectura se comparó con la versión paralela anterio
 
 ## Ejecutar desde el código fuente
 
-Requiere Flutter 3.44 / Dart 3.12 o versiones compatibles. Windows también necesita las herramientas de compilación de escritorio C++ de Visual Studio, Windows SDK, Rust y el compilador Cap’n Proto en PATH.
+Requiere Flutter 3.50.0 / Dart 3.14.0. Windows también necesita las herramientas de compilación de escritorio C++ de Visual Studio, Windows SDK, Rust y el compilador Cap’n Proto en PATH.
 
 Compilación completa de Windows Rust, pruebas de integración y empaquetado:
 

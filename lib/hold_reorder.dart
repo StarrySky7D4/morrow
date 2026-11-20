@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'appearance.dart';
 
 /// Move relative to an identity, never to an index captured before the drag.

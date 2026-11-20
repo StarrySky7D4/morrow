@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_plugin_ui/online.dart';
@@ -10,7 +10,7 @@ Widget localizedHost(String locale, PluginUiController controller) =>
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: [
         L10n.delegate,
-        ...AppLocalizations.localizationsDelegates,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       home: Scaffold(body: ManagedPluginForm(controller: controller)),
     );

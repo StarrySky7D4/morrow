@@ -12,7 +12,7 @@
 # The framework manifest pins raw patch bytes; the native launcher also keeps
 # canonical source inputs across Windows and LF-only checkouts. Binary Windows
 # resources retain their original bytes through Git's automatic text detection.
-/tool/flutter_windows_semantics/semantics.patch text eol=lf
+/tool/flutter_windows_semantics/semantics.patch text eol=lf whitespace=-blank-at-eol
 /windows/** text=auto eol=lf
 /tool/tests/test_windows_native_checkout.py text eol=lf
 

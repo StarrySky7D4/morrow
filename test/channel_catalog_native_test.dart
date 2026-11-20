@@ -1,18 +1,37 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/plugin_library.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 import 'package:morrow_studio/plugins/channel_task_models.dart';
 import 'package:morrow_studio/plugins/channel_task_session.dart';
+
 import 'external_plugin_native_test.dart'
     show entireCatalog, removeTestDirectory;
 import 'plugin_tools_native_test.dart' show pumpHost;
 
+// The native transport can schedule its reply in the widget test's event loop.
+// Keep pumping until the RPC settles, then return its actual value or error.
+Future<T> waitForHostReply<T>(WidgetTester tester, Future<T> reply) async {
+  var settled = false;
+  reply.then<void>(
+    (_) {
+      settled = true;
+    },
+    onError: (Object _, StackTrace _) {
+      settled = true;
+    },
+  );
+  await pumpHost(tester, () => settled);
+  return reply;
+}
+
 void main() {
   final host = Platform.environment['MORROW_WORKBENCH_HOST'];
+  final supervisor = Platform.environment['MORROW_WORKBENCH_SUPERVISOR'];
   final builtin = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
   final package =
       Platform.environment['MORROW_SDK_CHANNEL_DIRECTORY_PACKAGE_CPP'];
@@ -20,6 +39,11 @@ void main() {
     'real catalog and Workbench local channel UI run then reclaim original owners',
     (tester) async {
       expect(host, isNotNull, reason: 'Actual paired host is required');
+      expect(
+        supervisor,
+        isNotNull,
+        reason: 'Actual paired supervisor is required',
+      );
       expect(builtin, isNotNull, reason: 'Actual built-in package is required');
       expect(
         package,
@@ -36,6 +60,7 @@ void main() {
           );
           backend = await RustWorkbench.open(
             executable: host!,
+            supervisorExecutable: supervisor!,
             package: builtin!,
             directory: directory!,
             managed: true,
@@ -107,13 +132,19 @@ void main() {
           '0001020304050607\nff807f00',
         );
         final session = ChannelTaskSession.forBackend(backend!);
-        await tester.tap(find.byKey(const ValueKey('channel-run')));
-        await pumpHost(
-          tester,
-          () =>
-              session.snapshot?.taskState == ChannelTaskState.success ||
-              session.uncertain,
-        );
+        final run = find.byKey(const ValueKey('channel-run'));
+        await tester.ensureVisible(run);
+        expect(tester.widget<FilledButton>(run).onPressed, isNotNull);
+        await tester.tap(run);
+        await tester.pump();
+        await pumpHost(tester, () => !session.busy);
+        expect(session.snapshot, isNotNull, reason: '${session.failure}');
+        final deadline = DateTime.now().add(const Duration(seconds: 30));
+        while (session.snapshot!.taskState == ChannelTaskState.pending &&
+            !session.uncertain &&
+            DateTime.now().isBefore(deadline)) {
+          await waitForHostReply(tester, session.refresh());
+        }
         expect(session.uncertain, isFalse, reason: '${session.failure}');
         final completed = session.snapshot!;
         expect(
@@ -152,7 +183,10 @@ void main() {
           sha256.convert([0, 1, 2, 3, 4, 5, 6, 7, 255, 128, 127, 0]).bytes,
         );
         final key = Uint8List.fromList(completed.key);
-        await tester.tap(find.byKey(const ValueKey('channel-close')));
+        final close = find.byKey(const ValueKey('channel-close'));
+        await tester.ensureVisible(close);
+        await tester.tap(close);
+        await tester.pump();
         await pumpHost(
           tester,
           () =>
@@ -173,20 +207,32 @@ void main() {
         expect(session.canPrepare, isTrue);
         expect(find.textContaining('cleanup joined'), findsOneWidget);
         expect(tester.takeException(), isNull);
-        await tester.tap(find.text('Dismiss'));
+        final dismiss = find.text('Dismiss');
+        await tester.ensureVisible(dismiss);
+        await tester.tap(dismiss);
         await tester.pumpAndSettle();
-        await tester.runAsync(() async {
-          final catalog = await entireCatalog(backend!);
-          final entry = catalog.entries.singleWhere((value) => !value.builtin);
-          await backend!.removeExternal(entry, catalog.revision);
-          expect(
-            (await entireCatalog(
-              backend!,
-            )).entries.where((entry) => !entry.builtin),
-            isEmpty,
-          );
-          expect((await backend!.pluginState()).writable, isTrue);
-        });
+        expect(run, findsNothing);
+        final beforeRemoval = await waitForHostReply(
+          tester,
+          backend!.pluginPage(),
+        );
+        expect(beforeRemoval.cursor, isEmpty);
+        final installed = beforeRemoval.entries.singleWhere(
+          (item) => !item.builtin,
+        );
+        expect(installed.id, entry.id);
+        await waitForHostReply(
+          tester,
+          backend!.removeExternal(installed, beforeRemoval.revision),
+        );
+        final afterRemoval = await waitForHostReply(
+          tester,
+          backend!.pluginPage(),
+        );
+        expect(afterRemoval.cursor, isEmpty);
+        expect(afterRemoval.entries.single.builtin, isTrue);
+        final state = await waitForHostReply(tester, backend!.pluginState());
+        expect(state.writable, isTrue);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.runAsync(() async {

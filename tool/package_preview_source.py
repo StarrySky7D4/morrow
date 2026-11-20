@@ -28,6 +28,13 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    # ls-files also succeeds in an ignored subdirectory of another checkout.
+    prefix = subprocess.run(
+        ["git", "rev-parse", "--show-prefix"], cwd=root, capture_output=True
+    )
+    if prefix.returncode or prefix.stdout.rstrip(b"\r\n"):
+        parser.exit(1, "Preview packaging requires the project Git worktree root. "
+                    "For a source ZIP, follow the Windows build steps in README.md.\n")
     current = sources(root)
     if args.check:
         with zipfile.ZipFile(args.archive) as archive:

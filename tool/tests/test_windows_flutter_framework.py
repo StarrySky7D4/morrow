@@ -1,6 +1,7 @@
 """Drift and output-boundary checks for the isolated framework preparer."""
 import copy
 import difflib
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -19,6 +20,13 @@ class FrameworkPreparationTests(unittest.TestCase):
             self.changed.decode().splitlines(True),
             fromfile='a/' + TARGET, tofile='b/' + TARGET,
         )).encode()
+
+    def test_framework_candidate_matches_the_app_toolchain(self):
+        root = Path(__file__).resolve().parents[2]
+        manifest = json.loads((root / 'tool/flutter_windows_semantics/manifest.json').read_bytes())
+        spec = (root / 'pubspec.yaml').read_text(encoding='utf-8').splitlines()
+        self.assertIn(f"  flutter: {manifest['framework_version']}", spec)
+        self.assertIn(f"  sdk: ^{manifest['dart_sdk_version']}", spec)
 
     def test_exact_patch_accepts_original_and_preserves_content(self):
         self.assertEqual(strict_patch(self.original, self.patch), self.changed)

@@ -35,6 +35,27 @@ pub enum Error {
     Unknown,
     Consumed,
 }
+impl Error {
+    /// True when the original observation window reached its deadline.
+    pub fn is_expired(&self) -> bool {
+        use crate::io_binding::Error::Expired;
+        match self {
+            Self::Expired => true,
+            Self::Approval(e) | Self::Native(watch::Error::Approval(e)) => {
+                matches!(
+                    e,
+                    fs_watch_binding::Error::Expired | fs_watch_binding::Error::Binding(Expired)
+                )
+            }
+            Self::Native(
+                watch::Error::Admission(Expired)
+                | watch::Error::Directory(crate::directory_io::Error::Admission(Expired))
+                | watch::Error::Native(morrow_fs_watch_native_v1::windows::Fault::Deadline),
+            ) => true,
+            _ => false,
+        }
+    }
+}
 impl From<watch::Error> for Error {
     fn from(error: watch::Error) -> Self {
         Self::Native(error)

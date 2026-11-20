@@ -2041,6 +2041,7 @@
   "pluginsWatchBytes": "Delivery data limit (bytes)",
   "pluginsWatchCancelled": "This observation was cancelled.",
   "pluginsWatchClosed": "The directory has been released and cleanup is complete.",
+  "pluginsWatchEndedEarly": "Directory observation ended early. Some changes may be missing from the list.",
   "pluginsWatchExpired": "This observation reached its time limit.",
   "pluginsWatchFormError": "Check the full folder path. Every limit must be positive and within the plugin limits.",
   "pluginsWatchFrames": "Maximum records delivered",

@@ -57,7 +57,7 @@ test.54 は開庫時の重複した完全検証をまとめ、証拠データの
 
 ## ソースから実行
 
-Flutter 3.44／Dart 3.12 または互換バージョンが必要です。Windows では Visual Studio の C++ デスクトップビルドツール、Windows SDK、Rust、PATH 上の Cap’n Proto コンパイラーも必要です。
+Flutter 3.50.0／Dart 3.14.0が必要です。Windows では Visual Studio の C++ デスクトップビルドツール、Windows SDK、Rust、PATH 上の Cap’n Proto コンパイラーも必要です。
 
 Windows Rust ワークスペースの完全ビルド、統合検証、パッケージ作成：
 

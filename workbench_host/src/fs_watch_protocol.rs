@@ -23,6 +23,7 @@ fn nomination(bytes: &[u8]) -> Result<PathBuf> {
 }
 fn error(value: &Error) -> u16 {
     match value {
+        Error::Approval(_) | Error::Native(_) if value.is_expired() => 8,
         Error::Approval(_) => 1,
         Error::Native(_) => 2,
         Error::Guest(_) => 3,
@@ -36,6 +37,25 @@ fn error(value: &Error) -> u16 {
         Error::Consumed => 11,
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use morrow_plugin_runtime::{directory_io::watch, fs_watch_binding, io_binding};
+
+    #[test]
+    fn nested_watch_deadline_preserves_original_detail() {
+        let cause = Error::Native(watch::Error::Approval(fs_watch_binding::Error::Binding(
+            io_binding::Error::Expired,
+        )));
+        assert_eq!(error(&cause), error(&Error::Expired));
+        assert_eq!(format!("{cause:?}"), "Native(Approval(Binding(Expired)))");
+        assert_eq!(error(&Error::Native(watch::Error::Unknown)), 2);
+        assert_eq!(error(&Error::Approval(fs_watch_binding::Error::Denied)), 1);
+        assert_eq!(error(&Error::Cancelled), 7);
+        assert_eq!(error(&Error::Unknown), 10);
+    }
+}
+
 pub(super) fn handle(
     host: &mut Workbench,
     request: wire::request::Reader<'_>,

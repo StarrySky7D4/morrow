@@ -1,7 +1,7 @@
 import 'theme_plugins/ui_theme_tokens.dart';
 import 'surface_paint_boundary.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'media/texture_source.dart';
 import 'liquid_glass.dart';
 import 'neumorphic_controls.dart';

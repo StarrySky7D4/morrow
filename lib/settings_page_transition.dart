@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Fades through the background so workspace and settings never overlap.
 class SettingsPageTransition extends StatefulWidget {

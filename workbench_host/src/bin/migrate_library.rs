@@ -334,6 +334,7 @@ mod windows {
         let mut writer = File::options().write(true).create_new(true).open(target)?;
         io::copy(&mut reader, &mut writer)?;
         writer.sync_all()?;
+        drop(writer);
         Key::load(target)?;
         Ok(())
     }

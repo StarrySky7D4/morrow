@@ -333,8 +333,8 @@ pub async fn run() -> Result<u32> {
             killed = true;
         }
         if exit.is_none()
-            && let Ok(status) = tokio::time::timeout(Duration::from_millis(1), child.wait()).await {
-                exit = Some(status?);
+            && let Some(status) = child.try_wait()? {
+                exit = Some(status);
                 drain_at = Some(Instant::now());
                 if !closing {
                     fault = true;

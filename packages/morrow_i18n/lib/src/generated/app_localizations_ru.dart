@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -3589,6 +3590,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pluginsWatchClosed => 'Каталог освобождён, очистка завершена.';
+
+  @override
+  String get pluginsWatchEndedEarly =>
+      'Наблюдение за каталогом завершилось досрочно. В списке могут отсутствовать некоторые изменения.';
 
   @override
   String get pluginsWatchExpired =>

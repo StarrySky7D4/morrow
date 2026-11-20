@@ -1,6 +1,6 @@
 import 'theme_plugins/theme_plugin_controller.dart';
 import 'theme_plugins/theme_plugin_tile.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'appearance.dart';
 import 'collapsible_panel.dart';

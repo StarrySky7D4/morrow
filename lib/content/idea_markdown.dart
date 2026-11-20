@@ -1,5 +1,5 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../appearance.dart';
@@ -19,68 +19,72 @@ class IdeaMarkdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
-    return MarkdownBody(
-      data: data,
-      selectable: true,
-      softLineBreak: true,
-      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-        p: TextStyle(color: p.ink, height: 1.8, fontSize: 13),
-        h1: TextStyle(color: p.ink, fontSize: 25, fontWeight: FontWeight.w700),
-        h2: TextStyle(color: p.ink, fontSize: 21, fontWeight: FontWeight.w600),
-        code: TextStyle(color: p.accent, fontFamily: 'Consolas', fontSize: 12),
-        codeblockDecoration: BoxDecoration(
-          color: p.ink.withValues(alpha: .045),
-          borderRadius: p.borderRadius(12),
+    // flutter_markdown_plus reads the in-framework theme and text selection delegates.
+    // ignore: deprecated_member_use
+    return MaterialUiCompatibilityBridge(
+      child: MarkdownBody(
+        data: data,
+        selectable: true,
+        softLineBreak: true,
+        styleSheet: MarkdownStyleSheet(
+          p: TextStyle(color: p.ink, height: 1.8, fontSize: 13),
+          h1: TextStyle(color: p.ink, fontSize: 25, fontWeight: FontWeight.w700),
+          h2: TextStyle(color: p.ink, fontSize: 21, fontWeight: FontWeight.w600),
+          code: TextStyle(color: p.accent, fontFamily: 'Consolas', fontSize: 12),
+          codeblockDecoration: BoxDecoration(
+            color: p.ink.withValues(alpha: .045),
+            borderRadius: p.borderRadius(12),
+          ),
+          blockquoteDecoration: BoxDecoration(
+            color: p.accent.withValues(alpha: .065),
+            border: Border(left: BorderSide(color: p.accent, width: 3)),
+          ),
+          tableBorder: TableBorder.all(color: p.line),
+          tableCellsPadding: const EdgeInsets.all(9),
         ),
-        blockquoteDecoration: BoxDecoration(
-          color: p.accent.withValues(alpha: .065),
-          border: Border(left: BorderSide(color: p.accent, width: 3)),
-        ),
-        tableBorder: TableBorder.all(color: p.line),
-        tableCellsPadding: const EdgeInsets.all(9),
-      ),
-      onTapLink: (_, href, _) async {
-        if (href == null) return;
-        final safe = safeContentLink(href);
-        if (safe == null || safe.startsWith('attachment:')) return;
-        try {
-          if (!await launchUrl(
-            Uri.parse(safe),
-            mode: LaunchMode.externalApplication,
-          )) {
-            throw const FormatException('Link launch failed');
+        onTapLink: (_, href, _) async {
+          if (href == null) return;
+          final safe = safeContentLink(href);
+          if (safe == null || safe.startsWith('attachment:')) return;
+          try {
+            if (!await launchUrl(
+              Uri.parse(safe),
+              mode: LaunchMode.externalApplication,
+            )) {
+              throw const FormatException('Link launch failed');
+            }
+          } catch (_) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(L10n.of(context).visualLinkFailure)),
+              );
+            }
           }
-        } catch (_) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(L10n.of(context).visualLinkFailure)),
+        },
+        imageBuilder: (uri, _, alt) {
+          if (uri.scheme == 'attachment') {
+            final name = uri.pathSegments.join('/');
+            final matches = attachments.where(
+              (a) =>
+                  (a.source.name == name ||
+                      a.source.location == name ||
+                      a.pluginId == name) &&
+                  [TextureKind.image, TextureKind.gif].contains(a.source.kind),
             );
+            if (matches.isNotEmpty) {
+              return _InlineAttachment(
+                key: ValueKey(matches.first.source.location),
+                attachment: matches.first,
+              );
+            }
           }
-        }
-      },
-      imageBuilder: (uri, _, alt) {
-        if (uri.scheme == 'attachment') {
-          final name = uri.pathSegments.join('/');
-          final matches = attachments.where(
-            (a) =>
-                (a.source.name == name ||
-                    a.source.location == name ||
-                    a.pluginId == name) &&
-                [TextureKind.image, TextureKind.gif].contains(a.source.kind),
+          return _LinkedImage(
+            key: ValueKey(uri.toString()),
+            uri: uri,
+            alt: alt ?? L10n.of(context).visualImage,
           );
-          if (matches.isNotEmpty) {
-            return _InlineAttachment(
-              key: ValueKey(matches.first.source.location),
-              attachment: matches.first,
-            );
-          }
-        }
-        return _LinkedImage(
-          key: ValueKey(uri.toString()),
-          uri: uri,
-          alt: alt ?? L10n.of(context).visualImage,
-        );
-      },
+        },
+      ),
     );
   }
 }

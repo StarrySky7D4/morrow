@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'appearance.dart';
 import 'neumorphic_controls.dart';
 
@@ -411,6 +411,11 @@ class MorphingSliderTrack extends SliderTrackShape with BaseSliderTrackShape {
       canvas.restore();
     }
     void segment(bool left, bool enabledSegment, Color paintColor) {
+      if (left
+          ? thumbCenter.dx <= rect.left + overlap
+          : thumbCenter.dx >= rect.right - overlap) {
+        return;
+      }
       final bounds = Rect.fromLTRB(
         left ? rect.left : thumbCenter.dx - overlap,
         rect.top - (enabledSegment ? frame.activeGrowth / 2 : 0),
@@ -431,12 +436,9 @@ class MorphingSliderTrack extends SliderTrackShape with BaseSliderTrackShape {
       );
     }
 
-    if (thumbCenter.dx < rect.right - overlap) {
-      segment(false, !isLTR, isLTR ? inactive : active);
-    }
-    if (thumbCenter.dx > rect.left + overlap) {
-      segment(true, isLTR, isLTR ? active : inactive);
-    }
+    // Match Material's rounded track: the active end covers the inactive end in RTL too.
+    segment(!isLTR, false, inactive);
+    segment(isLTR, true, active);
     final secondary = secondaryOffset?.dx.clamp(rect.left, rect.right);
     if (secondary != null &&
         (isLTR ? secondary > thumbCenter.dx : secondary < thumbCenter.dx)) {

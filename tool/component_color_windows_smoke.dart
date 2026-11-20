@@ -1,7 +1,7 @@
 // Standalone release qualification. Uses the normal app binding and one stable
 // view; native MSAA continuously queries the same process while dialogs close.
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart' show LiveWidgetController, find;
 import 'package:window_manager/window_manager.dart';
 import 'package:morrow_studio/main.dart';
