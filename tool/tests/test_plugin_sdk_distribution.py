@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import stat
+import subprocess
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -39,6 +40,32 @@ class SdkDistributionTests(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(zipped.read(entry))
         cls.original_manifest = (cls.bundle / distribution.MANIFEST).read_bytes()
+
+    @unittest.skipUnless(shutil.which("git"), "Git is required for checkout validation")
+    def test_checkout_preserves_sdk_payload_bytes(self):
+        names = sorted(distribution.selected_names(self.source))
+        with tempfile.TemporaryDirectory(dir=self.root) as temp:
+            root = Path(temp)
+            repo = root / "repo"
+            repo.mkdir()
+            shutil.copyfile(REPO / ".gitattributes", repo / ".gitattributes")
+            for name in names:
+                path = repo / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(self.source / name, path)
+            subprocess.run(["git", "init", "--quiet"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "core.autocrlf=false", "add", "--all"], cwd=repo, check=True)
+            for mode in ("false", "true"):
+                checkout = root / mode
+                checkout.mkdir()
+                subprocess.run(
+                    ["git", "-c", f"core.autocrlf={mode}", "checkout-index", "--all",
+                     f"--prefix={checkout.as_posix()}/"],
+                    cwd=repo, check=True,
+                )
+                for name in names:
+                    with self.subTest(autocrlf=mode, file=name):
+                        self.assertEqual((checkout / name).read_bytes(), (self.source / name).read_bytes())
 
     def rehash(self):
         names = distribution.directory_files(self.bundle) - {distribution.MANIFEST}

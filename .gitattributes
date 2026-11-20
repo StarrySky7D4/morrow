@@ -1,3 +1,22 @@
+# SDK exports hash the payload bytes. Keep their text stable across Git clients.
+/NOTICE text eol=lf
+/docs/PLUGIN_PROJECT_TOOLS.md text eol=lf
+/docs/PLUGIN_SDK_COMPATIBILITY.md text eol=lf
+/sdk/*.md text eol=lf
+/sdk/LICENSE text eol=lf
+/sdk/c/include/*.h text eol=lf
+/sdk/c/src/*.c text eol=lf
+/sdk/cpp/include/*.hpp text eol=lf
+/sdk/cpp/src/*.cpp text eol=lf
+/sdk/examples/**/plugin.c text eol=lf
+/sdk/examples/**/plugin.cpp text eol=lf
+/sdk/examples/**/src/lib.rs text eol=lf
+/sdk/examples/**/Cargo.toml text eol=lf
+/sdk/examples/**/Cargo.lock text eol=lf
+/tool/morrow_plugin.py text eol=lf
+/tool/package_plugin_sdk.py text eol=lf
+/tool/plugin_sdk_lock.py text eol=lf
+
 # Frozen compatibility originals: preserve every byte across checkouts.
 # These extension contracts have fixed raw-byte digests. Windows checkouts
 # must retain their canonical LF bytes even when core.autocrlf is enabled.
