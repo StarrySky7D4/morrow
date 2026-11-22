@@ -21,8 +21,9 @@ pub(crate) unsafe fn read<T: Copy>(raw: *const T) -> Option<T> {
         return None;
     }
     let prefix = unsafe { header.read() };
-    if prefix.abi_version != 1 || (prefix.struct_size as usize) < size_of::<T>() {
-        return None;
+    if prefix.abi_version == 1 && prefix.struct_size as usize >= size_of::<T>() {
+        Some(unsafe { raw.read_unaligned() })
+    } else {
+        None
     }
-    Some(unsafe { raw.read_unaligned() })
 }
