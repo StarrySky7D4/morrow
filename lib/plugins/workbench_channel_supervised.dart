@@ -53,7 +53,9 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
       _finish();
     }, onError: _fail);
     _heartbeat = Timer.periodic(const Duration(milliseconds: 200), (_) {
-      if (_code == null && (!_startupFailed || _normalCloseRequested)) unawaited(_send(2, Uint8List(0)).catchError(_fail));
+      if (_code == null && (!_startupFailed || _normalCloseRequested)) {
+        unawaited(_send(2, Uint8List(0)).catchError(_heartbeatFailed));
+      }
     });
   }
   final Process process;
@@ -182,7 +184,11 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
   Future<void> _send(int kind, Uint8List bytes) {
     final next = _writes.then((_) async {
       // Retire already queued heartbeats after the open catch marks failure.
-      if (kind == 2 && _startupFailed && !_normalCloseRequested) return;
+      if (kind == 2 &&
+          ((_startupFailed && !_normalCloseRequested) ||
+              _validatedState?.released == true)) {
+        return;
+      }
       if (kind == 1 && _startupFailed) {
         throw const WorkbenchSupervisionUnconfirmed('Business admission is closed');
       }
@@ -308,6 +314,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
           }
           _initialValidatedState ??= state;
           _validatedState = state;
+          if (state.released) _heartbeat?.cancel();
           supervision.value = state;
           _requestQuarantineIfAllowed();
           if (state.uncertain) {
@@ -324,6 +331,17 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
     } catch (error, stack) {
       _fail(error, stack);
     }
+  }
+
+  void _heartbeatFailed(Object error, StackTrace stack) {
+    // Windows can report a pending heartbeat write after the final status
+    // and both EOFs, but before Process.exitCode. _finish still checks all three.
+    if (error is SocketException &&
+        _normalCloseRequested &&
+        _validatedState?.released == true) {
+      return;
+    }
+    _fail(error, stack);
   }
 
   void _fail(Object error, [StackTrace? stack]) {

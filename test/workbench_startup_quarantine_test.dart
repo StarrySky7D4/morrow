@@ -175,6 +175,8 @@ Future<void> _tick() => Future<void>.delayed(Duration.zero);
 // Gate the real IOSink target completion after it has consumed the complete
 // flush stream. No channel implementation or exit/proof decision is mirrored.
 final class _FlushControl {
+  _FlushControl({this.skipFlushes = 0});
+  int skipFlushes;
   final entered = Completer<void>();
   final gate = Completer<void>();
   void succeed() {
@@ -195,6 +197,10 @@ final class _GatedConsumer implements StreamConsumer<List<int>> {
   @override
   Future<void> addStream(Stream<List<int>> stream) async {
     await target.addStream(stream);
+    if (control.skipFlushes > 0) {
+      control.skipFlushes--;
+      return;
+    }
     if (!control.entered.isCompleted) control.entered.complete();
     await control.gate.future;
   }
@@ -463,6 +469,44 @@ void main() {
       expect(f.snapshot().failedStartupQuarantine, isNull);
     },
   );
+
+  for (final released in [true, false]) {
+    test('late heartbeat pipe closure with release proof = $released', () async {
+      // Deliver the orderly-close command, then hold the following heartbeat.
+      final control = _FlushControl(skipFlushes: 1);
+      final f = _Fixture(qualification: false, transport: _MemoryProcess(flushControl: control));
+      try {
+        f.emit(_state());
+        await f.channel.closeInput();
+        await control.entered.future.timeout(const Duration(seconds: 5));
+        expect(f.commands.map((command) => command.kind), [3, 2]);
+        if (released) {
+          f.emit(_terminal()
+            ..remove('abnormal_resource_closure_prepared')
+            ..['phase'] = 'Released'
+            ..['owner_phase'] = 'Released'
+            ..['normal_shutdown'] = true
+            ..['child_exit_code'] = 0);
+        }
+        await f.process.out.close();
+        await f.process.err.close();
+        control.gate.completeError(const SocketException('Pipe is closing'));
+        await _tick();
+        f.process.exited.complete(0);
+        if (released) {
+          expect(await f.channel.exitCode, 0);
+        } else {
+          await expectLater(
+            f.channel.exitCode,
+            throwsA(isA<WorkbenchSupervisionUnconfirmed>()),
+          );
+        }
+      } finally {
+        control.succeed();
+        await f.finish(code: 0);
+      }
+    });
+  }
 
   test('legacy nonqualification normal release remains unchanged', () async {
     final f = _Fixture(qualification: false);
