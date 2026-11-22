@@ -19,6 +19,7 @@ pub struct CHeader {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct CRequest {
     abi_version: u32,
     struct_size: u32,
@@ -139,11 +140,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     if raw.is_null() {
         return Err(Error::Invalid);
     }
-    // SAFETY: Caller passes an aligned live descriptor, never a wire pointer.
-    if !unsafe { crate::descriptor_prefix::matches(raw) } {
-        return Err(Error::Contract);
-    }
-    let raw = unsafe { &*raw };
+    let raw = unsafe { crate::descriptor_prefix::read(raw) }.ok_or(Error::Contract)?;
     let action = match raw.kind {
         1 => Action::Submit(Submission {
             operation_id: unsafe { read_bytes(raw.operation_id, io::MAX_OPERATION_BYTES) }?,

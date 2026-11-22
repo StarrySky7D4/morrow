@@ -120,10 +120,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, u32> {
     if raw.is_null() {
         return Err(16);
     }
-    if !unsafe { crate::descriptor_prefix::matches(raw) } {
-        return Err(18);
-    }
-    let r = unsafe { raw.read() };
+    let r = unsafe { crate::descriptor_prefix::read(raw) }.ok_or(18u32)?;
     let action = match r.kind {
         1 => Action::Receive {
             last_acked: r.sequence,

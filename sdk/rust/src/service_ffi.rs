@@ -100,6 +100,7 @@ pub struct CRequestView {
     header_count: u32,
 }
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct CReply {
     abi_version: u32,
     struct_size: u32,
@@ -220,11 +221,8 @@ pub unsafe extern "C" fn mp_service_response_encode(
         if raw.is_null() || reply.is_null() || out.is_null() {
             return Err(Error::Invalid);
         }
-        if !unsafe { crate::descriptor_prefix::matches(reply) } {
-            return Err(Error::Contract);
-        }
+        let reply = unsafe { crate::descriptor_prefix::read(reply) }.ok_or(Error::Contract)?;
         let handle = unsafe { &*raw.cast::<RequestHandle>() };
-        let reply = unsafe { &*reply };
         let reply = Reply {
             status: reply.status.try_into().map_err(|_| Error::Invalid)?,
             body: unsafe { read_bytes(reply.body, service::MAX_BODY_BYTES) }?,

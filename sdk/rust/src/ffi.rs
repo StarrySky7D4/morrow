@@ -8,7 +8,7 @@ pub struct Span {
     length: u32,
 }
 #[repr(C)]
-#[derive(Default)]
+#[derive(Clone, Copy, Default)]
 pub struct CRequest {
     abi_version: u32,
     struct_size: u32,
@@ -83,11 +83,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, CodecError> {
     if raw.is_null() {
         return Err(CodecError::Invalid);
     }
-    // SAFETY: caller passes a live aligned CRequest, not a wire pointer.
-    if !unsafe { crate::descriptor_prefix::matches(raw) } {
-        return Err(CodecError::Contract);
-    }
-    let r = unsafe { &*raw };
+    let r = unsafe { crate::descriptor_prefix::read(raw) }.ok_or(CodecError::Contract)?;
     // SAFETY: spans are bounded/checked before use; lifetime is the current call.
     let result = unsafe {
         Request {
@@ -1079,7 +1075,7 @@ mod ui_tests {
 
 /// Independent additive ABI: existing request and task structures retain their layouts.
 #[repr(C)]
-#[derive(Default)]
+#[derive(Clone, Copy, Default)]
 pub struct CContentRequest {
     abi_version: u32,
     struct_size: u32,
@@ -1099,10 +1095,7 @@ unsafe fn content_request(raw: *const CContentRequest) -> Result<Request, CodecE
     if raw.is_null() {
         return Err(CodecError::Invalid);
     }
-    if !unsafe { crate::descriptor_prefix::matches(raw) } {
-        return Err(CodecError::Contract);
-    }
-    let v = unsafe { &*raw };
+    let v = unsafe { crate::descriptor_prefix::read(raw) }.ok_or(CodecError::Contract)?;
     let r = unsafe {
         Request {
             request_id: read_text(v.request_id, 256)?,
@@ -1304,7 +1297,7 @@ pub unsafe extern "C" fn mp_task_get_command(raw: *const c_void, out: *mut Span,
 
 /// Additive local dependency codec ABI. A request's identity is correlation, never authority.
 #[repr(C)]
-#[derive(Default)]
+#[derive(Clone, Copy, Default)]
 pub struct CDependencyRequest {
     abi_version: u32,
     struct_size: u32,
@@ -1325,10 +1318,7 @@ unsafe fn dependency_request(
         return Err(CodecError::Invalid);
     }
     // SAFETY: caller provides a live aligned descriptor and bounded readable spans.
-    if !unsafe { crate::descriptor_prefix::matches(raw) } {
-        return Err(CodecError::Contract);
-    }
-    let raw = unsafe { &*raw };
+    let raw = unsafe { crate::descriptor_prefix::read(raw) }.ok_or(CodecError::Contract)?;
     if raw.input.length as usize > 65536 {
         return Err(CodecError::Limit);
     }
