@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#include <windows.h>  // Exercise the public header with Windows min/max macros in scope.
+#endif
 #include "morrow_plugin_codec.hpp"
 #include <cassert>
 #include <fstream>

@@ -5,7 +5,6 @@
 #include "morrow_plugin_codec.hpp"
 #include <array>
 #include <cstdint>
-#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -42,9 +41,9 @@ class mutation_request {
   }
   bool bounded() const noexcept {
     return operation_id_.size() <= MP_MAX_MUTATION_OPERATION_BYTES &&
-           operation_id_.size() <= std::numeric_limits<uint32_t>::max() &&
+           operation_id_.size() <= UINT32_MAX &&
            bytes_.size() <= MP_MAX_MUTATION_CHUNK_BYTES &&
-           bytes_.size() <= std::numeric_limits<uint32_t>::max() &&
+           bytes_.size() <= UINT32_MAX &&
            content_length_ <= MP_MAX_MUTATION_CONTENT_BYTES;
   }
 
@@ -177,8 +176,8 @@ class mutation_response {
     }
     if (request.bytes.size() > MP_MAX_MUTATION_FRAME_BYTES ||
         response.size() > MP_MAX_MUTATION_FRAME_BYTES ||
-        request.bytes.size() > std::numeric_limits<uint32_t>::max() ||
-        response.size() > std::numeric_limits<uint32_t>::max()) {
+        request.bytes.size() > UINT32_MAX ||
+        response.size() > UINT32_MAX) {
       out.status_ = MP_CODEC_LIMIT;
       return out;
     }

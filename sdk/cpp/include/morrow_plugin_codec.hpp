@@ -3,7 +3,6 @@
 #include "morrow_plugin_codec.h"
 #include "morrow_plugin_sdk.h"
 #include <cstdlib>
-#include <limits>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -44,7 +43,7 @@ class request {
         extra_(std::move(extra)), revision_(revision), offset_(offset),
         length_(length) {}
   static mp_span span(const std::string &s) {
-    if (s.size() > std::numeric_limits<uint32_t>::max())
+    if (s.size() > UINT32_MAX)
       detail::codec_length_error();
     return {reinterpret_cast<const uint8_t *>(s.data()),
             static_cast<uint32_t>(s.size())};
