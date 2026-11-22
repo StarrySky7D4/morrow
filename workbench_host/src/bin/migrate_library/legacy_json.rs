@@ -1,7 +1,7 @@
 use super::{Args, Result};
 use morrow_core::plugin_package::catalog;
 use morrow_workbench_host::Workbench;
-use morrow_workbench_plugin::Idea;
+use morrow_workbench_plugin::{Asset, Idea};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
@@ -204,37 +204,33 @@ fn inspect(path: &Path) -> Result<Legacy> {
             ],
             "idea",
         )?;
-        let id = string(idea, "id")?;
-        if !ids.insert(id) {
+        let draft = parse_idea(idea)?;
+        if !ids.insert(draft.id) {
             return Err("duplicate legacy idea ID".into());
         }
-        let _ = string(idea, "title")?;
-        let _ = string(idea, "description")?;
-        let _ = string(idea, "category")?;
-        let _ = string(idea, "time")?;
-        let _ = boolean(idea, "favorite")?;
-        let _ = strings(idea, "todos")?;
-        let _ = strings(idea, "completed")?;
-        let attachments = field(idea, "attachments")?
-            .as_array()
-            .ok_or("attachments is not a list")?;
-        for attachment in attachments {
+        string(idea, "time")?;
+        let mut contents = BTreeSet::new();
+        for (attachment, asset) in attachments(idea)?.iter().zip(draft.assets) {
             known_keys(
                 attachment,
                 &["source", "size", "exactSize", "pluginId"],
                 "attachment",
             )?;
             let source = field(attachment, "source")?;
-            let size = asset_size(attachment)?;
             if source_path(source)?.is_none() {
                 return Err("remote legacy attachment has no local bytes; retain source and resolve before migration".into());
             }
             collect_source(source, &mut paths, 200 * 1024 * 1024)?;
             let path = PathBuf::from(string(source, "location")?);
-            if paths.get(&path).unwrap().1 != size {
+            let content = *paths.get(&path).ok_or("attachment source missing")?;
+            if content.1 != asset.bytes {
                 return Err(
                     format!("attachment size differs from source: {}", path.display()).into(),
                 );
+            }
+            // The store reuses the blob ID for identical bytes. A card requires distinct IDs.
+            if !contents.insert(content) {
+                return Err("duplicate attachment content in legacy idea".into());
             }
         }
     }
@@ -400,7 +396,14 @@ fn rewrite_media(snapshot: &mut Value, mapped: &BTreeMap<PathBuf, PathBuf>) -> R
     }
     Ok(())
 }
-fn idea(value: &Value, host: &mut Workbench, mapped: &BTreeMap<PathBuf, PathBuf>) -> Result<Idea> {
+fn attachments(value: &Value) -> Result<&[Value]> {
+    field(value, "attachments")?
+        .as_array()
+        .map(Vec::as_slice)
+        .ok_or_else(|| "attachments is not a list".into())
+}
+
+fn parse_idea(value: &Value) -> Result<Idea> {
     let id = string(value, "id")?;
     let category = string(value, "category")?;
     let stage = optional_string(
@@ -421,7 +424,7 @@ fn idea(value: &Value, host: &mut Workbench, mapped: &BTreeMap<PathBuf, PathBuf>
         .ok_or("invalid color")?
         .try_into()?;
     let mut draft = Idea {
-        id: id.clone(),
+        id,
         title: string(value, "title")?,
         description: string(value, "description")?,
         category,
@@ -435,22 +438,38 @@ fn idea(value: &Value, host: &mut Workbench, mapped: &BTreeMap<PathBuf, PathBuf>
         color,
         ..Default::default()
     };
-    for attachment in field(value, "attachments")?
-        .as_array()
-        .ok_or("invalid attachments")?
-    {
+    for (index, attachment) in attachments(value)?.iter().enumerate() {
+        let source = field(attachment, "source")?;
+        draft.assets.push(Asset {
+            // The destination assigns the final ID when importing the file.
+            id: format!("pending-{index}"),
+            name: string(source, "name")?,
+            kind: string(source, "kind")?,
+            bytes: asset_size(attachment)?,
+        });
+    }
+    draft.validate()?;
+    Ok(draft)
+}
+
+fn import_idea(
+    value: &Value,
+    host: &mut Workbench,
+    mapped: &BTreeMap<PathBuf, PathBuf>,
+) -> Result<Idea> {
+    let mut draft = parse_idea(value)?;
+    for (asset, attachment) in draft.assets.iter_mut().zip(attachments(value)?) {
         let source = field(attachment, "source")?;
         let old = PathBuf::from(string(source, "location")?);
         let target = mapped.get(&old).ok_or("attachment copy missing")?;
         let mut reader = File::open(target)?;
-        let asset = host.import(
-            &id,
-            &string(source, "name")?,
-            &string(source, "kind")?,
+        *asset = host.import(
+            &draft.id,
+            &asset.name,
+            &asset.kind,
             &mut reader,
-            asset_size(attachment)?,
+            asset.bytes,
         )?;
-        draft.assets.push(asset);
     }
     draft.validate()?;
     Ok(draft)
@@ -506,7 +525,7 @@ pub(super) fn run(args: &Args, source: &Path) -> Result<()> {
         let mut host = Workbench::open(&db, Some(package))?;
         let mut created_bodies = BTreeMap::new();
         for (index, value) in legacy.ideas.iter().enumerate() {
-            let draft = idea(value, &mut host, &mapped)?;
+            let draft = import_idea(value, &mut host, &mapped)?;
             let id = draft.id.clone();
             let created = host.create(&format!("legacy-json-create-{index}"), draft.clone())?;
             if created.idea != draft || created.revision != 1 {
@@ -529,11 +548,7 @@ pub(super) fn run(args: &Args, source: &Path) -> Result<()> {
             if card.summary().type_id != "org.morrow.idea"
                 || card.summary().format_version != 2
                 || card.summary().revision != 2
-                || card.attachments().len()
-                    != field(value, "attachments")?
-                        .as_array()
-                        .ok_or("invalid attachments")?
-                        .len()
+                || card.attachments().len() != attachments(value)?.len()
             {
                 return Err(format!("imported card differs from legacy idea: {id}").into());
             }

@@ -36,6 +36,84 @@ fn cli(source: &Path, extra: &[&str]) -> std::process::Output {
     command.args(extra);
     command.output().unwrap()
 }
+
+#[test]
+fn invalid_legacy_idea_fails_preflight_and_apply_before_creating_output() {
+    let dir = tempfile::tempdir().unwrap();
+    let source = dir.path().join("export.json");
+    let target = dir.path().join("destination");
+    let raw = serde_json::to_vec(&serde_json::json!({
+        "version": 1,
+        "ideas": [{
+            "id": "legacy-card", "title": "Draft", "description": "", "category": "unknown",
+            "time": "", "icon": 0, "color": 0, "favorite": false,
+            "todos": [], "completed": [], "attachments": []
+        }]
+    }))
+    .unwrap();
+    fs::write(&source, &raw).unwrap();
+    for args in [
+        vec![],
+        vec!["--apply", "--output", target.to_str().unwrap()],
+    ] {
+        let result = cli(&source, &args);
+        assert!(!result.status.success());
+        assert!(
+            String::from_utf8_lossy(&result.stderr).contains("invalid idea identity or category")
+        );
+        assert!(!target.exists());
+        assert_eq!(fs::read(&source).unwrap(), raw);
+    }
+}
+#[test]
+fn attachment_only_card_preflight_checks_duplicate_content_across_paths() {
+    let dir = tempfile::tempdir().unwrap();
+    let media = dir.path().join("note.bin");
+    fs::write(&media, b"notes").unwrap();
+    let attachment = serde_json::json!({
+        "source": {"location": media, "name": "note.bin", "kind": "file", "local": true},
+        "size": 5
+    });
+    let mut snapshot: serde_json::Value =
+        serde_json::from_str(include_str!("../../test/fixtures/legacy/complete.json")).unwrap();
+    let idea = &mut snapshot["ideas"][0];
+    idea["category"] = "灵感".into();
+    idea["title"] = "".into();
+    idea["attachments"] = serde_json::json!([attachment]);
+    let source = dir.path().join("export.json");
+    fs::write(&source, snapshot.to_string()).unwrap();
+    let before = files(dir.path());
+    let result = cli(&source, &[]);
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    assert_eq!(files(dir.path()), before);
+
+    let other = dir.path().join("other.bin");
+    fs::write(&other, b"notes").unwrap();
+    let mut duplicate = attachment.clone();
+    duplicate["source"]["location"] = serde_json::json!(other);
+    duplicate["source"]["name"] = "other.bin".into();
+    snapshot["ideas"][0]["attachments"] = serde_json::json!([attachment, duplicate]);
+    fs::write(&source, snapshot.to_string()).unwrap();
+    let before = files(dir.path());
+    let target = dir.path().join("destination");
+    for args in [
+        vec![],
+        vec!["--apply", "--output", target.to_str().unwrap()],
+    ] {
+        let result = cli(&source, &args);
+        assert!(!result.status.success());
+        assert!(String::from_utf8_lossy(&result.stderr).contains("duplicate attachment content"));
+        assert!(!target.exists());
+        assert_eq!(files(dir.path()), before);
+    }
+    fs::write(&other, b"other").unwrap();
+    assert!(cli(&source, &[]).status.success());
+}
+
 fn source() -> (tempfile::TempDir, std::path::PathBuf, Vec<u8>) {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path().join("source");
