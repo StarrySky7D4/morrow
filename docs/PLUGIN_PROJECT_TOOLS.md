@@ -238,6 +238,22 @@ python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工�
 
 2026-09-27：底层 Rust `plugin_package pack-v2` 现可打包 `file-create`／`file-replace`／`file-delete` 声明，用于可信 Windows 宿主选择与恢复测试。它只写包声明，没有路径、选择权限或执行授权。上述 Python 项目生成器的 IO starter 能力范围仍如本节所述，尚未提供完整文件变更 guest SDK 模板；不要据此推断 guest 能直接调用私有宿主调度协议。Windows 条件替换继续明确 Unsupported。恢复会话及真实进程验证见 [本轮报告](../reports/mutation-recovery-session-2026-09-27.md)。
 
+### 为 Windows 工作台创建文件变更插件
+
+`--kind mutation` 使用 C11、C++17 或 Rust 的任务模板转发宿主提供的文件变更请求。默认清单只声明 `file-create`。可用 `--io-capability` 逐项选择 `file-create`、`file-replace`、`file-delete`。下面的项目仅请求替换已选文件。
+
+```powershell
+python -B tool/morrow_plugin.py new ../replace-note --kind mutation --language rust --id org.example.replace-note --io-capability file-replace --mutation-budget 1048576 16777216 24 --lock-sdk
+python -B tool/morrow_plugin.py validate ../replace-note --require-sdk-lock
+python -B tool/morrow_plugin.py pack ../replace-note --require-sdk-lock
+```
+
+可选的 `--mutation-budget` 依次指定每项任务字节数、累计字节数和同时使用的资源数。资源数 0 使用基础 IO 额度，正值用于 `file-replace`。工作台根据用户选择的目标及其父目录计算资源用量。用户在工作台批准本次额度、选择文件、复核计划并确认执行。宿主要求目标文件系统支持事务替换。普通 `--kind io` 项目继续使用原有能力集合。
+
+基础变更清单允许两个并发作业，单个作业上限为 1 MiB，累计上限为 8 MiB。累计额度包含请求、回复、暂存和查询的开销。启用扩展预算时，宿主在准备阶段检查完整计划的预计用量。
+
+SDK 源码分发包 v2 包含三种语言的变更模板。在分发目录外创建项目，给 `new` 和 `validate` 加上 `--sdk-only`。打包使用配套的完整仓库工具和本地编译器，可用 `--sdk-root` 指向生成项目时选用的同一 SDK。
+
 ## Explicit SDK source distribution
 
 `python -B tool/package_plugin_sdk.py create --source-root REPOSITORY --output SDK_SOURCE.zip` exports SDK library source, canonical contracts, license/NOTICE, C/C++/Rust starters, project/lock tools and declaration documentation. The destination must not exist and must be outside the source root. No native DLL, precompiled guest, SDK test/fixture, Core or runtime source is included. This is a source developer bundle, not a frozen SDK or product qualification.

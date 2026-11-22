@@ -73,6 +73,17 @@ class SdkDistributionTests(unittest.TestCase):
         value = {'schema': 1, 'profile': distribution.PROFILE, 'qualification': 'source-only-not-frozen', 'native_libraries_bundled': False, 'files': files}
         (self.bundle/distribution.MANIFEST).write_text(json.dumps(value), encoding='utf-8')
 
+    def test_mutation_starters_are_required_only_in_the_new_inventory(self):
+        current = set(distribution.verify_zip(self.archive)['files'])
+        legacy = {name for name in current if not name.startswith(
+            tuple(f'sdk/examples/{language}-mutation/' for language in distribution.LANGUAGES))}
+        self.assertEqual(len(current - legacy), 5)
+        distribution.validate_payload_names(legacy, distribution.LEGACY_STARTERS)
+        with self.assertRaises(distribution.DistributionError):
+            distribution.validate_payload_names(current, distribution.LEGACY_STARTERS)
+        with self.assertRaises(distribution.DistributionError):
+            distribution.validate_payload_names(current - {'sdk/examples/c-mutation/plugin.c'})
+
     def test_source_export_checks_single_core_authority_without_bundling_core(self):
         self.assertEqual(len(self.receipt['source_authority']['schemas']), 10)
         self.assertFalse(self.receipt['source_authority']['core_bundled'])

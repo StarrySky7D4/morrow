@@ -15,14 +15,16 @@ import zipfile
 import plugin_sdk_lock as sdk_lock
 
 MANIFEST = 'SDK_DISTRIBUTION_MANIFEST.json'
-PROFILE = 'morrow-sdk-source-distribution-v1'
+LEGACY_PROFILE = 'morrow-sdk-source-distribution-v1'
+PROFILE = 'morrow-sdk-source-distribution-v2'
 MAX_FILES = 4096
 MAX_FILE_BYTES = 8 * 1024 * 1024
 MAX_TOTAL_BYTES = 64 * 1024 * 1024
 MAX_MANIFEST_BYTES = 1024 * 1024
 MAX_ARCHIVE_BYTES = MAX_TOTAL_BYTES + 4 * 1024 * 1024
 LANGUAGES = ('c', 'cpp', 'rust')
-STARTERS = ('task', 'transform', 'ui', 'dependency-caller', 'io', 'service', 'service-http', 'channel', 'channel-directory')
+LEGACY_STARTERS = ('task', 'transform', 'ui', 'dependency-caller', 'io', 'service', 'service-http', 'channel', 'channel-directory')
+STARTERS = (*LEGACY_STARTERS, 'mutation')
 SDK_DOCS = ('README.md', 'CONTENT_API.md', 'IO_API.md', 'CHANNEL_API.md', 'SERVICE_API.md')
 TOOLS = ('morrow_plugin.py', 'plugin_sdk_lock.py', 'package_plugin_sdk.py')
 CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'channel.capnp', 'mutation.capnp', 'service.capnp', 'service_resources.capnp', 'version.txt', 'task-version.txt', 'ui-version.txt')
@@ -228,14 +230,14 @@ def validate_source_authority(root):
             'wire_versions': internal['wire_versions'], 'core_bundled': False, 'signature': False, 'semantics': 'NOT_PROVED'}
 
 
-def validate_payload_names(names):
+def validate_payload_names(names, starters=STARTERS):
     fixed = {'README.md', 'NOTICE', 'docs/PLUGIN_PROJECT_TOOLS.md', 'docs/PLUGIN_SDK_COMPATIBILITY.md'}
     fixed.update(public_inputs())
     fixed.update('sdk/' + name for name in sdk_lock.ROOT_FILES + SDK_DOCS)
     fixed.update('sdk/rust/contracts/' + name for name in CONTRACTS)
     fixed.update('tool/' + name for name in TOOLS)
     for lang in LANGUAGES:
-        for profile in STARTERS:
+        for profile in starters:
             prefix = f'sdk/examples/{lang}-{profile}/'
             fixed.add(prefix + ('plugin.c' if lang == 'c' else 'plugin.cpp' if lang == 'cpp' else 'src/lib.rs'))
             if lang == 'rust':
@@ -249,7 +251,7 @@ def validate_payload_names(names):
             raise DistributionError('outside SDK source distribution closure: ' + name)
 
 
-def selected_names(root):
+def selected_names(root, starters=STARTERS):
     # Reuse the existing SDK source-lock inventory and constraints unchanged.
     library = sdk_lock.inventory(root / 'sdk')
     validate_sdk_bindings(root)
@@ -260,7 +262,7 @@ def selected_names(root):
     names.update('tool/' + name for name in TOOLS)
     names.update(('NOTICE', 'docs/PLUGIN_PROJECT_TOOLS.md', 'docs/PLUGIN_SDK_COMPATIBILITY.md'))
     for lang in LANGUAGES:
-        for profile in STARTERS:
+        for profile in starters:
             prefix = f'sdk/examples/{lang}-{profile}/'
             names.add(prefix + ('plugin.c' if lang == 'c' else 'plugin.cpp' if lang == 'cpp' else 'src/lib.rs'))
             if lang == 'rust':
@@ -274,7 +276,7 @@ def selected_names(root):
             raise DistributionError('invalid SDK u16 compiler version input: ' + name)
     # Validate compiler inputs in ordinary and target-specific Cargo tables.
     import tomllib
-    for name in ['sdk/rust/Cargo.toml'] + [f'sdk/examples/rust-{p}/Cargo.toml' for p in STARTERS]:
+    for name in ['sdk/rust/Cargo.toml'] + [f'sdk/examples/rust-{p}/Cargo.toml' for p in starters]:
         cargo = tomllib.loads(checked_file(root, name).decode('utf-8'))
         # Additional Cargo source graphs are not included or resolved by this bundle.
         if any(key in cargo for key in ('patch', 'replace', 'bin', 'example', 'test', 'bench')):
@@ -349,7 +351,7 @@ def parse_manifest(data):
         raise DistributionError('invalid manifest') from error
     if not isinstance(value, dict) or set(value) != {'schema', 'profile', 'qualification', 'native_libraries_bundled', 'files'}:
         raise DistributionError('unexpected manifest fields')
-    if type(value['schema']) is not int or value['schema'] != 1 or value['profile'] != PROFILE or value['qualification'] != 'source-only-not-frozen' or value['native_libraries_bundled'] is not False:
+    if type(value['schema']) is not int or value['schema'] != 1 or value['profile'] not in (LEGACY_PROFILE, PROFILE) or value['qualification'] != 'source-only-not-frozen' or value['native_libraries_bundled'] is not False:
         raise DistributionError('unsupported distribution manifest')
     files = value['files']
     if not isinstance(files, dict) or not 1 <= len(files) <= MAX_FILES:
@@ -408,7 +410,7 @@ def verify_zip(path):
         manifest = parse_manifest(archive.read(MANIFEST))
         if set(archive.namelist()) != set(manifest['files']) | {MANIFEST}:
             raise DistributionError('archive inventory differs')
-        validate_payload_names(manifest['files'])
+        validate_payload_names(manifest['files'], LEGACY_STARTERS if manifest['profile'] == LEGACY_PROFILE else STARTERS)
         for name, item in manifest['files'].items():
             data = archive.read(name)  # ZipFile checks CRC on read; prechecked size bounds.
             if len(data) != item['size'] or sha(data) != item['sha256']:
@@ -445,7 +447,8 @@ def verify_distribution(root):
         regular(parent, True)
     data = checked_file(root, MANIFEST)
     manifest = parse_manifest(data)
-    required = set(selected_names(root)) | {'README.md'}
+    starters = LEGACY_STARTERS if manifest['profile'] == LEGACY_PROFILE else STARTERS
+    required = set(selected_names(root, starters)) | {'README.md'}
     if set(manifest['files']) != required or directory_files(root) != required | {MANIFEST}:
         raise DistributionError('distribution closure differs (keep projects and caches outside bundle)')
     for name, entry in manifest['files'].items():

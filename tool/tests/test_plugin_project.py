@@ -46,6 +46,26 @@ def write_config(path, config):
 
 
 class ProjectTests(unittest.TestCase):
+    def test_mutation_declarations_are_scoped_to_the_project_and_operation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "replace"
+            new = ["new", str(path), "--language", "c", "--id", "example.replace"]
+            with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+                for kind, capability, extra in [
+                    ("io", "file-replace", []),
+                    ("mutation", "http-request", []),
+                    ("mutation", "file-create", ["--mutation-budget", "1", "4", "24"]),
+                    ("mutation", "file-replace", ["--mutation-budget", "4", "1", "0"]),
+                ]:
+                    with self.subTest(kind=kind, capability=capability, extra=extra):
+                        self.assertNotEqual(tool.main(new + ["--kind", kind, "--io-capability", capability, *extra]), 0)
+                        self.assertFalse(path.exists())
+                self.assertEqual(tool.main(new + ["--kind", "mutation"]), 0)
+            _, config, _ = tool.project(path)
+            self.assertEqual(config["io"]["capabilities"], ["file-create"])
+            self.assertNotIn("mutation_budget", config)
+            self.assertIn("--mutation", tool.package_arguments(config))
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -73,7 +93,7 @@ class ProjectTests(unittest.TestCase):
                     self.assertEqual(source.read_bytes(), (self.sdk / "examples" / f"{language}-{profile}" / name).read_bytes())
                     self.assertEqual(config["build"]["language"], language)
                     self.assertEqual(config["plugin"]["dependency_calls"], kind == "dependency")
-                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0, "service": 0, "channel": 1}[kind])
+                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0, "service": 0, "channel": 1, "mutation": 0}[kind])
                     self.assertEqual(config["plugin"]["capabilities"], list(tool.CAPABILITIES) if kind == "content" else ["read-content", "edit-content"] if kind == "dependency" else [])
                     if kind == "io":
                         self.assertEqual(config["build"]["kind"], "io")

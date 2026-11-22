@@ -3,10 +3,12 @@
 mod native {
     use morrow_core::channel;
     use morrow_core::plugin_package::{
-        DEPENDENCIES_FEATURE, DEPENDENCY_CALLS_FEATURE, MAX_MODULE_BYTES, Package,
+        DEPENDENCIES_FEATURE, DEPENDENCY_CALLS_FEATURE, MAX_MODULE_BYTES, MAX_MUTATION_BYTES,
+        MAX_MUTATION_JOB_BYTES, MAX_MUTATION_RESOURCES, MUTATION_BUDGET_FEATURE, MUTATION_FEATURE,
+        Package,
         catalog::{self, Catalog},
         io::{self, IoCapability},
-        proto::{Capability, DependencyRequirement, TransformHandler},
+        proto::{Capability, DependencyRequirement, MutationBudget, TransformHandler},
     };
     use std::{
         collections::BTreeSet,
@@ -15,7 +17,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|file-create|file-replace|file-delete|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--channel-budget MAX_CHANNELS MAX_FRAME_BYTES MAX_BYTES MAX_MESSAGES MAX_REQUESTS MAX_DURATION_MS] [--channel-handler NAME] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|file-create|file-replace|file-delete|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--mutation [--mutation-budget JOB_BYTES TOTAL_BYTES RESOURCES]] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--channel-budget MAX_CHANNELS MAX_FRAME_BYTES MAX_BYTES MAX_MESSAGES MAX_REQUESTS MAX_DURATION_MS] [--channel-handler NAME] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -92,6 +94,8 @@ mod native {
         dependencies: Vec<DependencyRequirement>,
         dependency_calls: bool,
         service: bool,
+        mutation: bool,
+        mutation_budget: Option<MutationBudget>,
         service_resources: bool,
         service_run: Option<io::proto::ServiceRunProfile>,
         io_caps: Vec<IoCapability>,
@@ -115,6 +119,8 @@ mod native {
                 "--name"
                     | "--dependency-calls"
                     | "--service"
+                    | "--mutation"
+                    | "--mutation-budget"
                     | "--service-resources"
                     | "--service-run"
                     | "--io-resources"
@@ -225,6 +231,32 @@ mod native {
                     .push(value(args, &mut i, flag, "NAME")?.into()),
                 "--dependency-calls" => o.dependency_calls = true,
                 "--service" => o.service = true,
+                "--mutation" => o.mutation = true,
+                "--mutation-budget" => {
+                    let max_job_bytes = number(
+                        value(args, &mut i, flag, "JOB_BYTES")?,
+                        flag,
+                        1,
+                        MAX_MUTATION_JOB_BYTES,
+                    )?;
+                    let max_bytes = number(
+                        value(args, &mut i, flag, "TOTAL_BYTES")?,
+                        flag,
+                        max_job_bytes,
+                        MAX_MUTATION_BYTES,
+                    )?;
+                    let max_resources = number(
+                        value(args, &mut i, flag, "RESOURCES")?,
+                        flag,
+                        0,
+                        u64::from(MAX_MUTATION_RESOURCES),
+                    )? as u32;
+                    o.mutation_budget = Some(MutationBudget {
+                        max_job_bytes,
+                        max_bytes,
+                        max_resources,
+                    });
+                }
                 "--service-resources" => o.service_resources = true,
                 "--io-resources" => {
                     o.io_resources = Some(number(
@@ -323,6 +355,23 @@ mod native {
         if o.service_run.is_some() && !o.service {
             return Err("--service-run requires --service".into());
         }
+        if o.mutation_budget.is_some() && !o.mutation {
+            return Err("--mutation-budget requires --mutation".into());
+        }
+        if o.mutation
+            && (o.service
+                || o.io_caps.is_empty()
+                || o.io_caps.iter().any(|c| {
+                    !matches!(
+                        c,
+                        IoCapability::FileCreate
+                            | IoCapability::FileDelete
+                            | IoCapability::FileReplace
+                    )
+                }))
+        {
+            return Err("--mutation requires a file mutation IO declaration".into());
+        }
         if o.service_resources && (!o.service || !o.io_caps.contains(&IoCapability::HttpRequest)) {
             return Err("--service-resources requires --service and http-request".into());
         }
@@ -415,10 +464,18 @@ mod native {
                 .budget
                 .as_mut()
                 .expect("IO declaration factory supplies budget");
-            io_budget.max_resources = o.io_resources.unwrap_or(2);
-            io_budget.max_jobs = 1;
-            io_budget.max_bytes = 1024 * 1024;
+            io_budget.max_resources =
+                o.io_resources
+                    .unwrap_or(if o.mutation { io::MAX_RESOURCES } else { 2 });
+            // The guest frame and its nested file operation each hold a job.
+            io_budget.max_jobs = if o.mutation { 2 } else { 1 };
             io_budget.max_job_bytes = 1024 * 1024;
+            // One file task spans multiple metered guest frames and a terminal query.
+            io_budget.max_bytes = if o.mutation {
+                8 * 1024 * 1024
+            } else {
+                io_budget.max_job_bytes
+            };
             if let Some(profile) = o.service_run {
                 // Explicit cumulative ceiling changes only total capacity. The
                 // one-job, 1 MiB job and 30-second request ceilings stay bounded.
@@ -432,6 +489,16 @@ mod native {
                 declaration.service_run = Some(profile);
             }
             manifest.io_declaration = Some(declaration);
+        }
+        if o.mutation {
+            manifest.required_features.push(MUTATION_FEATURE.into());
+            manifest.mutation_schema_sha256 = morrow_core::mutation::schema_digest().to_vec();
+            if let Some(budget) = o.mutation_budget {
+                manifest
+                    .required_features
+                    .push(MUTATION_BUDGET_FEATURE.into());
+                manifest.mutation_budget = Some(budget);
+            }
         }
         if let Some(budget) = o.channel_budget {
             let handlers = if o.channel_handlers.is_empty() {
@@ -572,6 +639,20 @@ mod native {
                     budget.max_messages,
                     budget.max_requests,
                     budget.max_duration_ms
+                )?;
+            }
+        }
+        if package.mutation_enabled() {
+            writeln!(
+                out,
+                "mutation-schema-sha256={}",
+                hex(&m.mutation_schema_sha256)
+            )?;
+            if let Some(budget) = package.mutation_budget() {
+                writeln!(
+                    out,
+                    "mutation-budget job-bytes={} total-bytes={} resources={}",
+                    budget.max_job_bytes, budget.max_bytes, budget.max_resources
                 )?;
             }
         }

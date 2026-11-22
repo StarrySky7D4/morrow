@@ -15,9 +15,11 @@ import plugin_sdk_lock as sdk_lock
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ("rename", "summary", "operation", "attachment", "create-content", "edit-content", "read-content")
-KINDS = ("content", "transform", "ui", "dependency", "io", "service", "channel")
+KINDS = ("content", "transform", "ui", "dependency", "io", "service", "channel", "mutation")
 LANGUAGES = ("rust", "c", "cpp")
 IO_CAPABILITIES = ("file-read", "http-request", "credential-use")
+MUTATION_CAPABILITIES = ("file-create", "file-replace", "file-delete")
+MUTATION_BUDGET_FIELDS = ("max_job_bytes", "max_bytes", "max_resources")
 
 class ToolError(Exception):
     pass
@@ -127,13 +129,22 @@ def service_run(value, kind):
     integer(value.get("max_bytes"), 1, 64 * 1024 * 1024, "service_run.max_bytes")
     return value
 
+def mutation_budget(value, capabilities):
+    value = only(value, MUTATION_BUDGET_FIELDS, "mutation_budget")
+    job = integer(value.get("max_job_bytes"), 1, 32 * 1024 * 1024, "mutation_budget.max_job_bytes")
+    integer(value.get("max_bytes"), job, 256 * 1024 * 1024, "mutation_budget.max_bytes")
+    resources = integer(value.get("max_resources"), 0, 128, "mutation_budget.max_resources")
+    if resources and "file-replace" not in capabilities:
+        raise ToolError("mutation_budget.max_resources requires file-replace")
+    return value
+
 def project(path):
     root = path_text(path).resolve(strict=True)
     if root.is_file():
         if root.name != "plugin.toml":
             raise ToolError("expected a project directory or plugin.toml")
         root = root.parent
-    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io", "service_run", "channel"), "project")
+    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io", "service_run", "channel", "mutation_budget"), "project")
     integer(config.get("schema"), 1, 1, "schema")
     plugin = only(config.get("plugin"), ("id", "version", "name", "capabilities", "dependency_calls"), "plugin")
     identifier = string(plugin.get("id"), "plugin.id")
@@ -148,10 +159,12 @@ def project(path):
     build = only(config.get("build"), ("language", "source", "kind"), "build")
     if build.get("language") not in LANGUAGES:
         raise ToolError("build.language: expected rust, c or cpp")
-    if build.get("kind") not in (None, "io", "service", "channel"):
-        raise ToolError("build.kind: only io, service or channel is supported as an explicit project kind")
-    if (build.get("kind") in ("io", "service")) != ("io" in config):
-        raise ToolError("IO projects require build.kind = io/service and an [io] declaration")
+    if build.get("kind") not in (None, "io", "service", "channel", "mutation"):
+        raise ToolError("build.kind: expected io, service, channel or mutation")
+    if (build.get("kind") in ("io", "service", "mutation")) != ("io" in config):
+        raise ToolError("IO projects require build.kind = io/service/mutation and an [io] declaration")
+    if "mutation_budget" in config and build.get("kind") != "mutation":
+        raise ToolError("mutation_budget requires build.kind = mutation")
     if (build.get("kind") == "channel") != ("channel" in config):
         raise ToolError("Channel projects require build.kind = channel and a [channel] declaration")
     if "channel" in config:
@@ -202,12 +215,16 @@ def project(path):
     if "io" in config:
         io = only(config["io"], ("capabilities", "handlers", "service_resources", "max_resources"), "io")
         allowed = ("http-listen", "http-publish", "http-request", "credential-use") if build.get("kind") == "service" else IO_CAPABILITIES
+        if build.get("kind") == "mutation":
+            allowed = MUTATION_CAPABILITIES
         caps = io.get("capabilities")
         handlers = io.get("handlers")
         if (not isinstance(caps, list) or not caps or len(caps) > len(allowed)
                 or any(type(cap) is not str or cap not in allowed for cap in caps)
                 or len(caps) != len(set(caps))):
             raise ToolError("io.capabilities: use unique names allowed by the project kind")
+        if "mutation_budget" in config:
+            mutation_budget(config["mutation_budget"], caps)
         if build.get("kind") == "service" and not {"http-listen", "http-publish"}.issubset(caps):
             raise ToolError("service requires http-listen and http-publish")
         if "max_resources" in io:
@@ -389,6 +406,15 @@ def sdk_io(root, *, sdk_only=False):
         raise ToolError("SDK and host packager IO codec versions differ")
 
 
+def sdk_mutation(root, *, sdk_only=False):
+    for name in ("rust/src/mutation.rs", "c/include/morrow_plugin_mutation.h", "cpp/include/morrow_plugin_mutation.hpp"):
+        if not (root / name).is_file():
+            raise ToolError("incomplete mutation SDK root: " + str(root / name))
+    if not sdk_only:
+        schema = (root / "rust/contracts/mutation.capnp").read_text(encoding="utf-8")
+        if schema != (ROOT / "core/schemas/mutation.capnp").read_text(encoding="utf-8"):
+            raise ToolError("SDK and host packager mutation contracts differ")
+
 def sdk_service(root, *, sdk_only=False):
     for name in ("rust/src/service.rs", "c/include/morrow_plugin_service.h", "cpp/include/morrow_plugin_service.hpp"):
         if not (root / name).is_file():
@@ -461,8 +487,10 @@ def new_project(args):
     sdk_root = sdk(args)
     if service_http:
         profile_sdk_check(sdk_io, sdk_root, args)
-    if args.kind == "io":
+    if args.kind in ("io", "mutation"):
         profile_sdk_check(sdk_io, sdk_root, args)
+        if args.kind == "mutation":
+            profile_sdk_check(sdk_mutation, sdk_root, args)
     elif args.kind == "service":
         profile_sdk_check(sdk_service, sdk_root, args)
     elif args.kind == "channel":
@@ -483,13 +511,19 @@ def new_project(args):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", args.id):
         raise ToolError("invalid plugin.id")
     semver(args.version, "plugin.version"); string(args.name or args.id, "plugin.name", 128)
-    io_caps = getattr(args, "io_capability", None) or ["file-read"]
-    if args.kind != "io" and getattr(args, "io_capability", None):
-        raise ToolError("--io-capability requires --kind io")
-    if args.kind == "io" and (any(type(cap) is not str or cap not in IO_CAPABILITIES for cap in io_caps)
+    allowed_io = MUTATION_CAPABILITIES if args.kind == "mutation" else IO_CAPABILITIES
+    io_caps = getattr(args, "io_capability", None) or [allowed_io[0]]
+    if args.kind not in ("io", "mutation") and getattr(args, "io_capability", None):
+        raise ToolError("--io-capability requires --kind io or mutation")
+    if args.kind in ("io", "mutation") and (any(type(cap) is not str or cap not in allowed_io for cap in io_caps)
                               or len(io_caps) != len(set(io_caps))
                               or ("credential-use" in io_caps and "http-request" not in io_caps)):
         raise ToolError("--io-capability requires unique supported names; credential-use requires http-request")
+    limits = getattr(args, "mutation_budget", None)
+    if limits is not None:
+        if args.kind != "mutation":
+            raise ToolError("--mutation-budget requires --kind mutation")
+        limits = mutation_budget(dict(zip(MUTATION_BUDGET_FIELDS, limits, strict=True)), io_caps)
     run_values = {key: getattr(args, arg, None) for key, arg in
                   (("duration_ms", "service_run_ms"), ("max_jobs", "service_run_jobs"), ("max_bytes", "service_run_bytes"))}
     run_profile = service_run(run_values, args.kind) if any(v is not None for v in run_values.values()) else None
@@ -516,7 +550,7 @@ def new_project(args):
               "name = " + quote(args.name or args.id), "capabilities = [" + ", ".join(quote(c) for c in caps) + "]",
               "dependency_calls = " + str(args.kind == "dependency").lower(), "", "[build]", "language = " + quote(args.language),
               "source = " + quote(source_name)]
-    if args.kind in ("io", "service", "channel"):
+    if args.kind in ("io", "service", "channel", "mutation"):
         config.append("kind = " + quote(args.kind))
     config.extend(["", "[budget]", "fuel = 20000000", "memory_bytes = 16777216", "host_calls = 16"])
     if args.kind == "channel":
@@ -527,6 +561,11 @@ def new_project(args):
     if args.kind == "io":
         config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(cap) for cap in io_caps) + "]",
                        'handlers = ["' + ("morrow.http.forward.v1" if "http-request" in io_caps else "io.request") + '"]'])
+    if args.kind == "mutation":
+        config.extend(["", "[io]", "capabilities = [" + ", ".join(map(quote, io_caps)) + "]",
+                       'handlers = ["mutation.request"]', "max_resources = 8"])
+        if limits is not None:
+            config.extend(["", "[mutation_budget]", *[f"{key} = {limits[key]}" for key in MUTATION_BUDGET_FIELDS]])
     if args.kind == "service":
         service_caps = ["http-listen", "http-publish"] + (["http-request", "credential-use"] if service_http else [])
         config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(c) for c in service_caps) + "]",
@@ -570,6 +609,14 @@ strip = true
             raise ToolError("SDK example lock provenance is ambiguous")
         lock = lock.replace(old, f'name = "{cargo_name}"\nversion = {quote(args.version)}')
         files.update({"Cargo.toml": cargo.encode(), "Cargo.lock": lock.encode()})
+    if args.kind == "mutation":
+        execution_help = "Use the Windows Workbench file-action flow to select the target, review the plan, and approve execution."
+    elif args.kind == "channel":
+        execution_help = "Channel packages require an explicitly bound managed local source; ordinary transform cannot supply it. Discover and validate any Workbench channel route on the explicitly trusted host."
+    elif args.kind in ("io", "service"):
+        execution_help = "IO packages require the host IO execution route; the transform command cannot run them."
+    else:
+        execution_help = "`transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants."
     files["README.md"] = f"""# {args.name or args.id}
 
 {args.language} / {args.kind} SDK starter. Source template: Morrow SDK, AGPL-3.0-only (LICENSE).
@@ -582,7 +629,7 @@ Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 - `build PROJECT` compiles the current source into PROJECT/build/plugin.wasm.
 - `pack PROJECT` builds again, prepares the candidate and publishes an immutable hash-named package in PROJECT/dist.
 - `check PACKAGE` prepares only; it does not execute, grant permissions or resolve dependencies.
-{('- `transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants.' if args.kind not in ('io', 'service', 'channel') else '- Channel packages require an explicitly bound managed local source; ordinary transform cannot supply it. Discover and validate any Workbench channel route on the explicitly trusted host.' if args.kind == 'channel' else '- IO packages require the host IO execution route; the transform command cannot run them.')}
+- {execution_help}
 
 plugin.toml is compiler input. The application reads only the Protobuf+LZ4 package.
 Build failures stop packaging; previous packages remain available under their own hashes.
@@ -640,8 +687,10 @@ def preflight_project(args, loaded=None, *, check_lock=True):
     kind = config["build"].get("kind")
     # Service outbounds use the IO codec too. A matching service schema alone
     # cannot qualify a different IO contract/version in an external SDK.
-    if kind == "io" or (kind == "service" and "http-request" in config["io"]["capabilities"]):
+    if kind in ("io", "mutation") or (kind == "service" and "http-request" in config["io"]["capabilities"]):
         profile_sdk_check(sdk_io, sdk_root, args)
+    if kind == "mutation":
+        profile_sdk_check(sdk_mutation, sdk_root, args)
     if kind == "service":
         profile_sdk_check(sdk_service, sdk_root, args)
     if kind == "channel":
@@ -667,8 +716,10 @@ def validate_project(args):
     # receipt. Report exactly which contracts were compared for this profile.
     contracts = ["runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp"]
     kind = config["build"].get("kind", "standard")
-    if kind == "io" or (kind == "service" and "http-request" in config["io"]["capabilities"]):
+    if kind in ("io", "mutation") or (kind == "service" and "http-request" in config["io"]["capabilities"]):
         contracts.append("io.capnp")
+    if kind == "mutation":
+        contracts.append("mutation.capnp")
     if kind == "service":
         contracts += ["service.capnp", "service_resources.capnp"]
     if kind == "channel":
@@ -759,6 +810,10 @@ def host_tool(example, arguments, args):
     crate = "core" if example == "plugin_package" else "plugin_runtime"
     command = [executable("cargo"), "run", "--locked"] + ([] if args.allow_network else ["--offline"])
     command += ["--release", "--manifest-path", ROOT / crate / "Cargo.toml", "--example", example]
+    if target_base := os.environ.get("CARGO_TARGET_DIR"):
+        # Core also exports a cdylib. Its un-hashed rlib filename collides
+        # between these two independently locked Cargo builds in a shared cache.
+        command += ["--target-dir", Path(target_base) / "morrow-plugin-tools" / crate]
     if crate == "plugin_runtime":
         command += ["--features", "packages"]
     return run([*command, "--", *arguments], capture=True)
@@ -776,6 +831,10 @@ def package_arguments(config):
         arguments += ["--dependency-calls"]
     if config["build"].get("kind") == "service":
         arguments += ["--service"]
+    if config["build"].get("kind") == "mutation":
+        arguments.append("--mutation")
+        if "mutation_budget" in config:
+            arguments += ["--mutation-budget", *[str(config["mutation_budget"][key]) for key in MUTATION_BUDGET_FIELDS]]
     if config.get("io", {}).get("service_resources", False):
         arguments += ["--service-resources"]
     if "service_run" in config:
@@ -893,8 +952,10 @@ def main(argv=None):
             command.add_argument("--kind", choices=KINDS, default="transform")
             command.add_argument("--channel-input", choices=("exercise", "directory"),
                                  help="channel starter input contract: exercise (default) or canonical public Directory for a general managed caller")
-            command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
-                                 help="requested IO ceiling for --kind io (default: file-read)")
+            command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES + MUTATION_CAPABILITIES,
+                                 help="requested capability for io (default file-read) or mutation (default file-create)")
+            command.add_argument("--mutation-budget", type=int, nargs=3, metavar=("JOB_BYTES", "TOTAL_BYTES", "RESOURCES"),
+                                 help="optional file mutation limits; extended resources require file-replace")
             command.add_argument("--service-http", action="store_true", help="service starter: one explicitly approved POST endpoint with resource discovery")
             command.add_argument("--service-run-ms", type=int, help="finite run duration; requires jobs and bytes")
             command.add_argument("--service-run-jobs", type=int, help="cumulative task reservation ceiling")

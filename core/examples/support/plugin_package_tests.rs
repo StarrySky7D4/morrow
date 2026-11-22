@@ -1,5 +1,39 @@
 use super::*;
 #[test]
+fn mutation_package_preserves_resource_ceiling_and_file_capability() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--mutation",
+            "--mutation-budget",
+            "1048576",
+            "4194304",
+            "24",
+            "--io-capability",
+            "file-replace",
+            "--io-handler",
+            "mutation.request",
+        ],
+    );
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert!(p.mutation_enabled());
+    assert_eq!(
+        p.manifest().mutation_schema_sha256,
+        morrow_core::mutation::schema_digest()
+    );
+    assert_eq!(
+        p.io_capabilities(),
+        &BTreeSet::from([IoCapability::FileReplace])
+    );
+    assert_eq!(p.mutation_budget().unwrap().max_resources, 24);
+    let io_budget = p.io_declaration().unwrap().budget.as_ref().unwrap();
+    assert_eq!(io_budget.max_jobs, 2);
+    assert_eq!(io_budget.max_bytes, 8 * 1024 * 1024);
+    assert!(output.contains("mutation-budget job-bytes=1048576 total-bytes=4194304 resources=24"));
+}
+#[test]
 fn service_profile_pins_existing_schema_and_never_implies_a_run_grant() {
     let (_dir, mut args) = setup("pack-v2");
     add(

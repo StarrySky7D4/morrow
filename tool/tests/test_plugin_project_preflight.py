@@ -48,7 +48,7 @@ class PreflightTests(unittest.TestCase):
         return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in root.rglob("*") if p.is_file()}
 
-    def test_all_21_starters_are_read_only_and_report_their_declarations(self):
+    def test_all_starters_are_read_only_and_report_their_declarations(self):
         for language in tool.LANGUAGES:
             profiles = [(kind, False) for kind in tool.KINDS] + [("service", True)]
             for kind, outbound in profiles:
@@ -65,7 +65,8 @@ class PreflightTests(unittest.TestCase):
                     self.assertFalse(result["permissions_granted"])
                     self.assertFalse(result["plugin_executed"])
                     names = {c["name"] for c in result["contracts"]}
-                    self.assertEqual("io.capnp" in names, kind == "io" or outbound)
+                    self.assertEqual("io.capnp" in names, kind in ("io", "mutation") or outbound)
+                    self.assertEqual("mutation.capnp" in names, kind == "mutation")
                     self.assertEqual("service.capnp" in names, kind == "service")
                     for contract in result["contracts"]:
                         data = (tool.ROOT / "sdk/rust/contracts" / contract["name"]).read_bytes()
