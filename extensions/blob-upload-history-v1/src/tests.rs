@@ -397,6 +397,19 @@ fn ffi_failure_preserves_outputs_and_views_borrow_the_original_owner() {
             std::slice::from_raw_parts(out.operation_id.data, out.operation_id.bytes as usize),
             "upload-原记录".as_bytes()
         );
+        #[cfg(all(target_arch = "x86", target_env = "msvc", target_os = "windows"))]
+        {
+            use std::mem::size_of;
+            #[repr(C, align(8))]
+            struct StackStorage([u8; size_of::<View>() + 4]);
+            let mut storage = StackStorage([0; size_of::<View>() + 4]);
+            let slot = storage.0.as_mut_ptr().add(4).cast::<View>();
+            assert_eq!(slot.addr() % 8, 4);
+            assert_eq!(mbh_packet_view(owner, slot, size_of::<View>() as u32), 0);
+            let view = slot.read_unaligned();
+            assert_eq!(view.registry_revision, out.registry_revision);
+            assert_eq!(view.operation_id.data, out.operation_id.data);
+        }
         mbh_packet_free(owner);
         mbh_packet_free(std::ptr::null_mut());
     }

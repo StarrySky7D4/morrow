@@ -208,8 +208,9 @@ pub unsafe extern "C" fn mbh_packet_decode(
 /// Views borrow the packet's immutable strings until that same packet is freed.
 ///
 /// # Safety
-/// `packet` must be a live owner from this API. `out` must address an aligned,
-/// writable `View`, disjoint from the owner and its borrowed storage. Neither
+/// `packet` must be a live owner from this API. `out` must address a writable
+/// C ABI view (four-byte alignment is sufficient on Win32 MSVC),
+/// disjoint from the owner and its borrowed storage. Neither
 /// owner nor output may be mutated or freed concurrently.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn mbh_packet_view(
@@ -219,6 +220,11 @@ pub unsafe extern "C" fn mbh_packet_view(
 ) -> u32 {
     status((|| {
         aligned(packet)?;
+        // An ordinary i686 MSVC stack slot can be four-byte aligned even
+        // though Rust gives this struct eight-byte alignment for its u64s.
+        #[cfg(all(target_arch = "x86", target_env = "msvc", target_os = "windows"))]
+        aligned(out.cast::<u32>())?;
+        #[cfg(not(all(target_arch = "x86", target_env = "msvc", target_os = "windows")))]
         aligned(out)?;
         if (bytes as usize) < size_of::<View>() {
             return Err(Error::Buffer);
@@ -300,7 +306,7 @@ pub unsafe extern "C" fn mbh_packet_view(
             }
         }
         unsafe {
-            ptr::write(out, v);
+            ptr::write_unaligned(out, v);
         }
         Ok(())
     })())
