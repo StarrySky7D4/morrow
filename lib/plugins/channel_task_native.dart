@@ -37,7 +37,9 @@ final class NativeChannelTaskClient implements ChannelTaskBackend {
   Future<ChannelTaskSnapshot> prepareChannel(ChannelPrepareRequest request) {
     _requireSupported();
     return _exchange(
-      host.Action.channelPrepare,
+      request.compatibilityBudget
+          ? host.Action.channelPrepareWithCompatibilityBudget
+          : host.Action.channelPrepare,
       clearReply: true,
       configure: (row) =>
           ChannelTaskCodec.writePrepare(request, row.initChannelPrepare()),

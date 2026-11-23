@@ -11,6 +11,7 @@ pub(super) fn is_action(action: wire::Action) -> bool {
     matches!(
         action,
         wire::Action::ChannelPrepare
+            | wire::Action::ChannelPrepareWithCompatibilityBudget
             | wire::Action::ChannelAppend
             | wire::Action::ChannelRun
             | wire::Action::ChannelStatus
@@ -68,9 +69,10 @@ pub(super) fn handle(
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     let state = match request.get_action()? {
-        wire::Action::ChannelPrepare => {
+        action @ (wire::Action::ChannelPrepare
+        | wire::Action::ChannelPrepareWithCompatibilityBudget) => {
             let p = request.get_channel_prepare()?;
-            host.prepare_channel(Prepare {
+            let prepared = Prepare {
                 submission: id(p.get_submission()?)?,
                 package_id: text(p.get_package_id())?,
                 package_digest: id(p.get_package_digest()?)?,
@@ -86,7 +88,12 @@ pub(super) fn handle(
                 lifetime_ms: p.get_lifetime_ms(),
                 frame_count: p.get_frame_count(),
                 total_bytes: p.get_total_bytes(),
-            })?
+            };
+            if action == wire::Action::ChannelPrepareWithCompatibilityBudget {
+                host.prepare_channel_with_compatibility_budget(prepared)?
+            } else {
+                host.prepare_channel(prepared)?
+            }
         }
         wire::Action::ChannelAppend => {
             let p = request.get_channel_append()?;

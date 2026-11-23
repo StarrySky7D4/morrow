@@ -1401,6 +1401,9 @@ impl ChannelBroker {
         if self.gate(manager, host, instance, clock()).is_err() {
             return fail(Fault::PackageBinding);
         }
+        if !instance.consume_channel_compatibility_budget() {
+            return fail(Fault::TaskProtocol);
+        }
         let cancel = instance.cancellation();
         let mut execution = match instance.package().start_channel(input, cancel) {
             Ok(execution) => execution,

@@ -39,6 +39,45 @@ PluginLibraryEntry entry() => PluginLibraryEntry(
 );
 
 void main() {
+  testWidgets('compatibility budget needs confirmation for this source', (
+    tester,
+  ) async {
+    final backend = Backend();
+    final session = ChannelTaskSession.forBackend(backend);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChannelTaskManager(
+          backend: backend,
+          entry: entry(),
+          registryRevision: BigInt.one,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('channel-source-bytes')),
+      '00ff',
+    );
+    final run = find.byKey(const ValueKey('channel-run-compatibility-budget'));
+    await tester.tap(run);
+    await tester.pumpAndSettle();
+    expect(backend.prepares, 0);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(backend.prepares, 0);
+    await tester.tap(run);
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('channel-approve-compatibility-budget')),
+    );
+    await tester.pumpAndSettle();
+    expect(backend.prepares, 1);
+    expect(backend.runs, 1);
+    expect(backend.requests[1]!.compatibilityBudget, isTrue);
+    expect(backend.appended.single.bytes, [0, 255]);
+    await stopPolling(session, backend);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final fails in [false, true]) {
     testWidgets(
       'stale peer receipt ${fails ? "error" : "reply"} cannot attach to a new generation',

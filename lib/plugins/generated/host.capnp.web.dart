@@ -200,6 +200,7 @@ enum Action {
   fsWatchStart,
   fsWatchStatus,
   fsWatchRead,
+  channelPrepareWithCompatibilityBudget,
 }
 
 Action? actionFromUint16(int v) =>

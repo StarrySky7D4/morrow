@@ -1016,6 +1016,7 @@ fn handle_business(
     };
     match action {
         wire::Action::ChannelPrepare
+        | wire::Action::ChannelPrepareWithCompatibilityBudget
         | wire::Action::ChannelAppend
         | wire::Action::ChannelRun
         | wire::Action::ChannelStatus

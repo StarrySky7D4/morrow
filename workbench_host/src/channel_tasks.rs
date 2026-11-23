@@ -429,7 +429,22 @@ impl Workbench {
         }
         Ok(())
     }
-    pub fn prepare_channel(&mut self, mut request: Prepare) -> Result<State> {
+    pub fn prepare_channel(&mut self, request: Prepare) -> Result<State> {
+        self.prepare_channel_inner(request, false)
+    }
+
+    pub(crate) fn prepare_channel_with_compatibility_budget(
+        &mut self,
+        request: Prepare,
+    ) -> Result<State> {
+        self.prepare_channel_inner(request, true)
+    }
+
+    fn prepare_channel_inner(
+        &mut self,
+        mut request: Prepare,
+        compatibility_budget: bool,
+    ) -> Result<State> {
         self.channel_tasks.touch(false)?;
         self.product_gate().check()?;
         crate::channel_binding::require_owner(self.channel_tasks.owner)?;
@@ -574,7 +589,16 @@ impl Workbench {
             let state = self.local_state_mut()?;
             state.host.prepare_write()?;
             let manager = state.manager.as_mut().ok_or("plugin manager unavailable")?;
-            let instance = Arc::new(manager.connect(&request.package_id, &mut state.host)?);
+            let instance = Arc::new(if compatibility_budget {
+                manager.connect_channel_with_compatibility_budget(
+                    &request.package_id,
+                    request.package_digest,
+                    request.registry_revision,
+                    &mut state.host,
+                )?
+            } else {
+                manager.connect(&request.package_id, &mut state.host)?
+            });
             let bound = manager.bind_channel(
                 &state.host,
                 &instance,

@@ -196,6 +196,7 @@ enum Action {
   fsWatchStart,
   fsWatchStatus,
   fsWatchRead,
+  channelPrepareWithCompatibilityBudget,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -685,6 +686,11 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'fsWatchStart', codeOrder: 187, ordinal: 187),
     EnumerantSchemaInfo(name: 'fsWatchStatus', codeOrder: 188, ordinal: 188),
     EnumerantSchemaInfo(name: 'fsWatchRead', codeOrder: 189, ordinal: 189),
+    EnumerantSchemaInfo(
+      name: 'channelPrepareWithCompatibilityBudget',
+      codeOrder: 190,
+      ordinal: 190,
+    ),
   ],
 );
 

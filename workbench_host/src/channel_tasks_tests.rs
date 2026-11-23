@@ -130,6 +130,52 @@ fn error(bytes: &[u8]) -> String {
 }
 
 #[test]
+#[ignore = "requires the pinned original Directory archive declaring 100M fuel and 256 calls"]
+fn compatibility_budget_is_bound_to_the_exact_channel_preparation() {
+    let mut setup = Setup::new();
+    let limits = |app: &Workbench| {
+        let job = app.channel_tasks.job.as_ref().unwrap();
+        let limits = job.instance.package().limits();
+        (limits.fuel, limits.memory_bytes, limits.host_calls)
+    };
+    let request = setup.prepare(80);
+    let ordinary = setup.app.prepare_channel(request).unwrap();
+    assert_eq!(limits(&setup.app), (20_000_000, 16 * 1024 * 1024, 16));
+    setup.app.close_channel(&ordinary.key).unwrap();
+
+    let mut stale = setup.prepare(81);
+    stale.registry_revision -= 1;
+    assert!(
+        setup
+            .app
+            .prepare_channel_with_compatibility_budget(stale)
+            .is_err()
+    );
+    let request = setup.prepare(82);
+    let submission = request.submission;
+    let approved = setup
+        .app
+        .prepare_channel_with_compatibility_budget(request)
+        .unwrap();
+    assert_eq!(limits(&setup.app), (100_000_000, 16 * 1024 * 1024, 256));
+    assert_eq!(approved.submission, submission);
+
+    setup.app.close_channel(&approved.key).unwrap();
+    let repeated = setup.prepare(82);
+    assert!(
+        setup
+            .app
+            .prepare_channel_with_compatibility_budget(repeated)
+            .is_err()
+    );
+    let next = setup.prepare(83);
+    let ordinary = setup.app.prepare_channel(next).unwrap();
+    assert_eq!(limits(&setup.app), (20_000_000, 16 * 1024 * 1024, 16));
+    setup.app.close_channel(&ordinary.key).unwrap();
+    setup.app.finish().unwrap();
+}
+
+#[test]
 #[ignore = "requires the actual production directory package via MORROW_CHANNEL_DIRECTORY_PACKAGE"]
 fn production_wire_rejects_positive_inbound_duplex_before_any_grant_or_thread() {
     let mut setup = Setup::new();

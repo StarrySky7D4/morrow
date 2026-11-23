@@ -657,6 +657,10 @@ ChannelPrepareRequest prepareRequest(
     lifetimeMs: lifetimeMs,
     frameCount: frames,
     totalBytes: BigInt.from(bytes),
+    // The real private IPC path is exercised in both modes. The dedicated
+    // widget test covers the explicit approval gesture.
+    compatibilityBudget:
+        Platform.environment['MORROW_CHANNEL_TEST_COMPATIBILITY_BUDGET'] == '1',
   );
 }
 

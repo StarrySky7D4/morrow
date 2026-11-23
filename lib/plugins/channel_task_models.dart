@@ -93,6 +93,7 @@ final class ChannelPrepareRequest {
     required this.lifetimeMs,
     required this.frameCount,
     required this.totalBytes,
+    this.compatibilityBudget = false,
   }) : submission = ChannelValidation.identity(submission),
        packageDigest = ChannelValidation.identity(packageDigest) {
     ChannelValidation.u64(registryRevision);
@@ -121,6 +122,7 @@ final class ChannelPrepareRequest {
   final BigInt registryRevision, totalBytes;
   final ChannelSourceKind kind;
   final bool duplex;
+  final bool compatibilityBudget;
   final ChannelBudget budget;
   final int lifetimeMs, frameCount;
 }

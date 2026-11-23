@@ -109,6 +109,8 @@ pub(crate) struct Control {
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
     pub(crate) channel: Option<Arc<crate::channel::ChannelContext>>,
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    channel_compatibility_budget: Option<std::sync::atomic::AtomicBool>,
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
     pub(crate) blob_upload: Option<Arc<crate::blob_upload_binding::UploadContext>>,
     revocation: Revocation,
     cancel: Cancellation,
@@ -155,6 +157,14 @@ impl InstanceStopHandle {
     }
 }
 impl ManagedInstance {
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) fn consume_channel_compatibility_budget(&self) -> bool {
+        self.control
+            .channel_compatibility_budget
+            .as_ref()
+            .is_none_or(|approval| approval.swap(false, Ordering::AcqRel))
+    }
+
     pub fn stop_handle(&self) -> InstanceStopHandle {
         InstanceStopHandle(Arc::downgrade(&self.control))
     }
@@ -236,6 +246,18 @@ impl Drop for ManagedInstance {
         self.stop();
     }
 }
+#[derive(Clone, Copy)]
+enum ConnectionProfile {
+    Default,
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    BlobUpload(Limits),
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    ChannelCompatibility {
+        digest: [u8; 32],
+        revision: u64,
+    },
+}
+
 /// One manager owns registry mutation. No mutable registry or unchecked connection factory escapes.
 /// Existing low-level trusted APIs remain available; this is not isolation from the trusted host.
 pub struct Manager {
@@ -1041,7 +1063,7 @@ impl Manager {
     }
     /// Validate current enabled state and package bytes, then bind the stored approved ceiling.
     pub fn connect(&mut self, id: &str, host: &mut HostRuntime) -> Result<ManagedInstance> {
-        self.connect_profile(id, host, None)
+        self.connect_profile(id, host, ConnectionProfile::Default)
     }
     /// Pure preparation check using this Manager's actual policy. No HostRuntime
     /// or connection factory is supplied, so a refusal has not allocated a host
@@ -1065,13 +1087,34 @@ impl Manager {
         host: &mut HostRuntime,
         limits: Limits,
     ) -> Result<ManagedInstance> {
-        self.connect_profile(id, host, Some(limits))
+        self.connect_profile(id, host, ConnectionProfile::BlobUpload(limits))
     }
+
+    /// A trusted host may approve one channel invocation at the compatibility
+    /// ceiling for the exact enabled package and registry revision it reviewed.
+    /// Package declarations still cap execution, and the approval is spent
+    /// before entering Wasm, including when starting the guest fails.
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub fn connect_channel_with_compatibility_budget(
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        revision: u64,
+        host: &mut HostRuntime,
+    ) -> Result<ManagedInstance> {
+        self.check_revision(revision)?;
+        self.connect_profile(
+            id,
+            host,
+            ConnectionProfile::ChannelCompatibility { digest, revision },
+        )
+    }
+
     fn connect_profile(
         &mut self,
         id: &str,
         host: &mut HostRuntime,
-        upload_limits: Option<Limits>,
+        profile: ConnectionProfile,
     ) -> Result<ManagedInstance> {
         #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
         {
@@ -1084,14 +1127,33 @@ impl Manager {
             return Err(Error::Limit.into());
         }
         let (package, selection) = self.registry.resolve_enabled(id)?;
-        let limits = match upload_limits {
-            Some(limits) => {
+        let limits = match profile {
+            ConnectionProfile::Default => self.limits,
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            ConnectionProfile::BlobUpload(limits) => {
                 if package.blob_upload_declaration().is_none() || !selection.approved_blob_upload {
                     return Err(Error::Invalid("independent upload approval required").into());
                 }
                 limits
             }
-            None => self.limits,
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            ConnectionProfile::ChannelCompatibility { digest, revision } => {
+                self.check_revision(revision)?;
+                if selection.digest != digest {
+                    return Err(Error::RevisionConflict.into());
+                }
+                if package.channel_declaration().is_none() || !package.capabilities().is_empty() {
+                    return Err(Error::Invalid(
+                        "compatibility budget requires a source-only channel",
+                    )
+                    .into());
+                }
+                Limits {
+                    fuel: 100_000_000,
+                    memory_bytes: self.limits.memory_bytes.min(Limits::default().memory_bytes),
+                    host_calls: 256,
+                }
+            }
         };
         let package = PreparedPackage::new(package, limits)?;
         let connection = package.connect_approved(host, &selection.approved)?;
@@ -1138,6 +1200,12 @@ impl Manager {
                         .and_then(|budget| morrow_core::channel::Budget::from_proto(budget).ok())
                         .map(|budget| Arc::new(crate::channel::ChannelContext::new(budget)))
                 }),
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            channel_compatibility_budget: matches!(
+                profile,
+                ConnectionProfile::ChannelCompatibility { .. }
+            )
+            .then(|| std::sync::atomic::AtomicBool::new(true)),
             revocation,
             cancel: Cancellation::default(),
             #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]

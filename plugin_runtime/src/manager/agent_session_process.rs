@@ -144,6 +144,8 @@ impl Manager {
             #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
             channel: None,
             #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            channel_compatibility_budget: None,
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
             blob_upload: None,
             revocation,
             cancel: Cancellation::default(),

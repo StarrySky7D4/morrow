@@ -28,6 +28,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   String? handler;
   ChannelSourceKind? kind;
   bool duplex = false;
+  bool confirmingBudget = false;
   Object? inputFailure;
   Object? peerFailure;
   ChannelSentFrame? peerReceipt;
@@ -78,7 +79,58 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
     ]);
   }
 
-  Future<void> _run() async {
+  bool get _canRun =>
+      !confirmingBudget &&
+      session.canPrepare &&
+      widget.entry.hasEligibleDirectoryChannels &&
+      handler != null &&
+      kind != null &&
+      widget.backend.supportsLocalChannels;
+
+  Future<bool> _approveCompatibilityBudget(
+    ChannelPrepareRequest request,
+  ) async {
+    final generation = session.generation;
+    setState(() => confirmingBudget = true);
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Approve compatibility budget'),
+          content: Text(
+            'Run ${request.handler} from ${request.packageId} once with up to '
+            '100 million fuel units and 256 host calls. The package’s limits '
+            'also apply.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: const ValueKey('channel-approve-compatibility-budget'),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Approve once'),
+            ),
+          ],
+        ),
+      );
+      return confirmed == true &&
+          mounted &&
+          session.generation == generation &&
+          session.canPrepare &&
+          widget.registryRevision == request.registryRevision &&
+          widget.entry.id == request.packageId &&
+          ChannelValidation.same(widget.entry.digest, request.packageDigest);
+    } finally {
+      if (mounted) {
+        setState(() => confirmingBudget = false);
+      }
+    }
+  }
+
+  Future<void> _run({bool compatibilityBudget = false}) async {
+    if (!_canRun) return;
     try {
       if (source.text.length > 3 * 1024 * 1024) {
         throw const FormatException('Source text exceeds finite upload limit');
@@ -134,7 +186,11 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
           BigInt.zero,
           (sum, f) => sum + BigInt.from(f.bytes.length),
         ),
+        compatibilityBudget: compatibilityBudget,
       );
+      if (compatibilityBudget && !await _approveCompatibilityBudget(request)) {
+        return;
+      }
       inputFailure = null;
       peerReceipt = null;
       peerFailure = null;
@@ -301,16 +357,16 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
           onPressed: current == null ? null : () => unawaited(session.close()),
           child: const Text('Close channel'),
         ),
+        TextButton(
+          key: const ValueKey('channel-run-compatibility-budget'),
+          onPressed: _canRun
+              ? () => unawaited(_run(compatibilityBudget: true))
+              : null,
+          child: const Text('Run with compatibility budget…'),
+        ),
         FilledButton(
           key: const ValueKey('channel-run'),
-          onPressed:
-              session.canPrepare &&
-                  widget.entry.hasEligibleDirectoryChannels &&
-                  handler != null &&
-                  kind != null &&
-                  widget.backend.supportsLocalChannels
-              ? _run
-              : null,
+          onPressed: _canRun ? _run : null,
           child: Text(session.busy ? 'Preparing…' : 'Prepare and run once'),
         ),
         TextButton(
