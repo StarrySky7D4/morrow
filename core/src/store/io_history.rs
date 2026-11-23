@@ -14,7 +14,10 @@ use rusqlite::params;
 impl Store {
     /// Returns only the original bounded HTTP status under exact command pins.
     /// This does not claim, reserve, reconcile, append or authorize an operation.
-    pub fn lookup_http_operation_status(&self, expected: &Command) -> Result<Option<OperationOutcome>> {
+    pub fn lookup_http_operation_status(
+        &self,
+        expected: &Command,
+    ) -> Result<Option<OperationOutcome>> {
         // Reuse command validation without opening or changing a Store transaction.
         Record::prepared(expected.clone())?;
         if expected.capability != IoCapability::HttpRequest
@@ -68,18 +71,32 @@ impl Store {
                 // independently requiring payloads within the original IO frame cap.
                 let material_limit = io::MAX_FRAME_BYTES + 4096;
                 let request = io_evidence::load_material_bounded(
-                    &tx, &expected.operation_id, Kind::Request, &history, material_limit,
-                ).map_err(|_| Error::EvidenceUnavailable)?.ok_or(Error::EvidenceUnavailable)?;
+                    &tx,
+                    &expected.operation_id,
+                    Kind::Request,
+                    &history,
+                    material_limit,
+                )
+                .map_err(|_| Error::EvidenceUnavailable)?
+                .ok_or(Error::EvidenceUnavailable)?;
                 let response = io_evidence::load_material_bounded(
-                    &tx, &expected.operation_id, Kind::Response, &history, material_limit,
-                ).map_err(|_| Error::EvidenceUnavailable)?.ok_or(Error::EvidenceUnavailable)?;
+                    &tx,
+                    &expected.operation_id,
+                    Kind::Response,
+                    &history,
+                    material_limit,
+                )
+                .map_err(|_| Error::EvidenceUnavailable)?
+                .ok_or(Error::EvidenceUnavailable)?;
                 if request.payload().len() > io::MAX_FRAME_BYTES
                     || response.payload().len() > io::MAX_FRAME_BYTES
-                    || latest.data().observation_sha256.as_slice() != response.payload_sha256().as_slice()
+                    || latest.data().observation_sha256.as_slice()
+                        != response.payload_sha256().as_slice()
                 {
                     return Err(Error::EvidenceUnavailable);
                 }
-                let original = Request::decode(request.payload()).map_err(|_| Error::EvidenceUnavailable)?;
+                let original =
+                    Request::decode(request.payload()).map_err(|_| Error::EvidenceUnavailable)?;
                 let Action::SubmitHttp(submission) = original.action() else {
                     return Err(Error::EvidenceUnavailable);
                 };
@@ -95,6 +112,9 @@ impl Store {
             }
             Phase::InvalidPhase => return Err(Error::EvidenceUnavailable),
         };
-        Ok(Some(OperationOutcome { status, http_status: 0 }))
+        Ok(Some(OperationOutcome {
+            status,
+            http_status: 0,
+        }))
     }
 }

@@ -1,10 +1,10 @@
 #![cfg(not(target_arch = "wasm32"))]
 //! Disk-backed retained staging, including owner retries and process exits.
 use morrow_core::{
-    attachment::{BlobInfo, RetentionKind, MAX_BLOB_BYTES},
+    Error,
+    attachment::{BlobInfo, MAX_BLOB_BYTES, RetentionKind},
     content::{Attachment, CardRecord},
     store::{EventBudget, Store},
-    Error,
 };
 use sha2::{Digest, Sha256};
 use std::io::{Cursor, Read};
@@ -98,18 +98,22 @@ fn source_and_retention_insert_failures_roll_back_every_byte_and_owner() {
     let db = dir.path().join("store.db");
     let mut store = Store::open(&db, EventBudget::default()).unwrap();
     let expected = digest(b"expected");
-    assert!(store
-        .stage_blob_retained(&mut Cursor::new(b"short"), 8, expected, "short-owner", 1)
-        .is_err());
-    assert!(store
-        .stage_blob_retained(
-            &mut Cursor::new(b"extra"),
-            4,
-            digest(b"extr"),
-            "extra-owner",
-            1
-        )
-        .is_err());
+    assert!(
+        store
+            .stage_blob_retained(&mut Cursor::new(b"short"), 8, expected, "short-owner", 1)
+            .is_err()
+    );
+    assert!(
+        store
+            .stage_blob_retained(
+                &mut Cursor::new(b"extra"),
+                4,
+                digest(b"extr"),
+                "extra-owner",
+                1
+            )
+            .is_err()
+    );
     assert_eq!(
         store.stage_blob_retained(&mut Cursor::new(b"wrong"), 5, expected, "wrong-owner", 1),
         Err(Error::Integrity)
@@ -159,15 +163,17 @@ fn source_and_retention_insert_failures_roll_back_every_byte_and_owner() {
 
     let sql = rusqlite::Connection::open(&db).unwrap();
     sql.execute_batch("CREATE TRIGGER deny_snapshot BEFORE INSERT ON retentions WHEN NEW.owner='trigger-owner' BEGIN SELECT RAISE(ABORT,'retention insert denied'); END;").unwrap();
-    assert!(store
-        .stage_blob_retained(
-            &mut Cursor::new(b"durable"),
-            7,
-            digest(b"durable"),
-            "trigger-owner",
-            3
-        )
-        .is_err());
+    assert!(
+        store
+            .stage_blob_retained(
+                &mut Cursor::new(b"durable"),
+                7,
+                digest(b"durable"),
+                "trigger-owner",
+                3
+            )
+            .is_err()
+    );
     assert_eq!(store.retained_blob_local("trigger-owner").unwrap(), None);
     assert!(store.list_blobs_local("", 128).unwrap().is_empty());
     store.integrity_check().unwrap();
@@ -196,10 +202,12 @@ fn distinct_owners_share_one_blob_and_release_needs_both_then_full_grace() {
         b.id
     );
     assert_eq!(store.retire_blob_local(&a.id, 2), Err(Error::Retained));
-    assert!(store
-        .collect_retired_local(60_002, 60_000)
-        .unwrap()
-        .is_empty());
+    assert!(
+        store
+            .collect_retired_local(60_002, 60_000)
+            .unwrap()
+            .is_empty()
+    );
     store
         .release_retention_local(&b.id, "owner-b", RetentionKind::Snapshot, 60_003)
         .unwrap();
@@ -210,10 +218,12 @@ fn distinct_owners_share_one_blob_and_release_needs_both_then_full_grace() {
     drop(store);
     let mut store =
         Store::open_existing(std::path::Path::new(&db), EventBudget::default()).unwrap();
-    assert!(store
-        .collect_retired_local(120_002, 60_000)
-        .unwrap()
-        .is_empty());
+    assert!(
+        store
+            .collect_retired_local(120_002, 60_000)
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(
         store.collect_retired_local(120_003, 60_000).unwrap(),
         vec![a.id.clone()]
@@ -253,10 +263,12 @@ fn ordinary_card_and_event_history_keep_bytes_after_snapshot_owner_releases() {
         .set_attachments_local("business-remove", "business-card", 1, &[])
         .unwrap();
     assert_eq!(store.retire_blob_local(&file.id, 2), Err(Error::Retained));
-    assert!(store
-        .collect_retired_local(60_003, 60_000)
-        .unwrap()
-        .is_empty());
+    assert!(
+        store
+            .collect_retired_local(60_003, 60_000)
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(output(&store, &file.id), b"business and history pin");
     let sql = rusqlite::Connection::open(&db).unwrap();
     let history: i64 = sql
@@ -350,25 +362,29 @@ fn confirmed_replay_succeeds_at_physical_capacity_without_advancing_clock() {
         )
         .unwrap();
     assert_eq!(replay.id, original.id);
-    assert!(store
-        .stage_blob_retained(
-            &mut Cursor::new(b"new"),
-            3,
-            digest(b"new"),
-            "new-owner",
-            2048
-        )
-        .is_err());
+    assert!(
+        store
+            .stage_blob_retained(
+                &mut Cursor::new(b"new"),
+                3,
+                digest(b"new"),
+                "new-owner",
+                2048
+            )
+            .is_err()
+    );
     assert_eq!(store.retained_blob_local("new-owner").unwrap(), None);
-    assert!(store
-        .stage_blob_retained(
-            &mut Cursor::new(b"new"),
-            3,
-            digest(b"new"),
-            "regressed-owner",
-            0
-        )
-        .is_err());
+    assert!(
+        store
+            .stage_blob_retained(
+                &mut Cursor::new(b"new"),
+                3,
+                digest(b"new"),
+                "regressed-owner",
+                0
+            )
+            .is_err()
+    );
     assert_eq!(store.retained_blob_local("regressed-owner").unwrap(), None);
     store.integrity_check().unwrap();
 }

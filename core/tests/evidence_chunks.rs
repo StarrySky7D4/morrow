@@ -732,7 +732,10 @@ fn format_eight_readonly_then_migration_preserve_unknown_v1_bytes_and_signed_his
         1
     );
     drop(migrated);
-    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), morrow_core::store::SCHEMA_VERSION);
+    assert_eq!(
+        version(&rusqlite::Connection::open(&path).unwrap()),
+        morrow_core::store::SCHEMA_VERSION
+    );
     assert_eq!(operation_payload(&path), commit_before);
     assert_eq!(stored_chunks(&path), chunks_before);
 }
@@ -772,7 +775,10 @@ fn format_eight_batch_migration_crashes_publish_only_whole_version_transition() 
             1
         );
         drop(reopened);
-        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), morrow_core::store::SCHEMA_VERSION);
+        assert_eq!(
+            version(&rusqlite::Connection::open(&path).unwrap()),
+            morrow_core::store::SCHEMA_VERSION
+        );
         assert_eq!(operation_payload(&path), commit_before);
         assert_eq!(stored_chunks(&path), chunks_before);
     }
@@ -879,7 +885,10 @@ fn format_nine_preserves_legacy_maximum_intent_and_signature_across_migration() 
     assert_eq!(migrated.sealed_segment(1).unwrap().unwrap(), segment);
     migrated.integrity_check().unwrap();
     drop(migrated);
-    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), morrow_core::store::SCHEMA_VERSION);
+    assert_eq!(
+        version(&rusqlite::Connection::open(&path).unwrap()),
+        morrow_core::store::SCHEMA_VERSION
+    );
     assert_eq!(operation_payload(&path), before);
     assert_eq!(stored_chunks(&path), chunks);
 }
@@ -943,6 +952,9 @@ fn projection_capacity_migration_crashes_leave_whole_nine_or_ten() {
         }
         reopened.integrity_check().unwrap();
         drop(reopened);
-        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), morrow_core::store::SCHEMA_VERSION);
+        assert_eq!(
+            version(&rusqlite::Connection::open(&path).unwrap()),
+            morrow_core::store::SCHEMA_VERSION
+        );
     }
 }

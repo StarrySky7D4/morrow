@@ -628,7 +628,9 @@ fn windows_lock_directory_from_resolved(base: &str) -> Result<PathBuf> {
     if base.is_empty() || base.contains('\0') || !std::path::Path::new(base).is_absolute() {
         return Err(Error::Invalid("service lock root"));
     }
-    Ok(std::path::Path::new(base).join("Morrow").join("service-authority-locks"))
+    Ok(std::path::Path::new(base)
+        .join("Morrow")
+        .join("service-authority-locks"))
 }
 
 // Pure directory-shape checks. No resolver, environment or filesystem access.
@@ -638,8 +640,12 @@ mod windows_directory_contract_tests {
     #[test]
     fn resolved_base_keeps_the_existing_lock_suffix() {
         let base = "C:/synthetic-token/Local";
-        assert_eq!(windows_lock_directory_from_resolved(base).unwrap(),
-            PathBuf::from(base).join("Morrow").join("service-authority-locks"));
+        assert_eq!(
+            windows_lock_directory_from_resolved(base).unwrap(),
+            PathBuf::from(base)
+                .join("Morrow")
+                .join("service-authority-locks")
+        );
     }
     #[test]
     fn inherited_override_is_not_a_root_derivation_input() {

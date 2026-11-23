@@ -318,7 +318,10 @@ fn recovered_unknown_is_reconcile_only_and_pre_dispatch_cancellation_is_terminal
     store
         .reserve_io_intent_followup(cancelled.command(), || Ok(()))
         .unwrap();
-    append(&mut store, &cancelled.propose_cancel_before_dispatch().unwrap());
+    append(
+        &mut store,
+        &cancelled.propose_cancel_before_dispatch().unwrap(),
+    );
     // Pre-dispatch cancellation released its reservation; the dispatched
     // operation still holds exactly its own.
     assert_eq!(

@@ -72,7 +72,9 @@ pub enum Action {
     /// referenced origin, method and credential.
     SubmitHttp(HttpSubmission),
     /// Historical status only; a current, independently issued grant is required.
-    QueryOperation { operation_id: Vec<u8> },
+    QueryOperation {
+        operation_id: Vec<u8>,
+    },
     Unsupported(UnsupportedAction),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -313,7 +315,12 @@ impl Request {
     /// Encodes the existing query union without changing its original frame identity.
     pub fn query_operation(call_id: u64, operation_id: &[u8]) -> Result<Self> {
         validate_operation_id(operation_id)?;
-        Self::encode(call_id, Action::QueryOperation { operation_id: operation_id.to_vec() })
+        Self::encode(
+            call_id,
+            Action::QueryOperation {
+                operation_id: operation_id.to_vec(),
+            },
+        )
     }
     pub fn encode_finish(call_id: u64, reference: &[u8; 32]) -> Result<Self> {
         Self::encode(
@@ -468,7 +475,9 @@ impl Request {
             wire::request::QueryOperation(value) => {
                 let operation_id = value.map_err(invalid)?;
                 validate_operation_id(operation_id)?;
-                Action::QueryOperation { operation_id: operation_id.to_vec() }
+                Action::QueryOperation {
+                    operation_id: operation_id.to_vec(),
+                }
             }
         };
         Ok(Self {
@@ -599,7 +608,9 @@ impl Response {
             return Err(Error::Invalid("operation outcome request"));
         }
         let message = read(bytes)?;
-        let root = message.get_root::<wire::response::Reader>().map_err(invalid)?;
+        let root = message
+            .get_root::<wire::response::Reader>()
+            .map_err(invalid)?;
         if root.total_size().map_err(invalid)?.cap_count != 0 {
             return Err(invalid(()));
         }
@@ -705,7 +716,12 @@ impl Response {
     pub fn decode(request: &Request, bytes: &[u8]) -> Result<Self> {
         if matches!(request.action(), Action::QueryOperation { .. }) {
             let outcome = Self::decode_operation(request, bytes)?;
-            return Ok(Self { status: outcome.status, payload: Vec::new(), offset: 0, eof: true });
+            return Ok(Self {
+                status: outcome.status,
+                payload: Vec::new(),
+                offset: 0,
+                eof: true,
+            });
         }
         let message = read(bytes)?;
         let root = message

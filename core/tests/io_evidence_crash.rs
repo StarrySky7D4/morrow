@@ -63,19 +63,12 @@ fn planned() -> (u64, u64) {
 fn io_evidence_crash_child() {
     let path = std::env::var_os("MORROW_IO_EVIDENCE_DB").expect("child database");
     let mut store = Store::open_existing(Path::new(&path), Default::default()).unwrap();
-    match std::env::var("MORROW_IO_EVIDENCE_MODE")
-        .unwrap()
-        .as_str()
-    {
+    match std::env::var("MORROW_IO_EVIDENCE_MODE").unwrap().as_str() {
         "reserve" => {
-            store
-                .reserve_io_materials(&command(), || Ok(()))
-                .unwrap();
+            store.reserve_io_materials(&command(), || Ok(())).unwrap();
         }
         "store-request" => {
-            store
-                .reserve_io_materials(&command(), || Ok(()))
-                .unwrap();
+            store.reserve_io_materials(&command(), || Ok(())).unwrap();
             store
                 .store_io_material(SUBJECT, Kind::Request, &request_material(), || Ok(()))
                 .unwrap();
@@ -172,9 +165,7 @@ fn seed_prepared(path: &Path) {
 
 fn seed_request(path: &Path) {
     let mut store = Store::open_existing(path, Default::default()).unwrap();
-    store
-        .reserve_io_materials(&command(), || Ok(()))
-        .unwrap();
+    store.reserve_io_materials(&command(), || Ok(())).unwrap();
     store
         .store_io_material(SUBJECT, Kind::Request, &request_material(), || Ok(()))
         .unwrap();
@@ -211,7 +202,10 @@ fn material_reservation_commit_crashes_hold_or_release_exactly_once() {
             expected,
             "{point}"
         );
-        assert_eq!(count(&path, "io_material_reservations"), i64::from(committed) * 2);
+        assert_eq!(
+            count(&path, "io_material_reservations"),
+            i64::from(committed) * 2
+        );
         assert_eq!(count(&path, "io_evidence"), 0);
         assert_eq!(count(&path, "operations"), 1);
         assert_eq!(count(&path, "io_intents"), 1);

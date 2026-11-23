@@ -4,7 +4,9 @@
 use morrow_core::{
     Error,
     content::CardRecord,
-    io_intent::{Command as IntentCommand, MAX_CONTAINER_BYTES, ObservationSource, Record, Recovery},
+    io_intent::{
+        Command as IntentCommand, MAX_CONTAINER_BYTES, ObservationSource, Record, Recovery,
+    },
     plugin_package::io,
     store::Store,
 };

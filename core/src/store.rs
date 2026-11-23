@@ -9,29 +9,33 @@ use crate::{
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
-#[cfg(target_os = "linux")]
-mod linux_protected;
 mod binding;
 #[cfg(not(target_arch = "wasm32"))]
 mod changes_metadata;
+#[cfg(target_os = "linux")]
+mod linux_protected;
 #[cfg(not(target_arch = "wasm32"))]
-pub use changes_metadata::{ChangesBatch, ChangesBudget, ChangesStart, ChangesStoreBinding, ChangesWindow};
+pub use changes_metadata::{
+    ChangesBatch, ChangesBudget, ChangesStart, ChangesStoreBinding, ChangesWindow,
+};
 mod agent_ledger;
 pub use agent_ledger::MAX_RECORDS as MAX_AGENT_LEDGER_RECORDS;
 pub use agent_ledger::{AgentLedgerMutation, MAX_MUTATIONS as MAX_AGENT_LEDGER_MUTATIONS};
 mod channel_journal;
-pub use channel_journal::{ChannelCheckpoint, ChannelAckReceipt, ChannelCommit, MAX_CHANNEL_RECEIPTS};
+pub use channel_journal::{
+    ChannelAckReceipt, ChannelCheckpoint, ChannelCommit, MAX_CHANNEL_RECEIPTS,
+};
 mod card_snapshot;
 pub use card_snapshot::{CardPage, CardReadSnapshot, Census, FrozenCard, ReadPoint};
-mod blobs;
 mod blob_stage;
 mod blob_upload_journal;
+mod blobs;
 #[cfg(not(target_arch = "wasm32"))]
 pub use blob_stage::BlobStageStoreBinding;
 mod evidence;
 mod evidence_chunks;
-mod io_intent;
 mod io_history;
+mod io_intent;
 mod open_verification;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
@@ -466,7 +470,9 @@ impl Store {
     /// Generic `open` is not a protected substitute or fallback.
     #[cfg(target_os = "linux")]
     pub fn open_private(_path: &Path, _budget: EventBudget, _create: bool) -> Result<Self> {
-        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+        Err(Error::Invalid(
+            "protected Linux SQLite admission unavailable",
+        ))
     }
     #[cfg(target_os = "linux")]
     pub fn open_private_audited(
@@ -475,18 +481,24 @@ impl Store {
         _create: bool,
         _trust: crate::audit::TrustedLog,
     ) -> Result<Self> {
-        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+        Err(Error::Invalid(
+            "protected Linux SQLite admission unavailable",
+        ))
     }
     #[cfg(target_os = "linux")]
     pub fn open_private_read_only_audited(
         _path: &Path,
         _trust: crate::audit::TrustedLog,
     ) -> Result<Self> {
-        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+        Err(Error::Invalid(
+            "protected Linux SQLite admission unavailable",
+        ))
     }
     #[cfg(target_os = "linux")]
     pub fn private_audit_binding_status(_path: &Path) -> Result<AuditBindingState> {
-        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+        Err(Error::Invalid(
+            "protected Linux SQLite admission unavailable",
+        ))
     }
     /// Pin this file-backed Store before resolving persisted service approvals.
     pub fn pin_service_authority(&mut self) -> Result<ServiceAuthorityLease> {
@@ -510,12 +522,14 @@ impl Store {
         self.service_authority_coordinator.pin_ledger_owner()
     }
     pub fn validate_agent_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
-        self.service_authority_coordinator.validate_ledger_owner(lease)
+        self.service_authority_coordinator
+            .validate_ledger_owner(lease)
     }
     /// Close every ledger owner issued in this original Store epoch. A fresh
     /// host must resolve a new owner; this never renews an existing lease.
     pub fn invalidate_agent_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
-        self.service_authority_coordinator.invalidate_ledger_owner(lease)
+        self.service_authority_coordinator
+            .invalidate_ledger_owner(lease)
     }
     pub fn service_authority_control(&self) -> ServiceAuthorityControl {
         self.service_authority_coordinator.control()

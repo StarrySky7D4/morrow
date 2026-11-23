@@ -307,7 +307,10 @@ fn receipt_survives_pending_seal_snapshot_and_pinned_readpoint() {
         .container()
         .to_vec();
     let snapshot = store.open_card_snapshot().unwrap();
-    assert_eq!(snapshot.readpoint().database_version, morrow_core::store::SCHEMA_VERSION as u32);
+    assert_eq!(
+        snapshot.readpoint().database_version,
+        morrow_core::store::SCHEMA_VERSION as u32
+    );
     assert_eq!(snapshot.readpoint().operation_sequence, pending[1].0 as u64);
     store.snapshot_to(&before, 16 * 1024 * 1024).unwrap();
     for source in [&path, &before] {

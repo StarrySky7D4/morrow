@@ -180,12 +180,19 @@ impl HostRuntime {
     }
     /// Restricts a separately approved metadata source to this original receiver.
     /// No content/metadata permission is issued; the probe is read-only.
-    pub fn changes_receiver_liveness(&self, connection: &Connection) -> Result<crate::lifecycle::ChangesReceiverLiveness> {
+    pub fn changes_receiver_liveness(
+        &self,
+        connection: &Connection,
+    ) -> Result<crate::lifecycle::ChangesReceiverLiveness> {
         self.policy.changes_receiver_liveness(connection.instance)
     }
     /// Restriction only; live upload approval must be issued independently by the original Manager.
-    pub fn blob_upload_receiver_liveness(&self, connection: &Connection) -> Result<crate::lifecycle::BlobUploadReceiverLiveness> {
-        self.policy.blob_upload_receiver_liveness(connection.instance)
+    pub fn blob_upload_receiver_liveness(
+        &self,
+        connection: &Connection,
+    ) -> Result<crate::lifecycle::BlobUploadReceiverLiveness> {
+        self.policy
+            .blob_upload_receiver_liveness(connection.instance)
     }
     /// Trusted status check; a foreign or retired connection cannot start new guest work.
     pub fn connection_phase(

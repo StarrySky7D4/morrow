@@ -478,7 +478,15 @@ impl Registry {
         }
         let revision = self.revision.checked_add(1).ok_or(Error::Limit)?;
         let state = proto::Registry {
-            schema_version: self.format_version.max(if next.values().any(|s| s.approved_fs_watch) { 4 } else if next.values().any(|s| s.approved_blob_upload) { 3 } else { 2 }),
+            schema_version: self.format_version.max(
+                if next.values().any(|s| s.approved_fs_watch) {
+                    4
+                } else if next.values().any(|s| s.approved_blob_upload) {
+                    3
+                } else {
+                    2
+                },
+            ),
             revision,
             dependency_locks: dependencies
                 .values()
@@ -626,11 +634,17 @@ impl Registry {
     }
     /// Exact immutable package and registry revision; removal remains possible if its file is damaged.
     pub fn validate_blob_upload_approval(
-        &self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+        &self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
     ) -> Result<()> {
         self.check_revision(revision)?;
         let selection = self.selections.get(id).ok_or(Error::NotFound)?;
-        if selection.digest != digest { return Err(Error::RevisionConflict); }
+        if selection.digest != digest {
+            return Err(Error::RevisionConflict);
+        }
         if approved && self.load(selection)?.blob_upload_declaration().is_none() {
             return Err(Error::Invalid("upload approval exceeds declaration"));
         }
@@ -638,20 +652,32 @@ impl Registry {
     }
     /// Independent namespace; never inferred from content, IO or a previous package version.
     pub fn approve_blob_upload(
-        &mut self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
     ) -> Result<()> {
         self.validate_blob_upload_approval(id, digest, approved, revision)?;
         let mut next = self.selections.clone();
-        next.get_mut(id).expect("existing selection").approved_blob_upload = approved;
+        next.get_mut(id)
+            .expect("existing selection")
+            .approved_blob_upload = approved;
         self.commit(next, self.dependencies.clone())
     }
     /// Validate exact code and revision before a manager revokes a live instance.
     pub fn validate_fs_watch_approval(
-        &self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+        &self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
     ) -> Result<()> {
         self.check_revision(revision)?;
         let selection = self.selections.get(id).ok_or(Error::NotFound)?;
-        if selection.digest != digest { return Err(Error::RevisionConflict); }
+        if selection.digest != digest {
+            return Err(Error::RevisionConflict);
+        }
         if approved && self.load(selection)?.fs_watch_declaration().is_none() {
             return Err(Error::Invalid("watch approval exceeds declaration"));
         }
@@ -659,11 +685,17 @@ impl Registry {
     }
     /// Independent approval, cleared on upgrade and never inferred from IO capabilities.
     pub fn approve_fs_watch(
-        &mut self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
     ) -> Result<()> {
         self.validate_fs_watch_approval(id, digest, approved, revision)?;
         let mut next = self.selections.clone();
-        next.get_mut(id).expect("existing selection").approved_fs_watch = approved;
+        next.get_mut(id)
+            .expect("existing selection")
+            .approved_fs_watch = approved;
         self.commit(next, self.dependencies.clone())
     }
     /// Preflight the active presentation slot without changing any selection.

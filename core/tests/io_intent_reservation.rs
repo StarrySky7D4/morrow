@@ -41,7 +41,9 @@ fn append(store: &mut Store, record: &Record) -> Record {
         .unwrap()
 }
 fn reserve(store: &mut Store, command: &Command) {
-    store.reserve_io_intent_followup(command, || Ok(())).unwrap();
+    store
+        .reserve_io_intent_followup(command, || Ok(()))
+        .unwrap();
 }
 fn latest(store: &Store, operation: &str) -> Record {
     store
@@ -191,7 +193,10 @@ fn reservation_counts_against_every_other_writer_until_terminal() {
         Err(Error::EventCapacity)
     ));
     // Pre-dispatch cancellation always fits: it releases the reservation first.
-    append(&mut store, &prepared.propose_cancel_before_dispatch().unwrap());
+    append(
+        &mut store,
+        &prepared.propose_cancel_before_dispatch().unwrap(),
+    );
     assert_eq!(store.io_intent_reservation_usage().unwrap(), (0, 0));
     store.integrity_check().unwrap();
 }
@@ -247,7 +252,10 @@ fn byte_reservation_blocks_other_bytes_and_survives_sealing() {
     );
     // Pre-dispatch cancellation releases the reservation and fits because the
     // reservation is removed before the cancel event is measured.
-    append(&mut store, &prepared.propose_cancel_before_dispatch().unwrap());
+    append(
+        &mut store,
+        &prepared.propose_cancel_before_dispatch().unwrap(),
+    );
     assert_eq!(store.io_intent_reservation_usage().unwrap(), (0, 0));
     store.integrity_check().unwrap();
 }
@@ -438,7 +446,10 @@ fn release_only_works_before_dispatch_and_cancel_terminates_cleanly() {
     let cancelled = candidate("release-2");
     append(&mut store, &cancelled);
     reserve(&mut store, cancelled.command());
-    append(&mut store, &cancelled.propose_cancel_before_dispatch().unwrap());
+    append(
+        &mut store,
+        &cancelled.propose_cancel_before_dispatch().unwrap(),
+    );
     assert_eq!(store.io_intent_reservation_usage().unwrap(), (0, 0));
     assert!(matches!(
         store.release_io_intent_followup("plugin.io-test", "release-2"),
@@ -501,7 +512,10 @@ fn snapshot_at_prepared_phase_restores_reservation_and_continues() {
         restored.io_intent_reservation_usage().unwrap(),
         (1, RESERVATION_BYTES)
     );
-    append(&mut restored, &prepared.propose_dispatch_boundary().unwrap());
+    append(
+        &mut restored,
+        &prepared.propose_dispatch_boundary().unwrap(),
+    );
     let unknown = latest(&restored, "snapshot");
     append(
         &mut restored,
@@ -531,7 +545,10 @@ fn version_fifteen_with_prepared_intent_migrates_and_then_reserves() {
     assert_eq!(version, morrow_core::store::SCHEMA_VERSION);
     equivalent_latest(&migrated, &prepared);
     reserve(&mut migrated, prepared.command());
-    append(&mut migrated, &prepared.propose_dispatch_boundary().unwrap());
+    append(
+        &mut migrated,
+        &prepared.propose_dispatch_boundary().unwrap(),
+    );
     let unknown = latest(&migrated, "legacy15");
     append(
         &mut migrated,
@@ -591,10 +608,7 @@ fn tampered_reservation_state_is_rejected_by_integrity() {
     drop(store);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute(
-            "UPDATE io_reservations SET subject='plugin.stranger'",
-            [],
-        )
+        .execute("UPDATE io_reservations SET subject='plugin.stranger'", [])
         .unwrap();
     assert!(Store::open_existing(&path, Default::default()).is_err());
 }
