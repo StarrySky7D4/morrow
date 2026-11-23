@@ -80,7 +80,7 @@ fn posix_publish(source: &File, leaf: &str) -> i32 {
     };
     // SAFETY: synchronous owned handle; valid aligned input and output for this
     // call; NULL root and single name mean source's own directory, no CWD path.
-    let result = unsafe {
+    unsafe {
         NtSetInformationFile(
             source.as_raw_handle(),
             &mut status,
@@ -88,8 +88,7 @@ fn posix_publish(source: &File, leaf: &str) -> i32 {
             size_of::<RenameInformation>() as u32,
             65,
         )
-    };
-    result
+    }
 }
 
 #[test]

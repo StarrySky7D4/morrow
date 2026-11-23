@@ -406,7 +406,6 @@ fn private_output_bound_revokes_actual_control_and_preserves_first_error_after_m
         );
         assert!(exit.report.is_none());
         assert_eq!(exit.repair, matches!(maintenance, Maintenance::Error));
-        assert!(exit.requires_cleanup());
         fixture.assert_maintenance_entry(Status::Revoked);
         fixture.assert_restored(&mut exit.owner, 1);
         fixture.assert_stopped(&mut exit.owner, stopped);
@@ -522,12 +521,11 @@ fn successful_executor_keeps_actual_controls_live_until_explicit_stop() {
     let mut exit = join(fixture.start(64, || 2));
     assert!(exit.error.is_empty());
     assert!(!exit.repair);
-    assert!(!exit.requires_cleanup());
     fixture.assert_maintenance_entry(Status::Ready);
-    assert_eq!(
-        exit.report.as_ref().unwrap().output.as_ref().unwrap().bytes,
-        OUTPUT
-    );
+    let report = exit.report.as_ref().unwrap();
+    assert_eq!(report.execution.outcome, Ok(0));
+    assert!(report.failure.is_none());
+    assert_eq!(report.output.as_ref().unwrap().bytes, OUTPUT);
     fixture.assert_restored(&mut exit.owner, 1);
     assert_eq!(
         query(&fixture.sibling, &mut exit.owner, &fixture.instance, 33),
@@ -557,8 +555,7 @@ fn actual_windows_executor_spawn_failure_returns_original_owner_without_running_
         64,
         usize::MAX,
     )
-    .err()
-    .expect("impossible native stack reservation must fail without creating a worker");
+    .expect_err("impossible native stack reservation must fail without creating a worker");
     assert!(failure.error.raw_os_error().is_some());
     assert_eq!(clock_calls.load(Ordering::SeqCst), 0);
     let mut owner = failure.owner;

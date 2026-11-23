@@ -89,7 +89,9 @@ impl OperationHistoryGrant {
     /// or inference of another operation's read authority.
     pub(crate) fn validate_binding(&self, binding: &IoBinding) -> io_binding::Result<()> {
         self.state.binding.validate_same_owner(binding)?;
-        self.state.binding.require_capability(IoCapability::HttpRequest)?;
+        self.state
+            .binding
+            .require_capability(IoCapability::HttpRequest)?;
         binding.require_capability(IoCapability::HttpRequest)?;
         Ok(())
     }
@@ -149,12 +151,21 @@ impl OperationHistoryGrant {
         self.check_at(now)?;
         let outcome = match observed {
             Ok(Some(outcome)) => outcome,
-            Ok(None) => OperationOutcome { status: Status::NotFound, http_status: 0 },
+            Ok(None) => OperationOutcome {
+                status: Status::NotFound,
+                http_status: 0,
+            },
             Err(morrow_core::Error::OperationConflict | morrow_core::Error::RevisionConflict) => {
-                OperationOutcome { status: Status::Conflict, http_status: 0 }
+                OperationOutcome {
+                    status: Status::Conflict,
+                    http_status: 0,
+                }
             }
             Err(morrow_core::Error::Integrity | morrow_core::Error::EvidenceUnavailable) => {
-                OperationOutcome { status: Status::EvidenceUnavailable, http_status: 0 }
+                OperationOutcome {
+                    status: Status::EvidenceUnavailable,
+                    http_status: 0,
+                }
             }
             Err(other) => return Err(io_execution::storage(other)),
         };
@@ -186,7 +197,8 @@ mod tests {
             let wasm = wat::parse_str(
                 r#"(module (memory (export "memory") 1)
                 (func (export "morrow_run") (result i32) i32.const 0))"#,
-            ).unwrap();
+            )
+            .unwrap();
             let mut manifest = Package::manifest_for_task(ID, "1.0.0", &wasm, vec![]);
             let mut declaration = manifest_io::declaration(
                 vec![IoCapability::FileRead, IoCapability::HttpRequest],
@@ -206,19 +218,41 @@ mod tests {
             let registry = Registry::open(&dir.path().join("registry"), catalog).unwrap();
             let mut manager = Manager::new(registry, Limits::default());
             manager.select(&package, manager.revision()).unwrap();
-            manager.approve_io(ID, package.digest(), approved.clone(), manager.revision()).unwrap();
-            manager.set_enabled(ID, package.digest(), true, manager.revision()).unwrap();
+            manager
+                .approve_io(ID, package.digest(), approved.clone(), manager.revision())
+                .unwrap();
+            manager
+                .set_enabled(ID, package.digest(), true, manager.revision())
+                .unwrap();
             let mut host = HostRuntime::new(
                 Store::open(&dir.path().join("synthetic.db"), EventBudget::default()).unwrap(),
-            ).unwrap();
+            )
+            .unwrap();
             let instance = manager.connect(ID, &mut host).unwrap();
-            let binding = manager.bind_io(
-                &host, &instance, package.digest(), manager.revision(), &approved, 40, 1,
-            ).unwrap();
-            Self { manager, host, instance, binding, _dir: dir }
+            let binding = manager
+                .bind_io(
+                    &host,
+                    &instance,
+                    package.digest(),
+                    manager.revision(),
+                    &approved,
+                    40,
+                    1,
+                )
+                .unwrap();
+            Self {
+                manager,
+                host,
+                instance,
+                binding,
+                _dir: dir,
+            }
         }
         fn http() -> Self {
-            Self::new(BTreeSet::from([IoCapability::FileRead, IoCapability::HttpRequest]))
+            Self::new(BTreeSet::from([
+                IoCapability::FileRead,
+                IoCapability::HttpRequest,
+            ]))
         }
         fn command(&self) -> Command {
             Command {
@@ -236,7 +270,12 @@ mod tests {
         }
         fn issue(&self, expected: Command) -> io_binding::Result<OperationHistoryGrant> {
             OperationHistoryGrant::issue(
-                &self.manager, &self.host, &self.instance, &self.binding, expected, 1,
+                &self.manager,
+                &self.host,
+                &self.instance,
+                &self.binding,
+                expected,
+                1,
             )
         }
     }
@@ -257,7 +296,10 @@ mod tests {
             assert_eq!(f.issue(expected).err(), Some(io_binding::Error::Denied));
         }
         let denied = Fixture::new(BTreeSet::from([IoCapability::FileRead]));
-        assert_eq!(denied.issue(denied.command()).err(), Some(io_binding::Error::Denied));
+        assert_eq!(
+            denied.issue(denied.command()).err(),
+            Some(io_binding::Error::Denied)
+        );
         assert_eq!(f.binding.usage(), Usage::default());
     }
     #[test]
@@ -277,31 +319,68 @@ mod tests {
     #[test]
     fn grant_and_clones_never_reserve_resources_or_refund_cumulative_bytes() {
         let f = Fixture::http();
-        let held = f.binding.admit(
-            &f.manager, &f.host, &f.instance, IoCapability::HttpRequest, 0, 3, 1,
-        ).unwrap();
+        let held = f
+            .binding
+            .admit(
+                &f.manager,
+                &f.host,
+                &f.instance,
+                IoCapability::HttpRequest,
+                0,
+                3,
+                1,
+            )
+            .unwrap();
         let grant = f.issue(f.command()).unwrap();
         let copy = grant.clone();
         assert_eq!(grant.state.expected.approval_sha256, [0xa5; 32]);
-        assert_eq!(f.binding.usage(), Usage { resources: 0, jobs: 1, bytes: 3 });
+        assert_eq!(
+            f.binding.usage(),
+            Usage {
+                resources: 0,
+                jobs: 1,
+                bytes: 3
+            }
+        );
         grant.revoke();
         assert_eq!(copy.check_at(2), Err(io_execution::Error::Denied));
         drop(grant);
         drop(copy);
         drop(held);
-        assert_eq!(f.binding.usage(), Usage { resources: 0, jobs: 0, bytes: 3 });
+        assert_eq!(
+            f.binding.usage(),
+            Usage {
+                resources: 0,
+                jobs: 0,
+                bytes: 3
+            }
+        );
     }
     #[test]
     fn binding_compatibility_rejects_foreign_owner_and_capability_subset_without_clock() {
         let f = Fixture::http();
         let foreign = Fixture::http();
         let grant = f.issue(f.command()).unwrap();
-        assert_eq!(grant.validate_binding(&foreign.binding), Err(io_binding::Error::Denied));
-        let read_only = f.manager.bind_io(
-            &f.host, &f.instance, f.instance.package().package().digest(),
-            f.manager.revision(), &BTreeSet::from([IoCapability::FileRead]), 40, 1,
-        ).unwrap();
-        assert_eq!(grant.validate_binding(&read_only), Err(io_binding::Error::Denied));
+        assert_eq!(
+            grant.validate_binding(&foreign.binding),
+            Err(io_binding::Error::Denied)
+        );
+        let read_only = f
+            .manager
+            .bind_io(
+                &f.host,
+                &f.instance,
+                f.instance.package().package().digest(),
+                f.manager.revision(),
+                &BTreeSet::from([IoCapability::FileRead]),
+                40,
+                1,
+            )
+            .unwrap();
+        assert_eq!(
+            grant.validate_binding(&read_only),
+            Err(io_binding::Error::Denied)
+        );
         grant.validate_binding(&f.binding).unwrap();
         grant.check_at(2).unwrap();
     }
@@ -310,12 +389,21 @@ mod tests {
         let mut f = Fixture::http();
         let grant = f.issue(f.command()).unwrap();
         let another = Request::query_operation(7, b"another-operation").unwrap();
-        assert_eq!(grant.read(&f.host, &f.instance, &another, 0), Err(io_execution::Error::Denied));
+        assert_eq!(
+            grant.read(&f.host, &f.instance, &another, 0),
+            Err(io_execution::Error::Denied)
+        );
         let close = Request::encode_cancel(8, &[0; 32]).unwrap();
-        assert_eq!(grant.read(&f.host, &f.instance, &close, 0), Err(io_execution::Error::Denied));
+        assert_eq!(
+            grant.read(&f.host, &f.instance, &close, 0),
+            Err(io_execution::Error::Denied)
+        );
         let other = f.manager.connect(ID, &mut f.host).unwrap();
         let original = Request::query_operation(9, b"original-operation").unwrap();
-        assert_eq!(grant.read(&f.host, &other, &original, 0), Err(io_execution::Error::Denied));
+        assert_eq!(
+            grant.read(&f.host, &other, &original, 0),
+            Err(io_execution::Error::Denied)
+        );
         grant.check_at(2).unwrap();
         assert_eq!(f.binding.usage(), Usage::default());
     }
@@ -328,7 +416,10 @@ mod tests {
         let reply = grant.read(&f.host, &f.instance, &request, 2).unwrap();
         assert_eq!(
             Response::decode_operation(&request, &reply).unwrap(),
-            OperationOutcome { status: Status::NotFound, http_status: 0 },
+            OperationOutcome {
+                status: Status::NotFound,
+                http_status: 0
+            },
         );
         assert_eq!(f.host.store_local().pending(0, 100).unwrap(), before);
         assert_eq!(f.binding.usage(), Usage::default());
@@ -338,8 +429,11 @@ mod tests {
         let f = Fixture::http();
         let failed = Arc::new(AtomicBool::new(false));
         let probe = failed.clone();
-        let grant = f.issue(f.command()).unwrap()
-            .with_live_guard(move || !probe.load(Ordering::Acquire)).unwrap();
+        let grant = f
+            .issue(f.command())
+            .unwrap()
+            .with_live_guard(move || !probe.load(Ordering::Acquire))
+            .unwrap();
         let copy = grant.clone();
         grant.check_at(2).unwrap();
         failed.store(true, Ordering::Release);
@@ -352,13 +446,32 @@ mod tests {
     fn live_guard_attachment_cannot_widen_a_shared_existing_or_revoked_grant() {
         let f = Fixture::http();
         let grant = f.issue(f.command()).unwrap();
-        assert_eq!(grant.clone().with_live_guard(|| true).err(), Some(io_binding::Error::Denied));
+        assert_eq!(
+            grant.clone().with_live_guard(|| true).err(),
+            Some(io_binding::Error::Denied)
+        );
         grant.check_at(1).unwrap();
-        let guarded = f.issue(f.command()).unwrap().with_live_guard(|| true).unwrap();
-        assert_eq!(guarded.with_live_guard(|| true).err(), Some(io_binding::Error::Denied));
+        let guarded = f
+            .issue(f.command())
+            .unwrap()
+            .with_live_guard(|| true)
+            .unwrap();
+        assert_eq!(
+            guarded.with_live_guard(|| true).err(),
+            Some(io_binding::Error::Denied)
+        );
         grant.revoke();
-        assert_eq!(grant.with_live_guard(|| true).err(), Some(io_binding::Error::Denied));
-        assert_eq!(f.issue(f.command()).unwrap().with_live_guard(|| false).err(), Some(io_binding::Error::Denied));
+        assert_eq!(
+            grant.with_live_guard(|| true).err(),
+            Some(io_binding::Error::Denied)
+        );
+        assert_eq!(
+            f.issue(f.command())
+                .unwrap()
+                .with_live_guard(|| false)
+                .err(),
+            Some(io_binding::Error::Denied)
+        );
     }
     #[test]
     fn expiration_and_disconnect_do_not_restore_historical_approval() {

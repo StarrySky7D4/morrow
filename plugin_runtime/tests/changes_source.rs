@@ -1272,7 +1272,8 @@ fn actual_registry_publication_failure_invalidates_old_approval_before_failed_wr
     std::fs::create_dir(&target).unwrap();
     let revision = f.manager.revision();
     assert!(matches!(
-        f.manager.set_enabled(ID, f.package.digest(), false, revision),
+        f.manager
+            .set_enabled(ID, f.package.digest(), false, revision),
         Err(morrow_plugin_runtime::manager::ManagerError::Core(
             morrow_core::Error::Invalid("registry file type")
         ))
@@ -1285,7 +1286,10 @@ fn actual_registry_publication_failure_invalidates_old_approval_before_failed_wr
     std::fs::rename(&saved, &target).unwrap();
     let restored = std::fs::read(&target).unwrap();
     assert_eq!(restored, original);
-    assert_eq!(<[u8; 32]>::from(sha2::Sha256::digest(&restored)), original_sha256);
+    assert_eq!(
+        <[u8; 32]>::from(sha2::Sha256::digest(&restored)),
+        original_sha256
+    );
     assert!(!saved.exists());
     assert!(
         f.issue(cards(), HistoryStart::Beginning, 10_000).is_err(),

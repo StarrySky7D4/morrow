@@ -154,6 +154,10 @@ struct Entry {
     stamp: Stamp,
     selected: SelectedTarget,
 }
+#[expect(
+    clippy::large_enum_variant,
+    reason = "Keep the bounded replacement transaction inline with its original resource owner."
+)]
 enum TargetFile {
     Direct { file: File, lease: IoResourceLease },
     Conditional(native_windows::replacement_owner::ReplacementOwner),

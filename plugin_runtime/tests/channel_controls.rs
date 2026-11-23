@@ -269,11 +269,11 @@ fn joined(broker: &ChannelBroker) {
     let deadline = Instant::now() + WAIT;
     loop {
         let _ = owner.try_reap();
-        if let Some(snapshot) = broker.try_snapshot() {
-            if snapshot.resource_reclaimed {
-                assert_eq!(snapshot.cleanup_proof, CleanupProof::Joined);
-                return;
-            }
+        if let Some(snapshot) = broker.try_snapshot()
+            && snapshot.resource_reclaimed
+        {
+            assert_eq!(snapshot.cleanup_proof, CleanupProof::Joined);
+            return;
         }
         assert!(
             Instant::now() < deadline,

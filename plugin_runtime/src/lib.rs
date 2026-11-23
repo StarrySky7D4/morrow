@@ -26,16 +26,16 @@ mod continuation;
 pub mod dependency;
 #[cfg(all(feature = "packages", windows))]
 pub mod directory_io;
-#[cfg(all(feature = "packages", windows))]
-pub mod fs_watch_binding;
-#[cfg(all(feature = "packages", windows))]
-pub mod fs_watch_worker;
 #[cfg(feature = "package-management")]
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod file_io;
 #[cfg(all(feature = "packages", windows))]
 pub mod file_target;
+#[cfg(all(feature = "packages", windows))]
+pub mod fs_watch_binding;
+#[cfg(all(feature = "packages", windows))]
+pub mod fs_watch_worker;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod http_io;
 #[cfg(feature = "package-management")]
@@ -239,12 +239,17 @@ impl Runner {
     #[cfg(feature = "package-execution")]
     fn new_fs_watch_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
         let runner = Self::new_task(bytes, limits)?;
-        let imports: std::collections::BTreeSet<_> = runner.module.imports()
-            .map(|import| (import.module().to_owned(), import.name().to_owned())).collect();
-        if imports != std::collections::BTreeSet::from([
-            ("morrow_task_v1".into(), "read_input".into()),
-            ("morrow_task_v1".into(), "complete".into()),
-        ]) {
+        let imports: std::collections::BTreeSet<_> = runner
+            .module
+            .imports()
+            .map(|import| (import.module().to_owned(), import.name().to_owned()))
+            .collect();
+        if imports
+            != std::collections::BTreeSet::from([
+                ("morrow_task_v1".into(), "read_input".into()),
+                ("morrow_task_v1".into(), "complete".into()),
+            ])
+        {
             return Err(Fault::UnsupportedAbi);
         }
         Ok(runner)

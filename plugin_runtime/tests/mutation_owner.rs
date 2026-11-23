@@ -56,13 +56,13 @@ mod mutation_guest_budget;
 #[cfg(feature = "fault-injection")]
 #[path = "support/mutation_guest_crash.rs"]
 mod mutation_guest_crash;
-#[cfg(feature = "fault-injection")]
-#[path = "support/mutation_replace_crash.rs"]
-mod mutation_replace_crash;
 #[path = "support/mutation_guest_delivery.rs"]
 mod mutation_guest_delivery;
 #[path = "support/mutation_guest_frame.rs"]
 mod mutation_guest_frame;
+#[cfg(feature = "fault-injection")]
+#[path = "support/mutation_replace_crash.rs"]
+mod mutation_replace_crash;
 #[path = "support/mutation_sdk_wasm.rs"]
 mod mutation_sdk_wasm;
 
@@ -89,12 +89,14 @@ fn guest() -> Vec<u8> {
     .unwrap()
 }
 
+type TestGate = (mpsc::Sender<()>, mpsc::Receiver<()>);
+
 struct Owner {
     host: HostRuntime,
     manager: Manager,
     identity: Arc<()>,
-    gate: Option<(mpsc::Sender<()>, mpsc::Receiver<()>)>,
-    managed_gate: Arc<Mutex<Option<(mpsc::Sender<()>, mpsc::Receiver<()>)>>>,
+    gate: Option<TestGate>,
+    managed_gate: Arc<Mutex<Option<TestGate>>>,
 }
 impl HostOwner for Owner {
     fn runtime(&self) -> &HostRuntime {
@@ -1200,11 +1202,7 @@ fn queued_replace_returns_original_effect_and_reconciles_without_replay() {
         assert_eq!(exit.disconnect, Ok(()));
         assert!(Arc::ptr_eq(&exit.owner.identity, &identity));
         assert_eq!(fs::read(&path).unwrap(), bytes);
-        exit.owner
-            .host
-            .store_local()
-            .integrity_check()
-            .unwrap();
+        exit.owner.host.store_local().integrity_check().unwrap();
     }
 }
 

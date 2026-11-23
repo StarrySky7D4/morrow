@@ -563,8 +563,8 @@ fn dispatch_guest<O: ManagedHostOwner>(
         && run.report.outcome.is_ok()
     {
         run.report.outcome = Err(match error {
-                DirectoryCommandError::Admission(BindingError::Expired) => crate::Fault::Deadline,
-                _ => crate::Fault::TaskProtocol,
+            DirectoryCommandError::Admission(BindingError::Expired) => crate::Fault::Deadline,
+            _ => crate::Fault::TaskProtocol,
         });
     }
     let completed = run.report.outcome == Ok(0)

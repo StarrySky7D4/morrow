@@ -84,11 +84,17 @@ impl Execution {
         if fuel == 0 || fuel > runner.limits.fuel || calls > runner.limits.host_calls {
             return Err(Fault::Limits);
         }
-        Self::start_bounded(runner, Some(input), cancel, Limits {
-            fuel,
-            memory_bytes: runner.limits.memory_bytes,
-            host_calls: calls,
-        }, true)
+        Self::start_bounded(
+            runner,
+            Some(input),
+            cancel,
+            Limits {
+                fuel,
+                memory_bytes: runner.limits.memory_bytes,
+                host_calls: calls,
+            },
+            true,
+        )
     }
 
     fn start_bounded(

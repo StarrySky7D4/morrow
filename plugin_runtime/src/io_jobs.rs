@@ -73,10 +73,10 @@ mod deferred;
 mod owner_commands;
 mod transport_task;
 pub use owner_commands::{
-    BlobCommandHandle, BlobCommandKind, BlobResponse, BlobUploadOwner,
-    CommandOwner, FileCommandError, FileCommandHandle, FileResponse, FileSession,
-    MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS, OwnerCommandError,
-    OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
+    BlobCommandHandle, BlobCommandKind, BlobResponse, BlobUploadOwner, CommandOwner,
+    FileCommandError, FileCommandHandle, FileResponse, FileSession, MAX_OWNER_COMMAND_INPUT,
+    MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS, OwnerCommandError, OwnerCommandHandle,
+    OwnerCommandPoll, ServiceRunRenewalHandle,
 };
 #[cfg(windows)]
 pub use owner_commands::{

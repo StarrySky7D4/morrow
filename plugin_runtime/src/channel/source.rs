@@ -33,7 +33,11 @@ impl GrantState {
         if crate::monotonic::Instant::now() >= self.deadline {
             return Err(Error::Expired);
         }
-        if resource.control.upgrade().is_none_or(|control| !control.active()) {
+        if resource
+            .control
+            .upgrade()
+            .is_none_or(|control| !control.active())
+        {
             return Err(Error::Denied);
         }
         if self.live.as_ref().is_some_and(|live| !live()) {
@@ -46,7 +50,11 @@ impl GrantState {
         if crate::monotonic::Instant::now() >= self.deadline {
             return Err(Error::Expired);
         }
-        if resource.control.upgrade().is_none_or(|control| !control.active()) {
+        if resource
+            .control
+            .upgrade()
+            .is_none_or(|control| !control.active())
+        {
             return Err(Error::Denied);
         }
         Ok(())
@@ -87,7 +95,18 @@ impl SourceGrant {
         expected: Command,
         now: u64,
     ) -> Result<Self> {
-        Self::issue_inner(manager, host, instance, broker, expected_revision, expected, now, SourceProfile::Sse, None, None)
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            broker,
+            expected_revision,
+            expected,
+            now,
+            SourceProfile::Sse,
+            None,
+            None,
+        )
     }
     /// Issue with an immutable restricting probe. This callback must not acquire
     /// channel/Store/clock locks or reenter grant/broker methods. A false probe
@@ -103,8 +122,18 @@ impl SourceGrant {
         now: u64,
         live: impl Fn() -> bool + Send + Sync + 'static,
     ) -> Result<Self> {
-        Self::issue_inner(manager, host, instance, broker, expected_revision, expected, now, SourceProfile::Sse,
-            None, Some(Arc::new(live)))
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            broker,
+            expected_revision,
+            expected,
+            now,
+            SourceProfile::Sse,
+            None,
+            Some(Arc::new(live)),
+        )
     }
     /// Restrict the source to one immutable absolute monotonic deadline. A later
     /// supplied instant is capped by the original channel deadline, never renewed.
@@ -121,8 +150,18 @@ impl SourceGrant {
         deadline: crate::monotonic::Instant,
         live: impl Fn() -> bool + Send + Sync + 'static,
     ) -> Result<Self> {
-        Self::issue_inner(manager, host, instance, broker, expected_revision, expected, now, SourceProfile::Sse,
-            Some(deadline), Some(Arc::new(live)))
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            broker,
+            expected_revision,
+            expected,
+            now,
+            SourceProfile::Sse,
+            Some(deadline),
+            Some(Arc::new(live)),
+        )
     }
     /// Explicit host approval for a durable duplex WebSocket source. The old
     /// factories remain HTTP/SSE-only; no guest IO permission is derived here.
@@ -139,8 +178,18 @@ impl SourceGrant {
         deadline: crate::monotonic::Instant,
         live: impl Fn() -> bool + Send + Sync + 'static,
     ) -> Result<Self> {
-        Self::issue_inner(manager, host, instance, broker, expected_revision, expected, now,
-            SourceProfile::WebSocket, Some(deadline), Some(Arc::new(live)))
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            broker,
+            expected_revision,
+            expected,
+            now,
+            SourceProfile::WebSocket,
+            Some(deadline),
+            Some(Arc::new(live)),
+        )
     }
     #[allow(clippy::too_many_arguments)]
     fn issue_inner(
@@ -162,9 +211,14 @@ impl SourceGrant {
         let package = instance.package().package();
         // Authenticate without sampling/updating the legitimate broker clock.
         broker.owner(manager, host, instance)?;
-        manager.validate_instance(host, instance).map_err(|_| Error::Denied)?;
-        let selection = manager.selection(&package.manifest().package_id).ok_or(Error::Denied)?;
-        if manager.revision() != expected_revision || !selection.enabled
+        manager
+            .validate_instance(host, instance)
+            .map_err(|_| Error::Denied)?;
+        let selection = manager
+            .selection(&package.manifest().package_id)
+            .ok_or(Error::Denied)?;
+        if manager.revision() != expected_revision
+            || !selection.enabled
             || selection.digest != package.digest()
             || expected.subject != package.manifest().package_id
             || expected.package_sha256 != package.digest()
@@ -173,7 +227,8 @@ impl SourceGrant {
         {
             return Err(Error::Denied);
         }
-        if expected.request_bytes == 0 || expected.request_bytes > io::MAX_FRAME_BYTES as u64
+        if expected.request_bytes == 0
+            || expected.request_bytes > io::MAX_FRAME_BYTES as u64
             || expected.response_limit == 0
         {
             return Err(Error::Limit);
@@ -189,13 +244,23 @@ impl SourceGrant {
         {
             return Err(Error::Denied);
         }
-        if broker.resource.source_guard.lock().map_err(|_| Error::Unknown)?.is_some() {
+        if broker
+            .resource
+            .source_guard
+            .lock()
+            .map_err(|_| Error::Unknown)?
+            .is_some()
+        {
             return Err(Error::Denied);
         }
         {
             let queue = broker.resource.queues.lock().map_err(|_| Error::Unknown)?;
-            if queue.producer_state != ProducerState::NoProducer || queue.cause.is_some()
-                || queue.eof || queue.frame.is_some() || queue.sent.is_some() || queue.next_sequence != 0
+            if queue.producer_state != ProducerState::NoProducer
+                || queue.cause.is_some()
+                || queue.eof
+                || queue.frame.is_some()
+                || queue.sent.is_some()
+                || queue.next_sequence != 0
                 || duplex && (queue.accepted_sequence != 0 || queue.observed_sequence != 0)
             {
                 return Err(Error::Closed);
@@ -223,14 +288,22 @@ impl SourceGrant {
         // factory can attach only before a producer or original frame exists.
         let mut queue = broker.resource.queues.lock().map_err(|_| Error::Unknown)?;
         broker.resource.check_locked(&mut queue)?;
-        if queue.producer_state != ProducerState::NoProducer || queue.cause.is_some()
-            || queue.eof || queue.frame.is_some() || queue.sent.is_some() || queue.next_sequence != 0
+        if queue.producer_state != ProducerState::NoProducer
+            || queue.cause.is_some()
+            || queue.eof
+            || queue.frame.is_some()
+            || queue.sent.is_some()
+            || queue.next_sequence != 0
             || duplex && (queue.accepted_sequence != 0 || queue.observed_sequence != 0)
         {
             return Err(Error::Closed);
         }
         state.check()?;
-        let mut installed = broker.resource.source_guard.lock().map_err(|_| Error::Unknown)?;
+        let mut installed = broker
+            .resource
+            .source_guard
+            .lock()
+            .map_err(|_| Error::Unknown)?;
         if installed.is_some() {
             return Err(Error::Denied);
         }
@@ -261,7 +334,9 @@ impl SourceGrant {
             return Err(Error::Denied);
         }
         broker.owner(manager, host, instance)?;
-        manager.validate_instance(host, instance).map_err(|_| Error::Denied)?;
+        manager
+            .validate_instance(host, instance)
+            .map_err(|_| Error::Denied)?;
         self.check()
     }
     /// Publish revocation before waiting for the queue. This does not stop the

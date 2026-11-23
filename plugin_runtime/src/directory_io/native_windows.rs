@@ -355,6 +355,8 @@ pub(super) fn protect_close_fixture(file: &File) -> std::io::Result<()> {
     if unsafe { GetHandleInformation(file.as_raw_handle(), &mut flags) } == 0 {
         return Err(std::io::Error::last_os_error());
     }
-    if flags & 2 != 2 { return Err(std::io::Error::other("native fixture protection absent")); }
+    if flags & 2 != 2 {
+        return Err(std::io::Error::other("native fixture protection absent"));
+    }
     Ok(())
 }

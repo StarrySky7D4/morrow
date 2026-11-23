@@ -20,10 +20,17 @@ use morrow_plugin_runtime::{
     manager::{ManagedInstance, Manager},
 };
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeSet, fs, path::PathBuf};
+use std::{
+    collections::BTreeSet,
+    fs,
+    path::PathBuf,
+    sync::{Mutex, MutexGuard},
+};
 
 const ID: &str = "org.example.conditional-replace";
 const SUBJECT: &str = "conditional.replace-test";
+static NATIVE_REPLACE_TESTS: Mutex<()> = Mutex::new(());
+
 struct Fixture {
     dir: tempfile::TempDir,
     manager: Manager,
@@ -32,9 +39,15 @@ struct Fixture {
     binding: IoBinding,
     broker: TargetBroker,
     path: PathBuf,
+    _exclusive_test: MutexGuard<'static, ()>,
 }
 impl Fixture {
     fn new(resources: u32) -> Self {
+        // Keep separate test cases from contending for the process-wide native
+        // replacement gate. The broker still uses its normal nonblocking path.
+        let exclusive_test = NATIVE_REPLACE_TESTS
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         let dir = tempfile::tempdir().unwrap();
         let wasm = wat::parse_str(
             r#"(module
@@ -98,6 +111,7 @@ impl Fixture {
             binding,
             broker: TargetBroker::new([0x91; 32]).unwrap(),
             path,
+            _exclusive_test: exclusive_test,
         }
     }
     fn select(&mut self, bytes: &[u8]) -> Result<RequestRecord, Error> {

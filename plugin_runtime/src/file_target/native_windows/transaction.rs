@@ -479,10 +479,10 @@ impl<C> Transaction<C> {
         if !metadata.is_file() || metadata.file_attributes() & 0x400 != 0 {
             return Err(Failure::InvalidBounds);
         }
-        if let Some(selected) = selected {
-            if identity(locked)? != identity(selected)? {
-                return Err(Failure::SelectionMismatch);
-            }
+        if let Some(selected) = selected
+            && identity(locked)? != identity(selected)?
+        {
+            return Err(Failure::SelectionMismatch);
         }
         self.live()?;
         self.writer_paths.push(path.to_path_buf());
@@ -764,10 +764,10 @@ impl<C> Drop for Transaction<C> {
         let _ = self.rollback_once();
         let _ = self.close_transaction();
         let _ = self.close_ancestors();
-        if self.close_unknown || self.state == State::Unknown {
-            if let Some(charge) = self.charge.take() {
-                std::mem::forget(charge);
-            }
+        if (self.close_unknown || self.state == State::Unknown)
+            && let Some(charge) = self.charge.take()
+        {
+            std::mem::forget(charge);
         }
     }
 }

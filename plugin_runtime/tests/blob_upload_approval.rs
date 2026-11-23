@@ -54,7 +54,11 @@ fn manager_validates_upload_approval_before_revoking_an_unrelated_legacy_instanc
         .set_enabled(id, p.digest(), true, manager.revision())
         .unwrap();
     let instance = manager.connect(id, &mut host).unwrap();
-    assert!(manager.connect_blob_upload(id, &mut host, Limits::default()).is_err());
+    assert!(
+        manager
+            .connect_blob_upload(id, &mut host, Limits::default())
+            .is_err()
+    );
     let before = manager.persisted_snapshot().unwrap();
     let revision = manager.revision();
     assert!(

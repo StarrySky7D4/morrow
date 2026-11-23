@@ -18,9 +18,10 @@ use morrow_plugin_runtime::{
     directory_io::{CaptureLimits, SelectedDirectory},
     io_binding::{Error as AdmissionError, IoBinding},
     io_jobs::{
-        CommandOwner, DirectoryCommandError, DirectoryCommandHandle, DirectoryGuestHandle, DirectoryGuestResult, DirectoryResponse,
-        DirectorySession, HostOwner, IoWorker, JobError, JobLimits, ManagedHostOwner,
-        OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll, WorkerExit,
+        CommandOwner, DirectoryCommandError, DirectoryCommandHandle, DirectoryGuestHandle,
+        DirectoryGuestResult, DirectoryResponse, DirectorySession, HostOwner, IoWorker, JobError,
+        JobLimits, ManagedHostOwner, OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll,
+        WorkerExit,
     },
     manager::{ManagedInstance, Manager},
 };
@@ -160,7 +161,9 @@ impl Fixture {
         budget.max_duration_ms = 10_000;
         manifest.io_declaration = Some(declaration);
         manifest.required_features.push(io::FEATURE.into());
-        manifest.required_features.push(morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE.into());
+        manifest
+            .required_features
+            .push(morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE.into());
         let package = Package::build(manifest, &wasm).unwrap();
         let catalog = Catalog::open(&temp.path().join("catalog")).unwrap();
         catalog.install(&package).unwrap();
@@ -355,20 +358,27 @@ fn normal_guest() -> String {
     format!("{OPEN} i32.const 1024 local.get $reply_length call $complete drop")
 }
 fn capture(run: &Running) -> (DirectorySession, SelectedDirectory) {
-    let (session, mut reply) = run.worker.capture_directory_fresh(open_directory(&run.data), small_limits()).unwrap();
+    let (session, mut reply) = run
+        .worker
+        .capture_directory_fresh(open_directory(&run.data), small_limits())
+        .unwrap();
     let selected = match result(&mut reply).unwrap().unwrap() {
         DirectoryResponse::Captured(selected) => selected,
         _ => panic!("expected captured response kind"),
     };
     (session, selected)
 }
-fn guest_result(handle: &mut DirectoryGuestHandle)
-    -> Result<Result<DirectoryGuestResult, DirectoryCommandError>, OwnerCommandError> {
+fn guest_result(
+    handle: &mut DirectoryGuestHandle,
+) -> Result<Result<DirectoryGuestResult, DirectoryCommandError>, OwnerCommandError> {
     let until = Instant::now() + WAIT;
     loop {
         match handle.read() {
             Ok(None) => {
-                assert!(Instant::now() < until, "bounded new-profile guest completion wait");
+                assert!(
+                    Instant::now() < until,
+                    "bounded new-profile guest completion wait"
+                );
                 thread::sleep(Duration::from_millis(1));
             }
             Ok(Some(value)) => return Ok(value),
@@ -377,12 +387,19 @@ fn guest_result(handle: &mut DirectoryGuestHandle)
     }
 }
 fn guest_ready(handle: &DirectoryGuestHandle) {
-    wait_for(|| handle.poll() == OwnerCommandPoll::Ready, "new-profile reply Ready");
+    wait_for(
+        || handle.poll() == OwnerCommandPoll::Ready,
+        "new-profile reply Ready",
+    );
 }
 fn retired(run: &Running) {
-    wait_for(|| run.worker.directory_usage() == (0, 0)
-        && run.worker.directory_binding_usage().unwrap().resources == 0,
-        "original maintenance releases exact selection and original resource lease");
+    wait_for(
+        || {
+            run.worker.directory_usage() == (0, 0)
+                && run.worker.directory_binding_usage().unwrap().resources == 0
+        },
+        "original maintenance releases exact selection and original resource lease",
+    );
 }
 
 #[test]
@@ -394,29 +411,51 @@ fn guest_actual_open_wire_fees_charge_original_binding_and_unread_job_lifetime()
     assert_eq!(before.resources, 1);
     assert_eq!(before.jobs, 0);
     let shape = Request::new([1; 32], [2; 32], Action::Open).unwrap();
-    let response_shape = Response::new(&shape, Reply::Opened(Opened {
-        selection_epoch: selected.selection_epoch, page_sequence: 1, after_entry_id: None,
-        entries: selected.entries as u32, metadata_bytes: selected.metadata_bytes,
-    })).unwrap();
-    let mut handle = run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)).unwrap();
+    let response_shape = Response::new(
+        &shape,
+        Reply::Opened(Opened {
+            selection_epoch: selected.selection_epoch,
+            page_sequence: 1,
+            after_entry_id: None,
+            entries: selected.entries as u32,
+            metadata_bytes: selected.metadata_bytes,
+        }),
+    )
+    .unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     guest_ready(&handle);
     let unread = run.worker.directory_binding_usage().unwrap();
     assert_eq!(unread.jobs, 1);
     assert_eq!(unread.resources, before.resources);
     // Host task input, guest Open request, and its actual reply all charge the
     // original IoBinding. This profile's Open performs no new native query.
-    assert_eq!(unread.bytes - before.bytes,
-        2 * shape.wire().len() as u64 + response_shape.wire().len() as u64);
+    assert_eq!(
+        unread.bytes - before.bytes,
+        2 * shape.wire().len() as u64 + response_shape.wire().len() as u64
+    );
     let completed = guest_result(&mut handle).unwrap().unwrap();
     assert_eq!(completed.execution.outcome, Ok(0));
     assert!(!completed.unknown);
-    assert_eq!(completed.response.as_ref().unwrap().len(), response_shape.wire().len());
+    assert_eq!(
+        completed.response.as_ref().unwrap().len(),
+        response_shape.wire().len()
+    );
     assert_eq!(run.worker.directory_binding_usage().unwrap().jobs, 0);
-    assert_eq!(run.worker.directory_binding_usage().unwrap().bytes, unread.bytes);
+    assert_eq!(
+        run.worker.directory_binding_usage().unwrap().bytes,
+        unread.bytes
+    );
     {
         let hooks = run.hooks.lock().unwrap();
         let caller = thread::current().id();
-        assert!(hooks.iter().any(|(name, tid)| *name == "prepare" && *tid != caller));
+        assert!(
+            hooks
+                .iter()
+                .any(|(name, tid)| *name == "prepare" && *tid != caller)
+        );
         assert!(hooks.iter().all(|(_, tid)| *tid != caller));
     }
     run.finish(session);
@@ -428,13 +467,29 @@ fn undeclared_handler_rejection_preserves_this_selection_for_valid_call() {
     let mut run = Fixture::guest(&normal_guest()).start();
     let (session, _) = capture(&run);
     let before = run.worker.directory_binding_usage().unwrap();
-    let mut invalid = run.worker.submit_directory_guest_frame(session, "undeclared.handler".into(), Duration::from_secs(2)).unwrap();
-    assert!(matches!(guest_result(&mut invalid),
-        Ok(Err(DirectoryCommandError::Admission(AdmissionError::Denied)))));
+    let mut invalid = run
+        .worker
+        .submit_directory_guest_frame(session, "undeclared.handler".into(), Duration::from_secs(2))
+        .unwrap();
+    assert!(matches!(
+        guest_result(&mut invalid),
+        Ok(Err(DirectoryCommandError::Admission(
+            AdmissionError::Denied
+        )))
+    ));
     assert_eq!(run.worker.directory_usage().0, 1);
-    assert_eq!(run.worker.directory_binding_usage().unwrap().resources, before.resources);
-    let mut valid = run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)).unwrap();
-    assert_eq!(guest_result(&mut valid).unwrap().unwrap().execution.outcome, Ok(0));
+    assert_eq!(
+        run.worker.directory_binding_usage().unwrap().resources,
+        before.resources
+    );
+    let mut valid = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
+    assert_eq!(
+        guest_result(&mut valid).unwrap().unwrap().execution.outcome,
+        Ok(0)
+    );
     run.finish(session);
     run.reclaim(true);
 }
@@ -444,10 +499,20 @@ fn foreign_worker_and_oversized_handler_allocation_cannot_retire_other_selection
     let mut first = Fixture::guest(&normal_guest()).start();
     let mut second = Fixture::guest(&normal_guest()).start();
     let (session, _) = capture(&first);
-    assert!(matches!(second.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)), Err(OwnerCommandError::Closed)));
+    assert!(matches!(
+        second
+            .worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     let mut allocated = String::with_capacity(4096);
     allocated.push_str(HANDLER);
-    assert!(matches!(first.worker.submit_directory_guest_frame(session, allocated, Duration::from_secs(2)), Err(OwnerCommandError::Closed)));
+    assert!(matches!(
+        first
+            .worker
+            .submit_directory_guest_frame(session, allocated, Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     assert_eq!(first.worker.directory_usage().0, 1);
     first.finish(session);
     first.reclaim(true);
@@ -460,16 +525,26 @@ fn queued_cancel_retains_fees_and_retires_only_after_original_worker_maintenance
     let (session, _) = capture(&run);
     let blocker = run.block();
     let before = run.worker.directory_binding_usage().unwrap();
-    let mut handle = run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)).unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     assert!(!handle.is_started());
     handle.cancel();
     assert!(matches!(handle.read(), Err(OwnerCommandError::Cancelled)));
-    assert_eq!(run.worker.directory_binding_usage().unwrap().resources, before.resources);
+    assert_eq!(
+        run.worker.directory_binding_usage().unwrap().resources,
+        before.resources
+    );
     run.gate.release();
     drop(blocker);
     retired(&run);
     assert!(run.worker.directory_binding_usage().unwrap().bytes >= before.bytes);
-    assert!(matches!(run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)), Err(OwnerCommandError::Closed)));
+    assert!(matches!(
+        run.worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     run.reclaim(true);
 }
 
@@ -477,36 +552,53 @@ fn queued_cancel_retains_fees_and_retires_only_after_original_worker_maintenance
 fn cancelled_ready_reply_is_unknown_and_cannot_be_replayed_as_new_invocation() {
     let mut run = Fixture::guest(&normal_guest()).start();
     let (session, _) = capture(&run);
-    let mut handle = run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)).unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     guest_ready(&handle);
     let charged = run.worker.directory_binding_usage().unwrap().bytes;
     handle.cancel();
     assert!(matches!(handle.read(), Err(OwnerCommandError::Unknown)));
     retired(&run);
     assert_eq!(run.worker.directory_binding_usage().unwrap().bytes, charged);
-    assert!(matches!(run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)), Err(OwnerCommandError::Closed)));
+    assert!(matches!(
+        run.worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     run.reclaim(true);
 }
 
 #[test]
 fn repeated_original_open_nonce_fails_closed_and_never_leaves_resumable_selection() {
-    let duplicate = format!("{OPEN} {OPEN} i32.const 1024 local.get $reply_length call $complete drop");
+    let duplicate =
+        format!("{OPEN} {OPEN} i32.const 1024 local.get $reply_length call $complete drop");
     let mut run = Fixture::guest(&duplicate).start();
     let (session, _) = capture(&run);
     let before = run.worker.directory_binding_usage().unwrap().bytes;
-    let mut handle = run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)).unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     let failed = guest_result(&mut handle).unwrap().unwrap();
-    assert_eq!(failed.execution.outcome, Err(morrow_plugin_runtime::Fault::TaskProtocol));
+    assert_eq!(
+        failed.execution.outcome,
+        Err(morrow_plugin_runtime::Fault::TaskProtocol)
+    );
     assert!(failed.response.is_none());
     // No native page was generated; caller uncertainty and lifecycle still
     // force retirement, rather than granting another invocation replay.
     assert!(!failed.unknown);
     retired(&run);
     assert!(run.worker.directory_binding_usage().unwrap().bytes > before);
-    assert!(matches!(run.worker.submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)), Err(OwnerCommandError::Closed)));
+    assert!(matches!(
+        run.worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     run.reclaim(true);
 }
-
 
 /// Both host Open input and Opened reply are small default-allocator messages;
 /// this fixture only handles those single-segment canonical forms. Subsequent
@@ -522,27 +614,41 @@ fn copy_small_data_pointer(base: usize, ordinal: usize, destination: usize) -> S
 }
 fn first_page_guest(bad_complete: bool) -> String {
     use morrow_fs_directory_request_v1::{Action, Request};
-    let wire = Request::new([0x11;32], [0x22;32], Action::Next {
-        selection_epoch:[0x33;32], page_sequence:1, after_entry_id:None,
-    }).unwrap();
+    let wire = Request::new(
+        [0x11; 32],
+        [0x22; 32],
+        Action::Next {
+            selection_epoch: [0x33; 32],
+            page_sequence: 1,
+            after_entry_id: None,
+        },
+    )
+    .unwrap();
     let bytes = wire.wire();
     // Do not infer a native frame layout by guessed absolute payload offsets.
     // Find the controlled constructor data, then copy via actual Capnp pointers.
-    let locate = |marker:u8| {
-        let matches:Vec<_> = bytes.windows(32).enumerate()
-            .filter_map(|(offset, value)| (value == [marker;32]).then_some(offset)).collect();
-        assert_eq!(matches.len(),1, "unique synthetic marker");
+    let locate = |marker: u8| {
+        let matches: Vec<_> = bytes
+            .windows(32)
+            .enumerate()
+            .filter_map(|(offset, value)| (value == [marker; 32]).then_some(offset))
+            .collect();
+        assert_eq!(matches.len(), 1, "unique synthetic marker");
         matches[0]
     };
     let mut body = OPEN.to_owned();
     for (offset, byte) in bytes.iter().enumerate() {
-        body.push_str(&format!(" i32.const {} i32.const {} i32.store8",4096+offset,byte));
+        body.push_str(&format!(
+            " i32.const {} i32.const {} i32.store8",
+            4096 + offset,
+            byte
+        ));
     }
-    body.push_str(&copy_small_data_pointer(0,1,4096+locate(0x11)));
-    body.push_str(&copy_small_data_pointer(1024,5,4096+locate(0x33)));
+    body.push_str(&copy_small_data_pointer(0, 1, 4096 + locate(0x11)));
+    body.push_str(&copy_small_data_pointer(1024, 5, 4096 + locate(0x33)));
     // Deterministically distinct nonce: change the first synthetic byte only
     // when the actual initial nonce begins with that same byte.
-    body.push_str(&copy_small_data_pointer(0,2,6000));
+    body.push_str(&copy_small_data_pointer(0, 2, 6000));
     body.push_str(&format!(" i32.const 6000 i32.load8_u i32.const 34 i32.eq if i32.const {} i32.const 35 i32.store8 end",4096+locate(0x22)));
     body.push_str(&format!(" i32.const 4096 i32.const {} i32.const 16384 i32.const 65536 call $directory local.set $reply_length", bytes.len()));
     if bad_complete {
@@ -559,19 +665,31 @@ fn first_page_guest(bad_complete: bool) -> String {
 fn actual_terminal_next_uses_direct_worker_and_eof_still_requires_owner_join() {
     let mut run = Fixture::guest(&first_page_guest(false)).start();
     let (session, _) = capture(&run);
-    let mut handle = run.worker.submit_directory_guest_frame(session,HANDLER.into(),Duration::from_secs(2)).unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     guest_ready(&handle); // bounded completion would expose public self-queue deadlock
     let ready = run.worker.directory_binding_usage().unwrap();
-    assert_eq!(ready.resources,0); // empty synthetic directory's terminal page released native root
-    assert_eq!(ready.jobs,1); // unread invocation still owns its original job lease
+    assert_eq!(ready.resources, 0); // empty synthetic directory's terminal page released native root
+    assert_eq!(ready.jobs, 1); // unread invocation still owns its original job lease
     let completed = guest_result(&mut handle).unwrap().unwrap();
-    assert_eq!(completed.execution.outcome,Ok(0));
+    assert_eq!(completed.execution.outcome, Ok(0));
     assert!(!completed.unknown);
     assert!(completed.response.is_some());
-    assert!(matches!(run.worker.next_directory_page(session, morrow_plugin_runtime::directory_io::PageRequest {
-        reference:[1;32], selection_epoch:[2;32], page_sequence:1, after_entry_id:None,
-    }),Err(OwnerCommandError::Closed)));
-    assert_eq!(run.worker.directory_binding_usage().unwrap().jobs,0);
+    assert!(matches!(
+        run.worker.next_directory_page(
+            session,
+            morrow_plugin_runtime::directory_io::PageRequest {
+                reference: [1; 32],
+                selection_epoch: [2; 32],
+                page_sequence: 1,
+                after_entry_id: None,
+            }
+        ),
+        Err(OwnerCommandError::Closed)
+    ));
+    assert_eq!(run.worker.directory_binding_usage().unwrap().jobs, 0);
     // EOF proves no thread completion by itself. Actual original worker exit
     // and returned owner identity are separately observed here.
     run.reclaim(true);
@@ -582,35 +700,58 @@ fn page_generated_then_wrong_final_completion_is_unknown_without_cursor_replay()
     let mut run = Fixture::guest(&first_page_guest(true)).start();
     let (session, _) = capture(&run);
     let before = run.worker.directory_binding_usage().unwrap().bytes;
-    let mut handle = run.worker.submit_directory_guest_frame(session,HANDLER.into(),Duration::from_secs(2)).unwrap();
+    let mut handle = run
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     let unknown = guest_result(&mut handle).unwrap().unwrap();
-    assert_eq!(unknown.execution.outcome,Err(morrow_plugin_runtime::Fault::TaskProtocol));
+    assert_eq!(
+        unknown.execution.outcome,
+        Err(morrow_plugin_runtime::Fault::TaskProtocol)
+    );
     assert!(unknown.unknown);
     assert!(unknown.response.is_none());
     retired(&run);
-    assert!(run.worker.directory_binding_usage().unwrap().bytes>before);
-    assert!(matches!(run.worker.submit_directory_guest_frame(session,HANDLER.into(),Duration::from_secs(2)),Err(OwnerCommandError::Closed)));
+    assert!(run.worker.directory_binding_usage().unwrap().bytes > before);
+    assert!(matches!(
+        run.worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     run.reclaim(true);
 }
 
 #[test]
 fn unread_nonterminal_page_drop_retires_this_selection_and_preserves_other_worker() {
     let mut first = Fixture::guest(&first_page_guest(false)).start();
-    for number in 0..33 { fs::write(first.data.join(format!("entry-{number:02}")),b"synthetic").unwrap(); }
+    for number in 0..33 {
+        fs::write(first.data.join(format!("entry-{number:02}")), b"synthetic").unwrap();
+    }
     let mut other = Fixture::guest(&normal_guest()).start();
     let (session, selected) = capture(&first);
-    assert_eq!(selected.entries,33);
+    assert_eq!(selected.entries, 33);
     let (other_session, _) = capture(&other);
-    let handle = first.worker.submit_directory_guest_frame(session,HANDLER.into(),Duration::from_secs(2)).unwrap();
+    let handle = first
+        .worker
+        .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2))
+        .unwrap();
     guest_ready(&handle);
-    assert_eq!(first.worker.directory_binding_usage().unwrap().resources,1);
-    assert_eq!(first.worker.directory_binding_usage().unwrap().jobs,1);
+    assert_eq!(first.worker.directory_binding_usage().unwrap().resources, 1);
+    assert_eq!(first.worker.directory_binding_usage().unwrap().jobs, 1);
     let charged = first.worker.directory_binding_usage().unwrap().bytes;
     drop(handle);
     retired(&first);
-    assert_eq!(first.worker.directory_binding_usage().unwrap().bytes,charged);
-    assert_eq!(other.worker.directory_binding_usage().unwrap().resources,1);
-    assert!(matches!(first.worker.submit_directory_guest_frame(session,HANDLER.into(),Duration::from_secs(2)),Err(OwnerCommandError::Closed)));
+    assert_eq!(
+        first.worker.directory_binding_usage().unwrap().bytes,
+        charged
+    );
+    assert_eq!(other.worker.directory_binding_usage().unwrap().resources, 1);
+    assert!(matches!(
+        first
+            .worker
+            .submit_directory_guest_frame(session, HANDLER.into(), Duration::from_secs(2)),
+        Err(OwnerCommandError::Closed)
+    ));
     other.finish(other_session);
     first.reclaim(true);
     other.reclaim(true);

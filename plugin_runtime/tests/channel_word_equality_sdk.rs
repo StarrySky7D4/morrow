@@ -194,11 +194,11 @@ impl Fixture {
         let deadline = Instant::now() + WAIT;
         loop {
             let _ = cleanup.try_reap();
-            if let Some(snapshot) = self.broker.try_snapshot() {
-                if snapshot.resource_reclaimed {
-                    assert_eq!(snapshot.cleanup_proof, CleanupProof::Joined);
-                    return;
-                }
+            if let Some(snapshot) = self.broker.try_snapshot()
+                && snapshot.resource_reclaimed
+            {
+                assert_eq!(snapshot.cleanup_proof, CleanupProof::Joined);
+                return;
             }
             assert!(
                 Instant::now() < deadline,

@@ -19,16 +19,16 @@ use zeroize::Zeroizing;
 
 // Only the private OS query module may use unsafe. No guest memory reaches it.
 #[allow(unsafe_code)]
-mod native_windows;
-#[allow(unsafe_code)]
 pub(crate) mod native_picker;
+#[allow(unsafe_code)]
+mod native_windows;
 pub(crate) mod retirement;
 pub use retirement::DirectoryRetirementSnapshot;
 use retirement::{Ledger, TrackedFile};
 mod selected_path;
 mod selection;
-pub mod watch;
 pub(crate) mod selection_path;
+pub mod watch;
 pub use selected_path::DirectoryAbsolutePath;
 pub use selection_path::{DirectoryPathError, DirectoryRelativePath};
 

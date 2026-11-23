@@ -401,10 +401,13 @@ fn guest_replace_real_process_crash_matrix_preserves_original_history() {
     let expected_wasm_sha256: [u8; 32] = Sha256::digest(&expected_wasm).into();
     let bytes = body();
     let digest: [u8; 32] = Sha256::digest(&bytes).into();
+    // The child creates an additional fixture directory and a selected root.
+    // Start at the cache root so the whole native group fits the original budget.
+    let cache = Path::new(r"D:\build_cache");
     for point in CORE_POINTS.iter().chain(NATIVE_POINTS) {
         let root = tempfile::Builder::new()
             .prefix("morrow-replace-crash-2073-")
-            .tempdir()
+            .tempdir_in(cache)
             .unwrap()
             .keep();
         let began = Instant::now();

@@ -1,4 +1,5 @@
 //! Original managed conditional replacement: immutable claim, exact outcome, and no replay.
+use super::file_delete::serial_effects;
 use super::*;
 use morrow_core::{
     file_mutation::{Disposition, MutationRequest, RequestRecord, Target},
@@ -135,6 +136,7 @@ fn prepared(f: &Fixture, request: &RequestRecord, staged: bool) {
 
 #[test]
 fn real_selected_replace_records_exact_outcome_and_repeated_calls_cannot_dispatch_again() {
+    let _serial = serial_effects();
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(true);
     let before = binding.usage();
     let outcome = broker
@@ -196,6 +198,7 @@ fn real_selected_replace_records_exact_outcome_and_repeated_calls_cannot_dispatc
 
 #[test]
 fn missing_durable_content_keeps_prepared_and_charges_only_the_attempted_execution() {
+    let _serial = serial_effects();
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(false);
     let usage = binding.usage();
     assert!(matches!(
@@ -229,6 +232,7 @@ fn missing_durable_content_keeps_prepared_and_charges_only_the_attempted_executi
 
 #[test]
 fn foreign_owner_or_wrong_plan_is_rejected_before_dispatch_or_budget_charge() {
+    let _serial = serial_effects();
     let (mut f, instance, binding, mut broker, request, target, alias) = setup(true);
     let foreign = f.connect();
     let usage = binding.usage();

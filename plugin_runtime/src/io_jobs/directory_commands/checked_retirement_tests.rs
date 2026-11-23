@@ -39,7 +39,9 @@ fn closed(handle: &DirectoryCommandHandle, objects: usize) {
             close_calls: objects,
             confirmed_closed: objects,
             unknown: 0,
-            worker_bound: true, picker_started: false, picker_closed: false,
+            worker_bound: true,
+            picker_started: false,
+            picker_closed: false,
         }
     );
     assert!(handle.retirement_snapshot().all_closed());
@@ -258,7 +260,9 @@ fn synthetic_lost_close_result_never_reports_terminal_success_or_releases_capaci
                 close_calls: 1,
                 confirmed_closed: 0,
                 unknown: 1,
-                worker_bound: true, picker_started: false, picker_closed: false,
+                worker_bound: true,
+                picker_started: false,
+                picker_closed: false,
             }
         );
         assert!(!snapshot.all_closed());
@@ -309,7 +313,9 @@ fn synthetic_lost_partial_close_keeps_every_original_resource_lease() {
             close_calls: 2,
             confirmed_closed: 1,
             unknown: 1,
-            worker_bound: true, picker_started: false, picker_closed: false,
+            worker_bound: true,
+            picker_started: false,
+            picker_closed: false,
         }
     );
     assert_eq!(run.worker.directory_binding_usage().unwrap().resources, 3);

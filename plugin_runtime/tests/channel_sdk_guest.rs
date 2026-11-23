@@ -328,7 +328,7 @@ fn compiled_guests_keep_old_runner_rejection_and_unknown_without_source_replay()
         assert_eq!(unbound.report.outcome, Err(Fault::UnsupportedAbi));
         assert_eq!(unbound.report.host_calls, 0);
         let mut f = Fixture::new(&package, Kind::ByteStream, false);
-        f.broker.spawn(|producer| drop(producer)).unwrap();
+        f.broker.spawn(drop).unwrap();
         assert_eq!(f.join(), Status::Unknown);
         let input = f.input(0);
         let summary = f.summary(&input);

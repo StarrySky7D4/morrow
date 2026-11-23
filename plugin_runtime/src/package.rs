@@ -175,7 +175,11 @@ impl PreparedPackage {
                 execution.finish()
             }
             Err(fault) => crate::TaskRun {
-                report: Report { outcome: Err(fault), host_calls: 0, fuel_remaining: fuel },
+                report: Report {
+                    outcome: Err(fault),
+                    host_calls: 0,
+                    fuel_remaining: fuel,
+                },
                 completion: None,
             },
         }

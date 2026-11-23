@@ -10,13 +10,13 @@ use super::{
 use std::sync::{Arc, Mutex, Weak, mpsc};
 use zeroize::Zeroizing;
 
+#[path = "blob_commands.rs"]
+mod blobs;
 #[cfg(windows)]
 #[path = "directory_commands.rs"]
 pub(super) mod directories;
 #[path = "file_commands.rs"]
 mod files;
-#[path = "blob_commands.rs"]
-mod blobs;
 pub use blobs::{BlobCommandHandle, BlobCommandKind, BlobResponse, BlobUploadOwner};
 #[cfg(windows)]
 pub use directories::{
@@ -418,7 +418,10 @@ impl<O: HostOwner> Command<O> {
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
             CommandKind::Blob { request, dispatch } => Some(Reply::Blob(Box::new(dispatch(
-                owner, control, &self.ticket, *request,
+                owner,
+                control,
+                &self.ticket,
+                *request,
             )))),
             #[cfg(windows)]
             CommandKind::DirectoryGuest { request, dispatch } => {
@@ -599,7 +602,9 @@ impl<O: HostOwner> IoWorker<O> {
                 ticket: Some(ticket),
                 started: false,
             }),
-            Err(mpsc::TrySendError::Full(command)) => Err((OwnerCommandError::Busy, Box::new(command.kind))),
+            Err(mpsc::TrySendError::Full(command)) => {
+                Err((OwnerCommandError::Busy, Box::new(command.kind)))
+            }
             Err(mpsc::TrySendError::Disconnected(command)) => {
                 Err((OwnerCommandError::Closed, Box::new(command.kind)))
             }
