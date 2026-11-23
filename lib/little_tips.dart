@@ -132,16 +132,36 @@ class FooterOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
+    final customFooter = p.surfaces.resolveComponent('footer')?.enabled == true;
     final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
       child: MusicFooter(music: music),
     );
-    return Padding(
-      key: const ValueKey('footer-dock'),
-      padding: const EdgeInsets.only(top: 8),
-      child: p.surfaces.resolveComponent('footer')?.enabled == true
-          ? Glass(componentId: 'footer', p: p, radius: 14, child: content)
-          : content,
+    return Center(
+      child: Padding(
+        key: const ValueKey('footer-dock'),
+        padding: const EdgeInsets.only(top: 8),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 540),
+          child: customFooter
+              ? Glass(componentId: 'footer', p: p, radius: 999, child: content)
+              : DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: p.surface.withValues(alpha: p.dark ? 0.62 : 0.78),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: p.line),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: p.dark ? 0.22 : 0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: content,
+                ),
+        ),
+      ),
     );
   }
 }
@@ -156,12 +176,29 @@ class MusicFooter extends StatelessWidget {
       listenable: music,
       builder: (context, _) => Row(
         children: [
-          Icon(
-            music.playing ? Icons.music_note_rounded : Icons.circle,
-            size: music.playing ? 15 : 6,
-            color: p.accent,
-          ),
-          const SizedBox(width: 8),
+          if (music.current != null)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+              padding: EdgeInsets.zero,
+              onPressed: music.toggle,
+              icon: Icon(
+                music.playing
+                    ? Icons.pause_circle_outline_rounded
+                    : Icons.play_circle_outline_rounded,
+                size: 18,
+                color: p.accent,
+              ),
+            )
+          else ...[
+            Icon(
+              music.playing ? Icons.music_note_rounded : Icons.circle,
+              size: music.playing ? 15 : 6,
+              color: p.accent,
+            ),
+            const SizedBox(width: 8),
+          ],
+          const SizedBox(width: 4),
           Expanded(
             child: RotatingTip(
               key: const ValueKey('footer-tips'),
@@ -178,7 +215,7 @@ class MusicFooter extends StatelessWidget {
                           context,
                         ).visualNoLyricsTitle(music.current?.title ?? ''))
                   : null,
-              style: TextStyle(color: p.muted, fontSize: 11, height: 1.7),
+              style: TextStyle(color: p.muted, fontSize: 11, height: 1.6),
             ),
           ),
           IconButton(

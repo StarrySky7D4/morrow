@@ -31,7 +31,7 @@ void main() {
   float depth = u_depth * (1.0 + 0.24 * u_press + 0.10 * lightFacing);
   vec2 bend = normal * edge * edge * depth / u_size;
   vec2 sampleUV = clamp(uv - bend, vec2(0.001), vec2(0.999));
-#ifdef IMPELLER_TARGET_OPENGLES
+#if defined(IMPELLER_TARGET_OPENGLES) && !defined(IMPELLER_OPENGLES_UNFLIPPED_DEPRECATED)
   sampleUV.y = 1.0 - sampleUV.y;
 #endif
   frag_color = texture(u_backdrop, sampleUV);

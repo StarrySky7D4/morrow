@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'stable_masonry_grid.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'ui/workbench_motion.dart';
 
 /// One viewport, bounded prefetch, stable placement identities. Only the current
 /// page is mounted; five scroll offsets are retained, never card resources.
@@ -14,6 +15,8 @@ class WorkspaceViewport extends StatefulWidget {
     required this.footer,
     required this.itemBuilder,
     required this.twoColumnWidth,
+    this.threeColumnWidth = 1080,
+    this.compactList = false,
     this.status,
     this.cardRegionKey,
     this.queryPending = false,
@@ -28,6 +31,8 @@ class WorkspaceViewport extends StatefulWidget {
   final Object? session;
   final IndexedWidgetBuilder itemBuilder;
   final double twoColumnWidth;
+  final double threeColumnWidth;
+  final bool compactList;
 
   @override
   State<WorkspaceViewport> createState() => _WorkspaceViewportState();
@@ -45,7 +50,7 @@ class _WorkspaceViewportState extends State<WorkspaceViewport>
   IndexedWidgetBuilder? _retainedBuilder;
   late final _reveal = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 180),
+    duration: const Duration(milliseconds: 240),
     value: 1,
   );
 
@@ -118,53 +123,73 @@ class _WorkspaceViewportState extends State<WorkspaceViewport>
         for (var i = 0; i < ids.length; i++) ValueKey((widget.page, ids[i])): i,
       };
     }
+    final curvedReveal = CurvedAnimation(
+      parent: _reveal,
+      curve: WorkbenchCurves.springOut,
+    );
     return FadeTransition(
-      opacity: _reveal,
-      child: KeyedSubtree(
-        key: ValueKey('page-${widget.page}'),
-        child: CustomScrollView(
-          controller: _scroll,
-          key: PageStorageKey('workspace-scroll-${widget.page}'),
-          scrollCacheExtent: const ScrollCacheExtent.pixels(300),
-          slivers: [
-            SliverToBoxAdapter(child: widget.header),
-            SliverToBoxAdapter(child: widget.status ?? const SizedBox.shrink()),
-            ExcludeFocus(
-              key: ValueKey(widget.session),
-              excluding: widget.status != null,
-              child: SliverVisibility(
-                visible: widget.status == null,
-                maintainState: true,
-                sliver: SliverLayoutBuilder(
-                  key: widget.cardRegionKey,
-                  builder: (context, constraints) => StableMasonryGrid(
-                    ids: ids,
-                    gridDelegate:
-                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:
-                              constraints.crossAxisExtent >=
-                                  widget.twoColumnWidth
-                              ? 2
-                              : 1,
+      opacity: curvedReveal,
+      alwaysIncludeSemantics: true,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.018),
+          end: Offset.zero,
+        ).animate(curvedReveal),
+        child: KeyedSubtree(
+          key: ValueKey('page-${widget.page}'),
+          child: CustomScrollView(
+            controller: _scroll,
+            key: PageStorageKey('workspace-scroll-${widget.page}'),
+            scrollCacheExtent: const ScrollCacheExtent.pixels(300),
+            slivers: [
+              SliverToBoxAdapter(child: widget.header),
+              SliverToBoxAdapter(
+                child: widget.status ?? const SizedBox.shrink(),
+              ),
+              ExcludeFocus(
+                key: ValueKey(widget.session),
+                excluding: widget.status != null,
+                child: SliverVisibility(
+                  visible: widget.status == null,
+                  maintainState: true,
+                  sliver: SliverLayoutBuilder(
+                    key: widget.cardRegionKey,
+                    builder: (context, constraints) {
+                      final extent = constraints.crossAxisExtent;
+                      final crossAxisCount = widget.compactList
+                          ? 1
+                          : (widget.twoColumnWidth.isFinite &&
+                                    extent >= widget.threeColumnWidth)
+                          ? 3
+                          : extent >= widget.twoColumnWidth
+                          ? 2
+                          : 1;
+                      return StableMasonryGrid(
+                        ids: ids,
+                        gridDelegate:
+                            SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                            ),
+                        mainAxisSpacing: widget.compactList ? 8 : 14,
+                        crossAxisSpacing: 14,
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => KeyedSubtree(
+                            key: ValueKey((widget.page, ids[index])),
+                            child: itemBuilder!(context, index),
+                          ),
+                          childCount: itemBuilder == null ? 0 : ids.length,
+                          findChildIndexCallback: (key) => _indexes[key],
+                          // Cards have no inline editor; drafts live in editor sessions.
+                          addAutomaticKeepAlives: false,
                         ),
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 14,
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => KeyedSubtree(
-                        key: ValueKey((widget.page, ids[index])),
-                        child: itemBuilder!(context, index),
-                      ),
-                      childCount: itemBuilder == null ? 0 : ids.length,
-                      findChildIndexCallback: (key) => _indexes[key],
-                      // Cards have no inline editor; drafts live in editor sessions.
-                      addAutomaticKeepAlives: false,
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(child: widget.footer),
-          ],
+              SliverToBoxAdapter(child: widget.footer),
+            ],
+          ),
         ),
       ),
     );

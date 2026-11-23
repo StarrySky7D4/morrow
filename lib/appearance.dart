@@ -876,26 +876,27 @@ class SoftSwap extends StatelessWidget {
   const SoftSwap({super.key, required this.child});
   final Widget child;
   @override
-  Widget build(BuildContext context) => AnimatedSwitcher(
-    duration: motionDuration(context, 220),
-    switchInCurve: Curves.easeOutCubic,
-    layoutBuilder: (current, previous) => Stack(
-      alignment: Alignment.center,
-      children: [
-        ...previous.map(
-          (child) => IgnorePointer(child: ExcludeSemantics(child: child)),
-        ),
-        ?current,
-      ],
-    ),
-    transitionBuilder: (child, animation) => FadeTransition(
-      opacity: animation,
-      child: ScaleTransition(
-        scale: Tween<double>(begin: .9, end: 1).animate(animation),
-        child: child,
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: AnimatedSwitcher(
+      duration: motionDuration(context, 220),
+      switchInCurve: Curves.easeOutCubic,
+      layoutBuilder: (current, previous) => Stack(
+        alignment: Alignment.center,
+        children: [
+          ...previous.map((child) => IgnorePointer(child: child)),
+          ?current,
+        ],
       ),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        alwaysIncludeSemantics: true,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: .9, end: 1).animate(animation),
+          child: child,
+        ),
+      ),
+      child: child,
     ),
-    child: child,
   );
 }
 

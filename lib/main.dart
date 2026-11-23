@@ -83,6 +83,14 @@ import 'media/texture_source.dart';
 import 'media/texture_repository.dart';
 import 'media/texture_backdrop.dart';
 import 'media/texture_link_dialog.dart';
+import 'ui/workbench_motion.dart';
+import 'ui/workbench_strings.dart';
+import 'ui/workbench_rail.dart';
+import 'ui/command_bar.dart';
+import 'ui/command_palette.dart';
+import 'ui/inspector_drawer.dart';
+import 'ui/workspace_header.dart';
+import 'ui/idea_card.dart';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -996,6 +1004,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   final settingsNavigator = GlobalKey<NavigatorState>();
   bool sidebarExpanded = true;
   bool showCustomTone = false;
+  InspectorTab inspectorTab = InspectorTab.studio;
+  bool focusMode = false;
+  bool compactCards = false;
   late final MusicController music;
   bool backgroundSound = false;
   bool backgroundAudible = false;
@@ -1187,6 +1198,12 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     });
     sidebarExpanded = widget.restored?['sidebarExpanded'] as bool? ?? true;
     showAppearance = widget.restored?['appearanceExpanded'] as bool? ?? true;
+    compactCards = widget.restored?['compactCards'] as bool? ?? false;
+    final savedTab = widget.restored?['inspectorTab'] as String?;
+    inspectorTab = InspectorTab.values.firstWhere(
+      (t) => t.name == savedTab,
+      orElse: () => InspectorTab.studio,
+    );
     final savedMusic = widget.restored?['music'] as Map<String, dynamic>?;
     music = MusicController(
       plugin: widget.workbench?.studio,
@@ -1238,19 +1255,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     onBack: closeCompactSettings,
     backKey: const ValueKey('compact-settings-back'),
     backTooltip: l.mainBackToWorkbench,
-    child: SingleChildScrollView(
-      key: const PageStorageKey('compact-settings-scroll'),
-      padding: const EdgeInsets.only(bottom: 20),
-      child: SettingsSections(
-        children: [
-          appearance(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [scratchpad(), const SizedBox(height: 20), musicPanel()],
-          ),
-        ],
-      ),
-    ),
+    child: _buildInspector(compact: true),
   );
 
   Map<String, dynamic> snapshot() => {
@@ -1264,6 +1269,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     'music': music.toJson(),
     'sidebarExpanded': sidebarExpanded,
     'appearanceExpanded': showAppearance,
+    'compactCards': compactCards,
+    'inspectorTab': inspectorTab.name,
   };
   void persist() {
     _localViews.clear();
@@ -1721,19 +1728,208 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     return result;
   }
 
+  int get _inboxCount => ideas.where((e) => e.category == '灵感').length;
+  int get _activeProjectsCount =>
+      ideas.where((i) => i.category == '进行中' && projectStage(i) != '已完成').length;
+  int get _experimentsCount => ideas.where((e) => e.category == '实验').length;
+  int get _favoritesCount => ideas.where((e) => e.favorite).length;
+  Map<WorkbenchPage, int> get _pageCounts => {
+    WorkbenchPage.overview: ideas.length,
+    WorkbenchPage.inbox: _inboxCount,
+    WorkbenchPage.projects: ideas.where((e) => e.category == '进行中').length,
+    WorkbenchPage.laboratory: _experimentsCount,
+    WorkbenchPage.favorites: _favoritesCount,
+  };
+  int get _remainingDailyCount =>
+      dailyTipItems.where((item) => !completed.contains(item.id)).length;
+  bool get _hasPluginSettings =>
+      widget.workbench is WorkbenchPluginControl ||
+      widget.workbench is ExternalPluginControl ||
+      widget.workbench is WorkbenchProtectionBackup;
+
+  void _toggleFocusMode() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => focusMode = !focusMode);
+  }
+
+  void _toggleCompactCards() {
+    setState(() => compactCards = !compactCards);
+    persist();
+  }
+
+  void _openCommandPalette() {
+    final s = WorkbenchStrings.of(context);
+    final desktop = MediaQuery.sizeOf(context).width >= 1050;
+    showCommandPalette(
+      context: context,
+      palette: p,
+      pageCounts: _pageCounts,
+      onSelectPage: selectSection,
+      onApplyWorkspaceFilter: (text) {
+        search.text = text;
+        search.selection = TextSelection.collapsed(offset: text.length);
+        setState(() {
+          query = text;
+          pluginProjection();
+        });
+      },
+      cards: [
+        for (final idea in ideas)
+          CommandPaletteCardItem(
+            id: idea.id,
+            title: displayTitle(idea),
+            subtitle: displayDescription(idea),
+            category: categoryLabel(idea.category),
+            icon: idea.icon,
+            color: idea.color,
+            onOpen: () => openIdea(idea),
+          ),
+      ],
+      actions: [
+        CommandPaletteActionItem(
+          id: 'new-idea',
+          label: s.actionNewIdea,
+          shortcut: 'Ctrl+N',
+          icon: Icons.add_rounded,
+          onRun: createIdea,
+        ),
+        CommandPaletteActionItem(
+          id: 'focus-mode',
+          label: focusMode ? s.actionFocusOff : s.actionFocusOn,
+          shortcut: 'Ctrl+Shift+F',
+          icon: focusMode
+              ? Icons.fullscreen_exit_rounded
+              : Icons.fullscreen_rounded,
+          onRun: _toggleFocusMode,
+        ),
+        CommandPaletteActionItem(
+          id: 'toggle-sidebar',
+          label: sidebarExpanded
+              ? s.actionCollapseSidebar
+              : s.actionExpandSidebar,
+          icon: Icons.view_sidebar_outlined,
+          onRun: () {
+            setState(() => sidebarExpanded = !sidebarExpanded);
+            persist();
+          },
+        ),
+        CommandPaletteActionItem(
+          id: 'toggle-inspector',
+          label: desktop && showAppearance
+              ? s.actionHideInspector
+              : s.actionShowInspector,
+          icon: Icons.tune_rounded,
+          onRun: () {
+            if (desktop) {
+              setState(() => showAppearance = !showAppearance);
+              persist();
+            } else {
+              FocusManager.instance.primaryFocus?.unfocus();
+              setState(() => compactSettingsOpen = true);
+            }
+          },
+        ),
+        CommandPaletteActionItem(
+          id: 'toggle-density',
+          label: compactCards ? s.actionSwitchGrid : s.actionSwitchList,
+          icon: compactCards
+              ? Icons.grid_view_rounded
+              : Icons.view_agenda_outlined,
+          onRun: _toggleCompactCards,
+        ),
+        CommandPaletteActionItem(
+          id: 'toggle-theme',
+          label: p.dark ? s.actionLightTheme : s.actionDarkTheme,
+          icon: p.dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+          onRun: () =>
+              widget.onTheme(p.dark ? StudioTheme.white : StudioTheme.dark),
+        ),
+        if (!p.overridesMaterials)
+          CommandPaletteActionItem(
+            id: 'cycle-glass',
+            label: s.actionCycleGlass,
+            icon: Icons.blur_on_rounded,
+            onRun: () {
+              const modes = GlassMode.values;
+              widget.onMode(modes[(modes.indexOf(p.mode) + 1) % modes.length]);
+            },
+          ),
+        if (!p.overridesMaterials)
+          CommandPaletteActionItem(
+            id: 'component-materials',
+            label: s.actionComponentStyle,
+            icon: Icons.palette_outlined,
+            onRun: () => settingsNavigator.currentState!.push(
+              CanvasSettingsRoute<void>(
+                builder: (_) => ComponentMaterialListPage(
+                  palette: p,
+                  entries: componentEntries,
+                  onChanged: (value) {
+                    if (!mounted) return;
+                    updateSurfaces(value);
+                    widget.onAppearanceCommit();
+                  },
+                ),
+              ),
+            ),
+          ),
+        if (_hasPluginSettings)
+          CommandPaletteActionItem(
+            id: 'plugin-settings',
+            label: s.actionPluginSettings,
+            icon: Icons.extension_outlined,
+            onRun: openPluginSettings,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildInspector({required bool compact}) => WorkbenchInspector(
+    palette: p,
+    tab: inspectorTab,
+    onTabChanged: (tab) {
+      setState(() => inspectorTab = tab);
+      persist();
+    },
+    music: music,
+    backgroundAudible: backgroundAudible,
+    remainingDailyTasks: _remainingDailyCount,
+    inboxCount: _inboxCount,
+    activeProjectsCount: _activeProjectsCount,
+    experimentsCount: _experimentsCount,
+    favoritesCount: _favoritesCount,
+    quickCapture: quickCapture(),
+    scratchpad: scratchpad(),
+    musicPanel: musicPanel(),
+    appearance: appearance(showExpand: !compact),
+    onSelectPage: (page) {
+      if (compact) closeCompactSettings();
+      selectSection(page);
+    },
+    compact: compact,
+  );
+
   @override
   Widget build(BuildContext context) {
     _frameIdeas = null;
+    final s = WorkbenchStrings.of(context);
     return CallbackShortcuts(
       bindings: {
         if (compactSettingsOpen)
           const SingleActivator(LogicalKeyboardKey.escape):
-              closeCompactSettings,
+              closeCompactSettings
+        else if (focusMode)
+          const SingleActivator(LogicalKeyboardKey.escape): _toggleFocusMode,
         if (!compactSettingsOpen) ...{
-          const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
-              searchFocus.requestFocus(),
+          const SingleActivator(LogicalKeyboardKey.keyK, control: true):
+              _openCommandPalette,
           const SingleActivator(LogicalKeyboardKey.keyN, control: true):
               createIdea,
+          const SingleActivator(
+            LogicalKeyboardKey.keyF,
+            control: true,
+            shift: true,
+          ): _toggleFocusMode,
         },
       },
       child: Scaffold(
@@ -1818,6 +2014,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   builder: (context, constraints) {
                     final desktop = constraints.maxWidth >= 1050;
                     final sidebar = constraints.maxWidth >= 760;
+                    final showInspector = desktop && showAppearance && !focusMode;
                     return PopScope(
                       canPop: !compactSettingsOpen,
                       onPopInvokedWithResult: (didPop, result) {
@@ -1830,21 +2027,43 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                         duration: motionDuration(context, 320),
                         settings: compactSettings(),
                         content: Padding(
-                          padding: EdgeInsets.all(desktop ? 24 : 12),
+                          padding: EdgeInsets.all(desktop ? 20 : 12),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               if (sidebar)
                                 CollapsiblePanel(
                                   key: const ValueKey('sidebar-panel'),
-                                  expanded: sidebarExpanded,
+                                  expanded: !focusMode,
                                   axis: Axis.horizontal,
-                                  extent: desktop ? 234 : 192,
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                      right: desktop ? 26 : 16,
+                                      right: desktop ? 20 : 14,
                                     ),
-                                    child: navigation(),
+                                    child: WorkbenchRail(
+                                      palette: p,
+                                      section: section,
+                                      expanded: sidebarExpanded,
+                                      desktop: desktop,
+                                      counts: _pageCounts,
+                                      hasPluginSettings: _hasPluginSettings,
+                                      focusMode: focusMode,
+                                      onSelectPage: selectSection,
+                                      onToggleExpanded: () {
+                                        setState(
+                                          () => sidebarExpanded =
+                                              !sidebarExpanded,
+                                        );
+                                        persist();
+                                      },
+                                      onCreateIdea: createIdea,
+                                      onOpenCommandPalette: _openCommandPalette,
+                                      onToggleFocusMode: _toggleFocusMode,
+                                      onOpenPluginSettings: openPluginSettings,
+                                      componentInteractions:
+                                          componentInteractions,
+                                      cornerTipSurface: cornerTipSurface,
+                                    ),
                                   ),
                                 ),
                               Expanded(
@@ -1853,56 +2072,90 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                   children: [
                                     Column(
                                       children: [
-                                        header(sidebar, desktop),
+                                        WorkbenchCommandBar(
+                                          palette: p,
+                                          section: section,
+                                          visibleCount: visibleIdeas.length,
+                                          sidebar: sidebar,
+                                          desktop: desktop,
+                                          showAppearance: showAppearance,
+                                          focusMode: focusMode,
+                                          compactCards: compactCards,
+                                          search: search,
+                                          searchFocus: searchFocus,
+                                          onToggleAppearance: () {
+                                            if (desktop) {
+                                              if (focusMode) {
+                                                setState(() {
+                                                  focusMode = false;
+                                                  showAppearance = true;
+                                                });
+                                              } else {
+                                                setState(
+                                                  () => showAppearance =
+                                                      !showAppearance,
+                                                );
+                                              }
+                                              persist();
+                                            } else {
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                              setState(
+                                                () =>
+                                                    compactSettingsOpen = true,
+                                              );
+                                            }
+                                          },
+                                          onToggleFocusMode: _toggleFocusMode,
+                                          onToggleCompactCards:
+                                              _toggleCompactCards,
+                                          onOpenCommandPalette:
+                                              _openCommandPalette,
+                                          onCreateIdea: createIdea,
+                                          onClearSearch: () => setState(() {
+                                            search.clear();
+                                            query = '';
+                                          }),
+                                          wrapSearchInteractions: (child) =>
+                                              componentInteractions(
+                                                'search',
+                                                child,
+                                              ),
+                                          recoveryControl: _recoveryControl(),
+                                        ),
                                         if (widget.workbench != null &&
                                             !widget.workbench!.writable) ...[
                                           const SizedBox(height: 12),
                                           readOnlyNotice(),
                                         ],
-                                        const SizedBox(height: 22),
+                                        const SizedBox(height: 16),
                                         Expanded(
                                           child: Row(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.stretch,
                                             children: [
                                               Expanded(
-                                                child: workspaceViewport(),
+                                                child: workspaceViewport(
+                                                  desktop: desktop,
+                                                  sidebar: sidebar,
+                                                ),
                                               ),
                                               if (desktop)
                                                 CollapsiblePanel(
                                                   key: const ValueKey(
                                                     'settings-side-panel',
                                                   ),
-                                                  expanded: showAppearance,
+                                                  expanded: showInspector,
                                                   axis: Axis.horizontal,
-                                                  extent: 276,
+                                                  extent: 320,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                          left: 24,
+                                                          left: 20,
                                                         ),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                          child: Column(
-                                                            children: [
-                                                              appearance(
-                                                                showExpand: true,
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              scratchpad(),
-                                                              const SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              musicPanel(),
-                                                              const SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              smallQuote(),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                    child: _buildInspector(
+                                                      compact: false,
+                                                    ),
                                                   ),
                                                 ),
                                             ],
@@ -1911,17 +2164,54 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                       ],
                                     ),
                                     AnimatedPositioned(
-                                      duration: motionDuration(context, 280),
+                                      duration: workbenchDuration(
+                                        context,
+                                        WorkbenchDurations.medium,
+                                      ),
+                                      curve: WorkbenchCurves.springOut,
                                       left: 0,
-                                      right: desktop && showAppearance
-                                          ? 276
-                                          : 0,
-                                      bottom: 0,
+                                      right: showInspector ? 320 : 0,
+                                      bottom: sidebar || focusMode ? 0 : 72,
                                       child: componentInteractions(
                                         'footer',
                                         FooterOverlay(music: music),
                                       ),
                                     ),
+                                    if (!sidebar && !focusMode)
+                                      Positioned(
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        child: WorkbenchMobileNav(
+                                          palette: p,
+                                          section: section,
+                                          onSelectPage: selectSection,
+                                        ),
+                                      ),
+                                    if (focusMode)
+                                      Positioned(
+                                        right: 8,
+                                        bottom: 10,
+                                        child: Tooltip(
+                                          message: s.exitFocusTooltip,
+                                          child: FilledButton.tonalIcon(
+                                            key: const ValueKey(
+                                              'exit-focus-pill',
+                                            ),
+                                            onPressed: _toggleFocusMode,
+                                            icon: const Icon(
+                                              Icons.fullscreen_exit_rounded,
+                                              size: 16,
+                                            ),
+                                            label: Text(
+                                              s.actionFocusOff,
+                                              style: const TextStyle(
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -1940,673 +2230,99 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Widget navigation() => componentInteractions('navigation', navigationBody());
-  Widget navigationBody() => Glass(
-    componentId: 'navigation',
-    p: p,
-    radius: 26,
-    child: LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: IntrinsicHeight(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 26, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: Row(
-                      children: [
-                        logo(32),
-                        const SizedBox(width: 11),
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Morrow',
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: p.ink,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -1,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 9),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13),
-                    child: Text(
-                      l.mainSidebarMotto,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: p.muted,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 42),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, bottom: 14),
-                    child: Text(
-                      l.mainMySpace,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: p.muted,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                  navItem(WorkbenchPage.overview, Icons.grid_view_rounded),
-                  navItem(
-                    WorkbenchPage.inbox,
-                    Icons.inbox_outlined,
-                    count: ideas.where((e) => e.category == '灵感').length,
-                  ),
-                  navItem(WorkbenchPage.projects, Icons.folder_open_rounded),
-                  navItem(WorkbenchPage.laboratory, Icons.science_outlined),
-                  const SizedBox(height: 14),
-                  Divider(color: p.line, indent: 12, endIndent: 12),
-                  const SizedBox(height: 14),
-                  navItem(
-                    WorkbenchPage.favorites,
-                    Icons.bookmark_border_rounded,
-                  ),
-                  const Spacer(),
-                  componentInteractions(
-                    'corner-tips',
-                    cornerTipSurface(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.wb_twilight_rounded,
-                            color: p.accent,
-                            size: 23,
-                          ),
-                          const SizedBox(height: 9),
-                          RotatingTip(
-                            key: const ValueKey('corner-tips'),
-                            lines:
-                                TipPreferencesScope.maybeOf(context)?.lines(
-                                  'corner-tips',
-                                  localizedCornerTips(context),
-                                ) ??
-                                localizedCornerTips(context),
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: p.muted,
-                              height: 1.8,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 17,
-                        backgroundColor: p.accent.withValues(alpha: .13),
-                        child: Text(
-                          'D',
-                          style: TextStyle(color: p.accent, fontSize: 13),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l.mainPersonalWorkspace,
-                              style: TextStyle(fontSize: 11, color: p.ink),
-                            ),
-                            Text(
-                              l.mainSidebarMotto,
-                              style: TextStyle(fontSize: 9, color: p.muted),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(Icons.more_horiz, color: p.muted, size: 17),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget logo(double size) => Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(
-      color: p.accent,
-      borderRadius: p.borderRadius(size * .34),
-    ),
-    child: Icon(Icons.all_inclusive_rounded, size: 23, color: p.onAccent),
-  );
-
-  Widget navItem(WorkbenchPage page, IconData icon, {int? count}) {
-    final title = workbenchLabels.page(page);
-    final selected = section == page;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: NeumorphicSurface(
-        palette: p,
-        depth: selected ? -1 : 0,
-        borderRadius: p.borderRadius(12),
-        child: AnimatedContainer(
-          duration: motionDuration(context, 220),
-          decoration: BoxDecoration(
-            color: selected
-                ? p.accent.withValues(alpha: .13)
-                : Colors.transparent,
-            borderRadius: p.borderRadius(12),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: p.borderRadius(12),
-              key: ValueKey('nav-${page.id}'),
-              onTap: () => selectSection(page),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 13,
-                ),
-                child: Row(
-                  children: [
-                    Icon(icon, size: 18, color: selected ? p.accent : p.muted),
-                    const SizedBox(width: 11),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: selected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                          color: selected ? p.accent : p.muted,
-                        ),
-                      ),
-                    ),
-                    if (count != null)
-                      Text(
-                        '$count',
-                        style: TextStyle(fontSize: 10, color: p.muted),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   void selectSection(WorkbenchPage value) => setState(() {
     FocusManager.instance.primaryFocus?.unfocus();
     section = value;
     filter = GeneralFilter.all;
   });
 
-  Widget header(bool sidebar, bool desktop) => Row(
-    children: [
-      if (!sidebar)
-        PopupMenuButton<WorkbenchPage>(
-          tooltip: l.mainNavigation,
-          onSelected: selectSection,
-          icon: Icon(Icons.menu_rounded, color: p.ink),
-          itemBuilder: (_) => WorkbenchPage.values
-              .map(
-                (page) => PopupMenuItem(
-                  value: page,
-                  child: Text(workbenchLabels.page(page)),
-                ),
-              )
-              .toList(),
-        )
-      else ...[
-        IconButton(
-          key: const ValueKey('sidebar-toggle'),
-          tooltip: sidebarExpanded
-              ? l.mainCollapseSidebar
-              : l.mainExpandSidebar,
-          onPressed: () {
-            setState(() => sidebarExpanded = !sidebarExpanded);
-            persist();
-          },
-          icon: AnimatedRotation(
-            turns: sidebarExpanded ? 0 : .5,
-            duration: motionDuration(context, 340),
-            child: Icon(Icons.chevron_left_rounded, size: 19, color: p.muted),
-          ),
-        ),
-        Expanded(
-          child: Row(
-            children: [
-              Icon(Icons.space_dashboard_outlined, size: 16, color: p.muted),
-              const SizedBox(width: 9),
-              Flexible(
-                child: Text(
-                  l.mainWorkbench,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: p.muted, fontSize: 11),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text('/', style: TextStyle(color: p.muted)),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  workbenchLabels.page(section),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: p.ink, fontSize: 11),
-                ),
-              ),
-              const SizedBox(width: 10),
-            ],
-          ),
-        ),
-      ],
-      if (sidebar)
-        SizedBox(width: 246, child: searchField())
-      else
-        Expanded(child: searchField()),
-      const SizedBox(width: 8),
-      if (widget.workbench is WorkbenchEditorDraftRecovery ||
-          widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
-          (widget.workbench is WorkbenchEditorRecovery &&
-              widget.workbench is WorkbenchEditorDraftImportSupport))
-        PopupMenuButton<String>(
-          key: const ValueKey('editor-recovery-open'),
-          tooltip: l.mainEditorRecoveryTitle,
-          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
-          onSelected: (value) {
-            if (value == 'drafts') {
-              unawaited(reviewDraftJournal());
-            } else if (value == 'handoffs') {
-              unawaited(reviewDraftHandoffRecovery());
-            } else if (value == 'imports') {
-              unawaited(reviewDraftImportRecovery());
-            } else {
-              unawaited(reviewEditorRecovery());
-            }
-          },
-          itemBuilder: (_) => [
-            if (widget.workbench is WorkbenchEditorDraftRecovery)
-              PopupMenuItem(
-                key: const ValueKey('editor-recovery-menu-drafts'),
-                value: 'drafts',
-                child: Text(l.mainDraftJournalTitle),
-              ),
-            if (widget.workbench is WorkbenchEditorRecovery)
-              PopupMenuItem(
-                key: const ValueKey('editor-recovery-menu-edits'),
-                value: 'edits',
-                child: Text(l.mainEditorRecoveryTitle),
-              ),
-            if (widget.workbench is WorkbenchEditorDraftImportSupport)
-              PopupMenuItem(
-                key: const ValueKey('editor-recovery-menu-imports'),
-                value: 'imports',
-                child: Text(l.mainDraftImportRecoveryTitle),
-              ),
-            if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport)
-              PopupMenuItem(
-                key: const ValueKey('editor-recovery-menu-handoffs'),
-                value: 'handoffs',
-                child: Text(l.mainDraftHandoffRecoveryTitle),
-              ),
-          ],
-        )
-      else if (widget.workbench is WorkbenchEditorRecovery)
-        IconButton(
-          key: const ValueKey('editor-recovery-open'),
-          tooltip: l.mainEditorRecoveryTitle,
-          onPressed: reviewEditorRecovery,
-          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
-        )
-      else if (widget.workbench is WorkbenchEditorDraftImportSupport)
-        IconButton(
-          key: const ValueKey('draft-import-recovery-open'),
-          tooltip: l.mainDraftImportRecoveryTitle,
-          onPressed: reviewDraftImportRecovery,
-          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
-        ),
-      IconButton(
-        key: const ValueKey('appearance-toggle'),
-        tooltip: desktop && showAppearance
-            ? l.mainHideAppearance
-            : l.mainShowAppearance,
-        onPressed: () {
-          if (desktop) {
-            setState(() => showAppearance = !showAppearance);
-            persist();
+  Widget? _recoveryControl() {
+    if (widget.workbench is WorkbenchEditorDraftRecovery ||
+        widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
+        (widget.workbench is WorkbenchEditorRecovery &&
+            widget.workbench is WorkbenchEditorDraftImportSupport)) {
+      return PopupMenuButton<String>(
+        key: const ValueKey('editor-recovery-open'),
+        tooltip: l.mainEditorRecoveryTitle,
+        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+        onSelected: (value) {
+          if (value == 'drafts') {
+            unawaited(reviewDraftJournal());
+          } else if (value == 'handoffs') {
+            unawaited(reviewDraftHandoffRecovery());
+          } else if (value == 'imports') {
+            unawaited(reviewDraftImportRecovery());
           } else {
-            FocusManager.instance.primaryFocus?.unfocus();
-            setState(() => compactSettingsOpen = true);
+            unawaited(reviewEditorRecovery());
           }
         },
-        icon: Icon(Icons.tune_rounded, size: 19, color: p.muted),
-      ),
-    ],
-  );
-
-  Widget searchField() => componentInteractions('search', searchFieldBody());
-  Widget searchFieldBody() => SizedBox(
-    key: const ValueKey('header-search'),
-    height: 38,
-    child: Glass(
-      componentId: 'search',
-      recessed: true,
-      p: p,
-      radius: 12,
-      child: TextField(
-        controller: search,
-        focusNode: searchFocus,
-        style: TextStyle(fontSize: 11, color: p.ink),
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search, size: 17, color: p.muted),
-          hintText: l.mainSearchHint,
-          hintStyle: TextStyle(fontSize: 11, color: p.muted),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 13),
-          suffixIcon: search.text.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Text(
-                    'Ctrl K',
-                    style: TextStyle(fontSize: 9, color: p.muted),
-                  ),
-                )
-              : IconButton(
-                  tooltip: l.mainClearSearch,
-                  onPressed: () => setState(() {
-                    search.clear();
-                    query = '';
-                  }),
-                  icon: const Icon(Icons.close, size: 14),
-                ),
-        ),
-      ),
-    ),
-  );
-
-  Widget greeting() => Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'A LITTLE SPACE FOR BIG IDEAS',
-              style: TextStyle(fontSize: 9, color: p.accent, letterSpacing: 2),
+        itemBuilder: (_) => [
+          if (widget.workbench is WorkbenchEditorDraftRecovery)
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-drafts'),
+              value: 'drafts',
+              child: Text(l.mainDraftJournalTitle),
             ),
-            const SizedBox(height: 9),
-            Text(
-              section == WorkbenchPage.overview
-                  ? l.mainGreeting
-                  : workbenchLabels.page(section),
-              style: TextStyle(
-                fontSize: 27,
-                height: 1.3,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -.7,
-                color: p.ink,
-              ),
+          if (widget.workbench is WorkbenchEditorRecovery)
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-edits'),
+              value: 'edits',
+              child: Text(l.mainEditorRecoveryTitle),
             ),
-            const SizedBox(height: 8),
-            Text(
-              l.mainGreetingDetail,
-              style: TextStyle(fontSize: 12, color: p.muted),
+          if (widget.workbench is WorkbenchEditorDraftImportSupport)
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-imports'),
+              value: 'imports',
+              child: Text(l.mainDraftImportRecoveryTitle),
             ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 12),
-      FilledButton.icon(
-        onPressed: createIdea,
-        style: FilledButton.styleFrom(
-          backgroundColor: p.accent,
-          foregroundColor: p.onAccent,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
-          shape: RoundedRectangleBorder(borderRadius: p.borderRadius(12)),
-        ),
-        icon: const Icon(Icons.add, size: 17),
-        label: Text(l.mainNewIdea, style: TextStyle(fontSize: 11)),
-      ),
-    ],
-  );
-
-  Widget hero() => componentInteractions('hero', heroBody());
-  Widget heroBody() => LayoutBuilder(
-    builder: (context, constraints) => Glass(
-      componentId: 'hero',
-      p: p,
-      radius: 23,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: p.uiTheme == null ? 214 : 254),
-        child: Stack(
-          children: [
-            if (p.uiTheme != null &&
-                ThemePluginScope.of(context)?.plugin != null)
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: p.borderRadius(23),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      width: constraints.maxWidth < 520
-                          ? constraints.maxWidth
-                          : math.min(constraints.maxWidth * .57, 381),
-                      height: double.infinity,
-                      child: Opacity(
-                        opacity: constraints.maxWidth < 520 ? .18 : 1,
-                        child: ThemeArtwork(
-                          plugin: ThemePluginScope.of(context)!.plugin!,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else
-              Positioned(
-                right: constraints.maxWidth < 520 ? -145 : -20,
-                top: -70,
-                bottom: -70,
-                width: 340,
-                child: IgnorePointer(
-                  child: Opacity(
-                    opacity: constraints.maxWidth < 520 ? .24 : 1,
-                    child: CustomPaint(painter: OrbPainter(p)),
-                  ),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(25),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: p.accent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 7),
-                      Text(
-                        ThemePluginScope.of(context)?.plugin?.caption(
-                              Localizations.localeOf(context),
-                            ) ??
-                            l.mainHeroCaption,
-                        style: TextStyle(
-                          fontSize: 8,
-                          letterSpacing: 1.6,
-                          color: p.accent,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    l.mainHeroTitle,
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w500,
-                      color: p.ink,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    l.mainHeroBody,
-                    style: TextStyle(
-                      fontSize: 11,
-                      height: 1.85,
-                      color: p.muted,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  InkWell(
-                    onTap: createIdea,
-                    borderRadius: p.borderRadius(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            l.mainCaptureNow,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: p.accent,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            color: p.accent,
-                            size: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport)
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-handoffs'),
+              value: 'handoffs',
+              child: Text(l.mainDraftHandoffRecoveryTitle),
             ),
-          ],
-        ),
-      ),
-    ),
-  );
-
-  Widget collectionHeader() => Wrap(
-    alignment: WrapAlignment.spaceBetween,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: 12,
-    runSpacing: 12,
-    children: [
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            section == WorkbenchPage.overview
-                ? l.mainRecentThoughts
-                : workbenchLabels.page(section),
-            style: TextStyle(
-              fontSize: 15,
-              color: p.ink,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            (widget.workbench?.writable ?? false) &&
-                    _queries.phase != QueryPhase.ready &&
-                    !_queries.refreshing
-                ? '…'
-                : visibleIdeas.length.toString().padLeft(2, '0'),
-            style: TextStyle(fontSize: 10, color: p.muted),
-          ),
         ],
-      ),
-      Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: pageFilters
-            .map(
-              (label) => Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: InkWell(
-                  borderRadius: p.borderRadius(8),
-                  key: ValueKey('filter-${label.id}'),
-                  onTap: () => setState(() => filter = label),
-                  child: NeumorphicSurface(
-                    palette: p,
-                    depth: filter == label ? -0.8 : 0,
-                    borderRadius: p.borderRadius(8),
-                    child: AnimatedContainer(
-                      duration: motionDuration(context, 200),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 11,
-                        vertical: 7,
-                      ),
-                      decoration: BoxDecoration(
-                        color: filter == label
-                            ? p.accent.withValues(alpha: .13)
-                            : Colors.transparent,
-                        borderRadius: p.borderRadius(8),
-                      ),
-                      child: Text(
-                        workbenchLabels.filter(label),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: filter == label ? p.accent : p.muted,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    ],
-  );
+      );
+    }
+    if (widget.workbench is WorkbenchEditorRecovery) {
+      return IconButton(
+        key: const ValueKey('editor-recovery-open'),
+        tooltip: l.mainEditorRecoveryTitle,
+        onPressed: reviewEditorRecovery,
+        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+      );
+    }
+    if (widget.workbench is WorkbenchEditorDraftImportSupport) {
+      return IconButton(
+        key: const ValueKey('draft-import-recovery-open'),
+        tooltip: l.mainDraftImportRecoveryTitle,
+        onPressed: reviewDraftImportRecovery,
+        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+      );
+    }
+    return null;
+  }
 
-  Widget workspaceViewport() {
+  Widget _heroBackdropArtwork() {
+    final plugin = ThemePluginScope.of(context)?.plugin;
+    if (p.uiTheme != null && plugin != null) {
+      return ThemeArtwork(plugin: plugin);
+    }
+    return CustomPaint(painter: OrbPainter(p));
+  }
+
+  Widget workspaceViewport({required bool desktop, required bool sidebar}) {
     final items = visibleIdeas;
+    final queryPending =
+        (widget.workbench?.writable ?? false) &&
+        _queries.phase == QueryPhase.loading &&
+        !_queries.refreshing;
+    final showInlineCapture = !desktop || !showAppearance || focusMode;
     return WorkspaceViewport(
       page: section.id,
       session: widget.workbench ?? this,
-      queryPending:
-          (widget.workbench?.writable ?? false) &&
-          _queries.phase == QueryPhase.loading &&
-          !_queries.refreshing,
+      queryPending: queryPending,
+      compactList: compactCards,
       cardRegionKey: ValueKey(switch (section) {
         WorkbenchPage.inbox => 'inbox-list',
         WorkbenchPage.projects => 'project-board',
@@ -2620,18 +2336,44 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         WorkbenchPage.projects => 660,
         _ => double.infinity,
       },
+      threeColumnWidth: section == WorkbenchPage.overview
+          ? 860
+          : double.infinity,
       status: cardsStatus(items),
       header: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          greeting(),
-          const SizedBox(height: 24),
-          if (section == WorkbenchPage.overview) hero() else pageIntro(),
-          const SizedBox(height: 28),
-          collectionHeader(),
-          const SizedBox(height: 6),
-          Align(alignment: Alignment.centerRight, child: cardSortMenu()),
-          const SizedBox(height: 16),
+          if (section == WorkbenchPage.overview)
+            WorkbenchBentoHero(
+              palette: p,
+              backdropArtwork: _heroBackdropArtwork(),
+              inboxCount: _inboxCount,
+              activeProjectsCount: _activeProjectsCount,
+              experimentsCount: _experimentsCount,
+              favoritesCount: _favoritesCount,
+              onSelectPage: selectSection,
+              onCreateIdea: createIdea,
+              wrapInteractions: componentInteractions,
+            )
+          else
+            pageIntro(),
+          const SizedBox(height: 18),
+          WorkspaceFilterBar(
+            palette: p,
+            section: section,
+            filter: filter,
+            pageFilters: pageFilters,
+            query: query,
+            visibleCount: items.length,
+            queryPending: queryPending,
+            sortMenu: cardSortMenu(),
+            onSelectFilter: (label) => setState(() => filter = label),
+            onClearQuery: () => setState(() {
+              search.clear();
+              query = '';
+            }),
+          ),
+          const SizedBox(height: 14),
         ],
       ),
       itemBuilder: (_, index) => sortableCard(
@@ -2641,8 +2383,11 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             : specializedCard(items[index], index),
       ),
       footer: Padding(
-        padding: const EdgeInsets.only(top: 22, bottom: 94),
-        child: quickCapture(),
+        padding: EdgeInsets.only(
+          top: showInlineCapture ? 20 : 0,
+          bottom: sidebar ? 76 : 136,
+        ),
+        child: showInlineCapture ? quickCapture() : const SizedBox.shrink(),
       ),
     );
   }
@@ -2740,196 +2485,155 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     return null;
   }
 
-  Widget ideaCard(Idea idea) => cardInteractions(
-    idea,
-    Glass(
-      componentId: 'card:${idea.id}',
+  Widget ideaCard(Idea idea) {
+    void toggleFavorite() {
+      if (widget.workbench != null) {
+        pluginChange(PluginAction.favorite, idea, flag: !idea.favorite);
+        return;
+      }
+      setState(() => idea.favorite = !idea.favorite);
+      persist();
+    }
+
+    final totalSteps = idea.versioned?.tasks.length ?? idea.todos.length;
+    final completedSteps =
+        idea.versioned?.completeCount ?? idea.legacyCompletedCount;
+    final ambiguousSteps = idea.versioned?.ambiguousCount ?? 0;
+    final favoriteTooltip = idea.favorite
+        ? l.mainUnfavoriteTooltip(displayTitle(idea))
+        : l.mainFavoriteTooltip(displayTitle(idea));
+    final attachmentHintLabel = idea.attachments.isNotEmpty
+        ? l.mainCardAttachments(
+            idea.attachments.length,
+            idea.attachments.first.source.name,
+          )
+        : null;
+
+    return cardInteractions(
+      idea,
+      compactCards
+          ? WorkbenchIdeaListRow(
+              palette: p,
+              id: idea.id,
+              title: displayTitle(idea),
+              description: displayDescription(idea),
+              categoryLabel: categoryLabel(idea.category),
+              timeLabel: timeLabel(idea.time),
+              icon: idea.icon,
+              color: idea.color,
+              favorite: idea.favorite,
+              favoriteTooltip: favoriteTooltip,
+              attachmentCount: idea.attachments.length,
+              completedSteps: completedSteps,
+              totalSteps: totalSteps,
+              onTap: () => openIdea(idea),
+              onToggleFavorite: toggleFavorite,
+            )
+          : WorkbenchIdeaCard(
+              palette: p,
+              id: idea.id,
+              title: displayTitle(idea),
+              description: displayDescription(idea),
+              categoryLabel: categoryLabel(idea.category),
+              timeLabel: timeLabel(idea.time),
+              icon: idea.icon,
+              color: idea.color,
+              favorite: idea.favorite,
+              favoriteTooltip: favoriteTooltip,
+              attachmentCount: idea.attachments.length,
+              attachmentHintLabel: attachmentHintLabel,
+              completedSteps: completedSteps,
+              totalSteps: totalSteps,
+              ambiguousSteps: ambiguousSteps,
+              canEdit: canChangeCard(idea),
+              onTap: () => openIdea(idea),
+              onToggleFavorite: toggleFavorite,
+              onEdit: () => openIdea(idea, initialAction: 'edit'),
+            ),
+    );
+  }
+
+  Widget quickCapture() =>
+      componentInteractions('quick-capture', quickCaptureBody());
+  Widget quickCaptureBody() {
+    final s = WorkbenchStrings.of(context);
+    return Glass(
+      componentId: 'quick-capture',
       p: p,
-      radius: 19,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => openIdea(idea),
-          borderRadius: p.borderRadius(19),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(19, 16, 13, 17),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      radius: 18,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: p
-                            .componentColor(idea.color)
-                            .withValues(alpha: .15),
-                        borderRadius: p.borderRadius(11),
-                      ),
-                      child: Icon(
-                        idea.icon,
-                        color: p.dark
-                            ? Color.lerp(
-                                p.componentColor(idea.color),
-                                Colors.white,
-                                .3,
-                              )
-                            : p.componentColor(idea.color),
-                        size: 19,
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      tooltip: idea.favorite
-                          ? l.mainUnfavoriteTooltip(displayTitle(idea))
-                          : l.mainFavoriteTooltip(displayTitle(idea)),
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        if (widget.workbench != null) {
-                          pluginChange(
-                            PluginAction.favorite,
-                            idea,
-                            flag: !idea.favorite,
-                          );
-                          return;
-                        }
-                        setState(() => idea.favorite = !idea.favorite);
-                        persist();
-                      },
-                      icon: SoftSwap(
-                        child: Icon(
-                          idea.favorite
-                              ? Icons.bookmark_rounded
-                              : Icons.bookmark_border_rounded,
-                          key: ValueKey(idea.favorite),
-                          size: 17,
-                          color: idea.favorite
-                              ? p.accent
-                              : p.muted.withValues(alpha: .5),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
+                Icon(Icons.edit_note_rounded, color: p.accent, size: 17),
+                const SizedBox(width: 6),
                 Text(
-                  displayTitle(idea),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  s.quickCaptureTitle,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: p.ink,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const Spacer(),
                 Text(
-                  displayDescription(idea),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: p.muted, height: 1.8),
-                ),
-                if (idea.attachments.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      l.mainCardAttachments(
-                        idea.attachments.length,
-                        idea.attachments.first.source.name,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 10, color: p.accent),
-                    ),
-                  ),
-                const SizedBox(height: 19),
-                Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: p
-                            .componentColor(idea.color)
-                            .withValues(alpha: .1),
-                        borderRadius: p.borderRadius(5),
-                      ),
-                      child: Text(
-                        categoryLabel(idea.category),
-                        style: TextStyle(
-                          fontSize: 9,
-                          color: p.dark
-                              ? Color.lerp(
-                                  p.componentColor(idea.color),
-                                  Colors.white,
-                                  .4,
-                                )
-                              : Color.lerp(
-                                  p.componentColor(idea.color),
-                                  Colors.black,
-                                  .16,
-                                ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      timeLabel(idea.time),
-                      style: TextStyle(fontSize: 9, color: p.muted),
-                    ),
-                  ],
+                  s.quickCaptureSubtitle,
+                  style: TextStyle(fontSize: 9, color: p.muted),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: quickNote,
+                    onSubmitted: (_) => saveQuickNote(),
+                    style: TextStyle(fontSize: 12, color: p.ink),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      filled: true,
+                      fillColor: p.surface.withValues(alpha: p.dark ? 0.25 : 0.45),
+                      hintText: l.mainQuickHint,
+                      hintStyle: TextStyle(fontSize: 11, color: p.muted),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Tooltip(
+                  message: l.mainCaptureIdea,
+                  child: InkWell(
+                    borderRadius: p.borderRadius(11),
+                    onTap: saveQuickNote,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: p.accent,
+                        borderRadius: p.borderRadius(11),
+                      ),
+                      child: Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 17,
+                        color: p.onAccent,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-    ),
-  );
-
-  Widget quickCapture() =>
-      componentInteractions('quick-capture', quickCaptureBody());
-  Widget quickCaptureBody() => Glass(
-    componentId: 'quick-capture',
-    p: p,
-    radius: 17,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 9, 8),
-      child: Row(
-        children: [
-          Icon(Icons.edit_note_rounded, color: p.accent, size: 22),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: quickNote,
-              onSubmitted: (_) => saveQuickNote(),
-              style: TextStyle(fontSize: 12, color: p.ink),
-              decoration: InputDecoration(
-                hintText: l.mainQuickHint,
-                hintStyle: TextStyle(fontSize: 11, color: p.muted),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          IconButton(
-            tooltip: l.mainCaptureIdea,
-            onPressed: saveQuickNote,
-            icon: Icon(Icons.arrow_upward_rounded, size: 18, color: p.accent),
-          ),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 
   Future<void> saveQuickNote() async {
     final text = quickNote.text.trim();
@@ -4309,79 +4013,83 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   Widget scratchpad() => componentInteractions('daily', scratchpadBody());
-  Widget scratchpadBody() => Glass(
-    componentId: 'daily',
-    p: p,
-    radius: 22,
-    child: Padding(
-      padding: const EdgeInsets.all(19),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.bolt_outlined, color: p.accent, size: 17),
-              const SizedBox(width: 7),
-              Text(
-                l.mainDaily,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: p.ink,
+  Widget scratchpadBody() {
+    final items = dailyTipItems;
+    final doneCount = items.where((item) => completed.contains(item.id)).length;
+    final progress = items.isEmpty ? 0.0 : doneCount / items.length;
+    return Glass(
+      componentId: 'daily',
+      p: p,
+      radius: 20,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.bolt_outlined, color: p.accent, size: 17),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    l.mainDaily,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: p.ink,
+                    ),
+                  ),
+                ),
+                Text(
+                  '$doneCount/${items.length}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: p.accent,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(end: progress),
+                duration: workbenchDuration(context, WorkbenchDurations.medium),
+                curve: WorkbenchCurves.springOut,
+                builder: (context, value, _) => LinearProgressIndicator(
+                  value: value,
+                  minHeight: 4,
+                  backgroundColor: p.line,
+                  color: p.accent,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 17),
-          for (final item in dailyTipItems)
-            LittleTask(
-              key: ValueKey('daily-task:${item.id}'),
-              title: item.text,
-              canChange: () =>
-                  mounted &&
-                  menuWritable &&
-                  dailyTipItems.any((current) => current.id == item.id),
-              done: completed.contains(item.id),
-              onChanged: (done) => setDailyTipCompletion(item.id, done),
             ),
-          const SizedBox(height: 9),
-          Text(
-            TipPreferencesScope.maybeOf(
-                  context,
-                )?.dailyCaption(l.mainSlowProgress) ??
-                l.mainSlowProgress,
-            style: TextStyle(fontSize: 9, color: p.muted),
-          ),
-        ],
+            const SizedBox(height: 12),
+            for (final item in items)
+              LittleTask(
+                key: ValueKey('daily-task:${item.id}'),
+                title: item.text,
+                canChange: () =>
+                    mounted &&
+                    menuWritable &&
+                    dailyTipItems.any((current) => current.id == item.id),
+                done: completed.contains(item.id),
+                onChanged: (done) => setDailyTipCompletion(item.id, done),
+              ),
+            const SizedBox(height: 8),
+            Text(
+              TipPreferencesScope.maybeOf(
+                    context,
+                  )?.dailyCaption(l.mainSlowProgress) ??
+                  l.mainSlowProgress,
+              style: TextStyle(fontSize: 9, color: p.muted),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-
-  Widget smallQuote() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '“',
-          style: TextStyle(
-            color: p.accent.withValues(alpha: .4),
-            fontSize: 42,
-            height: 1,
-          ),
-        ),
-        Text(
-          l.mainCuriosity,
-          style: TextStyle(color: p.muted, fontSize: 12, height: 1.9),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          l.mainStayCurious,
-          style: TextStyle(fontSize: 7, color: p.muted, letterSpacing: 1.4),
-        ),
-      ],
-    ),
-  );
+    );
+  }
 
   bool _acceptEditorResult(Idea result, WorkbenchBackend? backend) {
     if (!mounted || !identical(widget.workbench, backend)) return false;

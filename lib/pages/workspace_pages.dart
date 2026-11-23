@@ -283,17 +283,25 @@ extension _PageContent on _StudioState {
           ),
           ClipRRect(
             borderRadius: p.borderRadius(8),
-            child: LinearProgressIndicator(
-              value: idea.versioned != null
-                  ? (idea.versioned!.tasks.isEmpty
-                        ? 0
-                        : idea.versioned!.completeCount /
-                              idea.versioned!.tasks.length)
-                  : idea.todos.isEmpty
-                  ? (projectStage(idea) == '已完成' ? 1 : 0)
-                  : idea.legacyCompletedCount / idea.todos.length,
-              minHeight: 5,
-              backgroundColor: p.line,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(
+                end: (idea.versioned != null
+                        ? (idea.versioned!.tasks.isEmpty
+                              ? 0.0
+                              : idea.versioned!.completeCount /
+                                    idea.versioned!.tasks.length)
+                        : idea.todos.isEmpty
+                        ? (projectStage(idea) == '已完成' ? 1.0 : 0.0)
+                        : idea.legacyCompletedCount / idea.todos.length)
+                    .clamp(0.0, 1.0),
+              ),
+              duration: workbenchDuration(context, WorkbenchDurations.medium),
+              curve: WorkbenchCurves.springOut,
+              builder: (context, progress, _) => LinearProgressIndicator(
+                value: progress,
+                minHeight: 5,
+                backgroundColor: p.line,
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -381,12 +389,20 @@ extension _PageContent on _StudioState {
         children: [
           Row(
             children: [
-              Text(
-                'EXP ${(index + 1).toString().padLeft(2, '0')}',
-                style: TextStyle(
-                  letterSpacing: 2,
-                  color: p.accent,
-                  fontSize: 11,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: p.accent.withValues(alpha: 0.12),
+                  borderRadius: p.borderRadius(7),
+                ),
+                child: Text(
+                  'EXP ${(index + 1).toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w700,
+                    color: p.accent,
+                    fontSize: 10,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -553,32 +569,66 @@ extension _PageContent on _StudioState {
     return Glass(
       componentId: WorkbenchV1.summaryComponentId(section),
       p: p,
+      radius: 22,
       child: Padding(
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, color: p.accent, size: 28),
-                const SizedBox(width: 16),
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: p.accent.withValues(alpha: 0.13),
+                    borderRadius: p.borderRadius(12),
+                  ),
+                  child: Icon(icon, color: p.accent, size: 22),
+                ),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     text,
-                    style: TextStyle(color: p.muted, height: 1.8, fontSize: 12),
+                    style: TextStyle(color: p.muted, height: 1.7, fontSize: 12),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             Wrap(
-              spacing: 24,
-              runSpacing: 10,
+              spacing: 10,
+              runSpacing: 8,
               children: stats
                   .map(
-                    (stat) => Text(
-                      '${stat.$1}  ${stat.$2}',
-                      style: TextStyle(color: p.ink, fontSize: 12),
+                    (stat) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: p.surface.withValues(alpha: p.dark ? 0.28 : 0.48),
+                        borderRadius: p.borderRadius(10),
+                        border: Border.all(color: p.line),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            stat.$1,
+                            style: TextStyle(color: p.muted, fontSize: 11),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${stat.$2}',
+                            style: TextStyle(
+                              color: p.ink,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                   .toList(),

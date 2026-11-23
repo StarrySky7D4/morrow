@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'ui/workbench_motion.dart';
 
 /// Keeps one live child through reversals: scroll, focus and player state survive.
 class CollapsiblePanel extends StatefulWidget {
@@ -64,7 +65,7 @@ class _CollapsiblePanelState extends State<CollapsiblePanel>
     animation: _progress,
     child: widget.child,
     builder: (context, child) {
-      final value = Curves.easeInOutCubic.transform(_progress.value);
+      final value = WorkbenchCurves.springOut.transform(_progress.value);
       final reveal = Curves.easeOut.transform((value * 1.4).clamp(0.0, 1.0));
       final horizontal = widget.axis == Axis.horizontal;
       final panel = IgnorePointer(
@@ -74,13 +75,14 @@ class _CollapsiblePanelState extends State<CollapsiblePanel>
           child: ExcludeSemantics(
             excluding: !widget.expanded,
             child: TickerMode(
-              enabled: _progress.value > 0,
+              enabled: widget.expanded && _progress.value > 0,
               child: Opacity(
                 opacity: reveal,
+                alwaysIncludeSemantics: true,
                 child: FractionalTranslation(
                   translation: horizontal
-                      ? Offset(-0.045 * (1 - value), 0)
-                      : Offset(0, -0.065 * (1 - value)),
+                      ? Offset(-0.035 * (1 - value), 0)
+                      : Offset(0, -0.05 * (1 - value)),
                   child: horizontal
                       ? SizedBox(width: widget.extent, child: child)
                       : child,

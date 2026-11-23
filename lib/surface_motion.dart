@@ -1,6 +1,7 @@
 import 'surface_paint_boundary.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
+import 'ui/workbench_motion.dart';
 
 Duration _motionDuration(BuildContext context, int milliseconds) =>
     MediaQuery.disableAnimationsOf(context) ||
@@ -65,8 +66,8 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
     final pressed = active && _pointer != null;
     final hovered = active && _hovered && !pressed;
     // Hover must not grow with the card width and consume adjacent gutters.
-    final scale = pressed ? 0.988 : 1.0;
-    final rise = hovered ? -2.0 : 0.0;
+    final scale = pressed ? 0.984 : 1.0;
+    final rise = hovered ? -3.0 : 0.0;
     return MouseRegion(
       onEnter: (_) {
         if (widget.enabled) setState(() => _hovered = true);
@@ -97,7 +98,7 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
         child: SurfacePaintBoundary(
           child: AnimatedContainer(
             duration: motion,
-            curve: Curves.easeOutCubic,
+            curve: WorkbenchCurves.snappy,
             transformAlignment: Alignment.center,
             transform: Matrix4.identity()
               ..setEntry(0, 0, scale)
@@ -107,9 +108,9 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
               borderRadius: widget.borderRadius,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: hovered ? 0.08 : 0),
-                  blurRadius: hovered ? 8 : 0,
-                  offset: Offset(0, hovered ? 3 : 0),
+                  color: Colors.black.withValues(alpha: hovered ? 0.10 : 0),
+                  blurRadius: hovered ? 14 : 0,
+                  offset: Offset(0, hovered ? 5 : 0),
                 ),
               ],
             ),
