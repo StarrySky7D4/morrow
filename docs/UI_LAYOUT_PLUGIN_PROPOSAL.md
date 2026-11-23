@@ -9,7 +9,7 @@
 
 ## 1. 提案背景与架构红线
 
-当前 `0.1.9-test.58` 仍处于预构建检查与资格收尾阶段（见 [当前开发状态](PROJECT_STATUS.md) 与 [qualification/current.json](qualification/current.json)，`source_accepted=false`、`release_eligible=false`）。为避免干扰现有 `0.1.x` 预构建门禁、既有布局测试与原生宿主资格，新版“现代桌面工作台”重构已被独立冻结在原型分支 `ui-plugin/modern-workbench-layout` 上。
+本提案以 `0.1.9-test.58` 的 Windows 预览基线 `41a18252` 为背景。该版本的[开发状态](https://github.com/StarrySky7D4/morrow/blob/41a18252914195b0456efc8b74809bdb21ae7eea/docs/PROJECT_STATUS.md)和[验收台账](https://github.com/StarrySky7D4/morrow/blob/41a18252914195b0456efc8b74809bdb21ae7eea/docs/qualification/current.json)均记录 `source_accepted=false`、`release_eligible=false`。为避免干扰现有 `0.1.x` 预构建门禁、既有布局测试与原生宿主资格，新版“现代桌面工作台”重构已被独立冻结在原型分支 `ui-plugin/modern-workbench-layout` 上。
 
 本提案建议在主规划线（[未来路线](FUTURE_ROADMAP.md) / [插件 SDK 与 UI 对接设计](PLUGIN_SDK_AND_UI.md) / [UI 设计思想与架构原则](UI_DESIGN_PRINCIPLES.md)）中正式纳入 **“声明式布局插件化（0.2.x）→ 工作台插槽扩展（0.3.x）”** 演进路线，同时严格守住以下不可妥协的架构红线：
 
@@ -50,7 +50,7 @@
 主 Agent 在复盘本提案时，可独立评估是否将原型分支中的以下两处纯宿主层 bugfix cherry-pick 回 `0.1.x`（不涉及布局改版）：
 
 1. **Flutter 3.50.0 Windows 液体玻璃背景倒置 / 反向滚动修复**（`shaders/liquid_glass.frag`）
-   - **现象**：Flutter `3.50.0` 在 Windows 默认启用 Impeller OpenGLES 且移除旧版 OpenGLES 纹理 Y 轴翻转（`impellerc` 定义 `IMPELLER_OPENGLES_UNFLIPPED_DEPRECATED`），原 `#ifdef IMPELLER_TARGET_OPENGLES` 下无条件执行 `sampleUV.y = 1.0 - sampleUV.y;` 会导致液体玻璃采样背景上下颠倒、滚动反向。
+   - **现象**：该原型使用 Flutter `3.50.0` 的 Windows Impeller OpenGLES 构建，纹理采样已采用不翻转的坐标约定（`impellerc` 定义 `IMPELLER_OPENGLES_UNFLIPPED_DEPRECATED`），原 `#ifdef IMPELLER_TARGET_OPENGLES` 下无条件执行 `sampleUV.y = 1.0 - sampleUV.y;` 会导致液体玻璃采样背景上下颠倒、滚动反向。
    - **修复**：改为 `#if defined(IMPELLER_TARGET_OPENGLES) && !defined(IMPELLER_OPENGLES_UNFLIPPED_DEPRECATED)`，实机 Windows 编译产物的反编译着色器已验证消除 `1.0 - _167.y` 翻转。
 2. **Windows `ui::AXTree` 语义树更新报错收敛**（`lib/appearance.dart`、`lib/collapsible_panel.dart`、`lib/workspace_viewport.dart` 等）
    - **现象**：过渡动画中的 `FadeTransition` / `Opacity` 缺少 `alwaysIncludeSemantics: true`，折叠面板在 `ExcludeSemantics` 状态下仍保持 `TickerMode` 激活，以及动画中途切换相同 `ValueKey` 子树，均会触发 `Failed to update ui::AXTree, error: ... will not be in the tree and is not the new root`。
@@ -60,7 +60,7 @@
 
 ## 4. `LayoutSpec v1` 声明式协议草案（供 0.2.x 设计参照）
 
-建议复用 `theme.describe` 的纯转换通道（`handler: "layout.describe"`, `output_type: "morrow.ui.layout.v1"`，正式持久化/传输格式沿用 Cap'n Proto + 有界预算校验），与主题插件**正交独立启用**：
+建议复用 `theme.describe` 的纯转换通道（`handler: "layout.describe"`, `output_type: "morrow.ui.layout.v1"`，持久化与传输均执行有界预算校验，编码格式见第 6 节待决项），与主题插件**正交独立启用**：
 
 ```json
 {
