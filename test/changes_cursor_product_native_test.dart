@@ -168,7 +168,10 @@ void main() {
           }
           final second = await runPage(first, 1);
           expect(second, isNot(first));
+          final stale = await prepare(['card-a', 'card-b'], first);
+          await expectLater(product.prepareChannel(stale), throwsA(anything));
           await runPage(second, 0);
+          await runPage(null, 0);
           final catalog = await entireCatalog(product);
           await product.configureExternal(
             catalog.entries.singleWhere((e) => e.id == changes.id),

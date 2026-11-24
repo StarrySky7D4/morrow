@@ -92,7 +92,7 @@ fn approved_pages_resume_on_selected_receipts_without_skipping_a_card() {
     let first_page = s
         .open_changes_page(
             [7; 32],
-            &scope,
+            &["a".into()],
             ChangesStart::Beginning,
             small,
             Some(1),
@@ -116,10 +116,8 @@ fn approved_pages_resume_on_selected_receipts_without_skipping_a_card() {
             || Ok(()),
         )
         .unwrap();
-    assert!(matches!(
-        s.materialize_changes_window(sparse, || Ok(())),
-        Err(Error::Limit)
-    ));
+    let sparse = s.materialize_changes_window(sparse, || Ok(())).unwrap();
+    assert_eq!(sparse.changes()[0].operation_id, "cb");
 }
 #[test]
 fn canonical_codec_rejects_every_truncation_and_noncanonical_boundary() {
@@ -161,6 +159,54 @@ fn canonical_codec_rejects_every_truncation_and_noncanonical_boundary() {
     expected.update(b"Morrow/changes-metadata/cursor/v1\0");
     expected.update(&b);
     assert_eq!(v.cursor().unwrap(), <[u8; 32]>::from(expected.finalize()));
+}
+
+#[test]
+fn reviewed_page_finds_a_card_beyond_an_entire_unrelated_scan_budget() {
+    use morrow_core::store::EventBudget;
+    let dir = tempfile::tempdir().unwrap();
+    let mut store = Store::open(
+        &dir.path().join("sparse"),
+        EventBudget {
+            max_count: 4200,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    for i in 0..4097 {
+        let id = format!("private-{i}");
+        store
+            .create_local(&format!("create-{i}"), &card(&id))
+            .unwrap();
+    }
+    store.create_local("selected", &card("selected")).unwrap();
+    let selected = vec!["selected".into()];
+    let window = store
+        .open_changes_page(
+            [7; 32],
+            &selected,
+            ChangesStart::Beginning,
+            ChangesBudget {
+                max_candidates: 1,
+                ..Default::default()
+            },
+            Some(1),
+            || Ok(()),
+        )
+        .unwrap();
+    let page = store.materialize_changes_window(window, || Ok(())).unwrap();
+    assert_eq!(page.changes().len(), 1);
+    assert_eq!(page.changes()[0].operation_id, "selected");
+    assert!(matches!(
+        store.open_changes_window(
+            [7; 32],
+            &selected,
+            ChangesStart::Beginning,
+            Default::default(),
+            || Ok(())
+        ),
+        Err(Error::Limit)
+    ));
 }
 #[test]
 fn scope_is_order_independent_length_prefixed_and_exact() {

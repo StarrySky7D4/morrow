@@ -507,7 +507,7 @@ fn additive_v26_migration_preserves_blob_and_stage_history_without_inventing_a_t
     drop(store);
     let raw = rusqlite::Connection::open(&path).unwrap();
     raw.execute_batch(
-        "DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; PRAGMA user_version=26;",
+        concat!(include_str!("schemas/without_reviewed_history.sql"), "DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; PRAGMA user_version=26;"),
     )
     .unwrap();
     drop(raw);
@@ -626,7 +626,7 @@ fn v27_migration_crash_is_atomic_and_never_fabricates_upload_history() {
         let (_root, path, store) = fixture();
         drop(store);
         let raw = rusqlite::Connection::open(&path).unwrap();
-        raw.execute_batch("DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; PRAGMA user_version=26;").unwrap();
+        raw.execute_batch(concat!(include_str!("schemas/without_reviewed_history.sql"), "DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; PRAGMA user_version=26;")).unwrap();
         drop(raw);
         crash(
             &path,

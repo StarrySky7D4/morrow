@@ -14,6 +14,57 @@ pub fn profile_digest() -> [u8; 32] {
     Sha256::digest(WIRE_SPEC).into()
 }
 
+/// Identifies an original metadata ACK. Permission is checked on each new page.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ChangesCursor {
+    pub epoch: [u8; 32],
+    pub sequence: u64,
+    pub metadata: [u8; 32],
+}
+impl ChangesCursor {
+    pub const BYTES: usize = 73;
+    pub fn encode(self) -> [u8; Self::BYTES] {
+        let mut bytes = [0; Self::BYTES];
+        bytes[0] = 1;
+        bytes[1..33].copy_from_slice(&self.epoch);
+        bytes[33..41].copy_from_slice(&self.sequence.to_le_bytes());
+        bytes[41..].copy_from_slice(&self.metadata);
+        bytes
+    }
+    pub fn decode(bytes: &[u8]) -> Result<Self> {
+        let bytes: &[u8; Self::BYTES] = bytes
+            .try_into()
+            .map_err(|_| Error::Invalid("changes bookmark"))?;
+        let value = Self {
+            epoch: bytes[1..33].try_into().unwrap(),
+            sequence: u64::from_le_bytes(bytes[33..41].try_into().unwrap()),
+            metadata: bytes[41..].try_into().unwrap(),
+        };
+        if bytes[0] != 1
+            || value.epoch == [0; 32]
+            || value.sequence == 0
+            || value.metadata == [0; 32]
+        {
+            return Err(Error::Invalid("changes bookmark"));
+        }
+        Ok(value)
+    }
+}
+pub fn reviewed_subscription(scope: [u8; 32]) -> [u8; 32] {
+    let mut digest = Sha256::new();
+    digest.update(b"Morrow/workbench/changes/approved-subscription/v1\0");
+    digest.update(scope);
+    digest.finalize().into()
+}
+#[derive(Clone, Copy, Default)]
+pub enum CheckpointMode {
+    #[default]
+    Independent,
+    Reviewed {
+        parent: Option<ChangesCursor>,
+    },
+}
+
 /// Public approved facts only. The Card hash covers complete Card.encode().
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Change {

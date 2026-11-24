@@ -11,6 +11,7 @@ use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
 mod binding;
 #[cfg(not(target_arch = "wasm32"))]
+mod changes_history;
 mod changes_metadata;
 #[cfg(target_os = "linux")]
 mod linux_protected;
@@ -79,7 +80,7 @@ const BASE_SCHEMA: &str = "CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
                 PRAGMA application_id=1297044050; PRAGMA user_version=4;";
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 27;
+pub const SCHEMA_VERSION: i64 = 28;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -187,6 +188,7 @@ fn capacity_room(
             .saturating_add(tls_identity::accounted(c)?)
             .saturating_add(file_content::accounted(c)?)
             .saturating_add(channel_journal::accounted(c)?)
+            .saturating_add(changes_history::accounted(c)?)
             .saturating_add(agent_ledger::accounted(c)?)
             .saturating_add(blob_stage::accounted(c)?)
             .saturating_add(blob_upload_journal::accounted(c)?)
@@ -972,6 +974,14 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("blob-upload-journal-migration-after-commit");
         }
+        if version < 28 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            changes_history::create(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 28))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+        }
         // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -1286,6 +1296,7 @@ impl Store {
         file_content::verify_schema(snapshot)?;
         file_content_receipt::verify_schema(snapshot)?;
         channel_journal::verify_schema(snapshot)?;
+        changes_history::verify(snapshot)?;
         agent_ledger::verify_schema(snapshot)?;
         blob_stage::verify_schema(snapshot)?;
         blob_upload_journal::verify_schema(snapshot)?;

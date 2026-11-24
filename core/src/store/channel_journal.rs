@@ -475,6 +475,28 @@ impl Store {
         response_wire: &[u8],
         guard: impl FnMut() -> Result<()>,
     ) -> Result<ChannelCommit> {
+        self.commit_channel_ack_with_mode(
+            subscription,
+            expected,
+            frame_wire,
+            request_wire,
+            response_wire,
+            crate::changes_metadata::CheckpointMode::Independent,
+            guard,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub fn commit_channel_ack_with_mode(
+        &mut self,
+        subscription: &[u8; 32],
+        expected: Option<&ChannelCheckpoint>,
+        frame_wire: &[u8],
+        request_wire: &[u8],
+        response_wire: &[u8],
+        mode: crate::changes_metadata::CheckpointMode,
+        mut guard: impl FnMut() -> Result<()>,
+    ) -> Result<ChannelCommit> {
+        use crate::changes_metadata::{ChangesCursor, CheckpointMode};
         let prepared = prepare_ack(
             &self.connection,
             subscription,
@@ -485,9 +507,35 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        match commit_ack_in_transaction(&tx, self.budget, expected, prepared, guard)? {
+        match commit_ack_in_transaction(&tx, self.budget, expected, prepared, &mut guard)? {
             super::StoreMutation::Unchanged(value) => Ok(value),
             super::StoreMutation::Commit(value) => {
+                if let CheckpointMode::Reviewed { parent } = mode {
+                    let ChannelCommit::Committed(next) = &value else {
+                        return Err(Error::Integrity);
+                    };
+                    let previous = if let Some(ack) = expected {
+                        Some(ChangesCursor {
+                            epoch: ack.source_epoch,
+                            sequence: ack.sequence,
+                            metadata: ack
+                                .cursor
+                                .as_slice()
+                                .try_into()
+                                .map_err(|_| Error::Integrity)?,
+                        })
+                    } else {
+                        parent
+                    };
+                    super::changes_history::advance(
+                        &tx,
+                        self.budget,
+                        subscription,
+                        previous,
+                        next,
+                    )?;
+                    guard()?;
+                }
                 tx.commit().map_err(|_| Error::CommitUnknown)?;
                 boundary("channel-checkpoint-after-commit");
                 Ok(value)

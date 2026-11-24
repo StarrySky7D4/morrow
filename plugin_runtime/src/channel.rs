@@ -1124,13 +1124,18 @@ impl ChannelBroker {
                                     };
                                     #[cfg(feature = "fault-injection")]
                                     let mut commit_checks = 0u8;
+                                    let mode = match self.resource.source_guard.lock().map_err(|_| Error::Unknown)?.as_ref() {
+                                        Some(SourceGuard::Changes(state)) => state.checkpoint_mode,
+                                        _ => morrow_core::changes_metadata::CheckpointMode::Independent,
+                                    };
                                     host.store_local_mut()
-                                        .commit_channel_ack_guarded(
+                                        .commit_channel_ack_with_mode(
                                             &subscription,
                                             checkpoint.as_ref(),
                                             &pending.encode().map_err(|_| Error::Invalid)?,
                                             &request.encode().map_err(|_| Error::Invalid)?,
                                             &ack.encode().map_err(|_| Error::Invalid)?,
+                                            mode,
                                             || {
                                                 #[cfg(feature = "fault-injection")]
                                                 {

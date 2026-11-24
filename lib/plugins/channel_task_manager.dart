@@ -117,7 +117,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                   'Allow ${request.packageId} to read up to ${review.pageSize} change records for these cards once.',
                   review.cards.join('\n'),
                   review.previousCursor == null
-                      ? 'Start at the beginning.'
+                      ? 'Use the last confirmed position, or start at the beginning for a new selection.'
                       : 'Resume after the last acknowledged record.',
                   'Each record includes the card ID, operation ID, revision and content digest.',
                 ],

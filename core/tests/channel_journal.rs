@@ -39,6 +39,128 @@ fn material(sequence: u64, call: u8) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
     )
 }
 #[test]
+fn reviewed_cursor_rejects_competing_parent_and_rotates_only_its_old_epochs() {
+    use morrow_core::changes_metadata::{
+        ChangesCursor, CheckpointMode, Metadata, reviewed_subscription,
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let db = dir.path().join("history");
+    let mut store = Store::open(&db, EventBudget::default()).unwrap();
+    let scope = [42; 32];
+    let sub = reviewed_subscription(scope);
+    let add = |s: &mut Store,
+               epoch: u8,
+               parent: Option<ChangesCursor>,
+               stop: bool|
+     -> morrow_core::Result<ChangesCursor> {
+        let item = Metadata {
+            scope_digest: scope,
+            window_id: [epoch; 32],
+            card_id: "a".into(),
+            operation_id: format!("edit-{epoch}"),
+            revision: 1,
+            card_sha256: [15; 32],
+        };
+        let digest = item.cursor()?;
+        let frame = Frame {
+            sequence: 1,
+            source_epoch: item.window_id,
+            bytes: item.encode()?,
+            cursor: digest.to_vec(),
+        };
+        let request = Request {
+            call_id: [9; 32],
+            reference: [31; 32],
+            source_epoch: frame.source_epoch,
+            action: Action::Ack {
+                sequence: 1,
+                frame_sha256: frame.digest()?,
+                cursor: frame.cursor.clone(),
+            },
+        };
+        let ack = Response {
+            call_id: request.call_id,
+            request_sha256: request.digest()?,
+            reference: request.reference,
+            source_epoch: frame.source_epoch,
+            status: Status::Acked,
+            frame: None,
+            last_acked: 1,
+            accepted_sequence: 0,
+            resource_reclaimed: false,
+        };
+        let mut calls = 0;
+        s.commit_channel_ack_with_mode(
+            &sub,
+            None,
+            &frame.encode()?,
+            &request.encode()?,
+            &ack.encode()?,
+            CheckpointMode::Reviewed { parent },
+            || {
+                calls += 1;
+                if stop && calls == 3 {
+                    Err(Error::OperationConflict)
+                } else {
+                    Ok(())
+                }
+            },
+        )?;
+        Ok(ChangesCursor {
+            epoch: frame.source_epoch,
+            sequence: 1,
+            metadata: digest,
+        })
+    };
+    let (frame, request, response) = material(1, 10);
+    store
+        .commit_channel_ack(&[90; 32], None, &frame, &request, &response)
+        .unwrap();
+    let first = add(&mut store, 11, None, false).unwrap();
+    assert_eq!(store.reviewed_changes_cursor(&sub).unwrap(), Some(first));
+    assert!(matches!(
+        add(&mut store, 12, None, false),
+        Err(Error::RevisionConflict)
+    ));
+    assert!(store.channel_checkpoint(&sub, &[12; 32]).unwrap().is_none());
+    let second = add(&mut store, 12, Some(first), false).unwrap();
+    assert!(matches!(
+        add(&mut store, 13, Some(second), true),
+        Err(Error::OperationConflict)
+    ));
+    assert_eq!(store.reviewed_changes_cursor(&sub).unwrap(), Some(second));
+    assert!(
+        store
+            .channel_ack_receipt(&sub, &first.epoch, 1)
+            .unwrap()
+            .is_some()
+    );
+    let third = add(&mut store, 13, Some(second), false).unwrap();
+    drop(store);
+    let reopened = Store::open_existing(&db, Default::default()).unwrap();
+    assert_eq!(reopened.reviewed_changes_cursor(&sub).unwrap(), Some(third));
+    assert!(
+        reopened
+            .channel_checkpoint(&sub, &first.epoch)
+            .unwrap()
+            .is_none()
+    );
+    for keep in [second, third] {
+        assert!(
+            reopened
+                .channel_ack_receipt(&sub, &keep.epoch, 1)
+                .unwrap()
+                .is_some()
+        );
+    }
+    assert!(
+        reopened
+            .channel_ack_receipt(&[90; 32], &[3; 32], 1)
+            .unwrap()
+            .is_some()
+    );
+}
+#[test]
 fn ack_receipt_and_checkpoint_are_atomic_durable_and_duplicate_ack_does_not_commit() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("subscriptions.sqlite");
@@ -581,7 +703,7 @@ fn journal_migration_process_crash_before_and_after_commit_reopens_same_store() 
         let path = dir.path().join("migration-crash.sqlite");
         drop(Store::open(&path, EventBudget::default()).unwrap());
         let db = rusqlite::Connection::open(&path).unwrap();
-        db.execute_batch("DROP TABLE IF EXISTS blob_upload_history; DROP TABLE IF EXISTS blob_upload_requests; DROP TABLE IF EXISTS blob_stage_history; DROP TABLE IF EXISTS blob_stage_operations; DROP TABLE IF EXISTS agent_ledger; DROP TABLE channel_ack_receipts; DROP TABLE channel_checkpoints; PRAGMA user_version=23;").unwrap();
+        db.execute_batch(concat!(include_str!("schemas/without_reviewed_history.sql"), "DROP TABLE IF EXISTS blob_upload_history; DROP TABLE IF EXISTS blob_upload_requests; DROP TABLE IF EXISTS blob_stage_history; DROP TABLE IF EXISTS blob_stage_operations; DROP TABLE IF EXISTS agent_ledger; DROP TABLE channel_ack_receipts; DROP TABLE channel_checkpoints; PRAGMA user_version=23;")).unwrap();
         drop(db);
         let output = std::process::Command::new(std::env::current_exe().unwrap())
             .args([

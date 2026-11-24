@@ -451,7 +451,7 @@ impl Workbench {
             && snapshot.last_acked > 0
         {
             let owner = self.state.local()?;
-            match source.confirmed_cursor(&owner.host, source.scope_digest(), snapshot.last_acked) {
+            match source.confirmed_cursor(&owner.host, snapshot.last_acked) {
                 Ok(cursor) => job.changes_cursor = cursor.encode().to_vec(),
                 Err(_) => {
                     job.error = "original changes acknowledgement could not be confirmed".into()
@@ -682,7 +682,9 @@ impl Workbench {
                     let start = review
                         .previous_cursor
                         .map_or(HistoryStart::Beginning, |cursor| HistoryStart::ExactAck {
-                            subscription: scope,
+                            subscription: morrow_core::changes_metadata::reviewed_subscription(
+                                scope,
+                            ),
                             cursor,
                         });
                     let approval = ChangesApproval::issue_page(
@@ -704,7 +706,7 @@ impl Workbench {
                         manager,
                         &state.host,
                         &instance,
-                        scope,
+                        morrow_core::changes_metadata::reviewed_subscription(scope),
                         request.budget,
                         now(state.start),
                     )?;

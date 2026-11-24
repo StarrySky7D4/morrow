@@ -401,12 +401,23 @@ pub(super) fn materialize_connection(
             .checked_sub(w.usage.candidates)
             .ok_or(Error::Limit)?;
         let read_limit = remaining.min(u32::from(w.budget.page_candidates));
-        if read_limit == 0 {
+        if read_limit == 0 && w.page_limit.is_none() {
             return Err(Error::Limit);
         }
         // First collect at most one bounded page of permanent candidates. No
         // card filter or operations payload participates in this range scan.
-        let candidates = {
+        let candidates = if let Some(size) = w.page_limit {
+            super::changes_history::candidates(
+                c,
+                &w.cards,
+                w.lower,
+                w.upper,
+                size,
+                &mut w.usage.candidates,
+                w.budget.max_candidates,
+                authorize,
+            )?
+        } else {
             let mut stmt=sql(c.prepare("SELECT sequence,CASE WHEN length(CAST(id AS BLOB)) BETWEEN 1 AND 256 THEN id ELSE NULL END FROM operation_events WHERE sequence>?1 AND sequence<=?2 ORDER BY sequence LIMIT ?3"))?;
             let mut rows = sql(stmt.query(params![w.lower, w.upper, i64::from(read_limit)]))?;
             let mut values = Vec::with_capacity(read_limit as usize);
@@ -420,13 +431,20 @@ pub(super) fn materialize_connection(
             values
         };
         if candidates.is_empty() {
+            if w.page_limit.is_some() {
+                break;
+            }
             return Err(Error::Integrity);
         }
         for (seq, operation) in candidates {
-            if seq != w.lower.checked_add(1).ok_or(Error::Limit)? {
+            if seq <= w.lower
+                || (w.page_limit.is_none() && seq != w.lower.checked_add(1).ok_or(Error::Limit)?)
+            {
                 return Err(Error::Integrity);
             }
-            w.usage.candidates = w.usage.candidates.checked_add(1).ok_or(Error::Limit)?;
+            if w.page_limit.is_none() {
+                w.usage.candidates = w.usage.candidates.checked_add(1).ok_or(Error::Limit)?;
+            }
             if w.usage.candidates > w.budget.max_candidates {
                 return Err(Error::Limit);
             }
@@ -475,6 +493,9 @@ pub(super) fn materialize_connection(
             w.lower = seq;
         }
         authorize()?;
+        if w.page_limit.is_some() {
+            break;
+        }
     }
     authorize()?;
     Ok(ChangesBatch {

@@ -37,41 +37,8 @@ pub enum HistoryStart {
     },
 }
 
-/// Identifies one committed metadata ACK. This carries no card access or grant.
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub struct ChangesCursor {
-    epoch: [u8; 32],
-    sequence: u64,
-    metadata: [u8; 32],
-}
-
-impl ChangesCursor {
-    pub const BYTES: usize = 73;
-
-    pub fn encode(self) -> [u8; Self::BYTES] {
-        let mut wire = [0; Self::BYTES];
-        wire[0] = 1;
-        wire[1..33].copy_from_slice(&self.epoch);
-        wire[33..41].copy_from_slice(&self.sequence.to_le_bytes());
-        wire[41..].copy_from_slice(&self.metadata);
-        wire
-    }
-
-    pub fn decode(bytes: &[u8]) -> Result<Self> {
-        let bytes: &[u8; Self::BYTES] = bytes.try_into().map_err(|_| Error::Denied)?;
-        let epoch = bytes[1..33].try_into().unwrap();
-        let sequence = u64::from_le_bytes(bytes[33..41].try_into().unwrap());
-        let metadata = bytes[41..].try_into().unwrap();
-        if bytes[0] != 1 || epoch == [0; 32] || sequence == 0 || metadata == [0; 32] {
-            return Err(Error::Denied);
-        }
-        Ok(Self {
-            epoch,
-            sequence,
-            metadata,
-        })
-    }
-}
+pub use morrow_core::changes_metadata::ChangesCursor;
+use morrow_core::changes_metadata::{CheckpointMode, reviewed_subscription};
 
 struct ApprovalState {
     manager: Weak<()>,
@@ -189,6 +156,7 @@ struct Item {
 }
 pub(super) struct GrantState {
     approval: Arc<ApprovalState>,
+    pub(super) checkpoint_mode: CheckpointMode,
     items: Arc<Vec<Item>>,
     deadline: Instant,
     #[cfg(feature = "fault-injection")]
@@ -248,6 +216,7 @@ impl GrantState {
 pub struct ChangesApproval {
     state: Arc<ApprovalState>,
     batch: ChangesBatch,
+    checkpoint_mode: CheckpointMode,
 }
 /// A restricting revocation handle. Revoking any fixed card closes the whole set.
 /// It cannot authorize another receiver, renew a deadline, or materialize a batch.
@@ -521,6 +490,28 @@ impl ChangesApproval {
             restrictions,
         });
         state.check()?;
+        let (start, checkpoint_mode) = if page_size.is_some() {
+            let sub = reviewed_subscription(scope);
+            let current = host
+                .store_local()
+                .reviewed_changes_cursor(&sub)
+                .map_err(core_error)?;
+            match start {
+                HistoryStart::Beginning => {}
+                HistoryStart::ExactAck {
+                    subscription,
+                    cursor,
+                } if subscription == sub && Some(cursor) == current => {}
+                _ => return Err(Error::Denied),
+            }
+            let start = current.map_or(HistoryStart::Beginning, |cursor| HistoryStart::ExactAck {
+                subscription: sub,
+                cursor,
+            });
+            (start, CheckpointMode::Reviewed { parent: current })
+        } else {
+            (start, CheckpointMode::Independent)
+        };
         let start = match start {
             HistoryStart::Beginning => ChangesStart::Beginning,
             HistoryStart::LatestAck {
@@ -555,7 +546,11 @@ impl ChangesApproval {
             .materialize_changes_window(window, || check_core(&state))
             .map_err(core_error)?;
         state.check()?;
-        Ok(Self { state, batch })
+        Ok(Self {
+            state,
+            batch,
+            checkpoint_mode,
+        })
     }
     pub fn revocation(&self) -> ChangesRevocation {
         ChangesRevocation {
@@ -574,6 +569,11 @@ impl ChangesApproval {
         channel_budget: Budget,
         now: u64,
     ) -> Result<ChangesSource> {
+        if matches!(self.checkpoint_mode, CheckpointMode::Reviewed { .. })
+            && subscription != reviewed_subscription(self.state.scope)
+        {
+            return Err(Error::Denied);
+        }
         self.state.owner(manager, host, instance)?;
         if now < self.state.issued_tick || now >= self.state.expires || subscription == [0; 32] {
             return Err(Error::Denied);
@@ -636,6 +636,7 @@ impl ChangesApproval {
         let items = Arc::new(items);
         let grant = Arc::new(GrantState {
             approval: self.state,
+            checkpoint_mode: self.checkpoint_mode,
             items: Arc::clone(&items),
             deadline,
             #[cfg(feature = "fault-injection")]
@@ -704,22 +705,24 @@ impl ChangesSource {
     }
     /// The workbench emits a bookmark only after the original protected Store
     /// corroborates the terminal guest's exact acknowledgement.
-    pub fn confirmed_cursor(
-        &self,
-        host: &HostRuntime,
-        subscription: [u8; 32],
-        sequence: u64,
-    ) -> Result<ChangesCursor> {
+    pub fn confirmed_cursor(&self, host: &HostRuntime, sequence: u64) -> Result<ChangesCursor> {
         host.store_local()
             .validate_changes_store_binding(&self.grant.approval.store_binding)
             .map_err(core_error)?;
+        let subscription = reviewed_subscription(self.scope_digest());
         let (_, cursor) = latest_anchor(
             host,
             subscription,
             self.broker.endpoint().source_epoch,
             self.scope_digest(),
         )?;
-        if cursor.sequence != sequence {
+        if cursor.sequence != sequence
+            || host
+                .store_local()
+                .reviewed_changes_cursor(&subscription)
+                .map_err(core_error)?
+                != Some(cursor)
+        {
             return Err(Error::Denied);
         }
         Ok(cursor)

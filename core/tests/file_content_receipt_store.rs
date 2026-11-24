@@ -112,7 +112,7 @@ fn reconstruct_v22_with_staged_bytes(path: &Path, live: &Receipt) {
         .unwrap();
     }
     sql.execute_batch(
-        "DROP TABLE IF EXISTS blob_upload_history; DROP TABLE IF EXISTS blob_upload_requests; DROP TABLE IF EXISTS blob_stage_history; DROP TABLE IF EXISTS blob_stage_operations; DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE file_content_receipts; UPDATE sqlite_sequence SET seq=1 WHERE name='outbox'; PRAGMA user_version=22;",
+        concat!(include_str!("schemas/without_reviewed_history.sql"), "DROP TABLE IF EXISTS blob_upload_history; DROP TABLE IF EXISTS blob_upload_requests; DROP TABLE IF EXISTS blob_stage_history; DROP TABLE IF EXISTS blob_stage_operations; DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE file_content_receipts; UPDATE sqlite_sequence SET seq=1 WHERE name='outbox'; PRAGMA user_version=22;"),
     )
     .unwrap();
 }
