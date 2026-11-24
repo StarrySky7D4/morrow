@@ -5310,6 +5310,7 @@ dependencies = [
 name = "morrow-workbench-host"
 version = "0.1.9-test.50"
 dependencies = [
+ "base64 0.22.1",
  "capnp",
  "capnpc",
  "getrandom 0.4.3",
@@ -5338,10 +5339,12 @@ dependencies = [
  "rusqlite",
  "rustls-pki-types",
  "semver",
+ "serde",
  "serde_json",
  "sha2 0.10.9",
  "tempfile",
  "tokio",
+ "tokio-util",
  "url",
  "wasm-bindgen",
  "x509-parser",
