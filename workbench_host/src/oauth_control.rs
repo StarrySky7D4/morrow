@@ -21,6 +21,8 @@ use std::{
 use tokio::runtime::Runtime;
 use tokio_util::sync::CancellationToken;
 
+const MAX_ACCOUNT_ACTIONS: usize = 256;
+
 #[derive(Clone)]
 struct Service {
     key: [u8; 32],
@@ -94,6 +96,7 @@ impl Job {
 pub(crate) struct Accounts {
     services: BTreeMap<[u8; 32], Service>,
     seen: BTreeSet<[u8; 32]>,
+    withdrawal_keys_at_limit: BTreeSet<[u8; 32]>,
     job: Option<Job>,
     reviewed: BTreeMap<[u8; 32], withdrawal::Reviewed>,
     withdrawal: Option<withdrawal::Withdrawal>,
@@ -171,10 +174,21 @@ impl Accounts {
         self.remember(nonce)
     }
     fn remember(&mut self, nonce: [u8; 32]) -> Result<()> {
-        if nonce == [0; 32] || self.seen.len() >= 256 || !self.seen.insert(nonce) {
+        if nonce == [0; 32] || self.seen.len() >= MAX_ACCOUNT_ACTIONS || !self.seen.insert(nonce) {
             return Err(Error::Limit.into());
         }
         Ok(())
+    }
+    #[cfg(test)]
+    pub(crate) fn fill_action_budget_for_test(&mut self) {
+        for i in 0..MAX_ACCOUNT_ACTIONS as u32 {
+            if self.seen.len() == MAX_ACCOUNT_ACTIONS {
+                break;
+            }
+            let mut key = [0x7a; 32];
+            key[..4].copy_from_slice(&i.to_le_bytes());
+            self.remember(key).unwrap();
+        }
     }
     pub(crate) fn stop(&mut self) {
         if let Some(job) = &mut self.job {

@@ -180,6 +180,9 @@ fn sign_out_while_the_original_guest_request_is_waiting_is_account_scoped_and_du
                     .unwrap()
             });
             assert!(w.local_state().is_err());
+            if active == 1 {
+                w.oauth_accounts.fill_action_budget_for_test();
+            }
             let (reference, revision, _) = accounts[0].0;
             let withdraw = |w: &mut Workbench, expected, nonce: u8| {
                 call(w, &s, Action::Logout, |mut p| {
@@ -579,6 +582,16 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
                 p.set_key(&[nonce; 32]);
             });
             assert_eq!(refresh.phase, 1, "{}", refresh.error);
+            // Until the original response is committed, neither this account
+            // nor the other can spend a second refresh slot.
+            for other in [accounts[0].0.0, accounts[1].0.0] {
+                let concurrent = call(&mut w, &s, Action::Refresh, |mut request| {
+                    request.set_service(&service_id);
+                    request.set_account(&other);
+                    request.set_key(&[90 + i as u8; 32]);
+                });
+                assert!(concurrent.error.contains("Busy"), "{}", concurrent.error);
+            }
             let done = completed(&mut w, &s, service_id, nonce);
             assert_eq!(done.accounts, vec![(*reference, revision + 2, 1)]);
             assert_eq!(
@@ -592,12 +605,36 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
             assert_eq!((observed.exchanges, observed.rotations), (2, 2));
         }
         let ((ref_a, revision_a, _), ep_a) = &accounts[0];
+        // Fill the owner ledger locally, without generating network traffic.
+        // Read each current account revision as the Windows account page does.
+        w.oauth_accounts.fill_action_budget_for_test();
+        let listed = w.oauth_account_page(&s, service_id, None, None).unwrap().0;
+        assert_eq!(listed.len(), 2);
+        let limited = call(&mut w, &s, Action::Refresh, |mut p| {
+            p.set_service(&service_id);
+            p.set_account(ref_a);
+            p.set_key(&[94; 32]);
+        });
+        assert!(limited.error.contains("Limit"), "{}", limited.error);
+        let reused = call(&mut w, &s, Action::Logout, |mut request| {
+            request.set_service(&service_id);
+            request.set_account(ref_a);
+            request.set_expected_revision(revision_a + 2);
+            request.set_key(&[60; 32]);
+        });
+        assert!(reused.error.contains("Limit"), "{}", reused.error);
         let out = call(&mut w, &s, Action::Logout, |mut p| {
             p.set_service(&service_id);
             p.set_account(ref_a);
             p.set_expected_revision(revision_a + 2);
+            p.set_key(&[95; 32]);
         });
+        assert!(out.error.is_empty(), "{}", out.error);
         assert_eq!(out.accounts[0].2, 4);
+        assert_eq!(
+            query(&mut w, &s, service_id, 95, Action::Poll).accounts,
+            out.accounts
+        );
         assert!(w.start_http(resource_request(&s, ep_a, 45)).is_err());
         resource_call(&mut w, &s, &accounts[1].1, 46, "beta");
         assert_eq!(

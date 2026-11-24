@@ -37,6 +37,38 @@ impl Reviewed {
     }
 }
 impl Accounts {
+    fn remember_withdrawal(
+        &mut self,
+        sel: &Selection,
+        service: [u8; 32],
+        reference: [u8; 32],
+        revision: u64,
+        key: [u8; 32],
+    ) -> Result<()> {
+        if self.seen.len() < super::MAX_ACCOUNT_ACTIONS {
+            return self.remember(key);
+        }
+        // After the normal allowance is spent, reserve cleanup only for an
+        // account that was actually listed at this exact selection and revision.
+        let listed = self.reviewed.get(&reference).is_some_and(|review| {
+            &review.selection == sel
+                && review.service == service
+                && review.expected == revision
+                && review.is_current()
+        });
+        if !listed {
+            return Err(Error::NotApproved.into());
+        }
+        if key == [0; 32]
+            || self.seen.contains(&key)
+            || self.withdrawal_keys_at_limit.len() >= morrow_core::outbound_authority::MAX_RECORDS
+            || !self.withdrawal_keys_at_limit.insert(key)
+        {
+            return Err(Error::Limit.into());
+        }
+        Ok(())
+    }
+
     /// Called after a network task has pinned the authority Store. Simply listing
     /// accounts never locks another workbench out of an otherwise idle library.
     pub(crate) fn prepare_withdrawals(&mut self, store: &mut Store) -> Result<()> {
@@ -126,7 +158,7 @@ impl Workbench {
                 return Err(Error::Busy.into());
             }
         }
-        self.oauth_accounts.remember(key)?;
+        self.oauth_accounts.remember_withdrawal(sel, service, reference, revision, key)?;
         let (signed_out, pending, witness) = if let Ok(state) = self.local_state() {
             let witness = state
                 .manager
