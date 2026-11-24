@@ -97,6 +97,7 @@ fn io_capability(kind: IoCapability) -> &'static str {
         IoCapability::FileCreate => "file-create",
         IoCapability::FileReplace => "file-replace",
         IoCapability::FileDelete => "file-delete",
+        IoCapability::FileRename => "file-rename",
         IoCapability::HttpRequest => "http-request",
         IoCapability::HttpListen => "http-listen",
         IoCapability::HttpPublish => "http-publish",
@@ -105,12 +106,12 @@ fn io_capability(kind: IoCapability) -> &'static str {
     }
 }
 fn io_approval(values: &[String]) -> Result<BTreeSet<IoCapability>> {
-    if values.len() > 10 {
+    if values.len() > morrow_core::plugin_package::io::MAX_CAPABILITIES {
         return Err("IO capability decision budget".into());
     }
     let mut set = BTreeSet::new();
     for value in values {
-        let kind = (1..=10)
+        let kind = (1..=morrow_core::plugin_package::io::MAX_CAPABILITIES as i32)
             .filter_map(|n| IoCapability::from_number(n).ok())
             .find(|&kind| io_capability(kind) == value)
             .ok_or("unknown IO capability")?;

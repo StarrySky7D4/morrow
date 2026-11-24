@@ -16,7 +16,8 @@ import plugin_sdk_lock as sdk_lock
 
 MANIFEST = 'SDK_DISTRIBUTION_MANIFEST.json'
 LEGACY_PROFILE = 'morrow-sdk-source-distribution-v1'
-PROFILE = 'morrow-sdk-source-distribution-v2'
+MUTATION_PROFILE = 'morrow-sdk-source-distribution-v2'
+PROFILE = 'morrow-sdk-source-distribution-v3'
 MAX_FILES = 4096
 MAX_FILE_BYTES = 8 * 1024 * 1024
 MAX_TOTAL_BYTES = 64 * 1024 * 1024
@@ -27,7 +28,7 @@ LEGACY_STARTERS = ('task', 'transform', 'ui', 'dependency-caller', 'io', 'servic
 STARTERS = (*LEGACY_STARTERS, 'mutation')
 SDK_DOCS = ('README.md', 'CONTENT_API.md', 'IO_API.md', 'CHANNEL_API.md', 'SERVICE_API.md')
 TOOLS = ('morrow_plugin.py', 'plugin_sdk_lock.py', 'package_plugin_sdk.py')
-CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'channel.capnp', 'mutation.capnp', 'service.capnp', 'service_resources.capnp', 'version.txt', 'task-version.txt', 'ui-version.txt')
+CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'channel.capnp', 'mutation.capnp', 'mutation_rename.capnp', 'service.capnp', 'service_resources.capnp', 'version.txt', 'task-version.txt', 'ui-version.txt')
 README = b'''# Morrow SDK source distribution\n\nThis source-only developer bundle supports C, C++ and Rust guests and declarative UI starters. It contains the original SDK library sources, fixed contracts, licenses, existing starters and project/lock tooling. No native DLL, precompiled guest, SDK tests, Core, runtime or host source is bundled.\n\nPython 3.11+ is required. Use `python -B tool/package_plugin_sdk.py verify-directory .` before using this directory. The bounded manifest covers source, tools, examples and documentation. It verifies local byte identity; it is not a supply-chain signature, a new contract authority, SDK freeze or platform/product qualification. Existing sdk.lock.toml retains morrow-sdk-source-v1 and its original limits.\n\n`python -B tool/morrow_plugin.py new ../plugin --sdk-only --language c --kind transform --id example.transform --lock-sdk`\n`python -B tool/morrow_plugin.py validate ../plugin --sdk-only --require-sdk-lock`\n\nPass --sdk-root PATH/sdk if the SDK is not beside this tool. Generated projects belong outside the bundle so the exact inventory remains valid. When relocating a Rust project, update its Cargo dependency path and pass the same SDK path. new/validate/lock-sdk in SDK-only mode use the bundle inventory and narrow internal source binding observations; they do not compare against or qualify a host. Source export requires SDK/Core canonical schemas and declared versions to agree before export. Internal binding observations do not prove compiler expansion, schema/manual decoder semantics, or behavior of self-rehashed malicious source. The default mode still requires repository Core contracts.\n\nbuild and doctor additionally require a trusted local compiler/toolchain; they are not source-only checks. Rust/Cargo may need an already provisioned offline dependency cache; C/C++ additionally need Clang and a WASI sysroot. They have not been run as part of distribution validation. pack/check/transform require trusted Core/runtime tools and are rejected in SDK-only mode before subprocesses or output. profiles is not included.\n\nTemplates declare ceilings, never grants. UI requires a host renderer/session validator. Content, IO, service, channel and dependencies require host-controlled bindings, grants and lifecycle. This bundle does not complete filesystem/network/plugin lifecycle capabilities or test them. Existing sdk/README.md and API documents describe repository workflows and their qualification limits; historical repository links may require the repository.\n'''
 
 class DistributionError(ValueError):
@@ -230,11 +231,15 @@ def validate_source_authority(root):
             'wire_versions': internal['wire_versions'], 'core_bundled': False, 'signature': False, 'semantics': 'NOT_PROVED'}
 
 
-def validate_payload_names(names, starters=STARTERS):
+def profile_contracts(profile):
+    return CONTRACTS if profile == PROFILE else tuple(name for name in CONTRACTS if name != 'mutation_rename.capnp')
+
+
+def validate_payload_names(names, starters=STARTERS, contracts=CONTRACTS):
     fixed = {'README.md', 'NOTICE', 'docs/PLUGIN_PROJECT_TOOLS.md', 'docs/PLUGIN_SDK_COMPATIBILITY.md'}
     fixed.update(public_inputs())
     fixed.update('sdk/' + name for name in sdk_lock.ROOT_FILES + SDK_DOCS)
-    fixed.update('sdk/rust/contracts/' + name for name in CONTRACTS)
+    fixed.update('sdk/rust/contracts/' + name for name in contracts)
     fixed.update('tool/' + name for name in TOOLS)
     for lang in LANGUAGES:
         for profile in starters:
@@ -251,11 +256,11 @@ def validate_payload_names(names, starters=STARTERS):
             raise DistributionError('outside SDK source distribution closure: ' + name)
 
 
-def selected_names(root, starters=STARTERS):
+def selected_names(root, starters=STARTERS, contracts=CONTRACTS):
     # Reuse the existing SDK source-lock inventory and constraints unchanged.
     library = sdk_lock.inventory(root / 'sdk')
     validate_sdk_bindings(root)
-    for name in CONTRACTS:
+    for name in contracts:
         checked_file(root, 'sdk/rust/contracts/' + name)
     names = {'sdk/' + name for name in library}
     names.update('sdk/' + name for name in SDK_DOCS)
@@ -351,7 +356,7 @@ def parse_manifest(data):
         raise DistributionError('invalid manifest') from error
     if not isinstance(value, dict) or set(value) != {'schema', 'profile', 'qualification', 'native_libraries_bundled', 'files'}:
         raise DistributionError('unexpected manifest fields')
-    if type(value['schema']) is not int or value['schema'] != 1 or value['profile'] not in (LEGACY_PROFILE, PROFILE) or value['qualification'] != 'source-only-not-frozen' or value['native_libraries_bundled'] is not False:
+    if type(value['schema']) is not int or value['schema'] != 1 or value['profile'] not in (LEGACY_PROFILE, MUTATION_PROFILE, PROFILE) or value['qualification'] != 'source-only-not-frozen' or value['native_libraries_bundled'] is not False:
         raise DistributionError('unsupported distribution manifest')
     files = value['files']
     if not isinstance(files, dict) or not 1 <= len(files) <= MAX_FILES:
@@ -367,6 +372,8 @@ def parse_manifest(data):
         total += entry['size']
     if total + len(data) > MAX_TOTAL_BYTES:
         raise DistributionError('total size limit including manifest')
+    if value['profile'] != PROFILE and 'sdk/rust/contracts/mutation_rename.capnp' in value['files']:
+        raise DistributionError('rename contract requires SDK source distribution v3')
     return value
 
 def snapshot(root):
@@ -410,7 +417,7 @@ def verify_zip(path):
         manifest = parse_manifest(archive.read(MANIFEST))
         if set(archive.namelist()) != set(manifest['files']) | {MANIFEST}:
             raise DistributionError('archive inventory differs')
-        validate_payload_names(manifest['files'], LEGACY_STARTERS if manifest['profile'] == LEGACY_PROFILE else STARTERS)
+        validate_payload_names(manifest['files'], LEGACY_STARTERS if manifest['profile'] == LEGACY_PROFILE else STARTERS, profile_contracts(manifest['profile']))
         for name, item in manifest['files'].items():
             data = archive.read(name)  # ZipFile checks CRC on read; prechecked size bounds.
             if len(data) != item['size'] or sha(data) != item['sha256']:
@@ -448,7 +455,7 @@ def verify_distribution(root):
     data = checked_file(root, MANIFEST)
     manifest = parse_manifest(data)
     starters = LEGACY_STARTERS if manifest['profile'] == LEGACY_PROFILE else STARTERS
-    required = set(selected_names(root, starters)) | {'README.md'}
+    required = set(selected_names(root, starters, profile_contracts(manifest['profile']))) | {'README.md'}
     if set(manifest['files']) != required or directory_files(root) != required | {MANIFEST}:
         raise DistributionError('distribution closure differs (keep projects and caches outside bundle)')
     for name, entry in manifest['files'].items():

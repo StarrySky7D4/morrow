@@ -50,6 +50,7 @@ fn start(
         Disposition::Create => 1,
         Disposition::Replace => 2,
         Disposition::Delete => 3,
+        Disposition::Rename => 4,
     };
     wire_call(
         &mut setup.app,

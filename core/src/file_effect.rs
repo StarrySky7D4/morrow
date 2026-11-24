@@ -29,17 +29,26 @@ pub enum DeleteResult {
     OsRejected { code: u32 },
 }
 
-pub struct DeleteOutcome {
-    value: proto::DeleteOutcome,
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RenameResult {
+    Renamed,
+    OsRejected { code: u32 },
+}
+
+pub type DeleteOutcome = EntryOutcome<false>;
+pub type RenameOutcome = EntryOutcome<true>;
+
+pub struct EntryOutcome<const RENAME: bool> {
+    value: proto::EntryOutcome,
     request_sha256: [u8; 32],
     target_reference: [u8; 32],
     expected_identity: [u8; 32],
-    result: DeleteResult,
+    os_error: u32,
     raw: Vec<u8>,
     container: Vec<u8>,
 }
 
-impl DeleteOutcome {
+impl EntryOutcome<false> {
     pub fn new(
         operation_id: &str,
         subject: &str,
@@ -48,20 +57,80 @@ impl DeleteOutcome {
         expected_identity: [u8; 32],
         result: DeleteResult,
     ) -> Result<Self> {
+        let code = match result {
+            DeleteResult::Deleted => 0,
+            DeleteResult::OsRejected { code: 0 } => {
+                return Err(Error::Invalid("zero OS rejection code"));
+            }
+            DeleteResult::OsRejected { code } => code,
+        };
+        Self::from_os_code(
+            operation_id,
+            subject,
+            request_sha256,
+            target_reference,
+            expected_identity,
+            code,
+        )
+    }
+    pub fn result(&self) -> DeleteResult {
+        match self.os_error {
+            0 => DeleteResult::Deleted,
+            code => DeleteResult::OsRejected { code },
+        }
+    }
+}
+impl EntryOutcome<true> {
+    pub fn new(
+        operation_id: &str,
+        subject: &str,
+        request_sha256: [u8; 32],
+        target_reference: [u8; 32],
+        expected_identity: [u8; 32],
+        result: RenameResult,
+    ) -> Result<Self> {
+        let code = match result {
+            RenameResult::Renamed => 0,
+            RenameResult::OsRejected { code: 0 } => {
+                return Err(Error::Invalid("zero OS rejection code"));
+            }
+            RenameResult::OsRejected { code } => code,
+        };
+        Self::from_os_code(
+            operation_id,
+            subject,
+            request_sha256,
+            target_reference,
+            expected_identity,
+            code,
+        )
+    }
+    pub fn result(&self) -> RenameResult {
+        match self.os_error {
+            0 => RenameResult::Renamed,
+            code => RenameResult::OsRejected { code },
+        }
+    }
+}
+impl<const RENAME: bool> EntryOutcome<RENAME> {
+    const ENVELOPE: &'static [u8; 8] = if RENAME { b"MROWFRN1" } else { MAGIC };
+    /// A zero code records the original API success; any other code is the observed OS rejection.
+    pub fn from_os_code(
+        operation_id: &str,
+        subject: &str,
+        request_sha256: [u8; 32],
+        target_reference: [u8; 32],
+        expected_identity: [u8; 32],
+        os_error_code: u32,
+    ) -> Result<Self> {
         // Reject oversized/invalid caller strings before cloning or protobuf allocation.
         identity(operation_id)?;
         identity(subject)?;
         if [request_sha256, target_reference, expected_identity].contains(&[0; 32]) {
             return Err(Error::Invalid("empty file delete digest"));
         }
-        if result == (DeleteResult::OsRejected { code: 0 }) {
-            return Err(Error::Invalid("invalid file delete error code"));
-        }
-        let (result_number, os_error_code) = match result {
-            DeleteResult::Deleted => (1, 0),
-            DeleteResult::OsRejected { code } => (2, code),
-        };
-        let value = proto::DeleteOutcome {
+        let result_number = if os_error_code == 0 { 1 } else { 2 };
+        let value = proto::EntryOutcome {
             schema_version: VERSION,
             operation_id: operation_id.to_owned(),
             subject: subject.to_owned(),
@@ -72,14 +141,14 @@ impl DeleteOutcome {
             os_error_code,
         };
         let raw = value.encode_to_vec();
-        let container = envelope::pack(MAGIC, &raw, MAX_RAW_BYTES)?;
+        let container = envelope::pack(Self::ENVELOPE, &raw, MAX_RAW_BYTES)?;
         Self::from_parts(value, raw, container)
     }
 
     pub fn decode(container: &[u8]) -> Result<Self> {
-        let raw = envelope::unpack(MAGIC, container, MAX_RAW_BYTES)?;
+        let raw = envelope::unpack(Self::ENVELOPE, container, MAX_RAW_BYTES)?;
         preflight(&raw)?;
-        let value = proto::DeleteOutcome::decode(raw.as_slice())
+        let value = proto::EntryOutcome::decode(raw.as_slice())
             .map_err(|_| Error::Invalid("file delete outcome protobuf"))?;
         if value.encode_to_vec() != raw {
             return Err(Error::Invalid("noncanonical file delete outcome"));
@@ -87,7 +156,7 @@ impl DeleteOutcome {
         Self::from_parts(value, raw, container.to_vec())
     }
 
-    fn from_parts(value: proto::DeleteOutcome, raw: Vec<u8>, container: Vec<u8>) -> Result<Self> {
+    fn from_parts(value: proto::EntryOutcome, raw: Vec<u8>, container: Vec<u8>) -> Result<Self> {
         if value.schema_version != VERSION {
             return Err(Error::UnsupportedVersion);
         }
@@ -96,9 +165,9 @@ impl DeleteOutcome {
         let request_sha256 = fixed_digest(&value.request_sha256)?;
         let target_reference = fixed_digest(&value.target_reference)?;
         let expected_identity = fixed_digest(&value.expected_identity)?;
-        let result = match (value.result, value.os_error_code) {
-            (1, 0) => DeleteResult::Deleted,
-            (2, code @ 1..) => DeleteResult::OsRejected { code },
+        let os_error = match (value.result, value.os_error_code) {
+            (1, 0) => 0,
+            (2, code @ 1..) => code,
             (0, _) => return Err(Error::Invalid("missing file delete result")),
             (1 | 2, _) => return Err(Error::Invalid("invalid file delete error code")),
             _ => return Err(Error::UnsupportedVersion),
@@ -108,7 +177,7 @@ impl DeleteOutcome {
             request_sha256,
             target_reference,
             expected_identity,
-            result,
+            os_error,
             raw,
             container,
         })
@@ -134,9 +203,6 @@ impl DeleteOutcome {
     }
     pub fn expected_identity(&self) -> [u8; 32] {
         self.expected_identity
-    }
-    pub fn result(&self) -> DeleteResult {
-        self.result
     }
 }
 

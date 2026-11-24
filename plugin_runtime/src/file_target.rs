@@ -84,6 +84,7 @@ mod creation;
 mod creation_selection;
 mod deletion;
 mod preparation;
+mod rename;
 mod replacement;
 pub use creation_selection::SelectedCreateTarget;
 // Native File ownership boundary; all other target code retains deny(unsafe_code).
@@ -160,18 +161,27 @@ struct Entry {
 )]
 enum TargetFile {
     Direct { file: File, lease: IoResourceLease },
+    Rename(rename::RenameFile),
     Conditional(native_windows::replacement_owner::ReplacementOwner),
 }
 impl TargetFile {
     fn lease(&self) -> &IoResourceLease {
         match self {
             Self::Direct { lease, .. } => lease,
+            Self::Rename(owner) => &owner.lease,
             Self::Conditional(owner) => owner.lease(),
+        }
+    }
+    fn destination(&self) -> Option<&RelativeFilePath> {
+        match self {
+            Self::Rename(owner) => Some(&owner.destination),
+            _ => None,
         }
     }
     fn metadata(&self) -> Result<Metadata> {
         match self {
             Self::Direct { file, .. } => Ok(file.metadata()?),
+            Self::Rename(owner) => Ok(owner.file.metadata()?),
             Self::Conditional(owner) => owner.metadata(),
         }
     }
@@ -284,7 +294,7 @@ impl TargetBroker {
                 (
                     &entry.scope,
                     entry.package_sha256,
-                    None,
+                    entry.file.destination().cloned(),
                     Some(entry.selected.expected_identity),
                 )
             };
@@ -346,6 +356,53 @@ impl TargetBroker {
         scope: SelectionScope,
         control: &mut impl TargetControl,
     ) -> Result<SelectedTarget> {
+        self.select_entry_controlled(manager, host, instance, binding, path, None, scope, control)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn select_rename_controlled(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        path: &Path,
+        destination: &RelativeFilePath,
+        scope: SelectionScope,
+        control: &mut impl TargetControl,
+    ) -> Result<SelectedTarget> {
+        if !destination.is_leaf()
+            || path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .is_none_or(|name| name.to_lowercase() == destination.as_str().to_lowercase())
+        {
+            return Err(Error::InvalidSelection);
+        }
+        self.select_entry_controlled(
+            manager,
+            host,
+            instance,
+            binding,
+            path,
+            Some(destination),
+            scope,
+            control,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn select_entry_controlled(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        path: &Path,
+        destination: Option<&RelativeFilePath>,
+        scope: SelectionScope,
+        control: &mut impl TargetControl,
+    ) -> Result<SelectedTarget> {
         if binding.is_mutation_history() {
             return Err(Error::Admission(io_binding::Error::Denied));
         }
@@ -357,7 +414,8 @@ impl TargetBroker {
         if !native_windows::available() {
             return Err(Error::RestartRequired);
         }
-        if scope.disposition == Disposition::Create
+        if (scope.disposition == Disposition::Rename) != destination.is_some()
+            || scope.disposition == Disposition::Create
             || scope.subject.is_empty()
             || scope.subject.len() > 256
             || scope
@@ -373,6 +431,8 @@ impl TargetBroker {
         self.reap(now);
         let resources = if scope.disposition == Disposition::Replace {
             native_windows::replacement_owner::resources(path)?
+        } else if destination.is_some() {
+            rename::resources(path)?
         } else {
             1
         };
@@ -402,6 +462,8 @@ impl TargetBroker {
             TargetFile::Conditional(native_windows::replacement_owner::ReplacementOwner::select(
                 path, deadline, lease,
             )?)
+        } else if let Some(destination) = destination {
+            TargetFile::Rename(rename::RenameFile::select(path, destination, lease)?)
         } else {
             // GENERIC_READ | DELETE; no create, truncate or delete-on-close.
             let file = OpenOptions::new()
@@ -472,7 +534,7 @@ impl TargetBroker {
             || request.approval_sha256 != entry.scope.approval_sha256
             || request.package_sha256 != entry.package_sha256
             || request.disposition != entry.scope.disposition
-            || request.target.relative_path.is_some()
+            || request.target.relative_path.as_ref() != entry.file.destination()
             || request.expected_identity != Some(entry.selected.expected_identity)
         {
             return Err(Error::Mismatch);

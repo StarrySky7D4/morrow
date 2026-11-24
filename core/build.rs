@@ -105,6 +105,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=schemas/io_manifest.proto");
     println!("cargo:rerun-if-changed=schemas/io.capnp");
     println!("cargo:rerun-if-changed=schemas/mutation.capnp");
+    println!("cargo:rerun-if-changed=schemas/mutation_rename.capnp");
     println!("cargo:rerun-if-changed=schemas/plugin_package.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
@@ -141,7 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("schemas/channel.capnp")
         .file("schemas/task.capnp")
         .file("schemas/io.capnp")
-        .file("schemas/mutation.capnp")
+        .file("schemas/mutation_rename.capnp")
         .file("schemas/service.capnp")
         .file("schemas/service_resources.capnp")
         .file("schemas/ui.capnp")

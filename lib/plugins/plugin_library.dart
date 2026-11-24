@@ -1,6 +1,9 @@
 import '../settings_surface.dart';
+
 import 'package:morrow_i18n/morrow_i18n.dart';
+
 import 'dart:async';
+
 import '../appearance.dart';
 import 'io_settings_page.dart';
 import 'credential_manager.dart';
@@ -37,11 +40,15 @@ import 'service_manager.dart';
 import 'service_run_control.dart';
 import 'service_run_manager.dart';
 import 'service_run_session.dart';
+
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'theme_package_import.dart';
+
 import 'package:morrow_plugin_ui/online.dart';
 
 class PluginLibraryPage {
@@ -381,11 +388,12 @@ class _ObservedTransport implements PluginUiTransport {
   @override
   Future<PluginUiReply> event(Uint8List bytes) => delegate.event(bytes);
   @override
-  Future<void> close() => _closing ??= Future<void>.sync(delegate.close)
-      .catchError((Object error, StackTrace stack) {
-        _closeFailed = true;
-        Error.throwWithStackTrace(error, stack);
-      });
+  Future<void> close() =>
+      _closing ??= Future<void>.sync(delegate.close)
+          .catchError((Object error, StackTrace stack) {
+            _closeFailed = true;
+            Error.throwWithStackTrace(error, stack);
+          });
   Future<void> closeOrRetry() => _closeFailed ? retryClose() : close();
   Future<void> retryClose() {
     _closing = null;
@@ -991,56 +999,54 @@ class _PluginLibraryState extends State<PluginLibrary> {
       });
     }
   }, (l) => l.pluginsInputFailed);
-  Future<void> _transform(PluginLibraryEntry entry) => _guard((
-    backend,
-    epoch,
-  ) async {
-    final handler = _handler;
-    final revision = _revision;
-    if (handler == null || revision == null) return;
-    final input = _fileBytes ?? Uint8List.fromList(utf8.encode(_text.text));
-    if (input.length > handler.maxInputBytes || input.length > 65536) {
-      setState(() => _message = (l) => l.pluginsInputTooLong);
-      return;
-    }
-    setState(() => _result = null);
-    final bytes = await backend.transformExternal(
-      entry,
-      revision,
-      handler,
-      Uint8List.fromList(input),
-    );
-    if (!_current(backend, epoch)) return;
-    if (bytes.length > handler.maxOutputBytes || bytes.length > 65536) {
-      throw const FormatException('输出超出限制');
-    }
-    // Only the host's framing is localized; plugin output bytes/text stay original.
-    String Function(AppLocalizations) preview;
-    try {
-      final text = utf8.decode(bytes);
-      if (text.runes.any(
-        (value) => value < 32 && value != 9 && value != 10 && value != 13,
-      )) {
-        throw const FormatException('non-text result');
-      }
-      final shown = String.fromCharCodes(text.runes.take(4096));
-      preview = (l) => text.isEmpty
-          ? l.pluginsEmptyResult
-          : text.runes.length > 4096
-          ? '$shown\n${l.pluginsPreviewTruncated}'
-          : shown;
-    } on FormatException {
-      final hex = bytes
-          .take(64)
-          .map((b) => b.toRadixString(16).padLeft(2, '0'))
-          .join(' ');
-      preview = (l) =>
-          l.pluginsBinaryPreview('$hex${bytes.length > 64 ? ' …' : ''}');
-    }
-    setState(
-      () => _result = (l) => l.pluginsResultBytes(bytes.length, preview(l)),
-    );
-  }, (l) => l.pluginsTransformUnknown);
+  Future<void> _transform(PluginLibraryEntry entry) =>
+      _guard((backend, epoch) async {
+        final handler = _handler;
+        final revision = _revision;
+        if (handler == null || revision == null) return;
+        final input = _fileBytes ?? Uint8List.fromList(utf8.encode(_text.text));
+        if (input.length > handler.maxInputBytes || input.length > 65536) {
+          setState(() => _message = (l) => l.pluginsInputTooLong);
+          return;
+        }
+        setState(() => _result = null);
+        final bytes = await backend.transformExternal(
+          entry,
+          revision,
+          handler,
+          Uint8List.fromList(input),
+        );
+        if (!_current(backend, epoch)) return;
+        if (bytes.length > handler.maxOutputBytes || bytes.length > 65536) {
+          throw const FormatException('输出超出限制');
+        }
+        // Only the host's framing is localized; plugin output bytes/text stay original.
+        String Function(AppLocalizations) preview;
+        try {
+          final text = utf8.decode(bytes);
+          if (text.runes.any(
+            (value) => value < 32 && value != 9 && value != 10 && value != 13,
+          )) {
+            throw const FormatException('non-text result');
+          }
+          final shown = String.fromCharCodes(text.runes.take(4096));
+          preview = (l) => text.isEmpty
+              ? l.pluginsEmptyResult
+              : text.runes.length > 4096
+              ? '$shown\n${l.pluginsPreviewTruncated}'
+              : shown;
+        } on FormatException {
+          final hex = bytes
+              .take(64)
+              .map((b) => b.toRadixString(16).padLeft(2, '0'))
+              .join(' ');
+          preview = (l) =>
+              l.pluginsBinaryPreview('$hex${bytes.length > 64 ? ' …' : ''}');
+        }
+        setState(
+          () => _result = (l) => l.pluginsResultBytes(bytes.length, preview(l)),
+        );
+      }, (l) => l.pluginsTransformUnknown);
 
   String _capability(String name) =>
       {
@@ -1074,6 +1080,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
           'file-create': l.pluginsIoFileCreate,
           'file-replace': l.pluginsIoFileReplace,
           'file-delete': l.pluginsIoFileDelete,
+          'file-rename': l.pluginsIoFileRename,
           'http-request': l.pluginsIoHttpRequest,
           'http-listen': l.pluginsIoHttpListen,
           'http-publish': l.pluginsIoHttpPublish,
@@ -1189,9 +1196,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _note(
         entry.declared.isEmpty
             ? L10n.of(context).pluginsNoPermissions
-            : L10n.of(
-                context,
-              ).pluginsDeclared(entry.declared.map(_capability).join(', ')),
+            : L10n.of(context)
+                  .pluginsDeclared(entry.declared.map(_capability).join(', ')),
       ),
       if (entry.declaredIo.isNotEmpty)
         _note(

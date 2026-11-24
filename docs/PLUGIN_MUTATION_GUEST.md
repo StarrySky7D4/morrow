@@ -1,5 +1,11 @@
 # 文件变更 guest 扩展草案
 
+## Windows 同目录重命名
+
+插件声明并获批 `file-rename` 后，用户在 Workbench 选择一个已有文件并输入新文件名。预算复核和操作确认都显示原文件及新名称。宿主把这两个值绑定到同一份计划，准备完成后还需确认执行。目标名已存在时，原文件和目标文件各自保留，并记录 Windows 返回的错误。
+
+通过宿主 `--sdk-capabilities` 的 `morrow.mutation.v1.selected_target_rename` 获取支持情况及扩展协议摘要。Rust 使用 `Action::Rename { destination }`，C 使用 `MP_MUTATION_PREPARE_RENAME` 并将 UTF-8 文件名写入 `bytes`，C++ 使用 `mutation_request::rename`。准备回执的类型为 `PrepareRename`。完成后可查询原计划的结果并释放任务。
+
 用 `--sdk-capabilities` 查询宿主时，`morrow.mutation.v1` 的 `selected_target_replacement` 描述已选目标的 `PrepareReplace`。旧工具读取的操作列表保留原 Create/Delete 范围。新字段缺失时，这次查询无法确认替换能力。`implementation_compiled` 表示宿主已编译 Windows 后端。实际调用仍需批准 `file-replace`、在所选文件系统上成功建立原生事务，并对已审阅的计划明确确认执行。
 
 2026-11-06 候选实现追加 `PrepareReplace`（kind 9、request union 15），旧编号不变；Core 与三语言 SDK 使用同一 Cap’n Proto 契约及新摘要。替换内容仍受原长度、摘要、30 秒期限和一次性执行许可约束，不接收客体自选路径。Windows 原目标和全部祖先由原事务持有，准备和内容提交不改写目标；明确取消并释放后才可重新读取被独占锁定的原件。
@@ -22,7 +28,7 @@
 
 工作台到可信 Dart 客户端的独立私有协议现已接入，见 [私有协议与客户端报告](../reports/guest-mutation-private-wire-2026-09-27.md)。Start／Submit／Status／Read／CancelCommand 不嵌入插件业务请求。结果分别表达 Owner 辅助回执、原始 Core guest 响应、调度／执行失败；Core 响应不被重编码为原生执行结果。读取需要原命令回执，后续 Core 动作持有 Prepare 返回的租约 reference；目标选择 reference 不可代替它。产品独立 guest 会话、实际预算和两次确认面板已接入，见 [界面与三语言验收](../reports/guest-mutation-execution-ui-2026-09-27.md)；预算扩展包跨重启只读恢复已有本机资格，系统选择器人工验收仍开放。
 
-每个请求包含固定版本和 schema SHA-256、非零 callId、32 字节且不能全零的选择租约 reference、同样约束的命令 submission、操作 ID 和 1–30000 ms 的请求期限。操作 ID 为不超过 256 UTF-8 字节的非空字符串，拒绝 Unicode 控制字符及 `/`、`\`、`:`。租约须由原 owner 在明确批准后签发，不能由插件编解码器自行创建权限。
+每个请求包含固定版本和 schema SHA-256、非零 callId、32 字节且不能全零的选择租约 reference、同样约束的命令 submission、操作 ID 和 1–30000 ms 的请求期限。操作 ID 为不超过 256 UTF-8 字节的非空字符串，拒绝 Unicode 控制字符及 `/`、``、`:`。租约须由原 owner 在明确批准后签发，不能由插件编解码器自行创建权限。
 
 响应回显 callId、reference、submission、操作 ID 和动作类型，接收方逐项校验。每个 mutation job 只允许一次与宿主输入一致的 import，完成帧必须等于宿主实际回帧；不定义隐式 Accepted／Pending，也不自动重试。原 owner 用有界账本将 submission 绑定到规范化语义、原始期限及结果；重取只允许改变交付 callId，仍检查当前授权。编解码器本身不签发权限。
 

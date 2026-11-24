@@ -1,15 +1,15 @@
 import 'dart:typed_data';
+
 import 'generated/host.capnp.dart' as host;
 import 'mutation_task_codec_native.dart';
 import 'mutation_task_models.dart';
 
-typedef MutationTaskExchange =
-    Future<T> Function<T>(
-      host.Action action, {
-      void Function(host.RequestBuilder)? configure,
-      required T Function(host.ResponseReader) decode,
-      required bool clearReply,
-    });
+typedef MutationTaskExchange = Future<T> Function<T>(
+  host.Action action, {
+  void Function(host.RequestBuilder)? configure,
+  required T Function(host.ResponseReader) decode,
+  required bool clearReply,
+});
 
 /// Typed native-only scheduler. Every call is a single explicit wire exchange.
 final class NativeMutationTaskClient implements MutationTaskBackend {
@@ -262,6 +262,7 @@ final class NativeMutationTaskClient implements MutationTaskBackend {
               MutationResultKind.created,
               MutationResultKind.replaced,
               MutationResultKind.deleted,
+              MutationResultKind.renamed,
             },
             MutationCommandKind.query => {MutationResultKind.history},
             MutationCommandKind.cancelPlan => {
@@ -294,9 +295,8 @@ final class NativeMutationTaskClient implements MutationTaskBackend {
                 (expected != null &&
                     stateExpected != null &&
                     (expected.length != stateExpected.length ||
-                        !Iterable<int>.generate(
-                          expected.length,
-                        ).every((i) => expected[i] == stateExpected[i])))) {
+                        !Iterable<int>.generate(expected.length)
+                            .every((i) => expected[i] == stateExpected[i])))) {
               throw const FormatException('Mutation expected identity changed');
             }
           }

@@ -181,3 +181,54 @@ fn dedicated_protocol_cannot_be_relabelled_as_network_or_read() {
         ));
     }
 }
+
+#[test]
+fn rename_binds_original_identity_and_exact_destination_without_write_data() {
+    let mut value = request();
+    value.disposition = Disposition::Rename;
+    value.target.relative_path = Some(RelativeFilePath::parse("destination.txt").unwrap());
+    value.content_length = 0;
+    value.content_sha256 = None;
+    let plan = RequestRecord::new(value.clone()).unwrap();
+    assert_eq!(
+        RequestRecord::decode(plan.container()).unwrap().request(),
+        &value
+    );
+    let command = plan.command().unwrap();
+    assert_eq!(command.capability, IoCapability::FileRename);
+    assert_ne!(command.protocol_sha256, file_mutation::schema_digest());
+    let mut other = value.clone();
+    other.target.relative_path = Some(RelativeFilePath::parse("other.txt").unwrap());
+    let changed = RequestRecord::new(other).unwrap().command().unwrap();
+    assert_ne!(changed.target_sha256, command.target_sha256);
+    assert_ne!(changed.request_sha256, command.request_sha256);
+    for name in [
+        None,
+        Some(RelativeFilePath::parse("nested/file.txt").unwrap()),
+    ] {
+        assert!(
+            RequestRecord::new(MutationRequest {
+                target: Target {
+                    reference: value.target.reference,
+                    relative_path: name
+                },
+                ..value.clone()
+            })
+            .is_err()
+        );
+    }
+    assert!(
+        RequestRecord::new(MutationRequest {
+            expected_identity: None,
+            ..value.clone()
+        })
+        .is_err()
+    );
+    assert!(
+        RequestRecord::new(MutationRequest {
+            content_length: 1,
+            ..value
+        })
+        .is_err()
+    );
+}

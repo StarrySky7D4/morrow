@@ -128,9 +128,10 @@ pub mod io_capnp {
 }
 
 #[allow(clippy::all, unsafe_code)]
-pub mod mutation_capnp {
-    include!(concat!(env!("OUT_DIR"), "/mutation_capnp.rs"));
+pub mod mutation_rename_capnp {
+    include!(concat!(env!("OUT_DIR"), "/mutation_rename_capnp.rs"));
 }
+pub use mutation_rename_capnp as mutation_capnp;
 
 /// Bounded inbound service messages; decoding never authenticates a principal.
 pub mod service;

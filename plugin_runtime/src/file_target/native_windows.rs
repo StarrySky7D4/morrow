@@ -44,7 +44,17 @@ pub(super) fn enter() -> Result<EffectGate, GateError> {
     Ok(EffectGate { _lock: lock })
 }
 impl EffectGate {
-    pub(super) fn delete(self, file: File) -> DeleteAttempt {
+    pub(super) fn rename(self, file: File, destination: &str) -> EntryAttempt {
+        let result = rename_same_directory(&file, destination);
+        if !close_created(file) {
+            return EntryAttempt::CloseUnknown(last_error());
+        }
+        match result {
+            Ok(()) => EntryAttempt::Applied,
+            Err(error) => EntryAttempt::Rejected(error_code(&error).unwrap_or(0)),
+        }
+    }
+    pub(super) fn delete(self, file: File) -> EntryAttempt {
         delete_locked(file)
     }
 }
@@ -62,8 +72,8 @@ unsafe extern "system" {
     ) -> i32;
     fn CloseHandle(handle: *mut c_void) -> i32;
 }
-pub(super) enum DeleteAttempt {
-    Deleted,
+pub(super) enum EntryAttempt {
+    Applied,
     /// OS rejected marking. This does not authorize automatic replay.
     Rejected(u32),
     /// Close failed after marking. Handle validity is unknown; do not retry it.
@@ -80,7 +90,7 @@ fn last_error() -> u32 {
 /// Windows does not promise that it is still valid. Admission is poisoned until
 /// process restart and the caller must retain the resource charge. A possibly
 /// still-open kernel handle is intentionally left for process teardown.
-fn delete_locked(file: File) -> DeleteAttempt {
+fn delete_locked(file: File) -> EntryAttempt {
     let mut info = FileDispositionInfo { delete_file: 1 };
     // SAFETY: File owns a live handle throughout this synchronous call; info is
     // initialized repr(C) FILE_DISPOSITION_INFO (one-byte BOOLEAN), correctly
@@ -94,17 +104,17 @@ fn delete_locked(file: File) -> DeleteAttempt {
         )
     };
     if marked == 0 {
-        return DeleteAttempt::Rejected(last_error());
+        return EntryAttempt::Rejected(last_error());
     }
     let raw = file.into_raw_handle();
     // SAFETY: into_raw_handle transferred sole ownership; close exactly once.
     // Neither branch reconstructs File, preventing a second close/reused-handle bug.
     if unsafe { CloseHandle(raw) } != 0 {
-        DeleteAttempt::Deleted
+        EntryAttempt::Applied
     } else {
         let code = last_error();
         CLOSE_UNCERTAIN.store(true, Ordering::Release);
-        DeleteAttempt::CloseUnknown(code)
+        EntryAttempt::CloseUnknown(code)
     }
 }
 
@@ -156,6 +166,14 @@ unsafe extern "system" {
 /// string or creates an object. Caller validates the same returned handle's
 /// metadata before using it as the next parent, and retains every ancestor.
 pub(super) fn open_child_directory(parent: &File, segment: &str) -> std::io::Result<File> {
+    open_selected_child(parent, segment, false)
+}
+
+pub(super) fn open_rename_source(parent: &File, segment: &str) -> std::io::Result<File> {
+    open_selected_child(parent, segment, true)
+}
+
+fn open_selected_child(parent: &File, segment: &str, rename_source: bool) -> std::io::Result<File> {
     use std::os::windows::io::FromRawHandle;
     use std::ptr::null_mut;
     if segment.contains('/') || morrow_core::file_path::RelativeFilePath::parse(segment).is_err() {
@@ -188,18 +206,27 @@ pub(super) fn open_child_directory(parent: &File, segment: &str) -> std::io::Res
     // File remains borrowed. FILE_OPEN (1) never creates/truncates; synchronous
     // NONALERT (0x20) plus SYNCHRONIZE ensures no pending use of stack storage.
     // DIRECTORY (1) and OPEN_REPARSE_POINT (0x200000) require a directory handle
-    // without following a final reparse target. Share READ only pins the object.
+    // without following a final reparse target. The rename source requires a regular file,
+    // DELETE/READ_ATTRIBUTES/SYNCHRONIZE access, and excludes all competing opens.
     let result = unsafe {
         NtCreateFile(
             &mut raw,
-            0x0010_00a0,
+            if rename_source {
+                0x0011_0080
+            } else {
+                0x0010_00a0
+            },
             &mut attributes,
             &mut status,
             std::ptr::null(),
             0,
+            if rename_source { 0 } else { 1 },
             1,
-            1,
-            0x0020_0021,
+            if rename_source {
+                0x0020_0060
+            } else {
+                0x0020_0021
+            },
             std::ptr::null(),
             0,
         )

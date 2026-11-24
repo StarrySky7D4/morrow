@@ -321,7 +321,7 @@ fn request(
     bytes: &[u8],
 ) -> RequestRecord {
     let (length, digest) = match disposition {
-        Disposition::Delete => (0, None),
+        Disposition::Delete | Disposition::Rename => (0, None),
         _ => (bytes.len() as u64, Some(Sha256::digest(bytes).into())),
     };
     RequestRecord::new(MutationRequest {

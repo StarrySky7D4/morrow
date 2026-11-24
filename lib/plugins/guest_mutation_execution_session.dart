@@ -699,16 +699,15 @@ final class GuestMutationExecutionSession {
     if (busy) throw StateError('Guest mutation session is busy');
     if (!canStart) throw StateError('Guest mutation review is unavailable');
     GuestMutationValidation.start(request);
-    if ((request.selection.disposition == MutationDisposition.delete &&
-            content != null) ||
+    if ((!request.selection.disposition.writesContent && content != null) ||
         (content?.length ?? 0) > GuestMutationValidation.maxContentBytes) {
       throw const FormatException('Invalid guest mutation content');
     }
-    final body = request.selection.disposition != MutationDisposition.delete
+    final body = request.selection.disposition.writesContent
         ? Uint8List.fromList(content ?? Uint8List(0))
         : Uint8List(0);
     final length = BigInt.from(body.length);
-    final digest = request.selection.disposition != MutationDisposition.delete
+    final digest = request.selection.disposition.writesContent
         ? _copy(Uint8List.fromList(sha256.convert(body).bytes))
         : null;
     MutationTaskValidation.buildPlan(operationId, length, digest);
@@ -808,10 +807,11 @@ final class GuestMutationExecutionSession {
         MutationDisposition.create => GuestMutationFrameKind.prepareCreate,
         MutationDisposition.replace => GuestMutationFrameKind.prepareReplace,
         MutationDisposition.delete => GuestMutationFrameKind.prepareDelete,
+        MutationDisposition.rename => GuestMutationFrameKind.prepareRename,
       }, phase: GuestMutationFramePhase.prepared)) {
         return;
       }
-      if (disposition != MutationDisposition.delete) {
+      if (disposition.writesContent) {
         if (body == null) {
           _record(
             const FormatException('Guest content was discarded'),
@@ -946,8 +946,7 @@ final class GuestMutationExecutionSession {
         return;
       }
       final frame = result.frame!;
-      final hasContent =
-          _request!.selection.disposition != MutationDisposition.delete;
+      final hasContent = _request!.selection.disposition.writesContent;
       if (previouslyReady &&
           frame.status == GuestMutationFrameStatus.completed &&
           frame.phase == GuestMutationFramePhase.prepared &&
@@ -975,8 +974,7 @@ final class GuestMutationExecutionSession {
       final result = await _command(GuestMutationCommand.hostQuery());
       if (!_expectOwner(result, MutationResultKind.history)) return;
       final history = result!.owner!;
-      final hasContent =
-          _request!.selection.disposition != MutationDisposition.delete;
+      final hasContent = _request!.selection.disposition.writesContent;
       if (previouslyReady &&
           history.phase == MutationPhase.prepared &&
           history.operationId == _operationId &&

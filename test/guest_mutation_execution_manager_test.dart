@@ -295,9 +295,14 @@ PluginLibraryEntry _plugin({
   dependencies: const [],
   handlers: const [],
   issue: '',
-  declaredIo: const ['file-create', 'file-replace', 'file-delete'],
+  declaredIo: const [
+    'file-create',
+    'file-replace',
+    'file-delete',
+    'file-rename',
+  ],
   approvedIo: authorized
-      ? const ['file-create', 'file-replace', 'file-delete']
+      ? const ['file-create', 'file-replace', 'file-delete', 'file-rename']
       : const [],
   mutationSupported: true,
   mutationBudget: budgeted
@@ -900,4 +905,56 @@ void main() {
       expect(backend.executes, 1);
     },
   );
+
+  testWidgets('rename confirms the source and destination before dispatch', (
+    tester,
+  ) async {
+    final backend = _Backend();
+    await tester.pumpWidget(
+      _screen(
+        backend,
+        budgeted: false,
+        pickFile: () async => XFile(r'C:\approved\original.bin'),
+      ),
+    );
+    await tester.pump();
+    await _tap(tester, 'disposition');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Rename files').last);
+    await tester.pumpAndSettle();
+    await _tap(tester, 'package');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Guest package').last);
+    await tester.pumpAndSettle();
+    await _tap(tester, 'pick-target');
+    expect(_key('pick-content'), findsNothing);
+    await tester.enterText(_key('file-name'), 'moved.bin');
+    await _tap(tester, 'draft');
+    await _waitForDialog(tester, 'draft');
+    expect(
+      find.textContaining(r'C:\approved\original.bin → moved.bin'),
+      findsWidgets,
+    );
+    expect(backend.starts, 0);
+    await tester.tap(_key('confirm-draft'));
+    await tester.pumpAndSettle();
+    expect(backend.request!.selection.relativePath, 'moved.bin');
+    expect(
+      backend.request!.selection.selectedPath,
+      r'C:\approved\original.bin',
+    );
+    await _tap(tester, 'prepare');
+    await tester.tap(_key('confirm-prepare'));
+    await tester.pumpAndSettle();
+    expect(backend.executes, 0);
+    await _tap(tester, 'execute');
+    expect(find.text('Rename this file'), findsWidgets);
+    await tester.tap(_key('confirm-cancel'));
+    await tester.pumpAndSettle();
+    expect(backend.executes, 0);
+    await _tap(tester, 'execute');
+    await tester.tap(_key('confirm-execute'));
+    await tester.pumpAndSettle();
+    expect(backend.executes, 1);
+  });
 }

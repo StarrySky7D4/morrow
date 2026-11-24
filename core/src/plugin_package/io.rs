@@ -8,7 +8,7 @@ pub mod proto {
 pub const FEATURE: &str = "io-v1";
 pub const VERSION: u32 = 1;
 pub const DECLARATION_VERSION: u32 = 1;
-pub const MAX_CAPABILITIES: usize = 10;
+pub const MAX_CAPABILITIES: usize = 11;
 pub const MAX_HANDLERS: usize = 16;
 pub const MAX_RESOURCES: u32 = 8;
 pub const MAX_JOBS: u32 = 4;
@@ -38,6 +38,7 @@ pub enum IoCapability {
     HttpPublish = 8,
     CredentialUse = 9,
     WebSocketConnect = 10,
+    FileRename = 11,
 }
 impl IoCapability {
     pub fn from_number(value: i32) -> Result<Self> {
@@ -52,6 +53,7 @@ impl IoCapability {
             8 => Ok(Self::HttpPublish),
             9 => Ok(Self::CredentialUse),
             10 => Ok(Self::WebSocketConnect),
+            11 => Ok(Self::FileRename),
             0 => Err(Error::Invalid("unspecified IO capability")),
             _ => Err(Error::UnsupportedVersion),
         }

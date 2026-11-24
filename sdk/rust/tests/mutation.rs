@@ -497,3 +497,36 @@ fn request_version_digest_and_borrowed_bounds() {
         Err(Error::Invalid)
     );
 }
+
+#[test]
+fn rename_round_trips_the_reviewed_leaf_and_uses_its_own_digest() {
+    let rename = request(Action::Rename {
+        destination: "预算-2.txt".into(),
+    });
+    let encoded = rename.encode().unwrap();
+    assert_eq!(Request::decode(&encoded).unwrap(), rename);
+    let mut receipt = response(&rename);
+    receipt.phase = Phase::Prepared;
+    receipt.effect = Effect::Unspecified;
+    let reply = receipt.encode(&rename).unwrap();
+    assert_eq!(rename.decode_reply(&reply).unwrap(), receipt);
+    assert!(request(Action::Delete).decode_reply(&reply).is_err());
+    for name in [
+        "",
+        "../next",
+        "another\\dir",
+        "X:other",
+        "NUL.txt",
+        "lpt².log",
+        "trailing.",
+        "bad?name",
+    ] {
+        assert!(
+            request(Action::Rename {
+                destination: name.into()
+            })
+            .encode()
+            .is_err()
+        );
+    }
+}

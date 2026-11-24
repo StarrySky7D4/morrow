@@ -179,6 +179,7 @@ class _Backend implements MutationTaskBackend, WorkbenchIoTaskControl {
               MutationDisposition.create => MutationResultKind.created,
               MutationDisposition.replace => MutationResultKind.replaced,
               MutationDisposition.delete => MutationResultKind.deleted,
+              MutationDisposition.rename => MutationResultKind.renamed,
             },
         phase: executedPhase,
         effect: executedEffect,

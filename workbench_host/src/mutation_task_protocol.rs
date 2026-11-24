@@ -47,6 +47,7 @@ pub(super) fn handle(
                 1 => Disposition::Create,
                 2 => Disposition::Replace,
                 3 => Disposition::Delete,
+                4 => Disposition::Rename,
                 _ => return Err("unknown mutation disposition".into()),
             },
             scan_limit: start.get_scan_limit(),
@@ -92,6 +93,7 @@ pub(super) fn handle(
             1 => Disposition::Create,
             2 => Disposition::Replace,
             3 => Disposition::Delete,
+            4 => Disposition::Rename,
             _ => return Err("unknown mutation disposition".into()),
         };
         let relative = text(start.get_relative_path())?;
@@ -317,6 +319,19 @@ pub(super) fn result_reply(
             }
             out.set_outcome(outcome.container());
         }
+        Some(Ok(MutationResponse::Renamed(outcome))) => {
+            out.set_kind(14);
+            out.set_phase(3);
+            out.set_operation_id(outcome.operation_id());
+            match outcome.result() {
+                morrow_core::file_effect::RenameResult::Renamed => out.set_effect(1),
+                morrow_core::file_effect::RenameResult::OsRejected { code } => {
+                    out.set_effect(2);
+                    out.set_os_code(code);
+                }
+            }
+            out.set_outcome(outcome.container());
+        }
         Some(Ok(MutationResponse::Deleted(outcome))) => {
             out.set_kind(5);
             out.set_phase(3);
@@ -349,7 +364,9 @@ pub(super) fn result_reply(
             if let Some(record) = record {
                 record_reply(&record, out.reborrow())?;
             }
-            use morrow_core::file_effect::{CreateResult, DeleteResult, ReplaceResult};
+            use morrow_core::file_effect::{
+                CreateResult, DeleteResult, RenameResult, ReplaceResult,
+            };
             use morrow_plugin_runtime::io_jobs::MutationOutcome;
             let result = match outcome.map(|value| *value) {
                 Some(MutationOutcome::Created(value)) => {
@@ -364,6 +381,13 @@ pub(super) fn result_reply(
                     Some(match value.result() {
                         DeleteResult::Deleted => None,
                         DeleteResult::OsRejected { code } => Some(code),
+                    })
+                }
+                Some(MutationOutcome::Renamed(value)) => {
+                    out.set_outcome(value.container());
+                    Some(match value.result() {
+                        RenameResult::Renamed => None,
+                        RenameResult::OsRejected { code } => Some(code),
                     })
                 }
                 Some(MutationOutcome::Replaced(value)) => {

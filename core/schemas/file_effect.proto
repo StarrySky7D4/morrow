@@ -13,6 +13,18 @@ message DeleteOutcome {
   uint32 os_error_code = 8;
 }
 
+// Common metadata-only outcome. Its operation-specific envelope identifies delete or rename.
+message EntryOutcome {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes target_reference = 5;
+  bytes expected_identity = 6;
+  int32 result = 7;
+  uint32 os_error_code = 8;
+}
+
 enum Result {
   RESULT_UNSPECIFIED = 0;
   DELETED = 1;

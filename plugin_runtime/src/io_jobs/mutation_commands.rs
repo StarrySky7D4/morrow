@@ -9,7 +9,7 @@ use crate::{
 };
 use morrow_core::{
     dispatch::HostRuntime,
-    file_effect::{CreateOutcome, DeleteOutcome, ReplaceOutcome},
+    file_effect::{CreateOutcome, DeleteOutcome, RenameOutcome, ReplaceOutcome},
     file_mutation::{Disposition, RequestRecord},
     file_path::RelativeFilePath,
     io_evidence::Kind,
@@ -58,22 +58,18 @@ pub struct MutationBudgetEstimate {
 impl MutationBudgetEstimate {
     pub fn for_plan(plan: &RequestRecord) -> Result<Self, OwnerCommandError> {
         let request = plan.request();
-        if !matches!(
-            request.disposition,
-            Disposition::Create | Disposition::Replace | Disposition::Delete
-        ) || request.content_length > MAX_MUTATION_CONTENT
-        {
+        if request.content_length > MAX_MUTATION_CONTENT {
             return Err(OwnerCommandError::Limit);
         }
         let content = request.content_length;
         let container = plan.container().len() as u64;
-        let chunks = if request.disposition != Disposition::Delete {
+        let chunks = if request.disposition.writes_content() {
             content.div_ceil(MAX_MUTATION_CHUNK as u64)
         } else {
             0
         };
         let submissions = chunks
-            .checked_add(if request.disposition != Disposition::Delete {
+            .checked_add(if request.disposition.writes_content() {
                 5
             } else {
                 4
@@ -237,6 +233,7 @@ pub enum MutationResponse {
     Created(CreateOutcome),
     Replaced(ReplaceOutcome),
     Deleted(DeleteOutcome),
+    Renamed(RenameOutcome),
     History {
         record: Option<Record>,
         staged_bytes: u64,
@@ -252,6 +249,7 @@ pub enum MutationOutcome {
     Created(CreateOutcome),
     Replaced(ReplaceOutcome),
     Deleted(DeleteOutcome),
+    Renamed(RenameOutcome),
 }
 impl std::fmt::Debug for MutationOutcome {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -259,6 +257,7 @@ impl std::fmt::Debug for MutationOutcome {
             Self::Created(_) => f.write_str("Created(..)"),
             Self::Replaced(_) => f.write_str("Replaced(..)"),
             Self::Deleted(_) => f.write_str("Deleted(..)"),
+            Self::Renamed(_) => f.write_str("Renamed(..)"),
         }
     }
 }
@@ -298,6 +297,7 @@ impl std::fmt::Debug for MutationResponse {
             Self::Created(_) => f.write_str("Created(..)"),
             Self::Replaced(_) => f.write_str("Replaced(..)"),
             Self::Deleted(_) => f.write_str("Deleted(..)"),
+            Self::Renamed(_) => f.write_str("Renamed(..)"),
             Self::History {
                 record,
                 staged_bytes,
@@ -332,6 +332,7 @@ pub(super) enum Request {
     SelectExisting {
         id: MutationSession,
         path: PathBuf,
+        destination: Option<RelativeFilePath>,
         scope: SelectionScope,
         secret: [u8; 32],
     },
@@ -419,8 +420,16 @@ impl Request {
     pub(super) fn charge(&self) -> u64 {
         size_of::<Request>() as u64
             + match self {
-                Self::SelectExisting { path, scope, .. } => {
-                    (path.capacity() + scope.subject.capacity() + REPLY_RESERVATION) as u64
+                Self::SelectExisting {
+                    path,
+                    destination,
+                    scope,
+                    ..
+                } => {
+                    (path.capacity()
+                        + destination.as_ref().map_or(0, |name| name.as_str().len())
+                        + scope.subject.capacity()
+                        + REPLY_RESERVATION) as u64
                 }
                 Self::SelectCreate {
                     root,
@@ -740,6 +749,27 @@ impl<O: ManagedHostOwner> IoWorker<O> {
         scope: SelectionScope,
         secret: [u8; 32],
     ) -> Result<(MutationSession, MutationHandle), OwnerCommandError> {
+        self.select_mutation_entry(path, None, scope, secret)
+    }
+    pub fn select_mutation_rename(
+        &self,
+        path: PathBuf,
+        destination: RelativeFilePath,
+        scope: SelectionScope,
+        secret: [u8; 32],
+    ) -> Result<(MutationSession, MutationHandle), OwnerCommandError> {
+        if destination.as_str().len() > 4 * 255 {
+            return Err(OwnerCommandError::Limit);
+        }
+        self.select_mutation_entry(path, Some(destination), scope, secret)
+    }
+    fn select_mutation_entry(
+        &self,
+        path: PathBuf,
+        destination: Option<RelativeFilePath>,
+        scope: SelectionScope,
+        secret: [u8; 32],
+    ) -> Result<(MutationSession, MutationHandle), OwnerCommandError> {
         let path_len = path.as_os_str().len();
         if path_len > 32_760 || scope.subject.len() > 256 {
             return Err(OwnerCommandError::Limit);
@@ -749,11 +779,13 @@ impl<O: ManagedHostOwner> IoWorker<O> {
         let path = PathBuf::from(path.as_os_str());
         let mut scope = scope;
         scope.subject = scope.subject.as_str().to_owned();
-        let retained_bytes = path.capacity();
+        let retained_bytes =
+            path.capacity() + destination.as_ref().map_or(0, |name| name.as_str().len());
         self.select_mutation(
             Request::SelectExisting {
                 id: self.next_mutation_id()?,
                 path,
+                destination,
                 scope,
                 secret,
             },
@@ -900,10 +932,7 @@ impl<O: ManagedHostOwner> IoWorker<O> {
             return Err(OwnerCommandError::Limit);
         }
         let plan = RequestRecord::decode(plan.container()).map_err(|_| OwnerCommandError::Limit)?;
-        if !matches!(
-            plan.request().disposition,
-            Disposition::Create | Disposition::Replace | Disposition::Delete
-        ) || plan.request().content_length > MAX_MUTATION_CONTENT
+        if plan.request().content_length > MAX_MUTATION_CONTENT
             || plan.request().content_length > self.control.limits.max_job_bytes
         {
             return Err(OwnerCommandError::Limit);
@@ -1447,6 +1476,9 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                             Disposition::Replace => MutationOutcome::Replaced(
                                 ReplaceOutcome::decode(material.payload())?,
                             ),
+                            Disposition::Rename => {
+                                MutationOutcome::Renamed(RenameOutcome::decode(material.payload())?)
+                            }
                             Disposition::Delete => {
                                 MutationOutcome::Deleted(DeleteOutcome::decode(material.payload())?)
                             }
@@ -1472,6 +1504,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                 Request::SelectExisting {
                     id,
                     path,
+                    destination,
                     scope,
                     secret,
                 } => {
@@ -1479,15 +1512,27 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                         return Err(file_target::Error::Limit);
                     }
                     let mut broker = TargetBroker::new(secret)?;
-                    let selected = broker.select_existing_controlled(
-                        manager,
-                        host,
-                        instance,
-                        &authority.binding,
-                        &path,
-                        scope.clone(),
-                        &mut gate,
-                    )?;
+                    let selected = match destination {
+                        Some(name) => broker.select_rename_controlled(
+                            manager,
+                            host,
+                            instance,
+                            &authority.binding,
+                            &path,
+                            &name,
+                            scope.clone(),
+                            &mut gate,
+                        )?,
+                        None => broker.select_existing_controlled(
+                            manager,
+                            host,
+                            instance,
+                            &authority.binding,
+                            &path,
+                            scope.clone(),
+                            &mut gate,
+                        )?,
+                    };
                     if source.queued()?.lock().cancelled {
                         return Err(file_target::Error::CancelledBeforeDispatch);
                     }
@@ -1584,11 +1629,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                     {
                         return Err(file_target::Error::Busy);
                     }
-                    if !matches!(
-                        plan.request().disposition,
-                        Disposition::Create | Disposition::Replace | Disposition::Delete
-                    ) || plan.request().content_length > MAX_MUTATION_CONTENT
-                    {
+                    if plan.request().content_length > MAX_MUTATION_CONTENT {
                         return Err(file_target::Error::Limit);
                     }
                     gate.with(|now, cancelled| {
@@ -1700,7 +1741,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                         .ok_or(file_target::Error::Missing)?;
                     same_request(resource, plan)?;
                     if resource.plan_cancelled
-                        || (plan.request().disposition != Disposition::Delete && !resource.durable)
+                        || (plan.request().disposition.writes_content() && !resource.durable)
                     {
                         return Err(file_target::Error::Missing);
                     }
@@ -1756,7 +1797,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                     if record.phase() != IntentPhase::Prepared {
                         return Err(file_target::Error::AlreadyDispatched);
                     }
-                    if plan.request().disposition != Disposition::Delete {
+                    if plan.request().disposition.writes_content() {
                         let mut rejected = None;
                         let content = host
                             .store_local()
@@ -2065,7 +2106,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                         {
                             return Err(file_target::Error::Busy);
                         }
-                        if plan.request().disposition != Disposition::Delete && !resource.durable {
+                        if plan.request().disposition.writes_content() && !resource.durable {
                             return Err(file_target::Error::Missing);
                         }
                         gate.with(|now, cancelled| {
@@ -2109,6 +2150,10 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                             .broker
                             .delete_controlled(manager, host, instance, plan, &mut gate)
                             .map(MutationResponse::Deleted),
+                        Disposition::Rename => resource
+                            .broker
+                            .rename_controlled(manager, host, instance, plan, &mut gate)
+                            .map(MutationResponse::Renamed),
                         Disposition::Replace => resource
                             .broker
                             .replace_controlled(manager, host, instance, plan, &mut gate)
@@ -2289,7 +2334,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                     // matching-history verification, binding exact content and
                     // receipt. Only Prepared/Cancelled can have optional staged
                     // bytes, so read those once. Delete has no staged content.
-                    let terminal_content = plan.request().disposition != Disposition::Delete
+                    let terminal_content = plan.request().disposition.writes_content()
                         && record.as_ref().is_some_and(|record| {
                             matches!(
                                 record.phase(),
@@ -2297,7 +2342,7 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                                     | morrow_core::io_intent::Phase::Observed
                             )
                         });
-                    let content = if plan.request().disposition == Disposition::Delete
+                    let content = if !plan.request().disposition.writes_content()
                         || terminal_content
                         || record.is_none()
                     {
@@ -2604,6 +2649,23 @@ pub(super) fn dispatch_guest<O: ManagedHostOwner>(
                 None,
             )
         }
+        guest_wire::Action::Rename { destination }
+            if plan.request().disposition == Disposition::Rename
+                && plan
+                    .request()
+                    .target
+                    .relative_path
+                    .as_ref()
+                    .is_some_and(|p| p.as_str() == destination) =>
+        {
+            (
+                Request::Prepare {
+                    id,
+                    request: plan.clone(),
+                },
+                None,
+            )
+        }
         guest_wire::Action::Delete if plan.request().disposition == Disposition::Delete => (
             Request::Prepare {
                 id,
@@ -2612,7 +2674,7 @@ pub(super) fn dispatch_guest<O: ManagedHostOwner>(
             None,
         ),
         guest_wire::Action::Chunk { offset, bytes }
-            if plan.request().disposition != Disposition::Delete =>
+            if plan.request().disposition.writes_content() =>
         {
             (
                 Request::Chunk {
@@ -2624,7 +2686,7 @@ pub(super) fn dispatch_guest<O: ManagedHostOwner>(
                 Some(Zeroizing::new(bytes.clone())),
             )
         }
-        guest_wire::Action::Commit if plan.request().disposition != Disposition::Delete => {
+        guest_wire::Action::Commit if plan.request().disposition.writes_content() => {
             (Request::Commit { id }, None)
         }
         guest_wire::Action::Execute => (Request::Execute { id }, None),
@@ -2682,6 +2744,15 @@ pub(super) fn dispatch_guest<O: ManagedHostOwner>(
             response.staged_bytes = plan.request().content_length;
             response.durable_content = true;
         }
+        Ok(MutationResponse::Renamed(outcome)) => {
+            response.phase = guest_wire::Phase::Observed;
+            response.effect = match outcome.result() {
+                morrow_core::file_effect::RenameResult::Renamed => guest_wire::Effect::OsSucceeded,
+                morrow_core::file_effect::RenameResult::OsRejected { .. } => {
+                    guest_wire::Effect::OsRejected
+                }
+            };
+        }
         Ok(MutationResponse::Deleted(outcome)) => {
             response.phase = guest_wire::Phase::Observed;
             response.effect = match outcome.result() {
@@ -2738,6 +2809,14 @@ pub(super) fn dispatch_guest<O: ManagedHostOwner>(
                                 guest_wire::Effect::OsSucceeded
                             }
                             morrow_core::file_effect::CreateResult::OsRejected { .. } => {
+                                guest_wire::Effect::OsRejected
+                            }
+                        },
+                        MutationOutcome::Renamed(value) => match value.result() {
+                            morrow_core::file_effect::RenameResult::Renamed => {
+                                guest_wire::Effect::OsSucceeded
+                            }
+                            morrow_core::file_effect::RenameResult::OsRejected { .. } => {
                                 guest_wire::Effect::OsRejected
                             }
                         },

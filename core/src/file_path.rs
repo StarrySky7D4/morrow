@@ -43,6 +43,11 @@ impl RelativeFilePath {
         Ok(Self(value.to_owned()))
     }
 
+    /// True for a single validated filename in its original directory.
+    pub fn is_leaf(&self) -> bool {
+        !self.0.contains('/')
+    }
+
     /// Returns the exact spelling that was validated.
     pub fn as_str(&self) -> &str {
         &self.0

@@ -785,7 +785,10 @@ impl Manager {
             || requested.iter().any(|cap| {
                 !matches!(
                     cap,
-                    IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                    IoCapability::FileCreate
+                        | IoCapability::FileReplace
+                        | IoCapability::FileDelete
+                        | IoCapability::FileRename
                 )
             })
         {
@@ -825,7 +828,10 @@ impl Manager {
             || !requested.iter().all(|cap| {
                 matches!(
                     cap,
-                    IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                    IoCapability::FileCreate
+                        | IoCapability::FileReplace
+                        | IoCapability::FileDelete
+                        | IoCapability::FileRename
                 )
             })
             || !instance.package.package().mutation_enabled()

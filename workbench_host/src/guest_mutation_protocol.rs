@@ -30,6 +30,7 @@ fn start_request(value: wire::mutation_start::Reader<'_>) -> Result<StartRequest
         1 => Disposition::Create,
         2 => Disposition::Replace,
         3 => Disposition::Delete,
+        4 => Disposition::Rename,
         _ => return Err("invalid guest mutation disposition".into()),
     };
     let relative = text(value.get_relative_path())?;

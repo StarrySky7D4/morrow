@@ -129,7 +129,7 @@ impl Registry {
                 if entry.approved_capabilities.len() > 7 {
                     return Err(Error::Limit);
                 }
-                if entry.approved_io_capabilities.len() > 10 {
+                if entry.approved_io_capabilities.len() > super::io::MAX_CAPABILITIES {
                     return Err(Error::Limit);
                 }
                 let mut approved_io = BTreeSet::new();

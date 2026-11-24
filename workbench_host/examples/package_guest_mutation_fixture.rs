@@ -61,6 +61,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             IoCapability::FileCreate,
             IoCapability::FileReplace,
             IoCapability::FileDelete,
+            IoCapability::FileRename,
         ],
         vec!["mutation.guest.fixture".into()],
     );
@@ -81,6 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 IoCapability::FileCreate,
                 IoCapability::FileReplace,
                 IoCapability::FileDelete,
+                IoCapability::FileRename,
             ])
     {
         return Err("guest mutation fixture declaration mismatch".into());

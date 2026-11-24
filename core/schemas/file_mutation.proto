@@ -20,4 +20,6 @@ enum Disposition {
   CREATE = 1;
   REPLACE = 2;
   DELETE = 3;
+  // relative_path is the reviewed destination leaf in the selected source directory.
+  RENAME = 4;
 }

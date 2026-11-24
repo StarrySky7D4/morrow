@@ -1,7 +1,7 @@
 //! One-shot selected-file deletion with a durable before-effect claim.
 use super::*;
 use morrow_core::{
-    file_effect::{DeleteOutcome, DeleteResult},
+    file_effect::{DeleteOutcome, EntryOutcome, RenameOutcome},
     io_evidence::{Kind, Material},
     io_intent::{ObservationSource, Phase},
 };
@@ -32,6 +32,28 @@ impl TargetBroker {
         request: &RequestRecord,
         control: &mut impl TargetControl,
     ) -> Result<DeleteOutcome> {
+        self.change_entry_controlled::<false>(manager, host, instance, request, control)
+    }
+
+    pub fn rename_controlled(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        request: &RequestRecord,
+        control: &mut impl TargetControl,
+    ) -> Result<RenameOutcome> {
+        self.change_entry_controlled::<true>(manager, host, instance, request, control)
+    }
+
+    fn change_entry_controlled<const RENAME: bool>(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        request: &RequestRecord,
+        control: &mut impl TargetControl,
+    ) -> Result<EntryOutcome<RENAME>> {
         let command = request.command()?;
         let reference = request.request().target.reference;
         if let Some(spent) = self.spent.get(&reference) {
@@ -48,7 +70,12 @@ impl TargetBroker {
             });
         }
         self.validate_request_controlled(manager, host, instance, request, control)?;
-        if request.request().disposition != Disposition::Delete {
+        let disposition = if RENAME {
+            Disposition::Rename
+        } else {
+            Disposition::Delete
+        };
+        if request.request().disposition != disposition {
             return Err(Error::Mismatch);
         }
         if !native_windows::available() {
@@ -88,14 +115,19 @@ impl TargetBroker {
         })?;
         let boundary = stored.propose_dispatch_boundary()?;
         let mut rejection = None;
-        let claim = host
-            .store_local_mut()
-            .claim_file_delete_local_authorized(&boundary, || {
-                controlled(control, |now| Ok(binding.check_liveness(now)?)).map_err(|error| {
-                    rejection = Some(error);
-                    morrow_core::Error::Invalid("inactive selected file delete")
-                })
-            });
+        let authorize = || {
+            controlled(control, |now| Ok(binding.check_liveness(now)?)).map_err(|error| {
+                rejection = Some(error);
+                morrow_core::Error::Invalid("inactive selected file")
+            })
+        };
+        let claim = if RENAME {
+            host.store_local_mut()
+                .claim_file_rename_local_authorized(&boundary, authorize)
+        } else {
+            host.store_local_mut()
+                .claim_file_delete_local_authorized(&boundary, authorize)
+        };
         let claimed = match claim {
             Ok(record) => record,
             Err(morrow_core::Error::CommitUnknown) => {
@@ -126,7 +158,7 @@ impl TargetBroker {
                 claimed: true,
             },
         );
-        fault("after-claim");
+        fault::<RENAME>("after-claim");
         let authorized = (|| -> Result<()> {
             controlled(control, |now| {
                 Ok(entry.file.lease().check(manager, host, instance, now)?)
@@ -145,28 +177,35 @@ impl TargetBroker {
         if authorized.is_err() {
             return Err(Error::OutcomeUnknown);
         }
-        let TargetFile::Direct { file, lease } = entry.file else {
-            return Err(Error::OutcomeUnknown);
-        };
-        let result = match effect_gate.delete(file) {
-            native_windows::DeleteAttempt::Deleted => DeleteResult::Deleted,
-            native_windows::DeleteAttempt::Rejected(code) if code != 0 => {
-                DeleteResult::OsRejected { code }
+        let (attempt, lease) = match entry.file {
+            TargetFile::Direct { file, lease } if !RENAME => (effect_gate.delete(file), lease),
+            TargetFile::Rename(owner) if RENAME => {
+                let rename::RenameFile {
+                    file,
+                    destination,
+                    lease,
+                    parents,
+                } = owner;
+                let outcome = effect_gate.rename(file, destination.as_str());
+                drop(parents);
+                (outcome, lease)
             }
-            native_windows::DeleteAttempt::Rejected(_) => return Err(Error::OutcomeUnknown),
-            native_windows::DeleteAttempt::CloseUnknown(_code) => {
-                // Native handle validity is unknown. Do not pretend its resource
-                // was freed. Admission is poisoned process-wide; keep this charge
-                // until process teardown without ever re-closing a numeric handle.
+            _ => return Err(Error::OutcomeUnknown),
+        };
+        let code = match attempt {
+            native_windows::EntryAttempt::Applied => 0,
+            native_windows::EntryAttempt::Rejected(code) if code != 0 => code,
+            native_windows::EntryAttempt::Rejected(_) => return Err(Error::OutcomeUnknown),
+            native_windows::EntryAttempt::CloseUnknown(_code) => {
                 std::mem::forget(lease);
                 return Err(Error::OutcomeUnknown);
             }
         };
-        fault("after-effect");
+        fault::<RENAME>("after-effect");
         // The host clock may revoke authority here. Retain the observed fact
         // regardless; only its final delivery is conditioned on current authority.
         control.with(|_, _| ());
-        let outcome = DeleteOutcome::new(
+        let outcome = EntryOutcome::<RENAME>::from_os_code(
             &command.operation_id,
             &command.subject,
             command.request_sha256,
@@ -175,7 +214,7 @@ impl TargetBroker {
                 .request()
                 .expected_identity
                 .ok_or(Error::OutcomeUnknown)?,
-            result,
+            code,
         )
         .map_err(|_| Error::OutcomeUnknown)?;
         let material = Material::encode(
@@ -191,19 +230,38 @@ impl TargetBroker {
             .map_err(|_| Error::OutcomeUnknown)?;
         // Original host and immutable observation are still held by this stack;
         // this records historical facts, not new authority to perform an effect.
-        host.store_local_mut()
-            .observe_file_delete_local_authorized(&observed, &material, || Ok(()))
-            .map_err(|_| Error::OutcomeUnknown)?;
-        fault("after-observe");
+        if RENAME {
+            host.store_local_mut().observe_file_rename_local_authorized(
+                &observed,
+                &material,
+                || Ok(()),
+            )
+        } else {
+            host.store_local_mut().observe_file_delete_local_authorized(
+                &observed,
+                &material,
+                || Ok(()),
+            )
+        }
+        .map_err(|_| Error::OutcomeUnknown)?;
+        fault::<RENAME>("after-observe");
         delivery(controlled(control, |now| {
             Ok(binding.check(manager, host, instance, now)?)
         }))?;
         Ok(outcome)
     }
 }
-fn fault(_point: &str) {
+fn fault<const RENAME: bool>(_point: &str) {
     #[cfg(feature = "fault-injection")]
-    if std::env::var("MORROW_FILE_DELETE_FAULT").ok().as_deref() == Some(_point) {
+    if std::env::var(if RENAME {
+        "MORROW_FILE_RENAME_FAULT"
+    } else {
+        "MORROW_FILE_DELETE_FAULT"
+    })
+    .ok()
+    .as_deref()
+        == Some(_point)
+    {
         std::process::exit(86);
     }
 }

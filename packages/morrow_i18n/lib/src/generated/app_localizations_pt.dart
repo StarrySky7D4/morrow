@@ -2101,6 +2101,9 @@ class AppLocalizationsPt extends AppLocalizations {
       'Excluir este arquivo permanentemente';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm => 'Renomear este arquivo';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm =>
       'Substituir permanentemente o conteúdo deste arquivo';
 
@@ -2120,6 +2123,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get pluginsFileMutationIntro =>
       'Escolha um plugin autorizado e um destino local. Revise a operação antes de prepará-la e confirme a execução separadamente.';
+
+  @override
+  String get pluginsFileMutationNewFileName => 'Novo nome do arquivo';
 
   @override
   String get pluginsFileMutationOperationError => 'Erro da operação';
@@ -2690,6 +2696,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => 'Ler arquivos autorizados';
+
+  @override
+  String get pluginsIoFileRename => 'Renomear arquivos';
 
   @override
   String get pluginsIoFileReplace => 'Substituir arquivos';

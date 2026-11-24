@@ -84,6 +84,9 @@ pub enum Action {
         content_sha256: [u8; 32],
     },
     Delete,
+    Rename {
+        destination: String,
+    },
     Chunk {
         offset: u64,
         bytes: Vec<u8>,
@@ -95,12 +98,25 @@ pub enum Action {
     Release,
 }
 
+pub fn rename_schema_digest() -> [u8; 32] {
+    crate::runtime::schema_digest(include_bytes!("../schemas/mutation_rename.capnp"))
+}
+
 impl Action {
+    fn wire_digest(&self) -> [u8; 32] {
+        if matches!(self, Self::Rename { .. }) {
+            rename_schema_digest()
+        } else {
+            schema_digest()
+        }
+    }
+
     pub fn kind(&self) -> Kind {
         match self {
             Self::Create { .. } => Kind::PrepareCreate,
             Self::Replace { .. } => Kind::PrepareReplace,
             Self::Delete => Kind::PrepareDelete,
+            Self::Rename { .. } => Kind::PrepareRename,
             Self::Chunk { .. } => Kind::Chunk,
             Self::Commit => Kind::Commit,
             Self::Execute => Kind::Execute,
@@ -112,6 +128,11 @@ impl Action {
 
     fn validate(&self) -> Result<()> {
         match self {
+            Self::Rename { destination }
+                if !crate::file_path::RelativeFilePath::parse(destination)?.is_leaf() =>
+            {
+                return Err(Error::Invalid("rename destination"));
+            }
             Self::Create {
                 content_length,
                 content_sha256,
@@ -174,7 +195,7 @@ impl Request {
         let mut message = Builder::new_default();
         let mut root = message.init_root::<wire::request::Builder>();
         root.set_version(VERSION);
-        root.set_schema_sha256(&schema_digest());
+        root.set_schema_sha256(&self.action.wire_digest());
         root.set_call_id(self.call_id);
         root.set_reference(&self.reference);
         root.set_submission(&self.submission);
@@ -198,6 +219,7 @@ impl Request {
                 create.set_content_sha256(content_sha256);
             }
             Action::Delete => root.set_prepare_delete(()),
+            Action::Rename { destination } => root.set_prepare_rename(destination.as_str()),
             Action::Chunk { offset, bytes } => {
                 let mut chunk = root.init_chunk();
                 chunk.set_offset(*offset);
@@ -220,9 +242,7 @@ impl Request {
         if root.total_size().map_err(invalid)?.cap_count != 0 {
             return Err(invalid(()));
         }
-        if root.get_version() != VERSION
-            || root.get_schema_sha256().map_err(invalid)? != schema_digest()
-        {
+        if root.get_version() != VERSION {
             return Err(Error::UnsupportedVersion);
         }
         let call_id = root.get_call_id();
@@ -249,6 +269,15 @@ impl Request {
                 }
             }
             wire::request::PrepareDelete(()) => Action::Delete,
+            wire::request::PrepareRename(name) => {
+                let name = name.map_err(invalid)?;
+                if name.as_bytes().len() > 4 * 255 {
+                    return Err(Error::Limit);
+                }
+                Action::Rename {
+                    destination: name.to_str().map_err(invalid)?.to_owned(),
+                }
+            }
             wire::request::Chunk(value) => {
                 let chunk = value.map_err(invalid)?;
                 let bytes = chunk.get_bytes().map_err(invalid)?;
@@ -273,6 +302,9 @@ impl Request {
             wire::request::CancelPlan(()) => Action::CancelPlan,
             wire::request::Release(()) => Action::Release,
         };
+        if root.get_schema_sha256().map_err(invalid)? != action.wire_digest() {
+            return Err(Error::UnsupportedVersion);
+        }
         let request = Self {
             call_id,
             reference,
@@ -351,9 +383,10 @@ impl Response {
             return Ok(());
         }
         let valid = match self.kind {
-            Kind::PrepareCreate | Kind::PrepareDelete | Kind::PrepareReplace => {
-                self.phase == Phase::Prepared && no_outcome && no_metadata
-            }
+            Kind::PrepareCreate
+            | Kind::PrepareDelete
+            | Kind::PrepareReplace
+            | Kind::PrepareRename => self.phase == Phase::Prepared && no_outcome && no_metadata,
             Kind::Chunk => {
                 let expected = match &request.action {
                     Action::Chunk { offset, bytes } => offset + bytes.len() as u64,
@@ -392,7 +425,7 @@ impl Response {
         let mut message = Builder::new_default();
         let mut root = message.init_root::<wire::response::Builder>();
         root.set_version(VERSION);
-        root.set_schema_sha256(&schema_digest());
+        root.set_schema_sha256(&request.action.wire_digest());
         root.set_call_id(self.call_id);
         root.set_reference(&self.reference);
         root.set_submission(&self.submission);
@@ -416,7 +449,7 @@ impl Response {
             return Err(invalid(()));
         }
         if root.get_version() != VERSION
-            || root.get_schema_sha256().map_err(invalid)? != schema_digest()
+            || root.get_schema_sha256().map_err(invalid)? != request.action.wire_digest()
         {
             return Err(Error::UnsupportedVersion);
         }

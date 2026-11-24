@@ -39,8 +39,9 @@ fn watch_metadata_round_trip_preserves_exact_bytes_and_does_not_add_io_capabilit
         &[io::IoCapability::FileList].into_iter().collect()
     );
     assert!(p.capabilities().is_empty());
-    assert!(io::IoCapability::from_number(11).is_err());
-    assert_eq!(io::MAX_CAPABILITIES, 10);
+    assert!(!p.io_capabilities().contains(&io::IoCapability::FileRename));
+    assert!(io::IoCapability::from_number(12).is_err());
+    assert_eq!(io::MAX_CAPABILITIES, 11);
     assert_eq!(p.manifest().budget.as_ref().unwrap().fuel, 20_000_000);
 }
 #[test]

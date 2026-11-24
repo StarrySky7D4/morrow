@@ -3766,6 +3766,12 @@ abstract class AppLocalizations {
   /// **'Delete this file permanently'**
   String get pluginsFileMutationExecuteDeleteConfirm;
 
+  /// No description provided for @pluginsFileMutationExecuteRenameConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename this file'**
+  String get pluginsFileMutationExecuteRenameConfirm;
+
   /// No description provided for @pluginsFileMutationExecuteReplaceConfirm.
   ///
   /// In en, this message translates to:
@@ -3801,6 +3807,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose an authorized package and a local target. Review the operation before preparation, then confirm execution separately.'**
   String get pluginsFileMutationIntro;
+
+  /// No description provided for @pluginsFileMutationNewFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'New file name'**
+  String get pluginsFileMutationNewFileName;
 
   /// No description provided for @pluginsFileMutationOperationError.
   ///
@@ -4759,6 +4771,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read approved files'**
   String get pluginsIoFileRead;
+
+  /// No description provided for @pluginsIoFileRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename files'**
+  String get pluginsIoFileRename;
 
   /// No description provided for @pluginsIoFileReplace.
   ///

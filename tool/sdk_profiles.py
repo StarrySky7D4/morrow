@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import stat
 import subprocess
@@ -175,6 +176,17 @@ def extension_discovery(discovery, platform, base_profiles):
                     or replacement.get("requires_native_transaction") is not True
                     or replacement.get("requires_execution_approval") is not True):
                 raise ValueError("invalid selected-target replacement metadata")
+        if "selected_target_rename" in profile:
+            rename = profile["selected_target_rename"]
+            if (not mutation or not isinstance(rename, dict) or
+                    {k: v for k, v in rename.items() if k != "wire_sha256"} != {
+                        "operation": "PrepareRename", "required_io_capability": "file-rename",
+                        "capability_number": 11, "platform_requirement": "windows",
+                        "implementation_compiled": windows, "same_directory_only": True,
+                        "replace_existing": False, "requires_execution_approval": True,
+                    } or not isinstance(rename.get("wire_sha256"), str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", rename["wire_sha256"])):
+                raise ValueError("invalid selected-target rename metadata")
         if name == "morrow.io.v1":
             expected = ["FileRead", "FileList", "FileCreate", "FileReplace", "FileDelete", "HttpRequest", "HttpListen", "HttpPublish", "CredentialUse", "WebSocketConnect"]
             capabilities = profile.get("declared_capabilities")

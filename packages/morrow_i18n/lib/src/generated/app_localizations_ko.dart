@@ -1995,6 +1995,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => '이 파일 영구 삭제';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm => '이 파일의 이름 변경';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm => '이 파일의 내용을 영구적으로 교체';
 
   @override
@@ -2013,6 +2016,9 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get pluginsFileMutationIntro =>
       '승인된 플러그인과 로컬 대상을 선택하세요. 작업을 검토하고 준비한 뒤 실행을 별도로 확인하세요.';
+
+  @override
+  String get pluginsFileMutationNewFileName => '새 파일 이름';
 
   @override
   String get pluginsFileMutationOperationError => '작업 오류';
@@ -2551,6 +2557,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => '승인된 파일 읽기';
+
+  @override
+  String get pluginsIoFileRename => '파일 이름 변경';
 
   @override
   String get pluginsIoFileReplace => '파일 교체';

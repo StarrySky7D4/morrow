@@ -2106,6 +2106,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Удалить этот файл навсегда';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm =>
+      'Переименовать этот файл';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm =>
       'Безвозвратно заменить содержимое этого файла';
 
@@ -2127,6 +2131,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pluginsFileMutationIntro =>
       'Выберите разрешённый плагин и локальный объект. Проверьте операцию перед подготовкой, затем отдельно подтвердите выполнение.';
+
+  @override
+  String get pluginsFileMutationNewFileName => 'Новое имя файла';
 
   @override
   String get pluginsFileMutationOperationError => 'Ошибка операции';
@@ -2696,6 +2703,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => 'Читать разрешённые файлы';
+
+  @override
+  String get pluginsIoFileRename => 'Переименование файлов';
 
   @override
   String get pluginsIoFileReplace => 'Заменять файлы';

@@ -242,9 +242,8 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
     }
     final selected = resume
         ? _scope(old)!
-        : _choices(
-            _draft.disposition,
-          ).singleWhere((p) => _packageKey(p) == _draft.package);
+        : _choices(_draft.disposition)
+              .singleWhere((p) => _packageKey(p) == _draft.package);
     final request = MutationDiscoverRequest(
       submission: _token(),
       packageId: selected.id,
@@ -293,6 +292,7 @@ class _MutationRecoveryManagerState extends State<MutationRecoveryManager>
     MutationDisposition.create => l.pluginsIoFileCreate,
     MutationDisposition.replace => l.pluginsIoFileReplace,
     MutationDisposition.delete => l.pluginsIoFileDelete,
+    MutationDisposition.rename => l.pluginsIoFileRename,
   };
   String _storage(AppLocalizations l, IoStoragePhase p) => switch (p) {
     IoStoragePhase.local => l.pluginsHttpTaskLocal,

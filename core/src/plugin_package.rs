@@ -668,6 +668,7 @@ impl Package {
                 || manifest.mutation_schema_sha256 != crate::mutation::schema_digest()
                 || !io_ceiling.contains(&io::IoCapability::FileCreate)
                     && !io_ceiling.contains(&io::IoCapability::FileDelete)
+                    && !io_ceiling.contains(&io::IoCapability::FileRename)
                     && !io_ceiling.contains(&io::IoCapability::FileReplace)
             {
                 return Err(Error::Invalid("mutation feature declaration"));
@@ -694,6 +695,7 @@ impl Package {
                         io::IoCapability::FileCreate
                             | io::IoCapability::FileReplace
                             | io::IoCapability::FileDelete
+                            | io::IoCapability::FileRename
                     )
                 })
                 || budget.max_job_bytes == 0
@@ -702,7 +704,8 @@ impl Package {
                 || budget.max_bytes > MAX_MUTATION_BYTES
                 || budget.max_resources > MAX_MUTATION_RESOURCES
                 || (budget.max_resources != 0
-                    && !io_ceiling.contains(&io::IoCapability::FileReplace)))
+                    && !io_ceiling.contains(&io::IoCapability::FileReplace)
+                    && !io_ceiling.contains(&io::IoCapability::FileRename)))
         {
             return Err(Error::Invalid("mutation budget declaration"));
         }

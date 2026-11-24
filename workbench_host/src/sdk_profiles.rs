@@ -256,7 +256,18 @@ fn mutation_profile() -> Value {
         "GeneralFilesystem",
         "NonWindowsMutationWorker"
     ]);
-    // Earlier SDK readers require the exact schema-1 operation lists.
+    // Earlier SDK readers require the exact schema-1 operation and IO capability lists.
+    value["selected_target_rename"] = json!({
+        "operation": "PrepareRename",
+        "required_io_capability": "file-rename",
+        "capability_number": plugin_package::io::IoCapability::FileRename as i32,
+        "wire_sha256": digest(mutation::rename_schema_digest()),
+        "platform_requirement": "windows",
+        "implementation_compiled": cfg!(windows),
+        "same_directory_only": true,
+        "replace_existing": false,
+        "requires_execution_approval": true
+    });
     value["selected_target_replacement"] = json!({
         "operation": "PrepareReplace",
         "required_io_capability": "file-replace",
@@ -870,7 +881,12 @@ mod tests {
     fn declared_io_capabilities_do_not_promote_unsupported_wire_operations() {
         let profile = io_profile();
         let capabilities = profile["declared_capabilities"].as_array().unwrap();
-        assert_eq!(capabilities.len(), plugin_package::io::MAX_CAPABILITIES);
+        // Rename is a separate mutation operation, discoverable by old readers as an optional field.
+        let rename = &mutation_profile()["selected_target_rename"];
+        assert_eq!(rename["capability_number"], plugin_package::io::IoCapability::FileRename.number());
+        assert_eq!(rename["wire_sha256"], digest(mutation::rename_schema_digest()));
+        assert!(capabilities.iter().all(|cap| cap["number"] != rename["capability_number"]));
+        assert_eq!(capabilities.len() + 1, plugin_package::io::MAX_CAPABILITIES);
         for capability in capabilities {
             assert!(
                 plugin_package::io::IoCapability::from_number(

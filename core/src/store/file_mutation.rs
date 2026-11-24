@@ -25,9 +25,12 @@ impl Store {
         if prepared.phase() != Phase::Prepared
             || !matches!(
                 command.capability,
-                IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                IoCapability::FileCreate
+                    | IoCapability::FileReplace
+                    | IoCapability::FileDelete
+                    | IoCapability::FileRename
             )
-            || command.protocol_sha256 != crate::file_mutation::schema_digest()
+            || command.protocol_sha256 != crate::file_mutation::protocol_digest(command.capability)
             || material.kind() != Kind::Request
             || material.operation_id() != command.operation_id
             || material.subject() != command.subject
@@ -321,9 +324,26 @@ impl Store {
     pub fn claim_file_delete_local_authorized(
         &mut self,
         candidate: &Record,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Record> {
+        self.claim_entry(candidate, Disposition::Delete, authorize)
+    }
+
+    pub fn claim_file_rename_local_authorized(
+        &mut self,
+        candidate: &Record,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Record> {
+        self.claim_entry(candidate, Disposition::Rename, authorize)
+    }
+
+    fn claim_entry(
+        &mut self,
+        candidate: &Record,
+        disposition: Disposition,
         mut authorize: impl FnMut() -> Result<()>,
     ) -> Result<Record> {
-        validate_delete_command(candidate, Phase::OutcomeUnknown)?;
+        validate_entry_command(candidate, disposition, Phase::OutcomeUnknown)?;
         // Check live authority before reading retained protected request bytes.
         authorize()?;
         let tx = sql(self
@@ -335,7 +355,7 @@ impl Store {
         if history.last().map(Record::phase) != Some(Phase::Prepared) {
             return Err(Error::RevisionConflict);
         }
-        let request = load_delete_request(&tx, &history)?;
+        let request = load_entry_request(&tx, &history, disposition)?;
         candidate.matches_command(&request.command()?)?;
         io_evidence::require_pending_file_response(&tx, &history)?;
         let (stored, changed) =
@@ -344,9 +364,17 @@ impl Store {
             return Err(Error::RevisionConflict);
         }
         authorize()?;
-        boundary("file-delete-claim-before-commit");
+        boundary(if disposition == Disposition::Rename {
+            "file-rename-claim-before-commit"
+        } else {
+            "file-delete-claim-before-commit"
+        });
         tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("file-delete-claim-after-commit");
+        boundary(if disposition == Disposition::Rename {
+            "file-rename-claim-after-commit"
+        } else {
+            "file-delete-claim-after-commit"
+        });
         Ok(stored)
     }
 
@@ -356,9 +384,28 @@ impl Store {
         &mut self,
         candidate: &Record,
         response: &Material,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Record> {
+        self.observe_entry(candidate, response, Disposition::Delete, authorize)
+    }
+
+    pub fn observe_file_rename_local_authorized(
+        &mut self,
+        candidate: &Record,
+        response: &Material,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Record> {
+        self.observe_entry(candidate, response, Disposition::Rename, authorize)
+    }
+
+    fn observe_entry(
+        &mut self,
+        candidate: &Record,
+        response: &Material,
+        disposition: Disposition,
         mut authorize: impl FnMut() -> Result<()>,
     ) -> Result<Record> {
-        validate_delete_command(candidate, Phase::Observed)?;
+        validate_entry_command(candidate, disposition, Phase::Observed)?;
         if response.kind() != Kind::Response
             || response.operation_id() != candidate.command().operation_id
             || response.subject() != candidate.command().subject
@@ -369,11 +416,10 @@ impl Store {
                 Ok(ObservationSource::OriginalResponse | ObservationSource::Reconciliation)
             )
         {
-            return Err(Error::Invalid("file delete observation metadata"));
+            return Err(Error::Invalid("file entry observation metadata"));
         }
         // Check live authority before reading retained protected request bytes.
         authorize()?;
-        let outcome = DeleteOutcome::decode(response.payload())?;
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
@@ -383,9 +429,13 @@ impl Store {
         if history.last().map(Record::phase) != Some(Phase::OutcomeUnknown) {
             return Err(Error::RevisionConflict);
         }
-        let request = load_delete_request(&tx, &history)?;
+        let request = load_entry_request(&tx, &history, disposition)?;
         candidate.matches_command(&request.command()?)?;
-        outcome_matches(&outcome, &request, candidate.command().request_sha256)?;
+        verify_entry_outcome(
+            response.payload(),
+            &request,
+            candidate.command().request_sha256,
+        )?;
         io_evidence::store_material_in_tx(
             &tx,
             &candidate.command().subject,
@@ -399,9 +449,17 @@ impl Store {
             return Err(Error::RevisionConflict);
         }
         authorize()?;
-        boundary("file-delete-observe-before-commit");
+        boundary(if disposition == Disposition::Rename {
+            "file-rename-observe-before-commit"
+        } else {
+            "file-delete-observe-before-commit"
+        });
         tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("file-delete-observe-after-commit");
+        boundary(if disposition == Disposition::Rename {
+            "file-rename-observe-after-commit"
+        } else {
+            "file-delete-observe-after-commit"
+        });
         Ok(stored)
     }
 }
@@ -505,17 +563,26 @@ fn replace_outcome_matches(
     Ok(())
 }
 
-fn validate_delete_command(candidate: &Record, phase: Phase) -> Result<()> {
+fn validate_entry_command(
+    candidate: &Record,
+    disposition: Disposition,
+    phase: Phase,
+) -> Result<()> {
     if candidate.phase() != phase
-        || candidate.command().capability != IoCapability::FileDelete
-        || candidate.command().protocol_sha256 != crate::file_mutation::schema_digest()
+        || candidate.command().capability != disposition.capability()
+        || candidate.command().protocol_sha256
+            != crate::file_mutation::protocol_digest(disposition.capability())
     {
-        return Err(Error::Invalid("file delete command"));
+        return Err(Error::Invalid("file entry command"));
     }
     Ok(())
 }
 
-fn load_delete_request(c: &rusqlite::Connection, history: &[Record]) -> Result<RequestRecord> {
+fn load_entry_request(
+    c: &rusqlite::Connection,
+    history: &[Record],
+    disposition: Disposition,
+) -> Result<RequestRecord> {
     let first = history.first().ok_or(Error::NotFound)?;
     let material =
         io_evidence::load_material(c, &first.command().operation_id, Kind::Request, history)?
@@ -524,14 +591,14 @@ fn load_delete_request(c: &rusqlite::Connection, history: &[Record]) -> Result<R
     first
         .matches_command(&request.command()?)
         .map_err(|_| Error::Integrity)?;
-    if request.request().disposition != Disposition::Delete {
-        return Err(Error::Invalid("not a file delete request"));
+    if request.request().disposition != disposition {
+        return Err(Error::Invalid("incorrect file entry operation"));
     }
-    ensure_no_delete_content(c, &first.command().operation_id)?;
+    ensure_no_entry_content(c, &first.command().operation_id)?;
     Ok(request)
 }
 
-fn ensure_no_delete_content(c: &rusqlite::Connection, operation: &str) -> Result<()> {
+fn ensure_no_entry_content(c: &rusqlite::Connection, operation: &str) -> Result<()> {
     let version: i64 = sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
     if version >= 22 {
         let present: bool = sql(c.query_row(
@@ -556,8 +623,20 @@ fn ensure_no_delete_content(c: &rusqlite::Connection, operation: &str) -> Result
     Ok(())
 }
 
-fn outcome_matches(
-    outcome: &DeleteOutcome,
+fn verify_entry_outcome(payload: &[u8], request: &RequestRecord, hash: [u8; 32]) -> Result<()> {
+    match request.request().disposition {
+        Disposition::Delete => outcome_matches(&DeleteOutcome::decode(payload)?, request, hash),
+        Disposition::Rename => outcome_matches(
+            &crate::file_effect::RenameOutcome::decode(payload)?,
+            request,
+            hash,
+        ),
+        _ => Err(Error::Invalid("file entry outcome disposition")),
+    }
+}
+
+fn outcome_matches<const RENAME: bool>(
+    outcome: &crate::file_effect::EntryOutcome<RENAME>,
     request: &RequestRecord,
     request_sha256: [u8; 32],
 ) -> Result<()> {
@@ -580,7 +659,9 @@ pub(super) fn verify_history(c: &rusqlite::Connection, history: &[Record]) -> Re
     let Some(first) = history.first() else {
         return Ok(());
     };
-    if first.command().protocol_sha256 != crate::file_mutation::schema_digest() {
+    if first.command().protocol_sha256
+        != crate::file_mutation::protocol_digest(first.command().capability)
+    {
         return Ok(());
     }
     check_version(c)?;
@@ -687,7 +768,7 @@ pub(super) fn verify_history(c: &rusqlite::Connection, history: &[Record]) -> Re
     if latest.phase() == Phase::OutcomeUnknown {
         io_evidence::require_pending_file_response(c, history)?;
     }
-    ensure_no_delete_content(c, &first.command().operation_id)?;
+    ensure_no_entry_content(c, &first.command().operation_id)?;
     if history.iter().any(|v| {
         !matches!(
             v.phase(),
@@ -703,8 +784,7 @@ pub(super) fn verify_history(c: &rusqlite::Connection, history: &[Record]) -> Re
         let response =
             io_evidence::load_material(c, &first.command().operation_id, Kind::Response, history)?
                 .ok_or(Error::Integrity)?;
-        let outcome = DeleteOutcome::decode(response.payload()).map_err(|_| Error::Integrity)?;
-        outcome_matches(&outcome, &request, first.command().request_sha256)
+        verify_entry_outcome(response.payload(), &request, first.command().request_sha256)
             .map_err(|_| Error::Integrity)?;
         if latest.data().observation_sha256 != response.digest().as_slice()
             || !matches!(

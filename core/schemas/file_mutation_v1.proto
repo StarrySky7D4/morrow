@@ -1,0 +1,23 @@
+syntax = "proto3";
+package morrow.file_mutation.v1;
+// Protected, immutable intent input. Not a live grant or a filesystem path API.
+// The actual content is separately staged and metered before any dispatch.
+message Request {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes package_sha256 = 4;
+  bytes approval_sha256 = 5;
+  bytes target_reference = 6;
+  string relative_path = 7;
+  Disposition disposition = 8;
+  bytes expected_identity = 9;
+  uint64 content_length = 10;
+  bytes content_sha256 = 11;
+}
+enum Disposition {
+  INVALID_DISPOSITION = 0;
+  CREATE = 1;
+  REPLACE = 2;
+  DELETE = 3;
+}

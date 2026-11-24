@@ -33,6 +33,7 @@ mod native {
             "file-create" => IoCapability::FileCreate,
             "file-replace" => IoCapability::FileReplace,
             "file-delete" => IoCapability::FileDelete,
+            "file-rename" => IoCapability::FileRename,
             "http-request" => IoCapability::HttpRequest,
             "credential-use" => IoCapability::CredentialUse,
             "http-listen" => IoCapability::HttpListen,

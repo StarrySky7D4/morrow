@@ -343,6 +343,7 @@ impl Store {
             crate::plugin_package::io::IoCapability::FileCreate
                 | crate::plugin_package::io::IoCapability::FileReplace
                 | crate::plugin_package::io::IoCapability::FileDelete
+                | crate::plugin_package::io::IoCapability::FileRename
         ) && candidate.phase() != Phase::CancelledBeforeDispatch
         {
             return Err(Error::UnsupportedVersion);

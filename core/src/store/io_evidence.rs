@@ -136,7 +136,10 @@ pub(super) fn load_material_bounded(
 fn is_file_command(command: &Command) -> bool {
     matches!(
         command.capability,
-        IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+        IoCapability::FileCreate
+            | IoCapability::FileReplace
+            | IoCapability::FileDelete
+            | IoCapability::FileRename
     )
 }
 /// File response evidence and Observed must be committed atomically by the

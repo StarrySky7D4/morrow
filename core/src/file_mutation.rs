@@ -23,20 +23,34 @@ pub const MAX_CONTAINER_BYTES: usize = MAX_RAW_BYTES + MAX_RAW_BYTES / 255 + 128
 pub const MAX_RESPONSE_BYTES: u64 = 4096;
 pub const MAX_HISTORY_METADATA_BYTES: u64 = MAX_CONTAINER_BYTES as u64 + MAX_RESPONSE_BYTES;
 pub fn schema_digest() -> [u8; 32] {
-    crate::runtime::schema_digest(include_bytes!("../schemas/file_mutation.proto"))
+    crate::runtime::schema_digest(include_bytes!("../schemas/file_mutation_v1.proto"))
 }
+/// Preserve the original protocol identity for existing records and their proofs.
+pub fn protocol_digest(capability: IoCapability) -> [u8; 32] {
+    if capability == IoCapability::FileRename {
+        crate::runtime::schema_digest(include_bytes!("../schemas/file_mutation.proto"))
+    } else {
+        schema_digest()
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Disposition {
     Create,
     Replace,
     Delete,
+    Rename,
 }
 impl Disposition {
+    pub fn writes_content(self) -> bool {
+        matches!(self, Self::Create | Self::Replace)
+    }
     pub fn capability(self) -> IoCapability {
         match self {
             Self::Create => IoCapability::FileCreate,
             Self::Replace => IoCapability::FileReplace,
             Self::Delete => IoCapability::FileDelete,
+            Self::Rename => IoCapability::FileRename,
         }
     }
 }
@@ -45,7 +59,8 @@ pub struct Target {
     /// Host-issued target identity; it is not an OS path or proof of approval.
     pub reference: [u8; 32],
     /// None names an explicitly selected single-file target. Some names an
-    /// entry under an independently approved directory handle. Never reparse or
+    /// entry under an independently approved directory handle. For rename it is the
+    /// reviewed new filename in the selected file’s own directory. Never reparse or
     /// decode this value after validation, and never resolve it by prefix alone.
     pub relative_path: Option<RelativeFilePath>,
 }
@@ -57,11 +72,11 @@ pub struct MutationRequest {
     pub approval_sha256: [u8; 32],
     pub target: Target,
     pub disposition: Disposition,
-    /// Required for replace/delete; a platform-defined original object/version
+    /// Required for replace, delete, and rename; a platform-defined original object/version
     /// digest. The platform must support checking it at the effect boundary.
     pub expected_identity: Option<[u8; 32]>,
     pub content_length: u64,
-    /// Includes SHA-256(empty) for an empty create/replace. Absent for delete.
+    /// Includes SHA-256(empty) for an empty create/replace. Absent for delete and rename.
     pub content_sha256: Option<[u8; 32]>,
 }
 impl MutationRequest {
@@ -84,7 +99,7 @@ impl MutationRequest {
             Disposition::Create if self.expected_identity.is_some() => {
                 return Err(Error::Invalid("create requires absence, not replacement"));
             }
-            Disposition::Replace | Disposition::Delete
+            Disposition::Replace | Disposition::Delete | Disposition::Rename
                 if self.expected_identity.is_none() || self.expected_identity == Some([0; 32]) =>
             {
                 return Err(Error::Invalid("missing expected file identity"));
@@ -92,8 +107,19 @@ impl MutationRequest {
             _ => {}
         }
         match self.disposition {
-            Disposition::Delete if self.content_length != 0 || self.content_sha256.is_some() => {
-                return Err(Error::Invalid("delete contains write data"));
+            Disposition::Rename
+                if self
+                    .target
+                    .relative_path
+                    .as_ref()
+                    .is_none_or(|p| !p.is_leaf()) =>
+            {
+                return Err(Error::Invalid("rename requires one destination filename"));
+            }
+            Disposition::Delete | Disposition::Rename
+                if self.content_length != 0 || self.content_sha256.is_some() =>
+            {
+                return Err(Error::Invalid("metadata operation contains write data"));
             }
             Disposition::Create | Disposition::Replace => {
                 if self.content_sha256.is_none() || self.content_sha256 == Some([0; 32]) {
@@ -143,6 +169,7 @@ impl RequestRecord {
             1 => Disposition::Create,
             2 => Disposition::Replace,
             3 => Disposition::Delete,
+            4 => Disposition::Rename,
             0 => return Err(Error::Invalid("missing file disposition")),
             _ => return Err(Error::UnsupportedVersion),
         };
@@ -197,7 +224,7 @@ impl RequestRecord {
             subject: r.subject.clone(),
             package_sha256: r.package_sha256,
             capability: r.disposition.capability(),
-            protocol_sha256: schema_digest(),
+            protocol_sha256: protocol_digest(r.disposition.capability()),
             request_sha256: Sha256::digest(&self.container).into(),
             approval_sha256: r.approval_sha256,
             target_sha256: target.finalize().into(),
@@ -223,6 +250,7 @@ fn encode_value(r: &MutationRequest) -> proto::Request {
             Disposition::Create => 1,
             Disposition::Replace => 2,
             Disposition::Delete => 3,
+            Disposition::Rename => 4,
         },
         expected_identity: r.expected_identity.map_or_else(Vec::new, |v| v.to_vec()),
         content_length: r.content_length,

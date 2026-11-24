@@ -68,6 +68,14 @@ class mutation_request {
     value.content_sha256_ = content_sha256;
     return value;
   }
+  static mutation_request rename(uint64_t call_id,
+      std::array<uint8_t, 32> reference, std::array<uint8_t, 32> submission,
+      std::string operation_id, uint32_t deadline_ms, std::string destination) {
+    mutation_request value(MP_MUTATION_PREPARE_RENAME, call_id, reference, submission,
+                           std::move(operation_id), deadline_ms);
+    value.bytes_.assign(destination.begin(), destination.end());
+    return value;
+  }
   static mutation_request remove(uint64_t call_id,
       std::array<uint8_t, 32> reference, std::array<uint8_t, 32> submission,
       std::string operation_id, uint32_t deadline_ms) {
@@ -129,7 +137,7 @@ class mutation_request {
     if (kind_ == MP_MUTATION_PREPARE_CREATE || kind_ == MP_MUTATION_PREPARE_REPLACE) {
       raw.content_length = content_length_;
       raw.content_sha256 = span(content_sha256_);
-    } else if (kind_ == MP_MUTATION_CHUNK) {
+    } else if (kind_ == MP_MUTATION_CHUNK || kind_ == MP_MUTATION_PREPARE_RENAME) {
       raw.offset = offset_;
       raw.bytes = span(bytes_);
     }

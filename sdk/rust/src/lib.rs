@@ -24,9 +24,10 @@ pub mod io_capnp {
     include!(concat!(env!("OUT_DIR"), "/io_capnp.rs"));
 }
 #[allow(clippy::all)]
-pub mod mutation_capnp {
-    include!(concat!(env!("OUT_DIR"), "/mutation_capnp.rs"));
+pub mod mutation_rename_capnp {
+    include!(concat!(env!("OUT_DIR"), "/mutation_rename_capnp.rs"));
 }
+pub use mutation_rename_capnp as mutation_capnp;
 mod descriptor_prefix;
 mod ffi;
 mod io_ffi;

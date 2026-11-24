@@ -611,7 +611,10 @@ impl IoBinding {
         if !self.mutation_history
             || !matches!(
                 capability,
-                IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+                IoCapability::FileCreate
+                    | IoCapability::FileReplace
+                    | IoCapability::FileDelete
+                    | IoCapability::FileRename
             )
         {
             return Err(Error::Denied);

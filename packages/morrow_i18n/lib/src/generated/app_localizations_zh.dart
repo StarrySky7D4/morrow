@@ -1925,6 +1925,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => '永久删除此文件';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm => '重命名此文件';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm => '永久替换此文件的内容';
 
   @override
@@ -1941,6 +1944,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsFileMutationIntro => '选择已授权的插件和本地目标。先审核并准备操作，再单独确认执行。';
+
+  @override
+  String get pluginsFileMutationNewFileName => '新文件名';
 
   @override
   String get pluginsFileMutationOperationError => '操作错误';
@@ -2457,6 +2463,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => '读取已批准的文件';
+
+  @override
+  String get pluginsIoFileRename => '重命名文件';
 
   @override
   String get pluginsIoFileReplace => '替换文件';

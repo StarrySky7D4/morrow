@@ -359,6 +359,16 @@ fn advance_internal(mutation: &mut MutationTask, worker: &IoWorker<WorkbenchStat
                     content_sha256: plan.request().content_sha256.unwrap(),
                 },
                 Disposition::Delete => guest_wire::Action::Delete,
+                Disposition::Rename => guest_wire::Action::Rename {
+                    destination: plan
+                        .request()
+                        .target
+                        .relative_path
+                        .as_ref()
+                        .expect("validated rename plan")
+                        .as_str()
+                        .to_owned(),
+                },
                 Disposition::Replace => guest_wire::Action::Replace {
                     content_length: plan.request().content_length,
                     content_sha256: plan.request().content_sha256.unwrap(),
@@ -552,7 +562,7 @@ impl Workbench {
                 let lease = guest.lease.ok_or("guest approval has not been delivered")?;
                 let plan = guest.plan.as_ref().ok_or("missing guest plan")?;
                 if !guest.prepared
-                    || plan.request().disposition == Disposition::Delete
+                    || !plan.request().disposition.writes_content()
                     || offset != guest.staged_bytes
                     || bytes.is_empty()
                     || bytes.len() > guest_wire::MAX_CHUNK_BYTES
@@ -579,7 +589,7 @@ impl Workbench {
                 let plan = guest.plan.as_ref().ok_or("missing guest plan")?;
                 if !guest.prepared
                     || guest.durable_content
-                    || plan.request().disposition == Disposition::Delete
+                    || !plan.request().disposition.writes_content()
                     || guest.staged_bytes != plan.request().content_length
                 {
                     return Err("guest content is incomplete".into());
@@ -598,7 +608,7 @@ impl Workbench {
                 if !guest.prepared
                     || guest.effect_attempted
                     || guest.plan_sha256() != Some(plan_sha256)
-                    || (plan.request().disposition != Disposition::Delete && !guest.durable_content)
+                    || (plan.request().disposition.writes_content() && !guest.durable_content)
                 {
                     return Err("guest execution review or content is incomplete".into());
                 }
@@ -897,11 +907,15 @@ impl Workbench {
             || path.contains('\0')
             || request.timeout_ms == 0
             || request.timeout_ms > 30_000
-            || !matches!(
+            || matches!(
                 request.disposition,
-                Disposition::Create | Disposition::Replace | Disposition::Delete
-            )
-            || (request.disposition == Disposition::Create) != request.relative_path.is_some()
+                Disposition::Create | Disposition::Rename
+            ) != request.relative_path.is_some()
+            || (request.disposition == Disposition::Rename
+                && request
+                    .relative_path
+                    .as_ref()
+                    .is_none_or(|name| !name.is_leaf()))
         {
             return Err("invalid guest mutation start".into());
         }
@@ -915,6 +929,7 @@ impl Workbench {
             &[match request.disposition {
                 Disposition::Create => 1,
                 Disposition::Delete => 3,
+                Disposition::Rename => 4,
                 Disposition::Replace => 2,
             }],
         );
@@ -1015,6 +1030,10 @@ impl Workbench {
             _ => return Err("guest mutation budget requires exact host approval".into()),
         };
         let selection = match request.relative_path {
+            Some(destination) if request.disposition == Disposition::Rename => Selection::Rename {
+                source: request.selected_path,
+                destination,
+            },
             Some(relative) => Selection::Create {
                 root: request.selected_path,
                 relative,

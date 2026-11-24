@@ -14,7 +14,7 @@ if match is None:
 files = {
     name: ((root / "core/schemas" / name).read_bytes().decode("utf-8").replace("\r\n", "\n")
            if name == "channel.capnp" else (root / "core/schemas" / name).read_text(encoding="utf-8"))
-    for name in ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp", "channel.capnp")
+    for name in ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp", "mutation_rename.capnp", "channel.capnp")
 }
 files["version.txt"] = match.group(1) + "\n"
 task_source = (root / "core/src/task.rs").read_text(encoding="utf-8")

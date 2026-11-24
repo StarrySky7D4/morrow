@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'io_task_models.dart';
 
 Uint8List _copy(Uint8List v) => Uint8List.fromList(v).asUnmodifiableView();
@@ -13,7 +14,15 @@ Uint8List _checkpoint(Uint8List v) {
 List<Uint8List>? _copyPlans(List<Uint8List>? v) =>
     v == null ? null : List<Uint8List>.unmodifiable(v.map(_copy));
 
-enum MutationDisposition { create, replace, delete }
+enum MutationDisposition {
+  create,
+  replace,
+  delete,
+  rename;
+
+  bool get writesContent => this == create || this == replace;
+  bool get requiresName => this == create || this == rename;
+}
 
 enum MutationCommandKind {
   select,
@@ -46,6 +55,7 @@ enum MutationResultKind {
   planned,
   plans,
   replaced,
+  renamed,
 }
 
 enum MutationPhase {
@@ -432,14 +442,20 @@ abstract final class MutationTaskValidation {
         v.selectedPath.isEmpty ||
         v.selectedPath.contains('\u0000') ||
         utf8.encode(v.selectedPath).length > 4096 ||
-        !RegExp(
-          r'^(?:[A-Za-z]:[\\/]|\\\\[^\\]+\\[^\\]+\\|/)',
-        ).hasMatch(v.selectedPath) ||
-        (v.disposition == MutationDisposition.create) !=
-            v.relativePath.isNotEmpty) {
+        !RegExp(r'^(?:[A-Za-z]:[\\/]|\\\\[^\\]+\\[^\\]+\\|/)')
+            .hasMatch(v.selectedPath) ||
+        v.disposition.requiresName != v.relativePath.isNotEmpty) {
       throw const FormatException('Invalid mutation selection');
     }
     if (v.relativePath.isNotEmpty) relativePath(v.relativePath);
+    if (v.disposition == MutationDisposition.rename &&
+        (v.relativePath.contains('/') ||
+            v.relativePath.toLowerCase() ==
+                v.selectedPath.split(RegExp(r'[\\/]')).last.toLowerCase())) {
+      throw const FormatException(
+        'Rename requires a different file name in the same directory',
+      );
+    }
   }
 
   static void validateReconciliation(MutationReconcileRequest v) {

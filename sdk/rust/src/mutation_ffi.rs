@@ -125,7 +125,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     }
     // SAFETY: A passing prefix promises the complete aligned descriptor exists.
     let raw = unsafe { &*raw };
-    if !(1..=9).contains(&raw.kind) {
+    if !(1..=10).contains(&raw.kind) {
         return Err(Error::Invalid);
     }
     if raw.call_id == 0 || raw.deadline_ms == 0 {
@@ -158,7 +158,8 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     // Reject variant garbage before copying any caller span. The default form
     // is strict even when the span length is zero but its pointer is non-null.
     if (!matches!(raw.kind, 1 | 9) && (raw.content_length != 0 || !empty(raw.content_sha256)))
-        || (raw.kind != 3 && (raw.offset != 0 || !empty(raw.bytes)))
+        || (raw.kind != 3 && raw.offset != 0)
+        || (!matches!(raw.kind, 3 | 10) && !empty(raw.bytes))
     {
         return Err(Error::Invalid);
     }
@@ -167,7 +168,7 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
     {
         return Err(Error::Invalid);
     }
-    if raw.kind == 3 && (raw.bytes.length == 0 || raw.bytes.data.is_null()) {
+    if matches!(raw.kind, 3 | 10) && (raw.bytes.length == 0 || raw.bytes.data.is_null()) {
         return Err(Error::Invalid);
     }
     let reference = unsafe { fixed32(raw.reference) }?;
@@ -185,6 +186,10 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
             content_sha256: unsafe { fixed32(raw.content_sha256) }?,
         },
         2 => Action::Delete,
+        10 => Action::Rename {
+            destination: String::from_utf8(unsafe { bytes(raw.bytes, 4 * 255) }?)
+                .map_err(|_| Error::Invalid)?,
+        },
         3 => Action::Chunk {
             offset: raw.offset,
             bytes: unsafe { bytes(raw.bytes, mutation::MAX_CHUNK_BYTES) }?,

@@ -1979,6 +1979,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginsFileMutationExecuteDeleteConfirm => 'このファイルを完全に削除';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm => 'このファイルの名前を変更';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm => 'このファイルの内容を完全に置き換える';
 
   @override
@@ -1996,6 +1999,9 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get pluginsFileMutationIntro =>
       '許可済みのプラグインとローカルの対象を選択します。操作を確認して準備した後、実行を別途確認します。';
+
+  @override
+  String get pluginsFileMutationNewFileName => '新しいファイル名';
 
   @override
   String get pluginsFileMutationOperationError => '操作のエラー';
@@ -2533,6 +2539,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => '許可されたファイルを読む';
+
+  @override
+  String get pluginsIoFileRename => 'ファイル名の変更';
 
   @override
   String get pluginsIoFileReplace => 'ファイルを置換';

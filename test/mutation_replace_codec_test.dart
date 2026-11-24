@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/generated/host.capnp.dart' as wire;
@@ -17,9 +18,8 @@ MutationResult? replacement({
   row.outcome = Uint8List.fromList([1, 2, 3]);
   alter?.call(row);
   return MutationTaskCodec.result(
-    MessageReader.deserialize(
-      message.serialize(),
-    ).getRoot(wire.mutationResultFactory),
+    MessageReader.deserialize(message.serialize())
+        .getRoot(wire.mutationResultFactory),
   );
 }
 
@@ -33,6 +33,9 @@ void main() {
       expect(success.effect, MutationEffect.osSucceeded);
       expect(success.operationId, 'replace-codec');
       expect(success.outcome, [1, 2, 3]);
+      final renamed = replacement(alter: (row) => row.kind = 14)!;
+      expect(renamed.kind, MutationResultKind.renamed);
+      expect(renamed.effect, MutationEffect.osSucceeded);
       final rejected = replacement(
         alter: (row) {
           row.effect = 2;
@@ -54,7 +57,7 @@ void main() {
         (row) => row.effect = 0,
         (row) => row.effect = 2,
         (row) => row.osCode = 5,
-        (row) => row.kind = 14,
+        (row) => row.kind = 15,
       ]) {
         expect(() => replacement(alter: alter), throwsFormatException);
       }

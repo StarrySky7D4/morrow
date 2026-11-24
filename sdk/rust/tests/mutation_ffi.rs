@@ -122,6 +122,12 @@ fn descriptor_encodes_all_actions_and_preserves_buffer_on_failure() {
         ),
         (2, Action::Delete),
         (
+            10,
+            Action::Rename {
+                destination: "renamed.bin".into(),
+            },
+        ),
+        (
             3,
             Action::Chunk {
                 offset: 2,
@@ -154,6 +160,8 @@ fn descriptor_encodes_all_actions_and_preserves_buffer_on_failure() {
         raw.offset = if kind == 3 { 2 } else { 0 };
         raw.bytes = if kind == 3 {
             span(&chunk)
+        } else if kind == 10 {
+            span(b"renamed.bin")
         } else {
             Span::default()
         };

@@ -23,6 +23,10 @@ pub mod guest;
 
 pub enum Selection {
     Existing(PathBuf),
+    Rename {
+        source: PathBuf,
+        destination: RelativeFilePath,
+    },
     Create {
         root: PathBuf,
         relative: RelativeFilePath,
@@ -136,6 +140,10 @@ impl Admission {
                     Selection::Existing(path) => {
                         worker.select_mutation_existing(path, scope, secret)?
                     }
+                    Selection::Rename {
+                        source,
+                        destination,
+                    } => worker.select_mutation_rename(source, destination, scope, secret)?,
                     Selection::Create { root, relative } => {
                         worker.select_mutation_create(root, relative, scope, secret)?
                     }
@@ -151,6 +159,10 @@ impl Admission {
                     Selection::Existing(path) => {
                         worker.select_mutation_existing(path, scope, secret)?
                     }
+                    Selection::Rename {
+                        source,
+                        destination,
+                    } => worker.select_mutation_rename(source, destination, scope, secret)?,
                     Selection::Create { root, relative } => {
                         worker.select_mutation_create(root, relative, scope, secret)?
                     }
@@ -262,16 +274,13 @@ impl Workbench {
         }
         self.local_state()?;
         if options.capabilities != BTreeSet::from([scope.disposition.capability()])
-            || matches!(
-                (&selection, scope.disposition),
-                (Selection::Existing(_), Disposition::Create)
-            )
-            || matches!(
+            || !matches!(
                 (&selection, scope.disposition),
                 (
-                    Selection::Create { .. },
+                    Selection::Existing(_),
                     Disposition::Delete | Disposition::Replace
-                )
+                ) | (Selection::Create { .. }, Disposition::Create)
+                    | (Selection::Rename { .. }, Disposition::Rename)
             )
         {
             return Err("mutation selection and capability mismatch".into());
@@ -531,6 +540,7 @@ impl Workbench {
                 MutationResponse::PlanCancelled(_)
                 | MutationResponse::Created(_)
                 | MutationResponse::Replaced(_)
+                | MutationResponse::Renamed(_)
                 | MutationResponse::Deleted(_),
             ) => {
                 mutation.terminal = true;
@@ -637,7 +647,15 @@ impl Workbench {
             || path.contains('\0')
             || request.timeout_ms == 0
             || request.timeout_ms > 30_000
-            || (request.disposition == Disposition::Create) != request.relative_path.is_some()
+            || matches!(
+                request.disposition,
+                Disposition::Create | Disposition::Rename
+            ) != request.relative_path.is_some()
+            || (request.disposition == Disposition::Rename
+                && request
+                    .relative_path
+                    .as_ref()
+                    .is_none_or(|name| !name.is_leaf()))
         {
             return Err("invalid mutation submission".into());
         }
@@ -652,6 +670,7 @@ impl Workbench {
                 Disposition::Create => 1,
                 Disposition::Replace => 2,
                 Disposition::Delete => 3,
+                Disposition::Rename => 4,
             }],
         );
         field(&mut hash, path.as_bytes());
@@ -714,6 +733,10 @@ impl Workbench {
         )
         .map_err(|_| "invalid mutation budget")?;
         let selection = match request.relative_path {
+            Some(destination) if request.disposition == Disposition::Rename => Selection::Rename {
+                source: request.selected_path,
+                destination,
+            },
             Some(relative) => Selection::Create {
                 root: request.selected_path,
                 relative,
@@ -879,6 +902,7 @@ impl Workbench {
                 Disposition::Create => 1,
                 Disposition::Replace => 2,
                 Disposition::Delete => 3,
+                Disposition::Rename => 4,
             }],
         );
         field(&mut hash, &request.scan_limit.to_le_bytes());

@@ -24,6 +24,8 @@ extern "C" {
 #define MP_MUTATION_CANCEL_PLAN 7u
 #define MP_MUTATION_RELEASE 8u
 #define MP_MUTATION_PREPARE_REPLACE 9u
+/* bytes carries the UTF-8 destination filename for PREPARE_RENAME; offset is zero. */
+#define MP_MUTATION_PREPARE_RENAME 10u
 
 #define MP_MUTATION_STATUS_INVALID 0u
 #define MP_MUTATION_STATUS_COMPLETED 1u
@@ -67,6 +69,7 @@ typedef struct mp_mutation_request_v1 {
   uint64_t content_length;
   mp_span content_sha256;
   uint64_t offset;
+  /* Chunk carries its body. PrepareRename carries the reviewed UTF-8 filename. */
   mp_span bytes;
 } mp_mutation_request_v1;
 

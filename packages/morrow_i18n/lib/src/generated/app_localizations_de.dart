@@ -2103,6 +2103,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Diese Datei endgültig löschen';
 
   @override
+  String get pluginsFileMutationExecuteRenameConfirm =>
+      'Diese Datei umbenennen';
+
+  @override
   String get pluginsFileMutationExecuteReplaceConfirm =>
       'Den Inhalt dieser Datei dauerhaft ersetzen';
 
@@ -2123,6 +2127,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get pluginsFileMutationIntro =>
       'Wählen Sie ein berechtigtes Plugin und ein lokales Ziel. Prüfen Sie den Vorgang vor der Vorbereitung und bestätigen Sie die Ausführung separat.';
+
+  @override
+  String get pluginsFileMutationNewFileName => 'Neuer Dateiname';
 
   @override
   String get pluginsFileMutationOperationError => 'Vorgangsfehler';
@@ -2698,6 +2705,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pluginsIoFileRead => 'Genehmigte Dateien lesen';
+
+  @override
+  String get pluginsIoFileRename => 'Dateien umbenennen';
 
   @override
   String get pluginsIoFileReplace => 'Dateien ersetzen';

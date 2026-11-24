@@ -76,13 +76,15 @@ int main(int argc, char **argv) {
   req.operation_id = span("mutation-vector-1", strlen("mutation-vector-1"));
   req.deadline_ms = MP_MUTATION_MAX_DEADLINE_MS;
   for (req.kind = MP_MUTATION_PREPARE_CREATE;
-       req.kind <= MP_MUTATION_PREPARE_REPLACE; ++req.kind) {
+       req.kind <= MP_MUTATION_PREPARE_RENAME; ++req.kind) {
     req.content_length = 0; req.content_sha256 = span(NULL, 0);
     req.offset = 0; req.bytes = span(NULL, 0);
     if (req.kind == MP_MUTATION_PREPARE_CREATE || req.kind == MP_MUTATION_PREPARE_REPLACE)
       req.content_sha256 = span(empty_hash, sizeof(empty_hash));
     if (req.kind == MP_MUTATION_CHUNK)
       req.bytes = span(chunk_bytes, sizeof(chunk_bytes));
+    if (req.kind == MP_MUTATION_PREPARE_RENAME)
+      req.bytes = span("reviewed.bin", strlen("reviewed.bin"));
     out_length = 99;
     assert(mp_mutation_request_encode(&req, output,
                                      MP_MAX_MUTATION_FRAME_BYTES, &out_length) == MP_CODEC_OK);
@@ -93,6 +95,7 @@ int main(int argc, char **argv) {
       assert(out_length == execute_length && memcmp(output, input, out_length) == 0);
     }
   }
+  req.bytes = span(NULL, 0);
   req.kind = MP_MUTATION_PREPARE_CREATE;
   req.content_length = 3;
   req.content_sha256 = span(content_hash, sizeof(content_hash));
@@ -156,6 +159,6 @@ int main(int argc, char **argv) {
   assert(mp_mutation_response_get(owned, &view, sizeof(view)) == MP_CODEC_INVALID);
   assert(view.encoded_frame.data == NULL && view.encoded_frame.length == 0);
   free(input); free(output); free(reply);
-  puts("PASS_SCOPED C mutation codec 21 vectors, eight actions, bounded owned replies");
+  puts("PASS_SCOPED C mutation codec 21 vectors, ten actions, bounded owned replies");
   return 0;
 }

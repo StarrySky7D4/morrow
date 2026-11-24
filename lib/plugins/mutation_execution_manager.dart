@@ -295,7 +295,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
   }
 
   Future<void> _pickSource() async {
-    if (!_canEdit || _draft.disposition == MutationDisposition.delete) return;
+    if (!_canEdit || !_draft.disposition.writesContent) return;
     final epoch = ++_epoch, backend = widget.backend;
     setState(() => _picking = true);
     try {
@@ -383,6 +383,11 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       if (directory == null || name.isEmpty) return null;
       return '${directory.endsWith(Platform.pathSeparator) ? directory : '$directory${Platform.pathSeparator}'}$name';
     }
+    if (_draft.disposition == MutationDisposition.rename) {
+      final source = _draft.file;
+      if (source == null || _name.text.isEmpty) return null;
+      return '$source → ${_name.text}';
+    }
     return _draft.file;
   }
 
@@ -393,7 +398,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       setState(() => _formError = 'selection');
       return;
     }
-    if (_draft.disposition == MutationDisposition.create &&
+    if (_draft.disposition.requiresName &&
         (_name.text.contains('/') || _name.text.contains('\\'))) {
       setState(() => _formError = 'selection');
       return;
@@ -406,22 +411,20 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       _formError = null;
     });
     try {
-      final content = _draft.disposition != MutationDisposition.delete
+      final content = _draft.disposition.writesContent
           ? await _readContent(_draft.content, epoch)
           : Uint8List(0);
       if (!mounted || epoch != _epoch || !identical(widget.backend, backend)) {
         return;
       }
-      final contentHash = _draft.disposition != MutationDisposition.delete
+      final contentHash = _draft.disposition.writesContent
           ? Uint8List.fromList(sha256.convert(content).bytes)
           : null;
       final operationId = 'morrow-${_hex(_token().sublist(0, 16))}';
       final selectedPath = _draft.disposition == MutationDisposition.create
           ? _draft.directory!
           : _draft.file!;
-      final relativePath = _draft.disposition == MutationDisposition.create
-          ? _name.text
-          : '';
+      final relativePath = _draft.disposition.requiresName ? _name.text : '';
       final approval = sha256.convert(
         utf8.encode(
           jsonEncode([
@@ -474,9 +477,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
       await _session.prepare(
         request,
         operationId: operationId,
-        content: request.disposition != MutationDisposition.delete
-            ? content
-            : null,
+        content: request.disposition.writesContent ? content : null,
       );
     } on FormatException catch (error) {
       if (mounted && epoch == _epoch) {
@@ -511,6 +512,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
                 MutationDisposition.create => l.pluginsIoFileCreate,
                 MutationDisposition.replace => l.pluginsIoFileReplace,
                 MutationDisposition.delete => l.pluginsIoFileDelete,
+                MutationDisposition.rename => l.pluginsIoFileRename,
               }),
               Text('${l.pluginsFileMutationTarget}: ${review.target}'),
               Text(
@@ -553,6 +555,8 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
                         l.pluginsFileMutationExecuteReplaceConfirm,
                       MutationDisposition.delete =>
                         l.pluginsFileMutationExecuteDeleteConfirm,
+                      MutationDisposition.rename =>
+                        l.pluginsFileMutationExecuteRenameConfirm,
                     }
                   : l.pluginsFileMutationPrepareConfirm,
             ),
@@ -664,6 +668,10 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               value: MutationDisposition.delete,
               child: Text(l.pluginsIoFileDelete),
             ),
+            DropdownMenuItem(
+              value: MutationDisposition.rename,
+              child: Text(l.pluginsIoFileRename),
+            ),
           ],
           onChanged: _canEdit
               ? (value) => setState(() {
@@ -706,14 +714,13 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               'pick-target',
               _canEdit && selected != null ? _pickTarget : null,
             ),
-            if (_draft.disposition != MutationDisposition.delete)
+            if (_draft.disposition.writesContent)
               _button(
                 l.pluginsFileMutationPickContent,
                 'pick-content',
                 _canEdit && selected != null ? _pickSource : null,
               ),
-            if (_draft.disposition != MutationDisposition.delete &&
-                _draft.content != null)
+            if (_draft.disposition.writesContent && _draft.content != null)
               _button(
                 l.pluginsFileMutationEmptyContent,
                 'empty-content',
@@ -730,7 +737,7 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
         if (_draft.directory != null) _note(_draft.directory!),
         if (_draft.file != null) _note(_draft.file!),
         if (_draft.contentName != null) _note(_draft.contentName!),
-        if (_draft.disposition == MutationDisposition.create)
+        if (_draft.disposition.requiresName)
           TextField(
             key: const ValueKey('mutation-execution-file-name'),
             controller: _name,
@@ -741,7 +748,9 @@ class _MutationExecutionManagerState extends State<MutationExecutionManager>
               _draft.approval = null;
             },
             decoration: InputDecoration(
-              labelText: l.pluginsFileMutationFileName,
+              labelText: _draft.disposition == MutationDisposition.rename
+                  ? l.pluginsFileMutationNewFileName
+                  : l.pluginsFileMutationFileName,
             ),
           ),
         const SizedBox(height: 8),

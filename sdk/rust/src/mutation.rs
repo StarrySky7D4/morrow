@@ -89,6 +89,9 @@ pub enum Action {
         content_sha256: [u8; 32],
     },
     Delete,
+    Rename {
+        destination: String,
+    },
     Chunk {
         offset: u64,
         bytes: Vec<u8>,
@@ -99,12 +102,54 @@ pub enum Action {
     CancelPlan,
     Release,
 }
+fn valid_rename_destination(name: &str) -> bool {
+    if name.is_empty()
+        || name.ends_with([' ', '.'])
+        || name.encode_utf16().count() > 255
+        || name.chars().any(|ch| {
+            ch.is_control() || matches!(ch, '/' | '\\' | ':' | '<' | '>' | '"' | '|' | '?' | '*')
+        })
+    {
+        return false;
+    }
+    let stem = name
+        .split('.')
+        .next()
+        .unwrap_or_default()
+        .trim_end_matches(' ')
+        .to_ascii_uppercase();
+    if matches!(
+        stem.as_str(),
+        "CON" | "PRN" | "AUX" | "NUL" | "CONIN$" | "CONOUT$" | "CLOCK$"
+    ) {
+        return false;
+    }
+    let numbered = stem
+        .strip_prefix("COM")
+        .or_else(|| stem.strip_prefix("LPT"));
+    !numbered.is_some_and(|n| {
+        matches!(
+            n,
+            "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "¹" | "²" | "³"
+        )
+    })
+}
+
 impl Action {
+    fn wire_digest(&self) -> [u8; 32] {
+        if matches!(self, Self::Rename { .. }) {
+            contract::MUTATION_RENAME_DIGEST
+        } else {
+            schema_digest()
+        }
+    }
+
     pub fn kind(&self) -> Kind {
         match self {
             Self::Create { .. } => Kind::PrepareCreate,
             Self::Replace { .. } => Kind::PrepareReplace,
             Self::Delete => Kind::PrepareDelete,
+            Self::Rename { .. } => Kind::PrepareRename,
             Self::Chunk { .. } => Kind::Chunk,
             Self::Commit => Kind::Commit,
             Self::Execute => Kind::Execute,
@@ -115,6 +160,9 @@ impl Action {
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::Rename { destination } if !valid_rename_destination(destination) => {
+                return Err(Error::Invalid);
+            }
             Self::Create {
                 content_length,
                 content_sha256,
@@ -176,7 +224,7 @@ impl Request {
         let mut message = Builder::new_default();
         let mut root = message.init_root::<wire::request::Builder>();
         root.set_version(VERSION);
-        root.set_schema_sha256(&schema_digest());
+        root.set_schema_sha256(&self.action.wire_digest());
         root.set_call_id(self.call_id);
         root.set_reference(&self.reference);
         root.set_submission(&self.submission);
@@ -200,6 +248,7 @@ impl Request {
                 create.set_content_sha256(content_sha256);
             }
             Action::Delete => root.set_prepare_delete(()),
+            Action::Rename { destination } => root.set_prepare_rename(destination.as_str()),
             Action::Chunk { offset, bytes } => {
                 let mut chunk = root.init_chunk();
                 chunk.set_offset(*offset);
@@ -221,9 +270,7 @@ impl Request {
         if root.total_size().map_err(invalid)?.cap_count != 0 {
             return Err(Error::Invalid);
         }
-        if root.get_version() != VERSION
-            || root.get_schema_sha256().map_err(invalid)? != schema_digest()
-        {
+        if root.get_version() != VERSION {
             return Err(Error::Contract);
         }
         let reference = identity(root.get_reference().map_err(invalid)?)?;
@@ -250,6 +297,15 @@ impl Request {
                 }
             }
             wire::request::PrepareDelete(()) => Action::Delete,
+            wire::request::PrepareRename(name) => {
+                let name = name.map_err(invalid)?;
+                if name.as_bytes().len() > 4 * 255 {
+                    return Err(Error::Limit);
+                }
+                Action::Rename {
+                    destination: name.to_str().map_err(invalid)?.to_owned(),
+                }
+            }
             wire::request::Chunk(v) => {
                 let value = v.map_err(invalid)?;
                 let data = value.get_bytes().map_err(invalid)?;
@@ -267,6 +323,9 @@ impl Request {
             wire::request::CancelPlan(()) => Action::CancelPlan,
             wire::request::Release(()) => Action::Release,
         };
+        if root.get_schema_sha256().map_err(invalid)? != action.wire_digest() {
+            return Err(Error::Contract);
+        }
         let result = Self {
             call_id: root.get_call_id(),
             reference,
@@ -335,7 +394,10 @@ impl Response {
             return Err(Error::Invalid);
         }
         match self.kind {
-            Kind::PrepareCreate | Kind::PrepareDelete | Kind::PrepareReplace => {
+            Kind::PrepareCreate
+            | Kind::PrepareDelete
+            | Kind::PrepareReplace
+            | Kind::PrepareRename => {
                 if self.phase != Phase::Prepared
                     || self.effect != Effect::Unspecified
                     || self.staged_bytes != 0
@@ -410,7 +472,7 @@ impl Response {
         let mut message = Builder::new_default();
         let mut root = message.init_root::<wire::response::Builder>();
         root.set_version(VERSION);
-        root.set_schema_sha256(&schema_digest());
+        root.set_schema_sha256(&request.action.wire_digest());
         root.set_call_id(self.call_id);
         root.set_reference(&self.reference);
         root.set_submission(&self.submission);
@@ -433,7 +495,7 @@ impl Response {
             return Err(Error::Invalid);
         }
         if root.get_version() != VERSION
-            || root.get_schema_sha256().map_err(invalid)? != schema_digest()
+            || root.get_schema_sha256().map_err(invalid)? != request.action.wire_digest()
         {
             return Err(Error::Contract);
         }

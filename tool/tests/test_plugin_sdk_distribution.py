@@ -85,7 +85,9 @@ class SdkDistributionTests(unittest.TestCase):
             distribution.validate_payload_names(current - {'sdk/examples/c-mutation/plugin.c'})
 
     def test_source_export_checks_single_core_authority_without_bundling_core(self):
-        self.assertEqual(len(self.receipt['source_authority']['schemas']), 10)
+        schemas = {row['name'] for row in self.receipt['source_authority']['schemas']}
+        self.assertEqual(schemas, {name for name in distribution.CONTRACTS if not name.endswith('.txt')})
+        self.assertIn('mutation_rename.capnp', schemas)
         self.assertFalse(self.receipt['source_authority']['core_bundled'])
         self.assertEqual(self.receipt['source_authority']['semantics'], 'NOT_PROVED')
         self.assertFalse((self.bundle/'core').exists())

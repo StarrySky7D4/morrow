@@ -3,7 +3,7 @@ use super::{Store, boundary, byte_room, sql};
 use crate::{
     Error, Result,
     file_content::{FileContent, MAX_CONTAINER_BYTES},
-    file_mutation::{Disposition, RequestRecord},
+    file_mutation::RequestRecord,
     identity,
     io_evidence::Kind,
     io_intent::{Phase, Record},
@@ -64,7 +64,7 @@ pub(super) fn plan(
     let material = super::io_evidence::load_material(c, operation, Kind::Request, &history)?
         .ok_or(Error::Integrity)?;
     let request = RequestRecord::decode(material.payload())?;
-    if request.request().disposition == Disposition::Delete {
+    if !request.request().disposition.writes_content() {
         return Err(Error::Invalid("delete has no staged write bytes"));
     }
     Ok(Some((

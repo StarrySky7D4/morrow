@@ -336,7 +336,7 @@ class _GuestMutationExecutionManagerState
   }
 
   Future<void> _pickSource() async {
-    if (!_canEdit || _draft.disposition == MutationDisposition.delete) return;
+    if (!_canEdit || !_draft.disposition.writesContent) return;
     final epoch = ++_epoch, backend = widget.backend;
     setState(() => _picking = true);
     try {
@@ -435,6 +435,11 @@ class _GuestMutationExecutionManagerState
       if (directory == null || _name.text.isEmpty) return null;
       return '${directory.endsWith(Platform.pathSeparator) ? directory : '$directory${Platform.pathSeparator}'}${_name.text}';
     }
+    if (_draft.disposition == MutationDisposition.rename) {
+      final source = _draft.file;
+      if (source == null || _name.text.isEmpty) return null;
+      return '$source → ${_name.text}';
+    }
     return _draft.file;
   }
 
@@ -516,6 +521,7 @@ class _GuestMutationExecutionManagerState
                       MutationDisposition.create => l.pluginsIoFileCreate,
                       MutationDisposition.replace => l.pluginsIoFileReplace,
                       MutationDisposition.delete => l.pluginsIoFileDelete,
+                      MutationDisposition.rename => l.pluginsIoFileRename,
                     }),
                     Text('${l.pluginsEndpointPackage}: ${review.packageName}'),
                     SelectableText(review.start.selection.packageId),
@@ -577,6 +583,8 @@ class _GuestMutationExecutionManagerState
                               l.pluginsFileMutationExecuteReplaceConfirm,
                             MutationDisposition.delete =>
                               l.pluginsFileMutationExecuteDeleteConfirm,
+                            MutationDisposition.rename =>
+                              l.pluginsFileMutationExecuteRenameConfirm,
                           }
                         : step == 'prepare'
                         ? l.pluginsFileMutationPrepareConfirm
@@ -603,7 +611,7 @@ class _GuestMutationExecutionManagerState
     final package = _selectedPackage(), target = _target();
     if (package == null ||
         target == null ||
-        (_draft.disposition == MutationDisposition.create &&
+        (_draft.disposition.requiresName &&
             (_name.text.contains('/') || _name.text.contains('\\')))) {
       setState(() => _formError = 'selection');
       return;
@@ -616,22 +624,20 @@ class _GuestMutationExecutionManagerState
     });
     try {
       final budget = _approvedBudget(package);
-      final content = _draft.disposition != MutationDisposition.delete
+      final content = _draft.disposition.writesContent
           ? await _readContent(_draft.content, epoch)
           : Uint8List(0);
       if (!mounted || epoch != _epoch || !identical(backend, widget.backend)) {
         return;
       }
-      final contentHash = _draft.disposition != MutationDisposition.delete
+      final contentHash = _draft.disposition.writesContent
           ? Uint8List.fromList(sha256.convert(content).bytes)
           : null;
       final operationId = 'morrow-guest-${_hex(_token().sublist(0, 16))}';
       final selectedPath = _draft.disposition == MutationDisposition.create
           ? _draft.directory!
           : _draft.file!;
-      final relativePath = _draft.disposition == MutationDisposition.create
-          ? _name.text
-          : '';
+      final relativePath = _draft.disposition.requiresName ? _name.text : '';
       final approval = sha256.convert(
         utf8.encode(
           jsonEncode([
@@ -690,9 +696,7 @@ class _GuestMutationExecutionManagerState
       await _session.review(
         request,
         operationId: operationId,
-        content: _draft.disposition != MutationDisposition.delete
-            ? content
-            : null,
+        content: _draft.disposition.writesContent ? content : null,
       );
       if (!mounted || epoch != _epoch || !identical(backend, widget.backend)) {
         return;
@@ -939,6 +943,10 @@ class _GuestMutationExecutionManagerState
               value: MutationDisposition.delete,
               child: Text(l.pluginsIoFileDelete),
             ),
+            DropdownMenuItem(
+              value: MutationDisposition.rename,
+              child: Text(l.pluginsIoFileRename),
+            ),
           ],
           onChanged: _canEdit
               ? (value) => setState(() {
@@ -1040,14 +1048,13 @@ class _GuestMutationExecutionManagerState
               'pick-target',
               _canEdit && package != null ? _pickTarget : null,
             ),
-            if (_draft.disposition != MutationDisposition.delete)
+            if (_draft.disposition.writesContent)
               _button(
                 l.pluginsFileMutationPickContent,
                 'pick-content',
                 _canEdit && package != null ? _pickSource : null,
               ),
-            if (_draft.disposition != MutationDisposition.delete &&
-                _draft.content != null)
+            if (_draft.disposition.writesContent && _draft.content != null)
               _button(
                 l.pluginsFileMutationEmptyContent,
                 'empty-content',
@@ -1064,14 +1071,16 @@ class _GuestMutationExecutionManagerState
         if (_draft.directory != null) _note(_draft.directory!),
         if (_draft.file != null) _note(_draft.file!),
         if (_draft.contentName != null) _note(_draft.contentName!),
-        if (_draft.disposition == MutationDisposition.create)
+        if (_draft.disposition.requiresName)
           TextField(
             key: const ValueKey('guest-mutation-file-name'),
             controller: _name,
             enabled: _canEdit,
             maxLength: 255,
             decoration: InputDecoration(
-              labelText: l.pluginsFileMutationFileName,
+              labelText: _draft.disposition == MutationDisposition.rename
+                  ? l.pluginsFileMutationNewFileName
+                  : l.pluginsFileMutationFileName,
             ),
             onChanged: (value) {
               _draft.name = value;

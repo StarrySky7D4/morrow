@@ -18,7 +18,7 @@ CAPABILITIES = ("rename", "summary", "operation", "attachment", "create-content"
 KINDS = ("content", "transform", "ui", "dependency", "io", "service", "channel", "mutation")
 LANGUAGES = ("rust", "c", "cpp")
 IO_CAPABILITIES = ("file-read", "http-request", "credential-use")
-MUTATION_CAPABILITIES = ("file-create", "file-replace", "file-delete")
+MUTATION_CAPABILITIES = ("file-create", "file-replace", "file-delete", "file-rename")
 MUTATION_BUDGET_FIELDS = ("max_job_bytes", "max_bytes", "max_resources")
 
 class ToolError(Exception):
@@ -134,8 +134,8 @@ def mutation_budget(value, capabilities):
     job = integer(value.get("max_job_bytes"), 1, 32 * 1024 * 1024, "mutation_budget.max_job_bytes")
     integer(value.get("max_bytes"), job, 256 * 1024 * 1024, "mutation_budget.max_bytes")
     resources = integer(value.get("max_resources"), 0, 128, "mutation_budget.max_resources")
-    if resources and "file-replace" not in capabilities:
-        raise ToolError("mutation_budget.max_resources requires file-replace")
+    if resources and not {"file-replace","file-rename"}.intersection(capabilities):
+        raise ToolError("mutation_budget.max_resources requires file-replace or file-rename")
     return value
 
 def project(path):
@@ -955,7 +955,7 @@ def main(argv=None):
             command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES + MUTATION_CAPABILITIES,
                                  help="requested capability for io (default file-read) or mutation (default file-create)")
             command.add_argument("--mutation-budget", type=int, nargs=3, metavar=("JOB_BYTES", "TOTAL_BYTES", "RESOURCES"),
-                                 help="optional file mutation limits; extended resources require file-replace")
+                                 help="optional file mutation limits; extended resources require file-replace or file-rename")
             command.add_argument("--service-http", action="store_true", help="service starter: one explicitly approved POST endpoint with resource discovery")
             command.add_argument("--service-run-ms", type=int, help="finite run duration; requires jobs and bytes")
             command.add_argument("--service-run-jobs", type=int, help="cumulative task reservation ceiling")

@@ -66,10 +66,15 @@ impl Setup {
         Self::with_budget(true)
     }
     fn with_budget(extended: bool) -> Self {
+        Self::with_capabilities(
+            extended,
+            vec![IoCapability::FileCreate, IoCapability::FileDelete],
+        )
+    }
+    fn with_capabilities(extended: bool, caps: Vec<IoCapability>) -> Self {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wasm();
         let mut manifest = Package::manifest_for_task(ID, "1.0.0", &wasm, vec![]);
-        let caps = vec![IoCapability::FileCreate, IoCapability::FileDelete];
         let mut declaration = io::declaration(caps.clone(), vec!["mutation.unused".into()]);
         let old = declaration.budget.as_mut().unwrap();
         old.max_jobs = 4;
@@ -817,3 +822,135 @@ mod guest_wire_tests;
 
 #[path = "mutation_guest_history_tests.rs"]
 mod guest_history_tests;
+
+#[test]
+fn guest_rename_requires_the_reviewed_plan_and_never_overwrites() {
+    let _serial = serial_effects();
+    for collision in [false, true] {
+        let mut setup = Setup::with_capabilities(false, vec![IoCapability::FileRename]);
+        let source = setup.dir.path().join("selected.bin");
+        let destination = setup.dir.path().join("新名称.bin");
+        fs::write(&source, b"selected payload").unwrap();
+        let alias = setup.dir.path().join("identity.bin");
+        fs::hard_link(&source, &alias).unwrap();
+        if collision {
+            fs::write(&destination, b"existing payload").unwrap();
+        }
+        let key = setup.start(
+            101,
+            Disposition::Rename,
+            source.clone(),
+            Some(RelativeFilePath::parse("新名称.bin").unwrap()),
+        );
+        selected(&mut setup.app, key);
+        let sha = plan(&mut setup.app, key, 102, "guest-rename", b"", true);
+        assert!(
+            setup
+                .app
+                .submit_guest_mutation(
+                    key,
+                    [103; 32],
+                    GuestAction::Prepare {
+                        plan_sha256: [0xb5; 32]
+                    }
+                )
+                .is_err()
+        );
+        let GuestMutationReply::Frame(prepared) = call(
+            &mut setup.app,
+            key,
+            104,
+            GuestAction::Prepare { plan_sha256: sha },
+        ) else {
+            panic!("missing rename preparation");
+        };
+        assert_eq!(
+            (prepared.kind, prepared.phase),
+            (wire::Kind::PrepareRename, wire::Phase::Prepared)
+        );
+        assert!(source.exists());
+        assert_eq!(destination.exists(), collision);
+        let GuestMutationReply::Frame(result) = call(
+            &mut setup.app,
+            key,
+            105,
+            GuestAction::Execute { plan_sha256: sha },
+        ) else {
+            panic!("missing rename outcome");
+        };
+        let expected = if collision {
+            wire::Effect::OsRejected
+        } else {
+            wire::Effect::OsSucceeded
+        };
+        assert_eq!(
+            (result.phase, result.effect),
+            (wire::Phase::Observed, expected)
+        );
+        assert_eq!(source.exists(), collision);
+        let expected_bytes: &[u8] = if collision {
+            b"existing payload"
+        } else {
+            b"selected payload"
+        };
+        assert_eq!(fs::read(&destination).unwrap(), expected_bytes);
+        if collision {
+            assert_eq!(fs::read(&source).unwrap(), b"selected payload");
+        } else {
+            fs::write(&alias, b"same file after rename").unwrap();
+            assert_eq!(fs::read(&destination).unwrap(), b"same file after rename");
+        }
+        assert!(
+            setup
+                .app
+                .submit_guest_mutation(key, [106; 32], GuestAction::Execute { plan_sha256: sha })
+                .is_err()
+        );
+        let GuestMutationReply::Frame(history) = call(&mut setup.app, key, 107, GuestAction::Query)
+        else {
+            panic!("missing rename history");
+        };
+        assert_eq!(
+            (history.phase, history.effect),
+            (wire::Phase::Observed, expected)
+        );
+        call(&mut setup.app, key, 108, GuestAction::Release);
+        stop(&mut setup.app, key);
+    }
+}
+
+#[test]
+fn guest_rename_requires_explicit_file_rename_approval() {
+    let _serial = serial_effects();
+    let mut setup = Setup::with_capabilities(
+        false,
+        vec![IoCapability::FileRename, IoCapability::FileDelete],
+    );
+    let source = setup.dir.path().join("original.bin");
+    fs::write(&source, b"unchanged").unwrap();
+    let request = setup.request(
+        120,
+        Disposition::Rename,
+        source.clone(),
+        Some(RelativeFilePath::parse("different.bin").unwrap()),
+    );
+    setup
+        .app
+        .configure_external_io(ID, &setup.digest, request.revision, &["file-delete".into()])
+        .unwrap();
+    let denied = setup.request(
+        121,
+        Disposition::Rename,
+        source.clone(),
+        Some(RelativeFilePath::parse("different.bin").unwrap()),
+    );
+    assert!(
+        setup
+            .app
+            .start_selected_guest_mutation(denied, None)
+            .is_err()
+    );
+    assert_eq!(fs::read(&source).unwrap(), b"unchanged");
+    assert!(!setup.dir.path().join("different.bin").exists());
+    assert_eq!(setup.app.io_status().storage, StoragePhase::Local);
+}

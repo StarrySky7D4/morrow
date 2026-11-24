@@ -13,6 +13,7 @@ enum IoCapability {
   HTTP_PUBLISH = 8;
   CREDENTIAL_USE = 9;
   WEB_SOCKET_CONNECT = 10;
+  FILE_RENAME = 11;
 }
 message IoBudget {
   uint32 max_resources = 1;

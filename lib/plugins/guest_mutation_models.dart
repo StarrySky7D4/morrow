@@ -81,6 +81,7 @@ enum GuestMutationFrameKind {
   cancelPlan,
   release,
   prepareReplace,
+  prepareRename,
 }
 
 enum GuestMutationFrameStatus {
@@ -474,6 +475,9 @@ abstract final class GuestMutationValidation {
     GuestMutationCommandKind.prepare
         when disposition == MutationDisposition.replace =>
       GuestMutationFrameKind.prepareReplace,
+    GuestMutationCommandKind.prepare
+        when disposition == MutationDisposition.rename =>
+      GuestMutationFrameKind.prepareRename,
     GuestMutationCommandKind.chunk => GuestMutationFrameKind.chunk,
     GuestMutationCommandKind.commitContent => GuestMutationFrameKind.commit,
     GuestMutationCommandKind.execute => GuestMutationFrameKind.execute,
@@ -578,6 +582,7 @@ abstract final class GuestMutationValidation {
       case GuestMutationFrameKind.prepareCreate:
       case GuestMutationFrameKind.prepareDelete:
       case GuestMutationFrameKind.prepareReplace:
+      case GuestMutationFrameKind.prepareRename:
         if (value.phase != GuestMutationFramePhase.prepared ||
             value.effect != GuestMutationFrameEffect.unspecified ||
             value.stagedBytes != BigInt.zero ||

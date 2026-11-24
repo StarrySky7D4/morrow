@@ -131,6 +131,7 @@ void main() {
           await backend!.configureExternalIo(plugin, catalog.revision, [
             'file-create',
             'file-delete',
+            'file-rename',
           ]);
           catalog = await entireCatalog(backend!);
           plugin = catalog.entries.singleWhere((p) => p.id == candidate.id);
@@ -281,6 +282,58 @@ void main() {
         );
         expect(_key('operation-error'), findsNothing);
         expect(_key('cleanup-error'), findsNothing);
+        // ignore: avoid_print
+        print('GUEST_WIDGET_CREATE_PASS=$language');
+
+        final renamed = File.fromUri(directory!.uri.resolve('renamed.bin'));
+        await _click(tester, _key('disposition'));
+        await tester.pump(const Duration(milliseconds: 300));
+        await _click(tester, find.text('Rename files').last);
+        await _click(tester, _key('package'));
+        await tester.pump(const Duration(milliseconds: 300));
+        await _click(tester, find.text(plugin.name).last);
+        await tester.enterText(
+          _key('job-budget'),
+          plugin.mutationBudget!.maxJobBytes.toString(),
+        );
+        await tester.enterText(
+          _key('total-budget'),
+          plugin.mutationBudget!.maxBytes.toString(),
+        );
+        await _tap(tester, 'pick-target');
+        await tester.enterText(_key('file-name'), 'renamed.bin');
+        await _tap(tester, 'draft');
+        await _wait(
+          tester,
+          () => _key('confirm-draft').evaluate().isNotEmpty,
+          'rename draft',
+        );
+        expect(find.textContaining('created.bin → renamed.bin'), findsWidgets);
+        await _click(tester, _key('confirm-draft'));
+        for (final step in ['prepare', 'execute']) {
+          await _tap(tester, step);
+          await _wait(
+            tester,
+            () => _key('confirm-$step').evaluate().isNotEmpty,
+            'rename $step',
+          );
+          expect(target.existsSync(), isTrue);
+          expect(renamed.existsSync(), isFalse);
+          if (step == 'execute')
+            expect(find.text('Rename this file'), findsWidgets);
+          await _click(tester, _key('confirm-$step'));
+        }
+        await _wait(tester, () => renamed.existsSync(), 'observed Rename');
+        expect(target.existsSync(), isFalse);
+        expect(renamed.readAsBytesSync(), content);
+        await _tap(tester, 'query');
+        await _tap(tester, 'release');
+        await _tap(tester, 'ack');
+        await _wait(tester, () => _enabled(tester, 'draft'), 'rename ACK');
+        expect(_key('operation-error'), findsNothing);
+        expect(_key('cleanup-error'), findsNothing);
+        // ignore: avoid_print
+        print('GUEST_WIDGET_RENAME_PASS=$language');
         // ignore: avoid_print
         print('GUEST_WIDGET_PASS=$language');
       } catch (error, stack) {

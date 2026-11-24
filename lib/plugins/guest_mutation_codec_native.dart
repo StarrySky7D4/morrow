@@ -4,7 +4,7 @@ import 'package:capnproto_dart/capnproto_dart.dart';
 
 import 'generated/host.capnp.dart' as host;
 import 'generated/identity.dart' as contract;
-import 'generated/mutation.capnp.dart' as core;
+import 'generated/mutation_rename.capnp.dart' as core;
 import 'guest_mutation_models.dart';
 import 'io_task_codec_native.dart';
 import 'mutation_task_codec_native.dart';
@@ -158,7 +158,11 @@ abstract final class GuestMutationCodec {
         digest == null ||
         !GuestMutationValidation.same(
           digest,
-          Uint8List.fromList(contract.mutationDigest),
+          Uint8List.fromList(
+            row.kind == core.Kind.prepareRename
+                ? contract.mutationRenameDigest
+                : contract.mutationDigest,
+          ),
         )) {
       throw const FormatException('Core guest schema changed');
     }

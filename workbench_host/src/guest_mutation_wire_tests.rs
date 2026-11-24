@@ -82,6 +82,7 @@ fn start(
                 Disposition::Create => 1,
                 Disposition::Replace => 2,
                 Disposition::Delete => 3,
+                Disposition::Rename => 4,
             });
             selection.set_selected_path(selected_path.to_str().unwrap());
             selection.set_relative_path(relative);

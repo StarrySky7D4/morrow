@@ -23,7 +23,7 @@ impl CreateEntry {
         self.lease().reclaimable(now)
     }
 }
-fn directory(file: &File) -> Result<()> {
+pub(super) fn directory(file: &File) -> Result<()> {
     let metadata = file.metadata()?;
     if !metadata.is_dir() || metadata.file_attributes() & 0x400 != 0 {
         return Err(Error::InvalidSelection);

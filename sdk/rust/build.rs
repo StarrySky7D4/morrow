@@ -25,6 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("IO_DIGEST", "io.capnp"),
         ("CHANNEL_DIGEST", "channel.capnp"),
         ("MUTATION_DIGEST", "mutation.capnp"),
+        ("MUTATION_RENAME_DIGEST", "mutation_rename.capnp"),
         ("SERVICE_DIGEST", "service.capnp"),
         ("SERVICE_RESOURCES_DIGEST", "service_resources.capnp"),
     ] {
@@ -45,7 +46,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("contracts/dependency_call.capnp")
         .file("contracts/io.capnp")
         .file("contracts/channel.capnp")
-        .file("contracts/mutation.capnp")
+        .file("contracts/mutation_rename.capnp")
         .file("contracts/service.capnp")
         .file("contracts/service_resources.capnp")
         .run()?;

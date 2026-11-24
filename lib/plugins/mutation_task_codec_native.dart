@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'generated/host.capnp.dart' as host;
 import 'io_task_codec_native.dart';
 import 'mutation_task_models.dart';
@@ -308,6 +309,7 @@ abstract final class MutationTaskCodec {
       case MutationResultKind.created:
       case MutationResultKind.replaced:
       case MutationResultKind.deleted:
+      case MutationResultKind.renamed:
         if (reference != null ||
             hasPlan ||
             hasRecord ||

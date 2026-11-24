@@ -51,7 +51,7 @@ void main() {
   final language = env['MORROW_GUEST_MUTATION_LANGUAGE'];
   final moduleHash = env['MORROW_GUEST_MUTATION_WASM_SHA256'];
   test(
-    'real guest SDK stages four chunks and requires two exact reviews for Create/Delete',
+    'real guest SDK stages content and confirms Create, Rename and Delete',
     () async {
       expect(language, anyOf('rust', 'c', 'cpp'));
       expect(moduleHash, matches(RegExp(r'^[0-9a-f]{64}$')));
@@ -90,6 +90,7 @@ void main() {
         await backend.configureExternalIo(plugin, catalog.revision, [
           'file-create',
           'file-delete',
+          'file-rename',
         ]);
         catalog = await entireCatalog(backend);
         plugin = catalog.entries.singleWhere((p) => p.id == candidate.id);
@@ -97,7 +98,10 @@ void main() {
         catalog = await entireCatalog(backend);
         plugin = catalog.entries.singleWhere((p) => p.id == candidate.id);
         expect(plugin.enabled, isTrue);
-        expect(plugin.approvedIo, containsAll(['file-create', 'file-delete']));
+        expect(
+          plugin.approvedIo,
+          containsAll(['file-create', 'file-delete', 'file-rename']),
+        );
         final declaration = plugin.mutationBudget!;
         final approved = ApprovedGuestBudget(
           maxJobBytes: declaration.maxJobBytes,
@@ -121,8 +125,9 @@ void main() {
         GuestMutationStartRequest request(
           int token,
           MutationDisposition disposition,
-          String name,
-        ) => GuestMutationStartRequest(
+          String name, [
+          File? source,
+        ]) => GuestMutationStartRequest(
           selection: MutationStartRequest(
             submission: _token(token),
             packageId: plugin.id,
@@ -131,8 +136,8 @@ void main() {
             disposition: disposition,
             selectedPath: disposition == MutationDisposition.create
                 ? targets.path
-                : created.path,
-            relativePath: disposition == MutationDisposition.create ? name : '',
+                : (source ?? created).path,
+            relativePath: disposition.requiresName ? name : '',
             subject: 'morrow.guest.file-actions.v1',
             approvalSha256: _token(100 + token),
             timeoutMs: 30000,
@@ -187,23 +192,46 @@ void main() {
         );
         await _closeTask(session);
 
+        final renamed = File.fromUri(targets.uri.resolve('renamed.bin'));
         await session.review(
-          request(2, MutationDisposition.delete, ''),
+          request(4, MutationDisposition.rename, 'renamed.bin'),
+          operationId: 'real-guest-rename-$language',
+        );
+        expect(session.canPrepare, isTrue);
+        final renameHash = session.planSha256!;
+        await session.prepare(reviewedPlanSha256: renameHash);
+        expect(session.canExecute, isTrue);
+        expect(created.existsSync(), isTrue);
+        expect(renamed.existsSync(), isFalse);
+        await session.execute(reviewedPlanSha256: renameHash);
+        expect(session.outcome?.effect, GuestMutationFrameEffect.osSucceeded);
+        expect(created.existsSync(), isFalse);
+        expect(await renamed.readAsBytes(), content);
+        expect(session.canExecute, isFalse);
+        await session.query();
+        expect(
+          session.history?.frame?.effect,
+          GuestMutationFrameEffect.osSucceeded,
+        );
+        await _closeTask(session);
+
+        await session.review(
+          request(2, MutationDisposition.delete, '', renamed),
           operationId: 'real-guest-delete-$language',
         );
         expect(session.canPrepare, isTrue);
-        expect(created.existsSync(), isTrue);
+        expect(renamed.existsSync(), isTrue);
         final deleteHash = session.planSha256!;
         await session.prepare(reviewedPlanSha256: deleteHash);
         expect(session.canExecute, isTrue);
         expect(
-          created.existsSync(),
+          renamed.existsSync(),
           isTrue,
           reason: 'Delete Prepare has no effect',
         );
         await session.execute(reviewedPlanSha256: deleteHash);
         expect(session.outcome?.effect, GuestMutationFrameEffect.osSucceeded);
-        expect(created.existsSync(), isFalse);
+        expect(renamed.existsSync(), isFalse);
         await session.query();
         expect(session.history?.frame?.phase, GuestMutationFramePhase.observed);
         await _closeTask(session);

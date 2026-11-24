@@ -37,7 +37,8 @@ impl Command {
         // capability can opt into the independent inbound service record contract.
         // File mutation plans have a separate digest and cannot be relabelled
         // as read or network requests. Legacy histories remain decodable.
-        if self.protocol_sha256 != io::schema_digest()
+        if (self.protocol_sha256 != io::schema_digest()
+            || self.capability == io::IoCapability::FileRename)
             && !(self.capability == io::IoCapability::HttpPublish
                 && self.protocol_sha256 == crate::service_record::schema_digest())
             && !(matches!(
@@ -45,7 +46,9 @@ impl Command {
                 io::IoCapability::FileCreate
                     | io::IoCapability::FileReplace
                     | io::IoCapability::FileDelete
-            ) && self.protocol_sha256 == crate::file_mutation::schema_digest())
+                    | io::IoCapability::FileRename
+            ) && self.protocol_sha256
+                == crate::file_mutation::protocol_digest(self.capability))
         {
             return Err(Error::UnsupportedVersion);
         }

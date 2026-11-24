@@ -60,6 +60,10 @@ int main(int argc, char** argv) {
       "mutation-vector-1", 30000, 3, content_hash).encode();
   assert(replacement.status == MP_CODEC_OK && replacement.bytes == load(dir, "replace-content"));
   assert(actions.back().encode().bytes == load(dir, "replace-empty"));
+  const auto renamed = morrow::mutation_request::rename(7, reference, submission,
+      "mutation-vector-1", 30000, "reviewed.bin").encode();
+  assert(renamed.status == MP_CODEC_OK && !renamed.bytes.empty());
+  assert(mp_mutation_request_validate(renamed.bytes.data(), static_cast<uint32_t>(renamed.bytes.size())) == MP_CODEC_OK);
   const auto encoded_execute = actions[4].encode();
   assert(encoded_execute.bytes == load(dir, "execute"));
 
@@ -139,5 +143,5 @@ int main(int argc, char** argv) {
       0, std::vector<uint8_t>(MP_MAX_MUTATION_CHUNK_BYTES + 1u, 1)).encode().status == MP_CODEC_LIMIT);
   assert(morrow::mutation_request::execute(7, reference, submission,
       std::string(MP_MAX_MUTATION_OPERATION_BYTES + 1u, 'x'), 30000).encode().status == MP_CODEC_LIMIT);
-  std::cout << "PASS_SCOPED C++ mutation move-only facade, 21 vectors, eight actions and bounds\n";
+  std::cout << "PASS_SCOPED C++ mutation move-only facade, 21 vectors, ten actions and bounds\n";
 }
