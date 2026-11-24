@@ -1276,7 +1276,7 @@ fn handle_business(
         }
         wire::Action::PluginApproveIo => {
             let values = r.get_approved_io_capabilities()?;
-            if values.len() > 10 {
+            if values.len() as usize > morrow_core::plugin_package::io::MAX_CAPABILITIES {
                 return Err("IO capability decision budget".into());
             }
             let approved = values.iter().map(text).collect::<Result<Vec<_>>>()?;
@@ -1284,6 +1284,13 @@ fn handle_business(
         }
         wire::Action::PluginRemove => {
             host.remove_external(&id, r.get_sha256()?, r.get_revision())?;
+        }
+        wire::Action::PluginContentTask => {
+            if !r.has_plugin_content_task() {
+                return Err("missing reviewed card task".into());
+            }
+            crate::plugin_content::handle(host, &id, r.get_sha256()?, r.get_revision(),
+                r.get_plugin_content_task()?, out.reborrow().init_plugin_content_result())?;
         }
         wire::Action::PluginTransform => {
             out.set_payload(&host.run_external_transform(
@@ -1966,6 +1973,7 @@ fn plugin_catalog_reply(
         row.set_available(entry.available);
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
+        row.set_content_task_supported(entry.content_task_supported);
         row.set_directory_supported(entry.directory_supported);
         row.set_fs_watch_supported(entry.fs_watch_supported);
         row.set_fs_watch_approved(entry.fs_watch_approved);

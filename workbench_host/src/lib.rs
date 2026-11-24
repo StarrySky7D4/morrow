@@ -90,6 +90,7 @@ pub mod http_tasks;
 pub mod io_tasks;
 pub mod legacy_json_preferences;
 pub mod plugin_catalog;
+mod plugin_content;
 mod preferences_evidence;
 mod preferences_local;
 mod preferences_proposal;

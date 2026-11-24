@@ -38,6 +38,7 @@ pub struct PluginEntry {
     pub io_handlers: Vec<String>,
     /// A declaration on this exact package, never a runtime approval.
     pub mutation_supported: bool,
+    pub content_task_supported: bool,
     pub directory_supported: bool,
     pub blob_upload_supported: bool,
     pub blob_upload_approved: bool,
@@ -265,6 +266,7 @@ impl WorkbenchState {
                 .io_declaration()
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
             mutation_supported: p.mutation_enabled(),
+            content_task_supported: crate::plugin_content::supports(p),
             directory_supported: m
                 .required_features
                 .iter()
@@ -378,6 +380,7 @@ impl WorkbenchState {
                     approved: s.approved.iter().map(|&k| capability(k).into()).collect(),
                     declared_io: vec![],
                     io_handlers: vec![],
+                    content_task_supported: false,
                     mutation_supported: false,
                     directory_supported: false,
                     blob_upload_supported: false,
@@ -676,7 +679,7 @@ impl WorkbenchState {
         self.finish_stopped_session();
         Ok(())
     }
-    fn start_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<Session> {
+    pub(crate) fn start_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<Session> {
         let p = self.external_package(id, digest, revision)?;
         reject_unbound_channel(&p)?;
         if p.manifest().dependencies.iter().any(|d| !d.optional) {

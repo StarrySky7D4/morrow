@@ -2,8 +2,14 @@
 // Full unsigned schema IDs. Never convert these values to a JS int.
 const schemaIds = <String, String>{
   'actionSchema': '8f969b341ddab10b',
+  'pluginContentStatusSchema': 'dcdd954ff7a11f83',
   'requestSchema': '98af3617e14b2953',
   'responseSchema': 'ccbd3dd94b141a74',
+  'pluginContentTaskSchema': 'c37375b66bc3a025',
+  'pluginContentCreateSchema': 'cb1a27fc6e759318',
+  'pluginContentEditSchema': 'e4ae22b7dc7a360f',
+  'pluginContentReadSchema': '846860b740421eb0',
+  'pluginContentResultSchema': '942c146f0800297e',
   'editorCommitProofSchema': 'd4ed675bdd2f4399',
   'serviceRunStartSchema': 'cfbad2e8a254be1e',
   'serviceTlsSelectionSchema': 'f1d1c57be59caa45',

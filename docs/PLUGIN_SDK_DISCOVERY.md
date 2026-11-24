@@ -9,10 +9,20 @@ The query tool is not a sandbox for arbitrary executables: its host path must be
 explicitly trusted. It binds the executable and raw descriptor SHA-256 and retains
 its bounded output/time/error checks.
 
+## Windows per-card content tasks
+
+The base guest-task profile advertises `external_content` and sets
+`workbench_constraints.content_task` when the Windows Workbench provides the
+per-card task dialog. In the plugin library, enable the desired content permission,
+open **Card task**, enter the card ID and review the command. Each confirmation
+starts one short-lived guest session scoped to that card, command and package.
+Create and edit return the operation ID, revision and event. A lookup uses the same
+card ID and original operation ID after reopening the library. An absent lookup
+reports the current observation. A read takes an explicit revision and byte offset.
+
 ## Additive compatibility
 
-Top-level descriptor schema1, both legacy base/channel profiles and the legacy
-experimental-extension status remain unchanged. Optional
+The descriptor keeps schema1 and the existing base and channel profile IDs. Optional
 `experimental_extensions.discovery` has its own schema1 and
 `status="compiled_metadata_only"`, `authority="none"`. New consumers accept legal
 old descriptors without this field; consumers that understand it validate it

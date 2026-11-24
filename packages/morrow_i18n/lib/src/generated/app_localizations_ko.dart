@@ -1640,6 +1640,45 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginsCancel => '취소';
 
   @override
+  String get pluginsCardAbsent => '이 카드와 작업에 대해 아직 기록된 커밋이 없습니다.';
+
+  @override
+  String get pluginsCardBody => '본문 (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => '커밋 확인됨';
+
+  @override
+  String get pluginsCardInvalid => '카드 ID, 리비전 및 내용 크기를 확인하세요.';
+
+  @override
+  String get pluginsCardOffset => '읽기 위치 (바이트)';
+
+  @override
+  String get pluginsCardOperationId => '작업 ID';
+
+  @override
+  String get pluginsCardPreview => '미리 보기 텍스트';
+
+  @override
+  String get pluginsCardRejected => '작업 거부됨';
+
+  @override
+  String get pluginsCardReview => '카드 작업 검토';
+
+  @override
+  String get pluginsCardRun => '한 번 승인하고 실행';
+
+  @override
+  String get pluginsCardTask => '카드 작업';
+
+  @override
+  String get pluginsCardType => '카드 유형';
+
+  @override
+  String get pluginsCardUnknown => '결과를 확인할 수 없습니다. 다시 쓰기 전에 이 작업 ID를 조회하세요.';
+
+  @override
   String get pluginsChoosePackage => '플러그인 파일 선택';
 
   @override

@@ -1725,6 +1725,48 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pluginsCancel => 'Abbrechen';
 
   @override
+  String get pluginsCardAbsent =>
+      'Für diese Karte und diesen Vorgang ist noch kein Commit erfasst.';
+
+  @override
+  String get pluginsCardBody => 'Inhalt (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Commit bestätigt';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Karten-ID, Revision und Inhaltsgrenzen prüfen.';
+
+  @override
+  String get pluginsCardOffset => 'Leseposition (Bytes)';
+
+  @override
+  String get pluginsCardOperationId => 'Vorgangs-ID';
+
+  @override
+  String get pluginsCardPreview => 'Vorschautext';
+
+  @override
+  String get pluginsCardRejected => 'Aufgabe abgelehnt';
+
+  @override
+  String get pluginsCardReview => 'Kartenaufgabe prüfen';
+
+  @override
+  String get pluginsCardRun => 'Einmal genehmigen und ausführen';
+
+  @override
+  String get pluginsCardTask => 'Kartenaufgabe';
+
+  @override
+  String get pluginsCardType => 'Kartentyp';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Ergebnis unbestätigt. Vor erneutem Schreiben die Vorgangs-ID prüfen.';
+
+  @override
   String get pluginsChoosePackage => 'Plugin-Datei auswählen';
 
   @override

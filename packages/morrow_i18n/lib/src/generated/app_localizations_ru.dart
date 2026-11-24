@@ -1731,6 +1731,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pluginsCancel => 'Отмена';
 
   @override
+  String get pluginsCardAbsent =>
+      'Для этой карточки и операции запись пока не найдена.';
+
+  @override
+  String get pluginsCardBody => 'Содержимое (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Запись подтверждена';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Проверьте идентификатор карточки, редакцию и размер содержимого.';
+
+  @override
+  String get pluginsCardOffset => 'Смещение чтения (байты)';
+
+  @override
+  String get pluginsCardOperationId => 'Идентификатор операции';
+
+  @override
+  String get pluginsCardPreview => 'Текст предпросмотра';
+
+  @override
+  String get pluginsCardRejected => 'Задача отклонена';
+
+  @override
+  String get pluginsCardReview => 'Проверить задачу карточки';
+
+  @override
+  String get pluginsCardRun => 'Разрешить и выполнить один раз';
+
+  @override
+  String get pluginsCardTask => 'Задача карточки';
+
+  @override
+  String get pluginsCardType => 'Тип карточки';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Результат не подтверждён. Проверьте операцию по идентификатору перед повторной записью.';
+
+  @override
   String get pluginsChoosePackage => 'Выбрать файл плагина';
 
   @override

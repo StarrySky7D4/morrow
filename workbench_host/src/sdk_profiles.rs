@@ -632,9 +632,9 @@ pub fn descriptor() -> Value {
                 "dependency_call": {"version": dependency_call::VERSION, "sha256": digest(dependency_call::schema_digest())}
             },
             "runtime_task_modes": ["content", "transform"],
-            "workbench_routes": ["external_transform", "external_ui"],
-            "workbench_constraints": {"content_task": false, "dependency_calls": false, "required_dependencies": false},
-            "runtime_route_constraints": "Content requires a bound trusted content adapter; dependency calls require the managed dependency router. These are not Workbench external routes.",
+            "workbench_routes": if cfg!(windows) { json!(["external_transform", "external_ui", "external_content"]) } else { json!(["external_transform", "external_ui"]) },
+            "workbench_constraints": {"content_task": cfg!(windows), "dependency_calls": false, "required_dependencies": false},
+            "runtime_route_constraints": "Windows external content requires current catalog approval and a separate confirmation for each card and operation. Dependency calls require the managed dependency router.",
             "runtime_supported_required_features": [plugin_package::TRANSFORM_HANDLERS_FEATURE, plugin_package::DEPENDENCIES_FEATURE, plugin_package::DEPENDENCY_CALLS_FEATURE],
             "hard_byte_limits": {"module": morrow_plugin_runtime::MAX_MODULE_BYTES, "message": runtime::MAX_MESSAGE_BYTES, "task_frame": task::MAX_TASK_BYTES, "task_value": task::MAX_VALUE_BYTES, "failure_text": task::MAX_FAILURE_MESSAGE_BYTES, "ui_frame": ui::MAX_BYTES, "dependency_frame": dependency_call::MAX_FRAME_BYTES, "dependency_value": dependency_call::MAX_PAYLOAD_BYTES},
             "runtime_defaults": {"fuel": defaults.fuel, "memory_bytes": defaults.memory_bytes, "host_calls": defaults.host_calls},
@@ -680,6 +680,9 @@ mod tests {
     #[test]
     fn agent_metadata_preserves_legacy_profiles_and_grants_nothing() {
         let value = descriptor();
+        let base = &value["profiles"][0];
+        assert_eq!(base["workbench_constraints"]["content_task"], cfg!(windows));
+        assert_eq!(base["workbench_routes"].as_array().unwrap().contains(&json!("external_content")), cfg!(windows));
         assert_eq!(value["schema_version"], 1);
         assert_eq!(value["profiles"].as_array().unwrap().len(), 2);
         assert_eq!(value["experimental_extensions"]["discovery"], extension_discovery());

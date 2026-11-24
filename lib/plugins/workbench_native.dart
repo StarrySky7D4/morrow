@@ -22,6 +22,7 @@ import 'versioned_content_codec.dart';
 import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
+import 'plugin_content_task.dart';
 import 'agent_wrapper_models.dart';
 import 'agent_wrapper_control.dart';
 import 'agent_wrapper_native.dart';
@@ -148,6 +149,7 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
         ? null
         : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
+    contentTaskSupported: row.contentTaskSupported,
     directorySupported: row.directorySupported,
     fsWatchSupported: row.fsWatchSupported,
     fsWatchApproved: row.fsWatchApproved,
@@ -211,6 +213,7 @@ class RustWorkbench
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
         ExternalPluginControl,
+        PluginContentBackend,
         AgentWrapperControl,
         WorkbenchAgentSessionSupport,
         ThemePackageImportControl,
@@ -1285,6 +1288,20 @@ class RustWorkbench
     r.sha256 = entry.digest;
     r.revisionBigInt = revision;
   }
+
+  @override
+  Future<PluginContentReceipt> runPluginContent(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    PluginContentRequest task,
+  ) => _callDecoded<PluginContentReceipt>(
+    host.Action.pluginContentTask,
+    configure: (r) {
+      _externalSelection(r, entry, revision);
+      task.encode(r.initPluginContentTask());
+    },
+    decode: (r) => task.decode(r.pluginContentResult ?? (throw const FormatException("Missing card task receipt"))),
+  );
 
   @override
   Future<void> configureExternal(

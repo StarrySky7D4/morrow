@@ -1729,6 +1729,48 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pluginsCancel => 'Cancelar';
 
   @override
+  String get pluginsCardAbsent =>
+      'Todavía no consta ningún cambio para esta tarjeta y operación.';
+
+  @override
+  String get pluginsCardBody => 'Contenido (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Cambio verificado';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Revisa el ID de tarjeta, la revisión y los límites de contenido.';
+
+  @override
+  String get pluginsCardOffset => 'Posición de lectura (bytes)';
+
+  @override
+  String get pluginsCardOperationId => 'ID de operación';
+
+  @override
+  String get pluginsCardPreview => 'Texto de vista previa';
+
+  @override
+  String get pluginsCardRejected => 'Tarea rechazada';
+
+  @override
+  String get pluginsCardReview => 'Revisar la tarea';
+
+  @override
+  String get pluginsCardRun => 'Aprobar y ejecutar una vez';
+
+  @override
+  String get pluginsCardTask => 'Tarea de tarjeta';
+
+  @override
+  String get pluginsCardType => 'Tipo de tarjeta';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Resultado sin confirmar. Consulta el ID de operación antes de volver a escribir.';
+
+  @override
   String get pluginsChoosePackage => 'Elegir archivo de complemento';
 
   @override

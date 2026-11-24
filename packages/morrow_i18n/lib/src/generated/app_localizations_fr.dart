@@ -1730,6 +1730,48 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pluginsCancel => 'Annuler';
 
   @override
+  String get pluginsCardAbsent =>
+      'Aucune écriture enregistrée pour cette carte et cette opération pour le moment.';
+
+  @override
+  String get pluginsCardBody => 'Contenu (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Écriture vérifiée';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Vérifiez l’identifiant de carte, la révision et la taille du contenu.';
+
+  @override
+  String get pluginsCardOffset => 'Position de lecture (octets)';
+
+  @override
+  String get pluginsCardOperationId => 'Identifiant de l’opération';
+
+  @override
+  String get pluginsCardPreview => 'Texte d’aperçu';
+
+  @override
+  String get pluginsCardRejected => 'Tâche refusée';
+
+  @override
+  String get pluginsCardReview => 'Vérifier la tâche';
+
+  @override
+  String get pluginsCardRun => 'Autoriser et exécuter une fois';
+
+  @override
+  String get pluginsCardTask => 'Tâche de carte';
+
+  @override
+  String get pluginsCardType => 'Type de carte';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Résultat à confirmer. Recherchez cette opération avant une nouvelle écriture.';
+
+  @override
   String get pluginsChoosePackage => 'Choisir le fichier d’extension';
 
   @override

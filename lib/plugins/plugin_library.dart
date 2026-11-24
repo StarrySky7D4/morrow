@@ -6,6 +6,8 @@ import 'dart:async';
 
 import '../appearance.dart';
 import 'io_settings_page.dart';
+import 'plugin_content_task.dart';
+import 'plugin_content_dialog.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
@@ -101,6 +103,7 @@ class PluginLibraryEntry {
     this.approvedIo = const [],
     this.ioHandlers = const [],
     this.mutationSupported = false,
+    this.contentTaskSupported = false,
     this.directorySupported = false,
     this.fsWatchSupported = false,
     this.fsWatchApproved = false,
@@ -180,6 +183,7 @@ class PluginLibraryEntry {
   final List<PluginTransformHandler> handlers;
   final List<String> ioHandlers;
   final bool mutationSupported;
+  final bool contentTaskSupported;
   final bool directorySupported;
   final bool fsWatchSupported, fsWatchApproved;
   final List<String> fsWatchHandlers;
@@ -318,6 +322,7 @@ String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
       e.approvedIo,
       e.ioHandlers,
       e.mutationSupported,
+      e.contentTaskSupported,
       e.directorySupported,
       e.fsWatchSupported,
       e.fsWatchApproved,
@@ -1340,6 +1345,34 @@ class _PluginLibraryState extends State<PluginLibrary> {
                   !_confirmed ? null : () => _remove(entry),
                   icon: Icons.remove_circle_outline,
                 ),
+                if (entry.contentTaskSupported &&
+                    widget.backend is PluginContentBackend)
+                  _button(
+                    L10n.of(context).pluginsCardTask,
+                    'plugin-content-${entry.id}',
+                    !usable || !entry.approved.any(PluginContentAction.permits)
+                        ? null
+                        : () {
+                            final owner = widget.backend;
+                            final revision = _revision!;
+                            final epoch = _epoch;
+                            showDialog<void>(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => PluginContentDialog(
+                                backend: owner as PluginContentBackend,
+                                entry: entry,
+                                revision: revision,
+                                isCurrent: () =>
+                                    _current(owner, epoch) &&
+                                    _confirmed &&
+                                    _revision == revision,
+                                onCommitted: widget.onChanged,
+                              ),
+                            );
+                          },
+                    icon: Icons.article_outlined,
+                  ),
                 if (entry.channelSupported)
                   _button(
                     'Local channels',

@@ -197,6 +197,7 @@ enum Action {
   fsWatchStatus,
   fsWatchRead,
   channelPrepareWithCompatibilityBudget,
+  pluginContentTask,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -691,12 +692,38 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 190,
       ordinal: 190,
     ),
+    EnumerantSchemaInfo(
+      name: 'pluginContentTask',
+      codeOrder: 191,
+      ordinal: 191,
+    ),
   ],
 );
 
 Action? actionFromUint16(int v) =>
     v < Action.values.length ? Action.values[v] : null;
 int actionToUint16(Action v) => v.index;
+
+enum PluginContentStatus { unknown, committed, chunk, absent, rejected }
+
+const EnumSchemaInfo pluginContentStatusSchema = EnumSchemaInfo(
+  id: 0xdcdd954ff7a11f83,
+  displayName: 'host.capnp:PluginContentStatus',
+  shortName: 'PluginContentStatus',
+  enumerants: [
+    EnumerantSchemaInfo(name: 'unknown', codeOrder: 0, ordinal: 0),
+    EnumerantSchemaInfo(name: 'committed', codeOrder: 1, ordinal: 1),
+    EnumerantSchemaInfo(name: 'chunk', codeOrder: 2, ordinal: 2),
+    EnumerantSchemaInfo(name: 'absent', codeOrder: 3, ordinal: 3),
+    EnumerantSchemaInfo(name: 'rejected', codeOrder: 4, ordinal: 4),
+  ],
+);
+
+PluginContentStatus? pluginContentStatusFromUint16(int v) =>
+    v < PluginContentStatus.values.length
+    ? PluginContentStatus.values[v]
+    : null;
+int pluginContentStatusToUint16(PluginContentStatus v) => v.index;
 
 final class RequestReader extends StructReader {
   RequestReader(super.raw, {super.capabilities});
@@ -965,6 +992,11 @@ final class RequestReader extends StructReader {
   FsWatchStartReader? get fsWatchStart => getStructFieldWith(
     63,
     (r) => FsWatchStartReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentTaskReader? get pluginContentTask => getStructFieldWith(
+    64,
+    (r) => PluginContentTaskReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1429,6 +1461,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasFsWatchStart() => hasPointerField(63);
+
+  PluginContentTaskBuilder initPluginContentTask() {
+    return initStructFieldWith(64, (r) => PluginContentTaskBuilder(r), 1, 3);
+  }
+
+  bool hasPluginContentTask() => hasPointerField(64);
 }
 
 final class _RequestFactory
@@ -1438,7 +1476,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 64;
+  int get ptrWords => 65;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1455,7 +1493,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 11,
-  pointerWords: 64,
+  pointerWords: 65,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2121,6 +2159,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xae5a248c7817b8ff),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'pluginContentTask',
+      codeOrder: 83,
+      body: SlotFieldSchemaInfo(
+        offset: 64,
+        type: StructRefTypeSchemaInfo(0xc37375b66bc3a025),
+      ),
+    ),
   ],
 );
 
@@ -2393,6 +2439,11 @@ final class ResponseReader extends StructReader {
   FsWatchResultReader? get fsWatchResult => getStructFieldWith(
     53,
     (r) => FsWatchResultReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentResultReader? get pluginContentResult => getStructFieldWith(
+    54,
+    (r) => PluginContentResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -2846,6 +2897,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasFsWatchResult() => hasPointerField(53);
+
+  PluginContentResultBuilder initPluginContentResult() {
+    return initStructFieldWith(54, (r) => PluginContentResultBuilder(r), 4, 7);
+  }
+
+  bool hasPluginContentResult() => hasPointerField(54);
 }
 
 final class _ResponseFactory
@@ -2855,7 +2912,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 54;
+  int get ptrWords => 55;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2872,7 +2929,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 54,
+  pointerWords: 55,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -3434,10 +3491,744 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0x86b19964f3c34d47),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'pluginContentResult',
+      codeOrder: 70,
+      body: SlotFieldSchemaInfo(
+        offset: 54,
+        type: StructRefTypeSchemaInfo(0x942c146f0800297e),
+      ),
+    ),
   ],
 );
 
 final responseFactory = _ResponseFactory();
+
+final class PluginContentTaskReader extends StructReader {
+  PluginContentTaskReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginContentTaskSchema;
+
+  int get which => getUint16Field(0);
+
+  String? get card => getTextField(0);
+
+  String? get requestId => getTextField(1);
+
+  PluginContentCreateReader? get create => getStructFieldWith(
+    2,
+    (r) => PluginContentCreateReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentEditReader? get edit => getStructFieldWith(
+    2,
+    (r) => PluginContentEditReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentReadReader? get read => getStructFieldWith(
+    2,
+    (r) => PluginContentReadReader(r, capabilities: capabilityTable),
+  );
+
+  String? get lookup => getTextField(2);
+}
+
+final class PluginContentTaskBuilder extends StructBuilder {
+  PluginContentTaskBuilder(super.raw);
+
+  @override
+  PluginContentTaskReader asReader() => PluginContentTaskReader(rawToReader());
+
+  void _setWhich(int v) => setUint16Field(0, v);
+
+  set card(String? v) {
+    setTextField(0, v);
+  }
+
+  set requestId(String? v) {
+    setTextField(1, v);
+  }
+
+  void selectUnspecified() {
+    setUint16Field(0, 0);
+  }
+
+  PluginContentCreateBuilder initCreate() {
+    setUint16Field(0, 1);
+    return initStructFieldWith(2, (r) => PluginContentCreateBuilder(r), 0, 3);
+  }
+
+  bool hasCreate() => hasPointerField(2);
+
+  PluginContentEditBuilder initEdit() {
+    setUint16Field(0, 2);
+    return initStructFieldWith(2, (r) => PluginContentEditBuilder(r), 1, 3);
+  }
+
+  bool hasEdit() => hasPointerField(2);
+
+  PluginContentReadBuilder initRead() {
+    setUint16Field(0, 3);
+    return initStructFieldWith(2, (r) => PluginContentReadBuilder(r), 3, 0);
+  }
+
+  bool hasRead() => hasPointerField(2);
+
+  set lookup(String? v) {
+    setUint16Field(0, 4);
+    setTextField(2, v);
+  }
+}
+
+final class _PluginContentTaskFactory
+    extends StructFactory<PluginContentTaskReader, PluginContentTaskBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginContentTaskSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentTaskReader fromRawReader(RawStructReader r) =>
+      PluginContentTaskReader(r);
+  @override
+  PluginContentTaskReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentTaskReader(r, capabilities: capabilities);
+  @override
+  PluginContentTaskBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentTaskBuilder(r);
+}
+
+const StructSchemaInfo pluginContentTaskSchema = StructSchemaInfo(
+  id: 0xc37375b66bc3a025,
+  displayName: 'host.capnp:PluginContentTask',
+  shortName: 'PluginContentTask',
+  dataWords: 1,
+  pointerWords: 3,
+  discriminantCount: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'card',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'requestId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'unspecified',
+      codeOrder: 2,
+      discriminantValue: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Void'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'create',
+      codeOrder: 3,
+      discriminantValue: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0xcb1a27fc6e759318),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'edit',
+      codeOrder: 4,
+      discriminantValue: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0xe4ae22b7dc7a360f),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'read',
+      codeOrder: 5,
+      discriminantValue: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0x846860b740421eb0),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'lookup',
+      codeOrder: 6,
+      discriminantValue: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pluginContentTaskFactory = _PluginContentTaskFactory();
+
+final class PluginContentCreateReader extends StructReader {
+  PluginContentCreateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginContentCreateSchema;
+
+  String? get typeId => getTextField(0);
+
+  String? get title => getTextField(1);
+
+  Uint8List? get body => getDataField(2);
+}
+
+final class PluginContentCreateBuilder extends StructBuilder {
+  PluginContentCreateBuilder(super.raw);
+
+  @override
+  PluginContentCreateReader asReader() =>
+      PluginContentCreateReader(rawToReader());
+
+  set typeId(String? v) {
+    setTextField(0, v);
+  }
+
+  set title(String? v) {
+    setTextField(1, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _PluginContentCreateFactory
+    extends
+        StructFactory<PluginContentCreateReader, PluginContentCreateBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginContentCreateSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentCreateReader fromRawReader(RawStructReader r) =>
+      PluginContentCreateReader(r);
+  @override
+  PluginContentCreateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentCreateReader(r, capabilities: capabilities);
+  @override
+  PluginContentCreateBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentCreateBuilder(r);
+}
+
+const StructSchemaInfo pluginContentCreateSchema = StructSchemaInfo(
+  id: 0xcb1a27fc6e759318,
+  displayName: 'host.capnp:PluginContentCreate',
+  shortName: 'PluginContentCreate',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'typeId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final pluginContentCreateFactory = _PluginContentCreateFactory();
+
+final class PluginContentEditReader extends StructReader {
+  PluginContentEditReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginContentEditSchema;
+
+  int get revision => getUint64Field(0);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get title => getTextField(0);
+
+  Uint8List? get body => getDataField(1);
+
+  String? get preview => getTextField(2);
+}
+
+final class PluginContentEditBuilder extends StructBuilder {
+  PluginContentEditBuilder(super.raw);
+
+  @override
+  PluginContentEditReader asReader() => PluginContentEditReader(rawToReader());
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set title(String? v) {
+    setTextField(0, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set preview(String? v) {
+    setTextField(2, v);
+  }
+}
+
+final class _PluginContentEditFactory
+    extends StructFactory<PluginContentEditReader, PluginContentEditBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginContentEditSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentEditReader fromRawReader(RawStructReader r) =>
+      PluginContentEditReader(r);
+  @override
+  PluginContentEditReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentEditReader(r, capabilities: capabilities);
+  @override
+  PluginContentEditBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentEditBuilder(r);
+}
+
+const StructSchemaInfo pluginContentEditSchema = StructSchemaInfo(
+  id: 0xe4ae22b7dc7a360f,
+  displayName: 'host.capnp:PluginContentEdit',
+  shortName: 'PluginContentEdit',
+  dataWords: 1,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'preview',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pluginContentEditFactory = _PluginContentEditFactory();
+
+final class PluginContentReadReader extends StructReader {
+  PluginContentReadReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginContentReadSchema;
+
+  int get revision => getUint64Field(0);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get offset => getUint64Field(8);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get length => getUint32Field(16);
+}
+
+final class PluginContentReadBuilder extends StructBuilder {
+  PluginContentReadBuilder(super.raw);
+
+  @override
+  PluginContentReadReader asReader() => PluginContentReadReader(rawToReader());
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set length(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _PluginContentReadFactory
+    extends StructFactory<PluginContentReadReader, PluginContentReadBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginContentReadSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 0;
+  @override
+  PluginContentReadReader fromRawReader(RawStructReader r) =>
+      PluginContentReadReader(r);
+  @override
+  PluginContentReadReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentReadReader(r, capabilities: capabilities);
+  @override
+  PluginContentReadBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentReadBuilder(r);
+}
+
+const StructSchemaInfo pluginContentReadSchema = StructSchemaInfo(
+  id: 0x846860b740421eb0,
+  displayName: 'host.capnp:PluginContentRead',
+  shortName: 'PluginContentRead',
+  dataWords: 3,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'length',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final pluginContentReadFactory = _PluginContentReadFactory();
+
+final class PluginContentResultReader extends StructReader {
+  PluginContentResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginContentResultSchema;
+
+  PluginContentStatus? get status =>
+      pluginContentStatusFromUint16(getUint16Field(0));
+
+  String? get card => getTextField(0);
+
+  String? get requestId => getTextField(1);
+
+  String? get operation => getTextField(2);
+
+  int get revision => getUint64Field(8);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  String? get event => getTextField(3);
+
+  Uint8List? get digest => getDataField(4);
+
+  Uint8List? get bytes => getDataField(5);
+
+  int get offset => getUint64Field(16);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get totalLength => getUint64Field(24);
+  BigInt get totalLengthBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  String? get failure => getTextField(6);
+}
+
+final class PluginContentResultBuilder extends StructBuilder {
+  PluginContentResultBuilder(super.raw);
+
+  @override
+  PluginContentResultReader asReader() =>
+      PluginContentResultReader(rawToReader());
+
+  set status(PluginContentStatus v) {
+    setUint16Field(0, pluginContentStatusToUint16(v));
+  }
+
+  set card(String? v) {
+    setTextField(0, v);
+  }
+
+  set requestId(String? v) {
+    setTextField(1, v);
+  }
+
+  set operation(String? v) {
+    setTextField(2, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set event(String? v) {
+    setTextField(3, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(16, v);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set totalLength(int v) {
+    setUint64Field(24, v);
+  }
+
+  set totalLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field totalLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set failure(String? v) {
+    setTextField(6, v);
+  }
+}
+
+final class _PluginContentResultFactory
+    extends
+        StructFactory<PluginContentResultReader, PluginContentResultBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginContentResultSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 7;
+  @override
+  PluginContentResultReader fromRawReader(RawStructReader r) =>
+      PluginContentResultReader(r);
+  @override
+  PluginContentResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentResultReader(r, capabilities: capabilities);
+  @override
+  PluginContentResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentResultBuilder(r);
+}
+
+const StructSchemaInfo pluginContentResultSchema = StructSchemaInfo(
+  id: 0x942c146f0800297e,
+  displayName: 'host.capnp:PluginContentResult',
+  shortName: 'PluginContentResult',
+  dataWords: 4,
+  pointerWords: 7,
+  fields: [
+    FieldSchemaInfo(
+      name: 'status',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: EnumRefTypeSchemaInfo(0xdcdd954ff7a11f83),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'card',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'requestId',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operation',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'event',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'totalLength',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'failure',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pluginContentResultFactory = _PluginContentResultFactory();
 
 final class EditorCommitProofReader extends StructReader {
   EditorCommitProofReader(super.raw, {super.capabilities});
@@ -5500,6 +6291,8 @@ final class PluginEntryReader extends StructReader {
 
   ListReader<String?>? get fsWatchHandlers => getTextListField(18);
 
+  bool get contentTaskSupported => getBoolField(10);
+
   int get fsWatchMaxFrames => getUint32Field(4);
 
   int get fsWatchMaxWireBytes => getUint64Field(16);
@@ -5662,6 +6455,10 @@ final class PluginEntryBuilder extends StructBuilder {
 
   ListBuilder<String?> initFsWatchHandlers(int length) {
     return initTextListField(18, length);
+  }
+
+  set contentTaskSupported(bool v) {
+    setBoolField(10, v);
   }
 
   set fsWatchMaxFrames(int v) {
@@ -5963,8 +6760,16 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       ),
     ),
     FieldSchemaInfo(
-      name: 'fsWatchMaxFrames',
+      name: 'contentTaskSupported',
       codeOrder: 30,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'fsWatchMaxFrames',
+      codeOrder: 31,
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: PrimitiveTypeSchemaInfo('UInt32'),
@@ -5972,7 +6777,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
     ),
     FieldSchemaInfo(
       name: 'fsWatchMaxWireBytes',
-      codeOrder: 31,
+      codeOrder: 32,
       body: SlotFieldSchemaInfo(
         offset: 2,
         type: PrimitiveTypeSchemaInfo('UInt64'),
@@ -5980,7 +6785,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
     ),
     FieldSchemaInfo(
       name: 'fsWatchMaxWindowMs',
-      codeOrder: 32,
+      codeOrder: 33,
       body: SlotFieldSchemaInfo(
         offset: 3,
         type: PrimitiveTypeSchemaInfo('UInt64'),

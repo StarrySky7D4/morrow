@@ -201,11 +201,20 @@ enum Action {
   fsWatchStatus,
   fsWatchRead,
   channelPrepareWithCompatibilityBudget,
+  pluginContentTask,
 }
 
 Action? actionFromUint16(int v) =>
     v < Action.values.length ? Action.values[v] : null;
 int actionToUint16(Action v) => v.index;
+
+enum PluginContentStatus { unknown, committed, chunk, absent, rejected }
+
+PluginContentStatus? pluginContentStatusFromUint16(int v) =>
+    v < PluginContentStatus.values.length
+    ? PluginContentStatus.values[v]
+    : null;
+int pluginContentStatusToUint16(PluginContentStatus v) => v.index;
 
 final class RequestReader extends StructReader {
   RequestReader(super.raw, {super.capabilities});
@@ -473,6 +482,11 @@ final class RequestReader extends StructReader {
   FsWatchStartReader? get fsWatchStart => getStructFieldWith(
     63,
     (r) => FsWatchStartReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentTaskReader? get pluginContentTask => getStructFieldWith(
+    64,
+    (r) => PluginContentTaskReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -955,6 +969,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasFsWatchStart() => hasPointerField(63);
+
+  PluginContentTaskBuilder initPluginContentTask() {
+    return initStructFieldWith(64, (r) => PluginContentTaskBuilder(r), 1, 3);
+  }
+
+  bool hasPluginContentTask() => hasPointerField(64);
 }
 
 final class _RequestFactory
@@ -962,7 +982,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 64;
+  int get ptrWords => 65;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1241,6 +1261,11 @@ final class ResponseReader extends StructReader {
   FsWatchResultReader? get fsWatchResult => getStructFieldWith(
     53,
     (r) => FsWatchResultReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentResultReader? get pluginContentResult => getStructFieldWith(
+    54,
+    (r) => PluginContentResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1712,6 +1737,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasFsWatchResult() => hasPointerField(53);
+
+  PluginContentResultBuilder initPluginContentResult() {
+    return initStructFieldWith(54, (r) => PluginContentResultBuilder(r), 4, 7);
+  }
+
+  bool hasPluginContentResult() => hasPointerField(54);
 }
 
 final class _ResponseFactory
@@ -1719,7 +1750,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 54;
+  int get ptrWords => 55;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1732,6 +1763,450 @@ final class _ResponseFactory
 }
 
 final responseFactory = _ResponseFactory();
+
+final class PluginContentTaskReader extends StructReader {
+  PluginContentTaskReader(super.raw, {super.capabilities});
+
+  int get which => getUint16Field(0);
+
+  String? get card => getTextField(0);
+
+  String? get requestId => getTextField(1);
+
+  PluginContentCreateReader? get create => getStructFieldWith(
+    2,
+    (r) => PluginContentCreateReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentEditReader? get edit => getStructFieldWith(
+    2,
+    (r) => PluginContentEditReader(r, capabilities: capabilityTable),
+  );
+
+  PluginContentReadReader? get read => getStructFieldWith(
+    2,
+    (r) => PluginContentReadReader(r, capabilities: capabilityTable),
+  );
+
+  String? get lookup => getTextField(2);
+}
+
+final class PluginContentTaskBuilder extends StructBuilder {
+  PluginContentTaskBuilder(super.raw);
+
+  @override
+  PluginContentTaskReader asReader() => PluginContentTaskReader(rawToReader());
+
+  void _setWhich(int v) => setUint16Field(0, v);
+
+  set card(String? v) {
+    setTextField(0, v);
+  }
+
+  set requestId(String? v) {
+    setTextField(1, v);
+  }
+
+  void selectUnspecified() {
+    setUint16Field(0, 0);
+  }
+
+  PluginContentCreateBuilder initCreate() {
+    setUint16Field(0, 1);
+    return initStructFieldWith(2, (r) => PluginContentCreateBuilder(r), 0, 3);
+  }
+
+  bool hasCreate() => hasPointerField(2);
+
+  PluginContentEditBuilder initEdit() {
+    setUint16Field(0, 2);
+    return initStructFieldWith(2, (r) => PluginContentEditBuilder(r), 1, 3);
+  }
+
+  bool hasEdit() => hasPointerField(2);
+
+  PluginContentReadBuilder initRead() {
+    setUint16Field(0, 3);
+    return initStructFieldWith(2, (r) => PluginContentReadBuilder(r), 3, 0);
+  }
+
+  bool hasRead() => hasPointerField(2);
+
+  set lookup(String? v) {
+    setUint16Field(0, 4);
+    setTextField(2, v);
+  }
+}
+
+final class _PluginContentTaskFactory
+    extends StructFactory<PluginContentTaskReader, PluginContentTaskBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentTaskReader fromRawReader(RawStructReader r) =>
+      PluginContentTaskReader(r);
+  @override
+  PluginContentTaskReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentTaskReader(r, capabilities: capabilities);
+  @override
+  PluginContentTaskBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentTaskBuilder(r);
+}
+
+final pluginContentTaskFactory = _PluginContentTaskFactory();
+
+final class PluginContentCreateReader extends StructReader {
+  PluginContentCreateReader(super.raw, {super.capabilities});
+
+  String? get typeId => getTextField(0);
+
+  String? get title => getTextField(1);
+
+  Uint8List? get body => getDataField(2);
+}
+
+final class PluginContentCreateBuilder extends StructBuilder {
+  PluginContentCreateBuilder(super.raw);
+
+  @override
+  PluginContentCreateReader asReader() =>
+      PluginContentCreateReader(rawToReader());
+
+  set typeId(String? v) {
+    setTextField(0, v);
+  }
+
+  set title(String? v) {
+    setTextField(1, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _PluginContentCreateFactory
+    extends
+        StructFactory<PluginContentCreateReader, PluginContentCreateBuilder> {
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentCreateReader fromRawReader(RawStructReader r) =>
+      PluginContentCreateReader(r);
+  @override
+  PluginContentCreateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentCreateReader(r, capabilities: capabilities);
+  @override
+  PluginContentCreateBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentCreateBuilder(r);
+}
+
+final pluginContentCreateFactory = _PluginContentCreateFactory();
+
+final class PluginContentEditReader extends StructReader {
+  PluginContentEditReader(super.raw, {super.capabilities});
+
+  int get revision => _checkedWireInt(revisionBigInt);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get title => getTextField(0);
+
+  Uint8List? get body => getDataField(1);
+
+  String? get preview => getTextField(2);
+}
+
+final class PluginContentEditBuilder extends StructBuilder {
+  PluginContentEditBuilder(super.raw);
+
+  @override
+  PluginContentEditReader asReader() => PluginContentEditReader(rawToReader());
+
+  set revision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    revisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set title(String? v) {
+    setTextField(0, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set preview(String? v) {
+    setTextField(2, v);
+  }
+}
+
+final class _PluginContentEditFactory
+    extends StructFactory<PluginContentEditReader, PluginContentEditBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginContentEditReader fromRawReader(RawStructReader r) =>
+      PluginContentEditReader(r);
+  @override
+  PluginContentEditReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentEditReader(r, capabilities: capabilities);
+  @override
+  PluginContentEditBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentEditBuilder(r);
+}
+
+final pluginContentEditFactory = _PluginContentEditFactory();
+
+final class PluginContentReadReader extends StructReader {
+  PluginContentReadReader(super.raw, {super.capabilities});
+
+  int get revision => _checkedWireInt(revisionBigInt);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get offset => _checkedWireInt(offsetBigInt);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get length => getUint32Field(16);
+}
+
+final class PluginContentReadBuilder extends StructBuilder {
+  PluginContentReadBuilder(super.raw);
+
+  @override
+  PluginContentReadReader asReader() => PluginContentReadReader(rawToReader());
+
+  set revision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    revisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set offset(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    offsetBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set length(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _PluginContentReadFactory
+    extends StructFactory<PluginContentReadReader, PluginContentReadBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 0;
+  @override
+  PluginContentReadReader fromRawReader(RawStructReader r) =>
+      PluginContentReadReader(r);
+  @override
+  PluginContentReadReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentReadReader(r, capabilities: capabilities);
+  @override
+  PluginContentReadBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentReadBuilder(r);
+}
+
+final pluginContentReadFactory = _PluginContentReadFactory();
+
+final class PluginContentResultReader extends StructReader {
+  PluginContentResultReader(super.raw, {super.capabilities});
+
+  PluginContentStatus? get status =>
+      pluginContentStatusFromUint16(getUint16Field(0));
+
+  String? get card => getTextField(0);
+
+  String? get requestId => getTextField(1);
+
+  String? get operation => getTextField(2);
+
+  int get revision => _checkedWireInt(revisionBigInt);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  String? get event => getTextField(3);
+
+  Uint8List? get digest => getDataField(4);
+
+  Uint8List? get bytes => getDataField(5);
+
+  int get offset => _checkedWireInt(offsetBigInt);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get totalLength => _checkedWireInt(totalLengthBigInt);
+  BigInt get totalLengthBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  String? get failure => getTextField(6);
+}
+
+final class PluginContentResultBuilder extends StructBuilder {
+  PluginContentResultBuilder(super.raw);
+
+  @override
+  PluginContentResultReader asReader() =>
+      PluginContentResultReader(rawToReader());
+
+  set status(PluginContentStatus v) {
+    setUint16Field(0, pluginContentStatusToUint16(v));
+  }
+
+  set card(String? v) {
+    setTextField(0, v);
+  }
+
+  set requestId(String? v) {
+    setTextField(1, v);
+  }
+
+  set operation(String? v) {
+    setTextField(2, v);
+  }
+
+  set revision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    revisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set event(String? v) {
+    setTextField(3, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set offset(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    offsetBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set totalLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    totalLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set totalLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field totalLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set failure(String? v) {
+    setTextField(6, v);
+  }
+}
+
+final class _PluginContentResultFactory
+    extends
+        StructFactory<PluginContentResultReader, PluginContentResultBuilder> {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 7;
+  @override
+  PluginContentResultReader fromRawReader(RawStructReader r) =>
+      PluginContentResultReader(r);
+  @override
+  PluginContentResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginContentResultReader(r, capabilities: capabilities);
+  @override
+  PluginContentResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginContentResultBuilder(r);
+}
+
+final pluginContentResultFactory = _PluginContentResultFactory();
 
 final class EditorCommitProofReader extends StructReader {
   EditorCommitProofReader(super.raw, {super.capabilities});
@@ -2995,6 +3470,8 @@ final class PluginEntryReader extends StructReader {
 
   ListReader<String?>? get fsWatchHandlers => getTextListField(18);
 
+  bool get contentTaskSupported => getBoolField(10);
+
   int get fsWatchMaxFrames => getUint32Field(4);
 
   int get fsWatchMaxWireBytes => _checkedWireInt(fsWatchMaxWireBytesBigInt);
@@ -3160,6 +3637,10 @@ final class PluginEntryBuilder extends StructBuilder {
 
   ListBuilder<String?> initFsWatchHandlers(int length) {
     return initTextListField(18, length);
+  }
+
+  set contentTaskSupported(bool v) {
+    setBoolField(10, v);
   }
 
   set fsWatchMaxFrames(int v) {

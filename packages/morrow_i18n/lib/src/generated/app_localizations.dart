@@ -3130,6 +3130,84 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get pluginsCancel;
 
+  /// No description provided for @pluginsCardAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'No commit is recorded for this card and operation yet.'**
+  String get pluginsCardAbsent;
+
+  /// No description provided for @pluginsCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body (UTF-8)'**
+  String get pluginsCardBody;
+
+  /// No description provided for @pluginsCardCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit verified'**
+  String get pluginsCardCommitted;
+
+  /// No description provided for @pluginsCardInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the card ID, revision, and content limits.'**
+  String get pluginsCardInvalid;
+
+  /// No description provided for @pluginsCardOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Read offset (bytes)'**
+  String get pluginsCardOffset;
+
+  /// No description provided for @pluginsCardOperationId.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation ID'**
+  String get pluginsCardOperationId;
+
+  /// No description provided for @pluginsCardPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview text'**
+  String get pluginsCardPreview;
+
+  /// No description provided for @pluginsCardRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Task rejected'**
+  String get pluginsCardRejected;
+
+  /// No description provided for @pluginsCardReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review card task'**
+  String get pluginsCardReview;
+
+  /// No description provided for @pluginsCardRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve once and run'**
+  String get pluginsCardRun;
+
+  /// No description provided for @pluginsCardTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Card task'**
+  String get pluginsCardTask;
+
+  /// No description provided for @pluginsCardType.
+  ///
+  /// In en, this message translates to:
+  /// **'Card type'**
+  String get pluginsCardType;
+
+  /// No description provided for @pluginsCardUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome unconfirmed. Look up this operation ID before submitting another write.'**
+  String get pluginsCardUnknown;
+
   /// No description provided for @pluginsChoosePackage.
   ///
   /// In en, this message translates to:

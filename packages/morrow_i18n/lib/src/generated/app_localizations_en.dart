@@ -1717,6 +1717,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsCancel => 'Cancel';
 
   @override
+  String get pluginsCardAbsent =>
+      'No commit is recorded for this card and operation yet.';
+
+  @override
+  String get pluginsCardBody => 'Body (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Commit verified';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Check the card ID, revision, and content limits.';
+
+  @override
+  String get pluginsCardOffset => 'Read offset (bytes)';
+
+  @override
+  String get pluginsCardOperationId => 'Operation ID';
+
+  @override
+  String get pluginsCardPreview => 'Preview text';
+
+  @override
+  String get pluginsCardRejected => 'Task rejected';
+
+  @override
+  String get pluginsCardReview => 'Review card task';
+
+  @override
+  String get pluginsCardRun => 'Approve once and run';
+
+  @override
+  String get pluginsCardTask => 'Card task';
+
+  @override
+  String get pluginsCardType => 'Card type';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Outcome unconfirmed. Look up this operation ID before submitting another write.';
+
+  @override
   String get pluginsChoosePackage => 'Choose plugin file';
 
   @override

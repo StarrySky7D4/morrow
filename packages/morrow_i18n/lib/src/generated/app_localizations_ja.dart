@@ -1626,6 +1626,45 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginsCancel => 'キャンセル';
 
   @override
+  String get pluginsCardAbsent => 'このカードと操作に対応するコミットはまだ記録されていません。';
+
+  @override
+  String get pluginsCardBody => '本文（UTF-8）';
+
+  @override
+  String get pluginsCardCommitted => 'コミットを確認しました';
+
+  @override
+  String get pluginsCardInvalid => 'カード ID、リビジョン、内容の上限を確認してください。';
+
+  @override
+  String get pluginsCardOffset => '読み取り位置（バイト）';
+
+  @override
+  String get pluginsCardOperationId => '操作 ID';
+
+  @override
+  String get pluginsCardPreview => 'プレビューのテキスト';
+
+  @override
+  String get pluginsCardRejected => 'タスクが拒否されました';
+
+  @override
+  String get pluginsCardReview => 'カードタスクを確認';
+
+  @override
+  String get pluginsCardRun => '今回のみ許可して実行';
+
+  @override
+  String get pluginsCardTask => 'カードタスク';
+
+  @override
+  String get pluginsCardType => 'カードの種類';
+
+  @override
+  String get pluginsCardUnknown => '結果は未確認です。再度書き込む前に、この操作 ID で照会してください。';
+
+  @override
   String get pluginsChoosePackage => 'プラグインファイルを選択';
 
   @override

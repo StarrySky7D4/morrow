@@ -1725,6 +1725,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String get pluginsCancel => 'Cancelar';
 
   @override
+  String get pluginsCardAbsent =>
+      'Ainda não há uma gravação para este cartão e esta operação.';
+
+  @override
+  String get pluginsCardBody => 'Conteúdo (UTF-8)';
+
+  @override
+  String get pluginsCardCommitted => 'Gravação verificada';
+
+  @override
+  String get pluginsCardInvalid =>
+      'Verifique o ID do cartão, a revisão e os limites do conteúdo.';
+
+  @override
+  String get pluginsCardOffset => 'Posição de leitura (bytes)';
+
+  @override
+  String get pluginsCardOperationId => 'ID da operação';
+
+  @override
+  String get pluginsCardPreview => 'Texto de pré-visualização';
+
+  @override
+  String get pluginsCardRejected => 'Tarefa recusada';
+
+  @override
+  String get pluginsCardReview => 'Rever tarefa do cartão';
+
+  @override
+  String get pluginsCardRun => 'Aprovar e executar uma vez';
+
+  @override
+  String get pluginsCardTask => 'Tarefa do cartão';
+
+  @override
+  String get pluginsCardType => 'Tipo de cartão';
+
+  @override
+  String get pluginsCardUnknown =>
+      'Resultado por confirmar. Consulte o ID da operação antes de voltar a gravar.';
+
+  @override
   String get pluginsChoosePackage => 'Escolher arquivo do plugin';
 
   @override

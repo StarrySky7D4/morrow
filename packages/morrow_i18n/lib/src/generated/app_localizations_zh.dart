@@ -1582,6 +1582,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsCancel => '取消';
 
   @override
+  String get pluginsCardAbsent => '尚未查到此卡片和操作的提交记录。';
+
+  @override
+  String get pluginsCardBody => '正文（UTF-8）';
+
+  @override
+  String get pluginsCardCommitted => '已核对提交';
+
+  @override
+  String get pluginsCardInvalid => '请检查卡片 ID、版本号和内容长度。';
+
+  @override
+  String get pluginsCardOffset => '读取偏移（字节）';
+
+  @override
+  String get pluginsCardOperationId => '操作 ID';
+
+  @override
+  String get pluginsCardPreview => '预览文字';
+
+  @override
+  String get pluginsCardRejected => '任务被拒绝';
+
+  @override
+  String get pluginsCardReview => '复核卡片任务';
+
+  @override
+  String get pluginsCardRun => '批准并运行一次';
+
+  @override
+  String get pluginsCardTask => '卡片任务';
+
+  @override
+  String get pluginsCardType => '卡片类型';
+
+  @override
+  String get pluginsCardUnknown => '结果未确认。再次写入前，请先用此操作 ID 核对提交。';
+
+  @override
   String get pluginsChoosePackage => '选择插件文件';
 
   @override
