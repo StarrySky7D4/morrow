@@ -1,16 +1,17 @@
 import 'dart:typed_data';
+
 import 'package:crypto/crypto.dart';
+
 import 'generated/host.capnp.dart' as host;
 import 'channel_task_models.dart';
 import 'channel_task_codec_native.dart';
 
-typedef ChannelTaskExchange =
-    Future<T> Function<T>(
-      host.Action action, {
-      void Function(host.RequestBuilder)? configure,
-      required T Function(host.ResponseReader) decode,
-      required bool clearReply,
-    });
+typedef ChannelTaskExchange = Future<T> Function<T>(
+  host.Action action, {
+  void Function(host.RequestBuilder)? configure,
+  required T Function(host.ResponseReader) decode,
+  required bool clearReply,
+});
 
 /// Calls only the original local host; never uses business/service forwarding.
 final class NativeChannelTaskClient implements ChannelTaskBackend {
@@ -37,7 +38,9 @@ final class NativeChannelTaskClient implements ChannelTaskBackend {
   Future<ChannelTaskSnapshot> prepareChannel(ChannelPrepareRequest request) {
     _requireSupported();
     return _exchange(
-      request.compatibilityBudget
+      request.changes != null
+          ? host.Action.channelPrepareChanges
+          : request.compatibilityBudget
           ? host.Action.channelPrepareWithCompatibilityBudget
           : host.Action.channelPrepare,
       clearReply: true,

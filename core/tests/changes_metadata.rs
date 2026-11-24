@@ -47,6 +47,80 @@ fn value() -> Metadata {
         card_sha256: [3; 32],
     }
 }
+
+#[test]
+fn approved_pages_resume_on_selected_receipts_without_skipping_a_card() {
+    let (_dir, mut s) = store();
+    s.create_local("ca", &card("a")).unwrap();
+    s.create_local("private", &card("other")).unwrap();
+    s.create_local("cb", &card("b")).unwrap();
+    let scope = ids();
+    let page = |start, limit| -> morrow_core::Result<Vec<Metadata>> {
+        let w = s.open_changes_page(
+            [7; 32],
+            &scope,
+            start,
+            ChangesBudget::default(),
+            Some(limit),
+            || Ok(()),
+        )?;
+        s.materialize_changes_window(w, || Ok(()))?
+            .into_metadata([8; 32])
+    };
+    assert!(page(ChangesStart::Beginning, 0).is_err());
+    assert!(page(ChangesStart::Beginning, 65).is_err());
+    let first = page(ChangesStart::Beginning, 1).unwrap();
+    assert_eq!(first.len(), 1);
+    assert_eq!(first[0].operation_id, "ca");
+    let second = page(ChangesStart::After(first[0].clone()), 1).unwrap();
+    assert_eq!(second.len(), 1);
+    assert_eq!(second[0].operation_id, "cb");
+    assert!(
+        page(ChangesStart::After(second[0].clone()), 1)
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        batch(&s, ChangesBudget::default()).unwrap().changes().len(),
+        2
+    );
+    let small = ChangesBudget {
+        max_candidates: 1,
+        ..Default::default()
+    };
+    assert!(matches!(batch(&s, small), Err(Error::Limit)));
+    let first_page = s
+        .open_changes_page(
+            [7; 32],
+            &scope,
+            ChangesStart::Beginning,
+            small,
+            Some(1),
+            || Ok(()),
+        )
+        .unwrap();
+    assert_eq!(
+        s.materialize_changes_window(first_page, || Ok(()))
+            .unwrap()
+            .changes()
+            .len(),
+        1
+    );
+    let sparse = s
+        .open_changes_page(
+            [7; 32],
+            &["b".into()],
+            ChangesStart::Beginning,
+            small,
+            Some(1),
+            || Ok(()),
+        )
+        .unwrap();
+    assert!(matches!(
+        s.materialize_changes_window(sparse, || Ok(())),
+        Err(Error::Limit)
+    ));
+}
 #[test]
 fn canonical_codec_rejects_every_truncation_and_noncanonical_boundary() {
     assert_eq!(

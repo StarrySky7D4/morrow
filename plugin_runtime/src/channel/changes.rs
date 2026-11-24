@@ -31,6 +31,46 @@ pub enum HistoryStart {
         subscription: [u8; 32],
         source_epoch: [u8; 32],
     },
+    ExactAck {
+        subscription: [u8; 32],
+        cursor: ChangesCursor,
+    },
+}
+
+/// Identifies one committed metadata ACK. This carries no card access or grant.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct ChangesCursor {
+    epoch: [u8; 32],
+    sequence: u64,
+    metadata: [u8; 32],
+}
+
+impl ChangesCursor {
+    pub const BYTES: usize = 73;
+
+    pub fn encode(self) -> [u8; Self::BYTES] {
+        let mut wire = [0; Self::BYTES];
+        wire[0] = 1;
+        wire[1..33].copy_from_slice(&self.epoch);
+        wire[33..41].copy_from_slice(&self.sequence.to_le_bytes());
+        wire[41..].copy_from_slice(&self.metadata);
+        wire
+    }
+
+    pub fn decode(bytes: &[u8]) -> Result<Self> {
+        let bytes: &[u8; Self::BYTES] = bytes.try_into().map_err(|_| Error::Denied)?;
+        let epoch = bytes[1..33].try_into().unwrap();
+        let sequence = u64::from_le_bytes(bytes[33..41].try_into().unwrap());
+        let metadata = bytes[41..].try_into().unwrap();
+        if bytes[0] != 1 || epoch == [0; 32] || sequence == 0 || metadata == [0; 32] {
+            return Err(Error::Denied);
+        }
+        Ok(Self {
+            epoch,
+            sequence,
+            metadata,
+        })
+    }
 }
 
 struct ApprovalState {
@@ -278,7 +318,7 @@ fn latest_anchor(
     subscription: [u8; 32],
     epoch: [u8; 32],
     scope: [u8; 32],
-) -> Result<Metadata> {
+) -> Result<(Metadata, ChangesCursor)> {
     let store = host.store_local();
     let checkpoint = store
         .channel_checkpoint(&subscription, &epoch)
@@ -325,7 +365,16 @@ fn latest_anchor(
     {
         return Err(Error::Denied);
     }
-    Ok(metadata)
+    let cursor = ChangesCursor {
+        epoch,
+        sequence: checkpoint.sequence,
+        metadata: checkpoint
+            .cursor
+            .as_slice()
+            .try_into()
+            .map_err(|_| Error::Denied)?,
+    };
+    Ok((metadata, cursor))
 }
 impl ChangesApproval {
     /// This call itself is the new explicit trusted-host metadata history approval
@@ -340,6 +389,68 @@ impl ChangesApproval {
         cards: Vec<String>,
         start: HistoryStart,
         budget: ChangesBudget,
+        expires: u64,
+        now: u64,
+        restrictions: Vec<ContentAuthorization>,
+    ) -> Result<Self> {
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            expected_revision,
+            cards,
+            start,
+            budget,
+            None,
+            expires,
+            now,
+            restrictions,
+        )
+    }
+
+    /// Approval covers just this page. Resuming from a previous endpoint still
+    /// verifies its durable ACK against the live Store and the full card scope.
+    #[allow(clippy::too_many_arguments)]
+    pub fn issue_page(
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_revision: u64,
+        cards: Vec<String>,
+        start: HistoryStart,
+        budget: ChangesBudget,
+        page_size: u16,
+        expires: u64,
+        now: u64,
+    ) -> Result<Self> {
+        if page_size == 0 || page_size > budget.max_events {
+            return Err(Error::Limit);
+        }
+        Self::issue_inner(
+            manager,
+            host,
+            instance,
+            expected_revision,
+            cards,
+            start,
+            budget,
+            Some(page_size),
+            expires,
+            now,
+            vec![],
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn issue_inner(
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_revision: u64,
+        cards: Vec<String>,
+        start: HistoryStart,
+        budget: ChangesBudget,
+        page_size: Option<u16>,
         expires: u64,
         now: u64,
         restrictions: Vec<ContentAuthorization>,
@@ -415,14 +526,29 @@ impl ChangesApproval {
             HistoryStart::LatestAck {
                 subscription,
                 source_epoch,
-            } => ChangesStart::After(latest_anchor(host, subscription, source_epoch, scope)?),
+            } => ChangesStart::After(latest_anchor(host, subscription, source_epoch, scope)?.0),
+            HistoryStart::ExactAck {
+                subscription,
+                cursor,
+            } => {
+                let (metadata, durable) = latest_anchor(host, subscription, cursor.epoch, scope)?;
+                if cursor != durable {
+                    return Err(Error::Denied);
+                }
+                ChangesStart::After(metadata)
+            }
         };
         state.check()?;
         let window = host
             .store_local()
-            .open_changes_window(state.package, &state.cards, start, budget, || {
-                check_core(&state)
-            })
+            .open_changes_page(
+                state.package,
+                &state.cards,
+                start,
+                budget,
+                page_size,
+                || check_core(&state),
+            )
             .map_err(core_error)?;
         let batch = host
             .store_local()
@@ -542,7 +668,10 @@ impl ChangesApproval {
             grant.check_authority()?;
             *installed = Some(SourceGuard::Changes(Arc::clone(&grant)));
         }
-        let source = ChangesSource { broker, grant };
+        let source = ChangesSource {
+            broker: Arc::new(broker),
+            grant,
+        };
         source.broker.spawn(move |producer| {
             for item in items.iter() {
                 // Producer performs the typed gate and records its terminal cause
@@ -562,12 +691,38 @@ impl ChangesApproval {
 /// Retains the exact original broker and source approval. Completion/ACK/join are
 /// still separate observations on the existing channel snapshot/cleanup handle.
 pub struct ChangesSource {
-    broker: ChannelBroker,
+    broker: Arc<ChannelBroker>,
     grant: Arc<GrantState>,
 }
 impl ChangesSource {
     pub fn broker(&self) -> &ChannelBroker {
         &self.broker
+    }
+    /// The worker can use the same broker while the source owner retains revocation.
+    pub fn shared_broker(&self) -> Arc<ChannelBroker> {
+        Arc::clone(&self.broker)
+    }
+    /// The workbench emits a bookmark only after the original protected Store
+    /// corroborates the terminal guest's exact acknowledgement.
+    pub fn confirmed_cursor(
+        &self,
+        host: &HostRuntime,
+        subscription: [u8; 32],
+        sequence: u64,
+    ) -> Result<ChangesCursor> {
+        host.store_local()
+            .validate_changes_store_binding(&self.grant.approval.store_binding)
+            .map_err(core_error)?;
+        let (_, cursor) = latest_anchor(
+            host,
+            subscription,
+            self.broker.endpoint().source_epoch,
+            self.scope_digest(),
+        )?;
+        if cursor.sequence != sequence {
+            return Err(Error::Denied);
+        }
+        Ok(cursor)
     }
     pub fn revocation(&self) -> ChangesRevocation {
         ChangesRevocation {

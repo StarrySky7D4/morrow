@@ -202,6 +202,7 @@ enum Action {
   fsWatchRead,
   channelPrepareWithCompatibilityBudget,
   pluginContentTask,
+  channelPrepareChanges,
 }
 
 Action? actionFromUint16(int v) =>
@@ -826,7 +827,7 @@ final class RequestBuilder extends StructBuilder {
   bool hasGuestMutationCommand() => hasPointerField(46);
 
   ChannelPrepareBuilder initChannelPrepare() {
-    return initStructFieldWith(47, (r) => ChannelPrepareBuilder(r), 4, 5);
+    return initStructFieldWith(47, (r) => ChannelPrepareBuilder(r), 4, 6);
   }
 
   bool hasChannelPrepare() => hasPointerField(47);
@@ -1626,7 +1627,7 @@ final class ResponseBuilder extends StructBuilder {
   bool hasGuestMutationResult() => hasPointerField(38);
 
   ChannelStateBuilder initChannelState() {
-    return initStructFieldWith(39, (r) => ChannelStateBuilder(r), 9, 10);
+    return initStructFieldWith(39, (r) => ChannelStateBuilder(r), 9, 11);
   }
 
   bool hasChannelState() => hasPointerField(39);
@@ -3472,6 +3473,8 @@ final class PluginEntryReader extends StructReader {
 
   bool get contentTaskSupported => getBoolField(10);
 
+  bool get changesMetadataSupported => getBoolField(11);
+
   int get fsWatchMaxFrames => getUint32Field(4);
 
   int get fsWatchMaxWireBytes => _checkedWireInt(fsWatchMaxWireBytesBigInt);
@@ -3641,6 +3644,10 @@ final class PluginEntryBuilder extends StructBuilder {
 
   set contentTaskSupported(bool v) {
     setBoolField(10, v);
+  }
+
+  set changesMetadataSupported(bool v) {
+    setBoolField(11, v);
   }
 
   set fsWatchMaxFrames(int v) {
@@ -7200,6 +7207,11 @@ final class ChannelPrepareReader extends StructReader {
   BigInt get totalBytesBigInt =>
       ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
       BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  ChangesWindowReviewReader? get changes => getStructFieldWith(
+    5,
+    (r) => ChangesWindowReviewReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ChannelPrepareBuilder extends StructBuilder {
@@ -7277,6 +7289,12 @@ final class ChannelPrepareBuilder extends StructBuilder {
     setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
     setUint32Field(28, (bits >> 32).toInt());
   }
+
+  ChangesWindowReviewBuilder initChanges() {
+    return initStructFieldWith(5, (r) => ChangesWindowReviewBuilder(r), 1, 2);
+  }
+
+  bool hasChanges() => hasPointerField(5);
 }
 
 final class _ChannelPrepareFactory
@@ -7284,7 +7302,7 @@ final class _ChannelPrepareFactory
   @override
   int get dataWords => 4;
   @override
-  int get ptrWords => 5;
+  int get ptrWords => 6;
   @override
   ChannelPrepareReader fromRawReader(RawStructReader r) =>
       ChannelPrepareReader(r);
@@ -7299,6 +7317,64 @@ final class _ChannelPrepareFactory
 }
 
 final channelPrepareFactory = _ChannelPrepareFactory();
+
+final class ChangesWindowReviewReader extends StructReader {
+  ChangesWindowReviewReader(super.raw, {super.capabilities});
+
+  ListReader<String?>? get cards => getTextListField(0);
+
+  int get pageSize => getUint16Field(0);
+
+  Uint8List? get previousCursor => getDataField(1);
+
+  bool get compatibilityBudget => getBoolField(16);
+}
+
+final class ChangesWindowReviewBuilder extends StructBuilder {
+  ChangesWindowReviewBuilder(super.raw);
+
+  @override
+  ChangesWindowReviewReader asReader() =>
+      ChangesWindowReviewReader(rawToReader());
+
+  ListBuilder<String?> initCards(int length) {
+    return initTextListField(0, length);
+  }
+
+  set pageSize(int v) {
+    setUint16Field(0, v);
+  }
+
+  set previousCursor(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set compatibilityBudget(bool v) {
+    setBoolField(16, v);
+  }
+}
+
+final class _ChangesWindowReviewFactory
+    extends
+        StructFactory<ChangesWindowReviewReader, ChangesWindowReviewBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChangesWindowReviewReader fromRawReader(RawStructReader r) =>
+      ChangesWindowReviewReader(r);
+  @override
+  ChangesWindowReviewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChangesWindowReviewReader(r, capabilities: capabilities);
+  @override
+  ChangesWindowReviewBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChangesWindowReviewBuilder(r);
+}
+
+final changesWindowReviewFactory = _ChangesWindowReviewFactory();
 
 final class ChannelAppendReader extends StructReader {
   ChannelAppendReader(super.raw, {super.capabilities});
@@ -7487,6 +7563,8 @@ final class ChannelStateReader extends StructReader {
   bool get workerJoined => getBoolField(274);
 
   bool get snapshotPending => getBoolField(275);
+
+  Uint8List? get changesCursor => getDataField(10);
 }
 
 final class ChannelStateBuilder extends StructBuilder {
@@ -7674,6 +7752,10 @@ final class ChannelStateBuilder extends StructBuilder {
   set snapshotPending(bool v) {
     setBoolField(275, v);
   }
+
+  set changesCursor(Uint8List? v) {
+    setDataField(10, v);
+  }
 }
 
 final class _ChannelStateFactory
@@ -7681,7 +7763,7 @@ final class _ChannelStateFactory
   @override
   int get dataWords => 9;
   @override
-  int get ptrWords => 10;
+  int get ptrWords => 11;
   @override
   ChannelStateReader fromRawReader(RawStructReader r) => ChannelStateReader(r);
   @override

@@ -104,6 +104,7 @@ class PluginLibraryEntry {
     this.ioHandlers = const [],
     this.mutationSupported = false,
     this.contentTaskSupported = false,
+    this.changesMetadataSupported = false,
     this.directorySupported = false,
     this.fsWatchSupported = false,
     this.fsWatchApproved = false,
@@ -184,6 +185,7 @@ class PluginLibraryEntry {
   final List<String> ioHandlers;
   final bool mutationSupported;
   final bool contentTaskSupported;
+  final bool changesMetadataSupported;
   final bool directorySupported;
   final bool fsWatchSupported, fsWatchApproved;
   final List<String> fsWatchHandlers;

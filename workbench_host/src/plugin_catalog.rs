@@ -39,6 +39,7 @@ pub struct PluginEntry {
     /// A declaration on this exact package, never a runtime approval.
     pub mutation_supported: bool,
     pub content_task_supported: bool,
+    pub changes_metadata_supported: bool,
     pub directory_supported: bool,
     pub blob_upload_supported: bool,
     pub blob_upload_approved: bool,
@@ -267,6 +268,7 @@ impl WorkbenchState {
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
             mutation_supported: p.mutation_enabled(),
             content_task_supported: crate::plugin_content::supports(p),
+            changes_metadata_supported: cfg!(windows) && p.is_changes_metadata(),
             directory_supported: m
                 .required_features
                 .iter()
@@ -381,6 +383,7 @@ impl WorkbenchState {
                     declared_io: vec![],
                     io_handlers: vec![],
                     content_task_supported: false,
+                    changes_metadata_supported: false,
                     mutation_supported: false,
                     directory_supported: false,
                     blob_upload_supported: false,

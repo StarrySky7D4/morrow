@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:capnproto_dart/capnproto_dart.dart';
+
 import 'generated/host.capnp.dart' as host;
 import 'generated/channel.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
@@ -55,6 +57,16 @@ abstract final class ChannelTaskCodec {
     row.lifetimeMs = value.lifetimeMs;
     row.frameCount = value.frameCount;
     row.totalBytesBigInt = value.totalBytes;
+    if (value.changes case final review?) {
+      final detail = row.initChanges();
+      final cards = detail.initCards(review.cards.length);
+      for (var i = 0; i < review.cards.length; i++) {
+        cards[i] = review.cards[i];
+      }
+      detail.pageSize = review.pageSize;
+      detail.previousCursor = review.previousCursor ?? Uint8List(0);
+      detail.compatibilityBudget = value.compatibilityBudget;
+    }
   }
 
   static ChannelDirectory directory(Uint8List bytes) {
@@ -168,6 +180,22 @@ abstract final class ChannelTaskCodec {
     final inputSha = row.inputSha256 ?? Uint8List(0);
     final observedSha = row.observedSha256 ?? Uint8List(0);
     final error = row.taskError ?? '';
+    final cursor = row.changesCursor ?? Uint8List(0);
+    if (cursor.isNotEmpty) {
+      ChannelValidation.changesCursor(cursor);
+      var sequence = BigInt.zero;
+      for (var i = 40; i >= 33; i--) {
+        sequence = (sequence << 8) | BigInt.from(cursor[i]);
+      }
+      if (!row.workerJoined ||
+          !row.resourceReclaimed ||
+          !ChannelValidation.same(cursor.sublist(1, 33), epoch) ||
+          sequence != row.lastAckedBigInt) {
+        throw const FormatException(
+          'Changes receipt disagrees with channel state',
+        );
+      }
+    }
     final outputType = row.outputType ?? '';
     _text(error);
     _text(outputType);
@@ -199,6 +227,7 @@ abstract final class ChannelTaskCodec {
       phase: phase,
       status: status,
       lastAcked: row.lastAckedBigInt,
+      changesCursor: cursor,
       acceptedSequence: row.acceptedSequenceBigInt,
       observedSequence: row.observedSequenceBigInt,
       cleanupProof: proof,

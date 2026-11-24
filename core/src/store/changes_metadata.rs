@@ -99,6 +99,7 @@ pub struct ChangesWindow {
     lower: i64,
     upper: i64,
     budget: ChangesBudget,
+    page_limit: Option<u16>,
     usage: Usage,
     deadline: Instant,
 }
@@ -265,6 +266,7 @@ pub(super) struct WindowIdentity {
     pub(super) owner: Arc<()>,
     pub(super) liveness: Weak<()>,
 }
+#[cfg(target_os = "linux")]
 pub(super) fn open_connection(
     c: &Connection,
     identity: WindowIdentity,
@@ -274,8 +276,24 @@ pub(super) fn open_connection(
     budget: ChangesBudget,
     authorize: &mut impl FnMut() -> Result<()>,
 ) -> Result<ChangesWindow> {
+    open_window(c, identity, package, cards, start, budget, None, authorize)
+}
+#[allow(clippy::too_many_arguments)]
+fn open_window(
+    c: &Connection,
+    identity: WindowIdentity,
+    package: [u8; 32],
+    cards: &[String],
+    start: ChangesStart,
+    budget: ChangesBudget,
+    page_limit: Option<u16>,
+    authorize: &mut impl FnMut() -> Result<()>,
+) -> Result<ChangesWindow> {
     let WindowIdentity { owner, liveness } = identity;
     budget.validate()?;
+    if page_limit.is_some_and(|size| size == 0 || size > budget.max_events) {
+        return Err(Error::Limit);
+    }
     let deadline = Instant::now()
         .checked_add(Duration::from_millis(budget.max_duration_ms))
         .ok_or(Error::Limit)?;
@@ -332,7 +350,9 @@ pub(super) fn open_connection(
     }
     // Permanent events have contiguous positions. Reject too-large windows,
     // rather than calling a truncated scan successful or filtering before LIMIT.
-    if (upper - lower) as u64 + u64::from(usage.candidates) > u64::from(budget.max_candidates) {
+    if page_limit.is_none()
+        && (upper - lower) as u64 + u64::from(usage.candidates) > u64::from(budget.max_candidates)
+    {
         return Err(Error::Limit);
     }
     authorize()?;
@@ -346,6 +366,7 @@ pub(super) fn open_connection(
         lower,
         upper,
         budget,
+        page_limit,
         usage,
         deadline,
     })
@@ -371,19 +392,24 @@ pub(super) fn materialize_connection(
         return Err(Error::Invalid("foreign changes Store"));
     }
     let mut changes = Vec::new();
-    while w.lower < w.upper {
+    'scan: while w.lower < w.upper {
         authorize()?;
         let mut page = Usage::default();
+        let remaining = w
+            .budget
+            .max_candidates
+            .checked_sub(w.usage.candidates)
+            .ok_or(Error::Limit)?;
+        let read_limit = remaining.min(u32::from(w.budget.page_candidates));
+        if read_limit == 0 {
+            return Err(Error::Limit);
+        }
         // First collect at most one bounded page of permanent candidates. No
         // card filter or operations payload participates in this range scan.
         let candidates = {
             let mut stmt=sql(c.prepare("SELECT sequence,CASE WHEN length(CAST(id AS BLOB)) BETWEEN 1 AND 256 THEN id ELSE NULL END FROM operation_events WHERE sequence>?1 AND sequence<=?2 ORDER BY sequence LIMIT ?3"))?;
-            let mut rows = sql(stmt.query(params![
-                w.lower,
-                w.upper,
-                i64::from(w.budget.page_candidates)
-            ]))?;
-            let mut values = Vec::with_capacity(usize::from(w.budget.page_candidates));
+            let mut rows = sql(stmt.query(params![w.lower, w.upper, i64::from(read_limit)]))?;
+            let mut values = Vec::with_capacity(read_limit as usize);
             while let Some(row) = sql(rows.next())? {
                 let seq: i64 = sql(row.get(0))?;
                 let id: Option<String> = sql(row.get(1))?;
@@ -439,6 +465,11 @@ pub(super) fn materialize_connection(
                         revision: r.revision,
                         card_sha256: r.content_sha256,
                     });
+                    if w.page_limit
+                        .is_some_and(|limit| changes.len() == usize::from(limit))
+                    {
+                        break 'scan;
+                    }
                 }
             }
             w.lower = seq;
@@ -485,10 +516,23 @@ impl Store {
         cards: &[String],
         start: ChangesStart,
         budget: ChangesBudget,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<ChangesWindow> {
+        self.open_changes_page(package, cards, start, budget, None, authorize)
+    }
+    /// A reviewed page may end at its last selected commit before the captured upper bound.
+    /// Exhausting the scan budget before that point is an explicit limit, never an empty page.
+    pub fn open_changes_page(
+        &self,
+        package: [u8; 32],
+        cards: &[String],
+        start: ChangesStart,
+        budget: ChangesBudget,
+        page_limit: Option<u16>,
         mut authorize: impl FnMut() -> Result<()>,
     ) -> Result<ChangesWindow> {
         let snapshot = sql(self.connection.unchecked_transaction())?;
-        let result = open_connection(
+        let result = open_window(
             &snapshot,
             WindowIdentity {
                 owner: self.snapshot_identity.clone(),
@@ -498,6 +542,7 @@ impl Store {
             cards,
             start,
             budget,
+            page_limit,
             &mut authorize,
         )?;
         sql(snapshot.rollback())?;

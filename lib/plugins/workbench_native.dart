@@ -150,6 +150,7 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
         : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
     contentTaskSupported: row.contentTaskSupported,
+    changesMetadataSupported: row.changesMetadataSupported,
     directorySupported: row.directorySupported,
     fsWatchSupported: row.fsWatchSupported,
     fsWatchApproved: row.fsWatchApproved,

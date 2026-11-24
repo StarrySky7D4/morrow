@@ -3,7 +3,7 @@
 use super::{text, wire};
 use crate::{
     Result, Workbench,
-    channel_tasks::{Prepare, SourceFrame, State},
+    channel_tasks::{ChangesSelection, Prepare, SourceFrame, State},
 };
 use morrow_core::channel::{Budget, Kind};
 
@@ -12,6 +12,7 @@ pub(super) fn is_action(action: wire::Action) -> bool {
         action,
         wire::Action::ChannelPrepare
             | wire::Action::ChannelPrepareWithCompatibilityBudget
+            | wire::Action::ChannelPrepareChanges
             | wire::Action::ChannelAppend
             | wire::Action::ChannelRun
             | wire::Action::ChannelStatus
@@ -43,6 +44,7 @@ fn state_reply(value: State, mut out: wire::channel_state::Builder<'_>) {
     out.set_phase(value.phase);
     out.set_status(value.status as u16);
     out.set_last_acked(value.last_acked);
+    out.set_changes_cursor(&value.changes_cursor);
     out.set_accepted_sequence(value.accepted_sequence);
     out.set_observed_sequence(value.observed_sequence);
     out.set_cleanup_proof(value.cleanup_proof as u16);
@@ -70,7 +72,8 @@ pub(super) fn handle(
 ) -> Result<()> {
     let state = match request.get_action()? {
         action @ (wire::Action::ChannelPrepare
-        | wire::Action::ChannelPrepareWithCompatibilityBudget) => {
+        | wire::Action::ChannelPrepareWithCompatibilityBudget
+        | wire::Action::ChannelPrepareChanges) => {
             let p = request.get_channel_prepare()?;
             let prepared = Prepare {
                 submission: id(p.get_submission()?)?,
@@ -89,7 +92,41 @@ pub(super) fn handle(
                 frame_count: p.get_frame_count(),
                 total_bytes: p.get_total_bytes(),
             };
-            if action == wire::Action::ChannelPrepareWithCompatibilityBudget {
+            if action == wire::Action::ChannelPrepareChanges {
+                let selection = p.get_changes()?;
+                let list = selection.get_cards()?;
+                if list.is_empty() || list.len() as usize > morrow_core::changes_metadata::MAX_CARDS
+                {
+                    return Err("choose 1 to 32 cards".into());
+                }
+                let cards = list
+                    .iter()
+                    .map(|item| {
+                        let value = item?.to_str()?;
+                        if value.len() > 256 {
+                            return Err("invalid card identity".into());
+                        }
+                        Ok(value.to_owned())
+                    })
+                    .collect::<Result<Vec<_>>>()?;
+                let bytes = selection.get_previous_cursor()?;
+                let previous_cursor = if bytes.is_empty() {
+                    None
+                } else {
+                    Some(morrow_plugin_runtime::channel::changes::ChangesCursor::decode(bytes)?)
+                };
+                host.prepare_changes_channel(
+                    prepared,
+                    ChangesSelection {
+                        cards,
+                        previous_cursor,
+                        page_size: selection.get_page_size(),
+                    },
+                    selection.get_compatibility_budget(),
+                )?
+            } else if p.has_changes() {
+                return Err("changes require explicit source approval".into());
+            } else if action == wire::Action::ChannelPrepareWithCompatibilityBudget {
                 host.prepare_channel_with_compatibility_budget(prepared)?
             } else {
                 host.prepare_channel(prepared)?

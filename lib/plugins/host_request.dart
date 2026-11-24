@@ -33,6 +33,7 @@ Future<void> sendHostRequest(
       action == host.Action.mutationDiscover ||
       action == host.Action.channelPrepare ||
       action == host.Action.channelPrepareWithCompatibilityBudget ||
+      action == host.Action.channelPrepareChanges ||
       action == host.Action.channelAppend ||
       action == host.Action.channelRun ||
       action == host.Action.channelStatus ||

@@ -11,7 +11,7 @@ import 'package:morrow_studio/plugins/plugin_library.dart';
 import 'channel_task_session_test.dart'
     show Backend, budget, identity, request, snapshot, source, stopPolling;
 
-PluginLibraryEntry entry() => PluginLibraryEntry(
+PluginLibraryEntry entry({bool changes = false}) => PluginLibraryEntry(
   id: 'org.example.channel',
   name: 'Channel package',
   version: '1.0.0',
@@ -22,9 +22,9 @@ PluginLibraryEntry entry() => PluginLibraryEntry(
   declared: const [],
   approved: const [],
   dependencies: const [],
-  handlers: const [
+  handlers: [
     PluginTransformHandler(
-      name: 'channel.consume',
+      name: changes ? 'changes.metadata' : 'channel.consume',
       inputType: 'morrow.channel.directory.v1',
       outputType: 'summary',
       maxInputBytes: 256,
@@ -33,12 +33,56 @@ PluginLibraryEntry entry() => PluginLibraryEntry(
   ],
   issue: '',
   channelSupported: true,
-  channelHandlers: const ['channel.consume'],
-  channelKinds: const [ChannelSourceKind.byteStream],
+  changesMetadataSupported: changes,
+  channelHandlers: [changes ? 'changes.metadata' : 'channel.consume'],
+  channelKinds: [
+    changes ? ChannelSourceKind.events : ChannelSourceKind.byteStream,
+  ],
   channelBudget: budget(),
 );
 
 void main() {
+  testWidgets(
+    'review displays selected cards and cancel leaves history unopened',
+    (tester) async {
+      final backend = Backend();
+      final session = ChannelTaskSession.forBackend(backend);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChannelTaskManager(
+            backend: backend,
+            entry: entry(changes: true),
+            registryRevision: BigInt.one,
+          ),
+        ),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('channel-source-bytes')),
+        'card-a\ncard-b',
+      );
+      final run = find.byKey(const ValueKey('channel-run'));
+      await tester.tap(run);
+      await tester.pumpAndSettle();
+      expect(find.text('Approve card changes'), findsOneWidget);
+      expect(find.textContaining('card-a\ncard-b'), findsWidgets);
+      expect(backend.prepares, 0);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(backend.prepares, 0);
+      await tester.tap(run);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('channel-approve-compatibility-budget')),
+      );
+      await tester.pumpAndSettle();
+      expect(backend.prepares, 1);
+      expect(backend.requests[1]!.changes!.cards, ['card-a', 'card-b']);
+      expect(backend.requests[1]!.compatibilityBudget, isFalse);
+      expect(backend.appended, isEmpty);
+      await stopPolling(session, backend);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
   testWidgets('compatibility budget needs confirmation for this source', (
     tester,
   ) async {

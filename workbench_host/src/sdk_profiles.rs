@@ -660,6 +660,12 @@ pub fn descriptor() -> Value {
             "channel_scope": {"trusted_local_sources": true, "managed_binding_required": true, "workbench_binding": false, "network_backend": false, "cloud_account": false, "automatic_replay": false},
             "native_binding_implementation": crate::channel_binding::implementation_descriptor(),
             "payload_discovery": channel_payload_discovery(),
+            "reviewed_card_history": {
+                "version": 1, "windows_workbench_compiled": cfg!(windows),
+                "handler": "changes.metadata", "max_reviewed_cards": 32, "max_records_per_page": 64,
+                "bookmark_bytes": 73, "receipt": "epoch_sequence_metadata_sha256",
+                "fresh_approval_per_page": true, "grants_card_content": false
+            },
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],

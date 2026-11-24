@@ -1017,6 +1017,7 @@ fn handle_business(
     match action {
         wire::Action::ChannelPrepare
         | wire::Action::ChannelPrepareWithCompatibilityBudget
+        | wire::Action::ChannelPrepareChanges
         | wire::Action::ChannelAppend
         | wire::Action::ChannelRun
         | wire::Action::ChannelStatus
@@ -1974,6 +1975,7 @@ fn plugin_catalog_reply(
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
         row.set_content_task_supported(entry.content_task_supported);
+        row.set_changes_metadata_supported(entry.changes_metadata_supported);
         row.set_directory_supported(entry.directory_supported);
         row.set_fs_watch_supported(entry.fs_watch_supported);
         row.set_fs_watch_approved(entry.fs_watch_approved);

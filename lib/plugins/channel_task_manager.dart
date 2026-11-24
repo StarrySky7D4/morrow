@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:material_ui/material_ui.dart';
+
 import 'channel_task_models.dart';
 import 'channel_task_session.dart';
 import 'plugin_library.dart';
 
-/// Caller supplies finite original bytes. This UI reads no path or remote source.
+/// Starts a finite caller-provided source or an explicitly reviewed card history.
 final class ChannelTaskManager extends StatefulWidget {
   const ChannelTaskManager({
     super.key,
@@ -25,6 +27,12 @@ final class ChannelTaskManager extends StatefulWidget {
 final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   late final session = ChannelTaskSession.forBackend(widget.backend);
   final source = TextEditingController();
+  final resume = TextEditingController();
+  final pageSize = TextEditingController(text: '16');
+  int get maxPageSize =>
+      min(64, widget.entry.channelBudget?.maxMessages.toInt() ?? 1);
+  bool get changes =>
+      widget.entry.changesMetadataSupported && handler == 'changes.metadata';
   String? handler;
   ChannelSourceKind? kind;
   bool duplex = false;
@@ -42,6 +50,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
     session.addListener(_changed);
     handler = handlers.firstOrNull?.name;
     kind = widget.entry.channelKinds.firstOrNull;
+    pageSize.text = min(16, maxPageSize).toString();
   }
 
   void _changed() {
@@ -60,6 +69,8 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   void dispose() {
     session.removeListener(_changed);
     source.dispose();
+    resume.dispose();
+    pageSize.dispose();
     // The backend-retained session and its key survive dismissal. Closing the
     // dialog never asserts release or starts a replacement invocation.
     super.dispose();
@@ -87,20 +98,34 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
       kind != null &&
       widget.backend.supportsLocalChannels;
 
-  Future<bool> _approveCompatibilityBudget(
-    ChannelPrepareRequest request,
-  ) async {
+  Future<bool> _approveRun(ChannelPrepareRequest request) async {
     final generation = session.generation;
     setState(() => confirmingBudget = true);
     try {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Approve compatibility budget'),
-          content: Text(
-            'Run ${request.handler} from ${request.packageId} once with up to '
-            '100 million fuel units and 256 host calls. The package’s limits '
-            'also apply.',
+          title: Text(
+            request.changes == null
+                ? 'Approve compatibility budget'
+                : 'Approve card changes',
+          ),
+          content: SingleChildScrollView(
+            child: Text(
+              [
+                if (request.changes case final review?) ...[
+                  'Allow ${request.packageId} to read up to ${review.pageSize} change records for these cards once.',
+                  review.cards.join('\n'),
+                  review.previousCursor == null
+                      ? 'Start at the beginning.'
+                      : 'Resume after the last acknowledged record.',
+                  'Each record includes the card ID, operation ID, revision and content digest.',
+                ],
+                if (request.compatibilityBudget)
+                  'Run ${request.handler} from ${request.packageId} once with up to '
+                      '100 million fuel units and 256 host calls. The package’s limits also apply.',
+              ].join('\n\n'),
+            ),
           ),
           actions: [
             TextButton(
@@ -138,8 +163,17 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
       final selected = handlers.firstWhere((h) => h.name == handler);
       final declared = widget.entry.channelBudget!;
       final frames = <ChannelSourceFrame>[];
-      for (final line
-          in source.text.split('\n').where((s) => s.trim().isNotEmpty)) {
+      final lines = source.text.split('\n').where((s) => s.trim().isNotEmpty);
+      final review = changes
+          ? ChangesWindowReview(
+              cards: lines.map((s) => s.trim()).toList(),
+              pageSize: int.parse(pageSize.text.trim()),
+              previousCursor: resume.text.trim().isEmpty
+                  ? null
+                  : _hex(resume.text),
+            )
+          : null;
+      for (final line in changes ? const <String>[] : lines) {
         if (frames.length >= 64) {
           throw const FormatException('At most 64 source frames');
         }
@@ -177,8 +211,8 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
         packageDigest: widget.entry.digest,
         registryRevision: widget.registryRevision,
         handler: selected.name,
-        kind: kind!,
-        duplex: duplex,
+        kind: changes ? ChannelSourceKind.events : kind!,
+        duplex: changes ? false : duplex,
         budget: budget,
         lifetimeMs: duration,
         frameCount: frames.length,
@@ -187,8 +221,10 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
           (sum, f) => sum + BigInt.from(f.bytes.length),
         ),
         compatibilityBudget: compatibilityBudget,
+        changes: review,
       );
-      if (compatibilityBudget && !await _approveCompatibilityBudget(request)) {
+      if ((compatibilityBudget || review != null) &&
+          !await _approveRun(request)) {
         return;
       }
       inputFailure = null;
@@ -247,9 +283,10 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Provide finite source frames as hexadecimal bytes. Each line is one frame; use | followed by optional opaque cursor hex. Maximum 64 frames and 1 MiB, subject to the package budget. Cursors are for Events; byte-stream cursors must be empty. A duplex peer requires no inbound frames.',
-              ),
+              if (!changes)
+                const Text(
+                  'Provide finite source frames as hexadecimal bytes. Each line is one frame; use | followed by optional opaque cursor hex. Maximum 64 frames and 1 MiB, subject to the package budget. Cursors are for Events; byte-stream cursors must be empty. A duplex peer requires no inbound frames.',
+                ),
               if (handlers.isEmpty)
                 const Text(
                   'This package is not eligible for a bounded local Directory invocation.',
@@ -265,33 +302,54 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                     ? (value) => setState(() => handler = value)
                     : null,
               ),
-              DropdownButton<ChannelSourceKind>(
-                key: const ValueKey('channel-kind'),
-                value: kind,
-                items: [
-                  for (final k in widget.entry.channelKinds)
-                    DropdownMenuItem(value: k, child: Text(k.name)),
-                ],
-                onChanged: session.canPrepare
-                    ? (value) => setState(() => kind = value)
-                    : null,
-              ),
-              CheckboxListTile(
-                title: const Text('Duplex peer (requires empty source)'),
-                value: duplex,
-                onChanged: session.canPrepare
-                    ? (value) => setState(() => duplex = value ?? false)
-                    : null,
-              ),
+              if (!changes)
+                DropdownButton<ChannelSourceKind>(
+                  key: const ValueKey('channel-kind'),
+                  value: kind,
+                  items: [
+                    for (final k in widget.entry.channelKinds)
+                      DropdownMenuItem(value: k, child: Text(k.name)),
+                  ],
+                  onChanged: session.canPrepare
+                      ? (value) => setState(() => kind = value)
+                      : null,
+                ),
+              if (!changes)
+                CheckboxListTile(
+                  title: const Text('Duplex peer (requires empty source)'),
+                  value: duplex,
+                  onChanged: session.canPrepare
+                      ? (value) => setState(() => duplex = value ?? false)
+                      : null,
+                ),
               TextField(
                 key: const ValueKey('channel-source-bytes'),
                 controller: source,
                 maxLines: 6,
                 enabled: session.canPrepare,
-                decoration: const InputDecoration(
-                  labelText: 'Original bytes hex | cursor hex',
+                decoration: InputDecoration(
+                  labelText: changes
+                      ? 'Card IDs, one per line'
+                      : 'Original bytes hex | cursor hex',
                 ),
               ),
+              if (changes) ...[
+                TextField(
+                  controller: pageSize,
+                  enabled: session.canPrepare,
+                  decoration: InputDecoration(
+                    labelText: 'Records per approval (1–$maxPageSize)',
+                  ),
+                ),
+                TextField(
+                  controller: resume,
+                  enabled: session.canPrepare,
+                  key: const ValueKey('channel-changes-resume'),
+                  decoration: const InputDecoration(
+                    labelText: 'Resume cursor (optional)',
+                  ),
+                ),
+              ],
               if (inputFailure != null) Text(inputFailure.toString()),
               if (peerFailure != null)
                 Text('Peer receipt unconfirmed: $peerFailure'),
@@ -315,6 +373,12 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                   'Previously received ${received.outputType}: ${base64Encode(received.output)} (base64)',
                 ),
               if (current != null) ...[
+                if (activeHere &&
+                    session.request?.changes != null &&
+                    current.changesCursor.isNotEmpty)
+                  SelectableText(
+                    'Resume cursor\n${current.changesCursor.map((b) => b.toRadixString(16).padLeft(2, '0')).join()}',
+                  ),
                 Text(
                   '${activeHere ? "This package" : session.request?.packageId}: ${current.phase.name} / ${current.status.name}${current.snapshotPending ? " · snapshot pending" : ""}',
                 ),

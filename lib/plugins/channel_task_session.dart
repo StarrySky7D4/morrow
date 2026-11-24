@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
 import 'channel_task_models.dart';
 
 /// Retained by the original backend across view dismissal. Never replays a task.
@@ -35,6 +37,11 @@ final class ChannelTaskSession extends ChangeNotifier {
             !ChannelValidation.same(old.submission, next.submission) ||
             !ChannelValidation.same(old.directory.wire, next.directory.wire) ||
             next.lastAcked < old.lastAcked ||
+            (old.changesCursor.isNotEmpty &&
+                !ChannelValidation.same(
+                  old.changesCursor,
+                  next.changesCursor,
+                )) ||
             next.acceptedSequence < old.acceptedSequence ||
             next.observedSequence < old.observedSequence ||
             next.uploadedFrames < old.uploadedFrames ||

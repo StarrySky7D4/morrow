@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 enum ChannelSourceKind { byteStream, events }
@@ -73,11 +74,50 @@ abstract final class ChannelValidation {
   static bool same(List<int> a, List<int> b) =>
       a.length == b.length &&
       Iterable<int>.generate(a.length).every((i) => a[i] == b[i]);
+  static Uint8List changesCursor(List<int> bytes) {
+    if (bytes.length != 73 ||
+        bytes.first != 1 ||
+        bytes.sublist(1, 33).every((v) => v == 0) ||
+        bytes.sublist(33, 41).every((v) => v == 0) ||
+        bytes.sublist(41).every((v) => v == 0)) {
+      throw const FormatException('Invalid changes acknowledgement');
+    }
+    return owned(bytes);
+  }
+
   static void u64(BigInt value) {
     if (value < BigInt.zero || value >= (BigInt.one << 64)) {
       throw const FormatException('Channel integer outside UInt64');
     }
   }
+}
+
+final class ChangesWindowReview {
+  ChangesWindowReview({
+    required List<String> cards,
+    required this.pageSize,
+    List<int>? previousCursor,
+  }) : cards = List.unmodifiable(cards),
+       previousCursor = previousCursor == null
+           ? null
+           : ChannelValidation.changesCursor(previousCursor) {
+    if (cards.isEmpty ||
+        cards.length > 32 ||
+        cards.toSet().length != cards.length ||
+        cards.any(
+          (card) =>
+              card.isEmpty ||
+              utf8.encode(card).length > 256 ||
+              RegExp(r'[\x00-\x1f\x7f-\x9f/\\:]').hasMatch(card),
+        ) ||
+        pageSize < 1 ||
+        pageSize > 64) {
+      throw const FormatException('Invalid changes window');
+    }
+  }
+  final List<String> cards;
+  final int pageSize;
+  final Uint8List? previousCursor;
 }
 
 final class ChannelPrepareRequest {
@@ -94,6 +134,7 @@ final class ChannelPrepareRequest {
     required this.frameCount,
     required this.totalBytes,
     this.compatibilityBudget = false,
+    this.changes,
   }) : submission = ChannelValidation.identity(submission),
        packageDigest = ChannelValidation.identity(packageDigest) {
     ChannelValidation.u64(registryRevision);
@@ -109,7 +150,14 @@ final class ChannelPrepareRequest {
         totalBytes < BigInt.zero ||
         totalBytes > BigInt.from(1024 * 1024) ||
         totalBytes > budget.maxBytes ||
-        (frameCount == 0 && (totalBytes != BigInt.zero || !duplex)) ||
+        (frameCount == 0 &&
+            (totalBytes != BigInt.zero || (!duplex && changes == null))) ||
+        (changes != null &&
+            (kind != ChannelSourceKind.events ||
+                duplex ||
+                frameCount != 0 ||
+                handler != 'changes.metadata' ||
+                BigInt.from(changes!.pageSize) > budget.maxMessages)) ||
         (duplex && frameCount != 0) ||
         (frameCount > 0 &&
             (totalBytes < BigInt.from(frameCount) ||
@@ -118,6 +166,7 @@ final class ChannelPrepareRequest {
     }
   }
   final Uint8List submission, packageDigest;
+  final ChangesWindowReview? changes;
   final String packageId, handler;
   final BigInt registryRevision, totalBytes;
   final ChannelSourceKind kind;
@@ -185,6 +234,7 @@ final class ChannelTaskSnapshot {
     required this.phase,
     required this.status,
     required this.lastAcked,
+    List<int> changesCursor = const [],
     required this.acceptedSequence,
     required this.observedSequence,
     required this.cleanupProof,
@@ -208,6 +258,9 @@ final class ChannelTaskSnapshot {
        submission = ChannelValidation.identity(submission),
        reference = ChannelValidation.identity(reference),
        sourceEpoch = ChannelValidation.identity(sourceEpoch),
+       changesCursor = changesCursor.isEmpty
+           ? ChannelValidation.owned([])
+           : ChannelValidation.changesCursor(changesCursor),
        output = ChannelValidation.owned(output),
        inputSha256 = ChannelValidation.owned(inputSha256),
        observedSha256 = ChannelValidation.owned(observedSha256);
@@ -215,6 +268,7 @@ final class ChannelTaskSnapshot {
       submission,
       reference,
       sourceEpoch,
+      changesCursor,
       output,
       inputSha256,
       observedSha256;

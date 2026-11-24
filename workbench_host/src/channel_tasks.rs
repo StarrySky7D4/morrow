@@ -4,12 +4,14 @@
 use crate::{Result, Workbench, WorkbenchState, io_tasks::AccessError, now};
 use morrow_core::{
     channel::{Budget, Kind, Status},
+    store::ChangesBudget,
     task::{Invocation, Transform},
 };
 use morrow_plugin_runtime::{
     channel::{
         ChannelBroker, ChannelCleanup, CleanupProof, ProducerOutcome, Snapshot as RuntimeSnapshot,
         Source,
+        changes::{ChangesApproval, ChangesCursor, ChangesSource, HistoryStart},
     },
     manager::ManagedInstance,
     package::TaskReport,
@@ -47,6 +49,11 @@ pub struct Prepare {
     pub frame_count: u32,
     pub total_bytes: u64,
 }
+pub struct ChangesSelection {
+    pub cards: Vec<String>,
+    pub page_size: u16,
+    pub previous_cursor: Option<ChangesCursor>,
+}
 #[derive(Clone)]
 pub struct SourceFrame {
     pub sequence: u64,
@@ -63,6 +70,7 @@ pub struct State {
     pub phase: u16,
     pub status: Status,
     pub last_acked: u64,
+    pub changes_cursor: Vec<u8>,
     pub accepted_sequence: u64,
     pub observed_sequence: u64,
     pub cleanup_proof: CleanupProof,
@@ -135,6 +143,8 @@ struct Job {
     directory: Vec<u8>,
     instance: Arc<ManagedInstance>,
     broker: Arc<ChannelBroker>,
+    changes_source: Option<ChangesSource>,
+    changes_cursor: Vec<u8>,
     cleanup: Arc<ChannelCleanup>,
     input_type: String,
     output_type: String,
@@ -239,11 +249,21 @@ impl Job {
     fn observe(&mut self) {
         let _ = self.cleanup.try_reap();
         let snapshot = self.broker.try_snapshot();
-        let progress = self
-            .progress
-            .try_lock()
-            .ok()
-            .map(|progress| progress.view());
+        let progress = if self.changes_source.is_some() {
+            // Only the guarded Store producer can emit on this receive-only channel.
+            snapshot.and_then(|s| {
+                Some(ProgressView {
+                    source_frames: u32::try_from(s.usage.messages).ok()?,
+                    source_bytes: s.usage.bytes,
+                    ..Default::default()
+                })
+            })
+        } else {
+            self.progress
+                .try_lock()
+                .ok()
+                .map(|progress| progress.view())
+        };
         match (snapshot, progress) {
             (Some(snapshot), Some(progress))
                 if snapshot.last_acked <= u64::from(progress.source_frames)
@@ -339,6 +359,7 @@ impl Job {
             phase,
             status,
             last_acked: snapshot.map_or(0, |snapshot| snapshot.last_acked),
+            changes_cursor: self.changes_cursor.clone(),
             accepted_sequence: snapshot.map_or(0, |snapshot| snapshot.accepted_sequence),
             observed_sequence: self.last_progress.observed_sequence,
             cleanup_proof: snapshot
@@ -409,10 +430,34 @@ impl Workbench {
                 .manager
                 .as_ref()
                 .is_none_or(|manager| manager.revision() != job.request.registry_revision)
-            {
-                job.stop();
-            }
+        {
+            job.stop();
+        }
         job.observe();
+        if job.worker_joined
+            && job.changes_cursor.is_empty()
+            && job.error.is_empty()
+            && !job.close_requested
+            && !job.snapshot_pending
+            && job.report.as_ref().is_some_and(|report| {
+                report.failure.is_none()
+                    && report.execution.outcome.is_ok()
+                    && report.output.is_some()
+            })
+            && let Some(source) = &job.changes_source
+            && let Some(snapshot) = job.last_snapshot
+            && snapshot.resource_reclaimed
+            && snapshot.producer_outcome == ProducerOutcome::Eof
+            && snapshot.last_acked > 0
+        {
+            let owner = self.state.local()?;
+            match source.confirmed_cursor(&owner.host, source.scope_digest(), snapshot.last_acked) {
+                Ok(cursor) => job.changes_cursor = cursor.encode().to_vec(),
+                Err(_) => {
+                    job.error = "original changes acknowledgement could not be confirmed".into()
+                }
+            }
+        }
         if job.close_requested
             && (!job.worker_started || job.worker_joined)
             && job
@@ -430,29 +475,52 @@ impl Workbench {
         Ok(())
     }
     pub fn prepare_channel(&mut self, request: Prepare) -> Result<State> {
-        self.prepare_channel_inner(request, false)
+        self.prepare_channel_inner(request, false, None)
     }
 
     pub(crate) fn prepare_channel_with_compatibility_budget(
         &mut self,
         request: Prepare,
     ) -> Result<State> {
-        self.prepare_channel_inner(request, true)
+        self.prepare_channel_inner(request, true, None)
+    }
+
+    pub fn prepare_changes_channel(
+        &mut self,
+        request: Prepare,
+        changes: ChangesSelection,
+        compatibility_budget: bool,
+    ) -> Result<State> {
+        if request.kind != Kind::Events
+            || request.duplex
+            || request.frame_count != 0
+            || request.total_bytes != 0
+            || request.handler != "changes.metadata"
+            || changes.cards.is_empty()
+            || changes.cards.len() > morrow_core::changes_metadata::MAX_CARDS
+            || changes.page_size == 0
+            || u32::from(changes.page_size) > MAX_SOURCE_FRAMES
+        {
+            return Err("invalid reviewed changes window".into());
+        }
+        self.prepare_channel_inner(request, compatibility_budget, Some(changes))
     }
 
     fn prepare_channel_inner(
         &mut self,
         mut request: Prepare,
         compatibility_budget: bool,
+        changes: Option<ChangesSelection>,
     ) -> Result<State> {
         self.channel_tasks.touch(false)?;
         self.product_gate().check()?;
         crate::channel_binding::require_owner(self.channel_tasks.owner)?;
         self.channel_reclaim()?;
         if let Some(old) = &self.channel_tasks.job
-            && (!old.disconnected || old.worker.is_some()) {
-                return Err("close and reclaim the original channel job first".into());
-            }
+            && (!old.disconnected || old.worker.is_some())
+        {
+            return Err("close and reclaim the original channel job first".into());
+        }
         if request.submission == [0; 32]
             || request.package_digest == [0; 32]
             || self.channel_tasks.seen.contains(&request.submission)
@@ -461,7 +529,7 @@ impl Workbench {
             || request.frame_count > MAX_SOURCE_FRAMES
             || request.total_bytes > MAX_JOB_BYTES
             || (request.frame_count == 0) != (request.total_bytes == 0)
-            || request.frame_count == 0 && !request.duplex
+            || request.frame_count == 0 && !request.duplex && changes.is_none()
             || request.duplex && request.frame_count != 0
         {
             return Err("invalid, repeated or exhausted local source preparation".into());
@@ -490,6 +558,9 @@ impl Workbench {
             return Err("local channel package selection changed".into());
         }
         let package = manager.installed_package(request.package_digest)?;
+        if changes.is_some() && !package.is_changes_metadata() {
+            return Err("selected package does not declare the changes metadata profile".into());
+        }
         if !package.capabilities().is_empty()
             || package.io_declaration().is_some()
             || !package.manifest().dependencies.is_empty()
@@ -550,8 +621,11 @@ impl Workbench {
                 .min(30_000),
         };
         request.budget.validate()?;
+        let reserved_frames = changes
+            .as_ref()
+            .map_or(request.frame_count, |c| u32::from(c.page_size));
         if u64::from(request.lifetime_ms) > request.budget.max_duration_ms
-            || u64::from(request.frame_count) > request.budget.max_messages
+            || u64::from(reserved_frames) > request.budget.max_messages
             || request.total_bytes > request.budget.max_bytes
         {
             return Err("local source exceeds the approved original grant".into());
@@ -570,7 +644,7 @@ impl Workbench {
         let reserve_frames = self
             .channel_tasks
             .source_frames
-            .checked_add(request.frame_count)
+            .checked_add(reserved_frames)
             .ok_or("host frame budget overflow")?;
         if reserve_bytes > MAX_HOST_RESERVED_BYTES || reserve_frames > MAX_HOST_SOURCE_FRAMES {
             return Err("local channel host cumulative budget exhausted".into());
@@ -585,7 +659,7 @@ impl Workbench {
         let deadline = Instant::now()
             .checked_add(Duration::from_millis(u64::from(request.lifetime_ms)))
             .ok_or("channel deadline overflow")?;
-        let (instance, broker) = {
+        let (instance, broker, changes_source) = {
             let state = self.local_state_mut()?;
             state.host.prepare_write()?;
             let manager = state.manager.as_mut().ok_or("plugin manager unavailable")?;
@@ -599,33 +673,74 @@ impl Workbench {
             } else {
                 manager.connect(&request.package_id, &mut state.host)?
             });
-            let bound = manager.bind_channel(
-                &state.host,
-                &instance,
-                request.package_digest,
-                request.registry_revision,
-                Source {
-                    kind: request.kind,
-                    duplex: request.duplex,
-                    checkpoint_scope: if request.kind == Kind::Events {
-                        Some(key)
-                    } else {
-                        None
-                    },
-                },
-                request.budget,
-                expires,
-                tick,
-            );
-            let broker = match bound {
-                Ok(broker) => Arc::new(broker),
+            let bound: Result<(Arc<ChannelBroker>, Option<ChangesSource>)> = (|| {
+                if let Some(review) = changes {
+                    let scope = state
+                        .host
+                        .store_local()
+                        .changes_scope_digest(request.package_digest, &review.cards)?;
+                    let start = review
+                        .previous_cursor
+                        .map_or(HistoryStart::Beginning, |cursor| HistoryStart::ExactAck {
+                            subscription: scope,
+                            cursor,
+                        });
+                    let approval = ChangesApproval::issue_page(
+                        manager,
+                        &state.host,
+                        &instance,
+                        request.registry_revision,
+                        review.cards,
+                        start,
+                        ChangesBudget {
+                            max_duration_ms: u64::from(request.lifetime_ms),
+                            ..Default::default()
+                        },
+                        review.page_size,
+                        expires,
+                        tick,
+                    )?;
+                    let source = approval.bind(
+                        manager,
+                        &state.host,
+                        &instance,
+                        scope,
+                        request.budget,
+                        now(state.start),
+                    )?;
+                    return Ok((source.shared_broker(), Some(source)));
+                }
+                Ok((
+                    Arc::new(manager.bind_channel(
+                        &state.host,
+                        &instance,
+                        request.package_digest,
+                        request.registry_revision,
+                        Source {
+                            kind: request.kind,
+                            duplex: request.duplex,
+                            checkpoint_scope: if request.kind == Kind::Events {
+                                Some(key)
+                            } else {
+                                None
+                            },
+                        },
+                        request.budget,
+                        expires,
+                        tick,
+                    )?),
+                    None,
+                ))
+            })();
+            let (broker, changes_source) = match bound {
+                Ok(bound) => bound,
                 Err(error) => {
                     instance.request_stop();
                     let _ = state.host.disconnect(instance.connection());
-                    return Err(error.into());
+                    return Err(error);
                 }
             };
-            (instance, broker)
+            (instance, broker, changes_source)
         };
         let directory = broker.directory().encode()?;
         let cleanup = Arc::new(broker.cleanup_handle());
@@ -652,6 +767,8 @@ impl Workbench {
             directory,
             instance,
             broker,
+            changes_source,
+            changes_cursor: vec![],
             cleanup,
             input_type,
             output_type,
@@ -680,7 +797,8 @@ impl Workbench {
         self.product_gate().check()?;
         self.channel_reclaim()?;
         let job = self.channel_tasks.checked(key)?;
-        if job.run_admitted
+        if job.changes_source.is_some()
+            || job.run_admitted
             || job.close_requested
             || Instant::now() >= job.deadline
             || frame.sequence != job.uploaded.len() as u64 + 1
@@ -748,35 +866,40 @@ impl Workbench {
         let progress = job.progress.clone();
         let duplex = job.request.duplex;
         let cap = job.request.budget.max_bytes.min(MAX_JOB_BYTES);
-        let spawned = job.broker.spawn(move |producer| {
-            if !duplex {
-                for frame in frames {
-                    if producer.push(frame.bytes.clone(), frame.cursor).is_err() {
-                        return;
+        let spawned = if job.changes_source.is_some() {
+            // ChangesApproval bound the guarded producer before issuing the Directory.
+            Ok(())
+        } else {
+            job.broker.spawn(move |producer| {
+                if !duplex {
+                    for frame in frames {
+                        if producer.push(frame.bytes.clone(), frame.cursor).is_err() {
+                            return;
+                        }
+                        let mut progress = progress.lock().unwrap_or_else(|e| e.into_inner());
+                        progress.source_frames += 1;
+                        progress.source_bytes += frame.bytes.len() as u64;
                     }
-                    let mut progress = progress.lock().unwrap_or_else(|e| e.into_inner());
-                    progress.source_frames += 1;
-                    progress.source_bytes += frame.bytes.len() as u64;
-                }
-                let _ = producer.finish();
-            } else {
-                // Production duplex grants are sink-only: no extra producer thread
-                // or half-close interpretation of the public terminal Closed status.
-                while let Ok((sequence, bytes)) = producer.wait_sent() {
-                    let mut progress = progress.lock().unwrap_or_else(|e| e.into_inner());
-                    if progress.sent.len() >= MAX_SOURCE_FRAMES as usize
-                        || progress.observed_bytes.saturating_add(bytes.len() as u64) > cap
-                    {
-                        break;
+                    let _ = producer.finish();
+                } else {
+                    // Production duplex grants are sink-only: no extra producer thread
+                    // or half-close interpretation of the public terminal Closed status.
+                    while let Ok((sequence, bytes)) = producer.wait_sent() {
+                        let mut progress = progress.lock().unwrap_or_else(|e| e.into_inner());
+                        if progress.sent.len() >= MAX_SOURCE_FRAMES as usize
+                            || progress.observed_bytes.saturating_add(bytes.len() as u64) > cap
+                        {
+                            break;
+                        }
+                        progress.observed_bytes += bytes.len() as u64;
+                        progress.observed_hash.update(&bytes);
+                        progress.sent.push((sequence, bytes));
                     }
-                    progress.observed_bytes += bytes.len() as u64;
-                    progress.observed_hash.update(&bytes);
-                    progress.sent.push((sequence, bytes));
+                    // An explicit guest Close can end a sink without claiming source EOF.
+                    let _ = producer.finish();
                 }
-                // An explicit guest Close can end a sink without claiming source EOF.
-                let _ = producer.finish();
-            }
-        });
+            })
+        };
         if let Err(error) = spawned {
             job.error = short_error(error);
             job.stop();
@@ -881,9 +1004,10 @@ impl Workbench {
         self.channel_tasks.request_stop();
         self.channel_reclaim()?;
         if let Some(job) = &self.channel_tasks.job
-            && (!job.disconnected || job.worker.is_some()) {
-                return Err(AccessError::Busy.into());
-            }
+            && (!job.disconnected || job.worker.is_some())
+        {
+            return Err(AccessError::Busy.into());
+        }
         Ok(())
     }
 }
@@ -892,9 +1016,9 @@ impl Drop for ChannelTasks {
         self.request_stop();
     }
 }
-#[cfg(all(test, windows))]
-#[path = "channel_tasks_tests.rs"]
-mod tests;
 #[cfg(all(test, not(windows)))]
 #[path = "channel_tasks_native_tests.rs"]
 mod native_tests;
+#[cfg(all(test, windows))]
+#[path = "channel_tasks_tests.rs"]
+mod tests;

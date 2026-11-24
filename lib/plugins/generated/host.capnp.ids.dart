@@ -61,6 +61,7 @@ const schemaIds = <String, String>{
   'guestMutationResultSchema': 'efd23c868c2b10a7',
   'channelBudgetSchema': 'dacee23e459a2f5c',
   'channelPrepareSchema': 'f06275f93ca1c58a',
+  'changesWindowReviewSchema': 'be08a13a8fcaff3f',
   'channelAppendSchema': 'f6a0d85cd579ff7b',
   'channelRunSchema': 'f124676368fb14ec',
   'channelStateSchema': 'c7b507f73451d865',

@@ -40,6 +40,12 @@ Rust 库与 C / C++ 头文件位于 `extensions/changes-metadata-v1`，不属于
 
 ## 当前验收与后续
 
+### Windows 工作台的单次授权分页
+
+在已启用插件的通道窗口选择 `changes.metadata`，逐行填写卡片 ID，并选择本次最多读取的记录数。工作台显示接收插件、卡片集合和元数据字段，用户每次确认一页。插件仍通过原 Events 接口接收记录和提交 ACK。卡片集合上限为 32，每页最多 64 条，插件声明的较小预算优先。
+
+第一页可留空续读游标。插件完成、生产者正常结束、资源已回收且宿主核实原库 ACK 后，页面显示可复制的续读游标。下次打开同一资料库或重启应用后，可为同一插件和卡片集合重新批准续读。返回零条时沿用上一条已经确认的游标。有缺失的记录、已变更的回执或达到扫描预算时，宿主报告错误。工作台书签以十六进制表示 73 字节，绑定格式版本、窗口标识、确认序号和元数据摘要。能力描述的 `reviewed_card_history` 给出当前程序编译的入口。
+
 Windows C02 的普通合成 Store、有限 source 与三语言新 guest 已限定通过；C03 新增只读发现和静态准备兼容资格。见 [Windows 复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)与[C03 接入验证](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)。
 
-protected owner、生产 UI / catalog 绑定、长期 watch、retention / gap / 跨进程完整恢复、其他平台和整个 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。C08原owner fresh-secret入口已有独立限定Windows资格，见 [C08记录](../reports/reconstruction-2026-10-05/directory-secret-factory.md)，完整范围与后续门槛见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；当前C09新增原root至相对descendant的持有链接线，新20、factory14、原owner115及原件42分别实际通过，Workbench仅Release库check通过、protected产品NOT_RUN；C09 network100和Clippy NOT_RUN，见 [C09范围](../reports/reconstruction-2026-10-05/directory-selection-owner.md)；不证明picker／root以上来源，不新增目录guest或blob耐久后端。发现信息不能替代运行和授权。
+长期 watch、持久回执的轮转保留、其他平台和整个 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。C08原owner fresh-secret入口已有独立限定Windows资格，见 [C08记录](../reports/reconstruction-2026-10-05/directory-secret-factory.md)，完整范围与后续门槛见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；当前C09新增原root至相对descendant的持有链接线，新20、factory14、原owner115及原件42分别实际通过，Workbench仅Release库check通过、protected产品NOT_RUN；C09 network100和Clippy NOT_RUN，见 [C09范围](../reports/reconstruction-2026-10-05/directory-selection-owner.md)；不证明picker／root以上来源，不新增目录guest或blob耐久后端。发现信息不能替代运行和授权。
