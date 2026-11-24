@@ -205,6 +205,10 @@ enum Action {
   channelPrepareChanges,
   oauthControl,
   channelChangesCheckpoint,
+  channelChangesWait,
+  channelChangesWaitStatus,
+  channelChangesWaitClaim,
+  channelChangesWaitCancel,
 }
 
 Action? actionFromUint16(int v) =>
@@ -1308,6 +1312,11 @@ final class ResponseReader extends StructReader {
     56,
     (r) => ChangesCheckpointReader(r, capabilities: capabilityTable),
   );
+
+  ChangesWaitViewReader? get changesWait => getStructFieldWith(
+    57,
+    (r) => ChangesWaitViewReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1796,6 +1805,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasChangesCheckpoint() => hasPointerField(56);
+
+  ChangesWaitViewBuilder initChangesWait() {
+    return initStructFieldWith(57, (r) => ChangesWaitViewBuilder(r), 1, 2);
+  }
+
+  bool hasChangesWait() => hasPointerField(57);
 }
 
 final class _ResponseFactory
@@ -1803,7 +1818,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 57;
+  int get ptrWords => 58;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2220,6 +2235,56 @@ final class _ChangesCheckpointFactory
 }
 
 final changesCheckpointFactory = _ChangesCheckpointFactory();
+
+final class ChangesWaitViewReader extends StructReader {
+  ChangesWaitViewReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  int get phase => getUint16Field(0);
+
+  Uint8List? get preparedKey => getDataField(1);
+}
+
+final class ChangesWaitViewBuilder extends StructBuilder {
+  ChangesWaitViewBuilder(super.raw);
+
+  @override
+  ChangesWaitViewReader asReader() => ChangesWaitViewReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set preparedKey(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChangesWaitViewFactory
+    extends StructFactory<ChangesWaitViewReader, ChangesWaitViewBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChangesWaitViewReader fromRawReader(RawStructReader r) =>
+      ChangesWaitViewReader(r);
+  @override
+  ChangesWaitViewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChangesWaitViewReader(r, capabilities: capabilities);
+  @override
+  ChangesWaitViewBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChangesWaitViewBuilder(r);
+}
+
+final changesWaitViewFactory = _ChangesWaitViewFactory();
 
 final class PluginContentTaskReader extends StructReader {
   PluginContentTaskReader(super.raw, {super.capabilities});

@@ -42,8 +42,33 @@ PluginLibraryEntry entry({bool changes = false}) => PluginLibraryEntry(
 );
 
 final class ProgressBackend extends Fake
-    implements ChannelTaskBackend, ChangesCheckpointBackend {
+    implements
+        ChannelTaskBackend,
+        ChangesCheckpointBackend,
+        ChangesWaitBackend {
   final selections = <ChangesWindowReview>[];
+  final waits = <ChannelPrepareRequest>[];
+  final cancellations = <Uint8List>[];
+  @override
+  Future<ChangesWaitStatus> startChangesWait(
+    ChannelPrepareRequest request,
+  ) async {
+    waits.add(request);
+    return const ChangesWaitStatus(ChangesWaitPhase.waiting, null);
+  }
+
+  @override
+  Future<ChangesWaitStatus> changesWaitStatus(
+    Uint8List key, {
+    bool cancel = false,
+  }) async {
+    if (cancel) cancellations.add(key);
+    return ChangesWaitStatus(
+      cancel ? ChangesWaitPhase.cancelled : ChangesWaitPhase.waiting,
+      null,
+    );
+  }
+
   @override
   bool get supportsLocalChannels => true;
   @override
@@ -63,6 +88,47 @@ final class ProgressBackend extends Fake
 }
 
 void main() {
+  testWidgets(
+    'a reviewed future page keeps its visible cards fixed until cancellation',
+    (tester) async {
+      final backend = ProgressBackend();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChannelTaskManager(
+            backend: backend,
+            entry: entry(changes: true),
+            registryRevision: BigInt.one,
+          ),
+        ),
+      );
+      final input = find.byKey(const ValueKey('channel-source-bytes'));
+      await tester.enterText(input, 'one-card');
+      final wait = find.text('Wait for changes and run one page');
+      await tester.ensureVisible(wait);
+      await tester.tap(wait);
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('channel-run')));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('wait up to 30 seconds'), findsOneWidget);
+      expect(backend.waits, isEmpty);
+      await tester.tap(
+        find.byKey(const ValueKey('channel-approve-compatibility-budget')),
+      );
+      await tester.pumpAndSettle();
+      expect(backend.waits.single.changes!.cards, ['one-card']);
+      expect(tester.widget<TextField>(input).enabled, isFalse);
+      final cancel = find.text('Cancel wait');
+      await tester.ensureVisible(cancel);
+      await tester.tap(cancel);
+      await tester.pumpAndSettle();
+      expect(
+        backend.cancellations.single,
+        orderedEquals(backend.waits.single.submission),
+      );
+      expect(tester.widget<TextField>(input).enabled, isTrue);
+      expect(find.text('Wait cancelled.'), findsOneWidget);
+    },
+  );
   testWidgets(
     'checking progress reads only the typed cards and clears the result on a changed selection',
     (tester) async {

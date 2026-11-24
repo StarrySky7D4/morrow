@@ -666,6 +666,7 @@ pub fn descriptor() -> Value {
                 "bookmark_bytes": 73, "receipt": "epoch_sequence_metadata_sha256",
                 "retained_ack_epochs_per_selection": 2, "durable_compare_and_swap": true,
                 "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
+                "finite_wait_for_one_page": "reviewed_cards_and_guest_share_original_deadline",
                 "fresh_approval_per_page": true, "grants_card_content": false
             },
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",

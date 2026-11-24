@@ -240,6 +240,7 @@ class RustWorkbench
         NativeDirectoryPickerCapabilities,
         ChannelTaskBackend,
         ChangesCheckpointBackend,
+        ChangesWaitBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
         GuestMutationSupport,
@@ -1411,6 +1412,15 @@ class RustWorkbench
   Future<ReviewedChangesProgress> inspectChangesCheckpoint(
     String packageId, Uint8List digest, BigInt revision, ChangesWindowReview selection,
   ) => _channelTasks.inspectChangesCheckpoint(packageId, digest, revision, selection);
+  @override
+  Future<ChangesWaitStatus> startChangesWait(ChannelPrepareRequest request) =>
+      _channelTasks.startChangesWait(request);
+  @override
+  Future<ChangesWaitStatus> changesWaitStatus(Uint8List submission, {bool cancel = false}) =>
+      _channelTasks.changesWaitStatus(submission, cancel: cancel);
+  @override
+  Future<ChannelTaskSnapshot> claimChangesWait(Uint8List submission) =>
+      _channelTasks.claimChangesWait(submission);
   @override
   Future<ChannelTaskSnapshot> prepareChannel(ChannelPrepareRequest request) =>
       _channelTasks.prepareChannel(request);

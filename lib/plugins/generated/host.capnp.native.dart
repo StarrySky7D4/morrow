@@ -201,6 +201,10 @@ enum Action {
   channelPrepareChanges,
   oauthControl,
   channelChangesCheckpoint,
+  channelChangesWait,
+  channelChangesWaitStatus,
+  channelChangesWaitClaim,
+  channelChangesWaitCancel,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -710,6 +714,26 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       name: 'channelChangesCheckpoint',
       codeOrder: 194,
       ordinal: 194,
+    ),
+    EnumerantSchemaInfo(
+      name: 'channelChangesWait',
+      codeOrder: 195,
+      ordinal: 195,
+    ),
+    EnumerantSchemaInfo(
+      name: 'channelChangesWaitStatus',
+      codeOrder: 196,
+      ordinal: 196,
+    ),
+    EnumerantSchemaInfo(
+      name: 'channelChangesWaitClaim',
+      codeOrder: 197,
+      ordinal: 197,
+    ),
+    EnumerantSchemaInfo(
+      name: 'channelChangesWaitCancel',
+      codeOrder: 198,
+      ordinal: 198,
     ),
   ],
 );
@@ -2528,6 +2552,11 @@ final class ResponseReader extends StructReader {
     56,
     (r) => ChangesCheckpointReader(r, capabilities: capabilityTable),
   );
+
+  ChangesWaitViewReader? get changesWait => getStructFieldWith(
+    57,
+    (r) => ChangesWaitViewReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -2998,6 +3027,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasChangesCheckpoint() => hasPointerField(56);
+
+  ChangesWaitViewBuilder initChangesWait() {
+    return initStructFieldWith(57, (r) => ChangesWaitViewBuilder(r), 1, 2);
+  }
+
+  bool hasChangesWait() => hasPointerField(57);
 }
 
 final class _ResponseFactory
@@ -3007,7 +3042,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 57;
+  int get ptrWords => 58;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -3024,7 +3059,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 57,
+  pointerWords: 58,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -3608,6 +3643,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 56,
         type: StructRefTypeSchemaInfo(0x9ea4cdaea36fef1c),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'changesWait',
+      codeOrder: 73,
+      body: SlotFieldSchemaInfo(
+        offset: 57,
+        type: StructRefTypeSchemaInfo(0x8248cbaf4b396f12),
       ),
     ),
   ],
@@ -4327,6 +4370,94 @@ const StructSchemaInfo changesCheckpointSchema = StructSchemaInfo(
 );
 
 final changesCheckpointFactory = _ChangesCheckpointFactory();
+
+final class ChangesWaitViewReader extends StructReader {
+  ChangesWaitViewReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = changesWaitViewSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  int get phase => getUint16Field(0);
+
+  Uint8List? get preparedKey => getDataField(1);
+}
+
+final class ChangesWaitViewBuilder extends StructBuilder {
+  ChangesWaitViewBuilder(super.raw);
+
+  @override
+  ChangesWaitViewReader asReader() => ChangesWaitViewReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set preparedKey(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChangesWaitViewFactory
+    extends StructFactory<ChangesWaitViewReader, ChangesWaitViewBuilder> {
+  @override
+  StructSchemaInfo get schema => changesWaitViewSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChangesWaitViewReader fromRawReader(RawStructReader r) =>
+      ChangesWaitViewReader(r);
+  @override
+  ChangesWaitViewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChangesWaitViewReader(r, capabilities: capabilities);
+  @override
+  ChangesWaitViewBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChangesWaitViewBuilder(r);
+}
+
+const StructSchemaInfo changesWaitViewSchema = StructSchemaInfo(
+  id: 0x8248cbaf4b396f12,
+  displayName: 'host.capnp:ChangesWaitView',
+  shortName: 'ChangesWaitView',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'preparedKey',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final changesWaitViewFactory = _ChangesWaitViewFactory();
 
 final class PluginContentTaskReader extends StructReader {
   PluginContentTaskReader(super.raw, {super.capabilities});

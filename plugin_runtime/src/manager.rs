@@ -275,20 +275,20 @@ pub struct Manager {
     channel_cleanup: Vec<Arc<crate::channel::ChannelContext>>,
 }
 /// Valid only while the original selection owner and registry revision are live.
-#[cfg(windows)]
 #[derive(Clone)]
-pub struct AccountRevision {
+pub struct SelectionRevision {
     owner: Weak<()>,
     revision: Weak<AtomicBool>,
 }
-#[cfg(windows)]
-impl AccountRevision {
+impl SelectionRevision {
     pub fn is_current(&self) -> bool {
         self.owner.upgrade().is_some()
             && self.revision.upgrade()
                 .is_some_and(|changed| !changed.load(Ordering::Acquire))
     }
 }
+#[cfg(windows)]
+pub type AccountRevision = SelectionRevision;
 
 impl Manager {
     pub fn new(registry: Registry, limits: Limits) -> Self {
@@ -311,12 +311,15 @@ impl Manager {
     pub(crate) fn changes_revision_guard(&self) -> Arc<AtomicBool> {
         Arc::clone(&self.changes_revision)
     }
-    #[cfg(windows)]
-    pub fn account_revision(&self) -> AccountRevision {
-        AccountRevision {
+    pub fn selection_revision(&self) -> SelectionRevision {
+        SelectionRevision {
             owner: self.identity(),
             revision: Arc::downgrade(&self.changes_revision),
         }
+    }
+    #[cfg(windows)]
+    pub fn account_revision(&self) -> AccountRevision {
+        self.selection_revision()
     }
     /// One original account worker may wait on the selected registry revision.
     /// Replacing any selection cancels it before registry changes are published.

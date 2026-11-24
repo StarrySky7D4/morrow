@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'channel_task_models.dart';
 import 'channel_task_session.dart';
+import 'changes_page_wait.dart';
 import 'plugin_library.dart';
 
 /// Starts a finite caller-provided source or an explicitly reviewed card history.
@@ -25,7 +26,7 @@ final class ChannelTaskManager extends StatefulWidget {
 }
 
 final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
-  late final session = ChannelTaskSession.forBackend(widget.backend);
+  late ChannelTaskSession session;
   final source = TextEditingController();
   final resume = TextEditingController();
   final pageSize = TextEditingController(text: '16');
@@ -41,6 +42,8 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   ReviewedChangesProgress? checkpoint;
   int lookupGeneration = 0;
   bool checkingCheckpoint = false;
+  bool waitForChanges = false;
+  ChangesPageWait? watcher;
   Object? peerFailure;
   ChannelSentFrame? peerReceipt;
   late int receiptGeneration;
@@ -49,6 +52,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   @override
   void initState() {
     super.initState();
+    session = ChannelTaskSession.forBackend(widget.backend);
     receiptGeneration = session.generation;
     session.addListener(_changed);
     handler = handlers.firstOrNull?.name;
@@ -72,10 +76,22 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   @override
   void didUpdateWidget(covariant ChannelTaskManager oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.backend != widget.backend ||
+    if (!identical(oldWidget.backend, widget.backend)) {
+      session.removeListener(_changed);
+      session = ChannelTaskSession.forBackend(widget.backend);
+      receiptGeneration = session.generation;
+      session.addListener(_changed);
+      peerReceipt = null;
+      peerFailure = null;
+    }
+    if (!identical(oldWidget.backend, widget.backend) ||
+        oldWidget.entry.id != widget.entry.id ||
         oldWidget.registryRevision != widget.registryRevision ||
         !ChannelValidation.same(oldWidget.entry.digest, widget.entry.digest)) {
       clearCheckpoint();
+      watcher?.removeListener(_changed);
+      watcher?.dispose();
+      watcher = null;
     }
   }
 
@@ -150,6 +166,8 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
 
   @override
   void dispose() {
+    watcher?.removeListener(_changed);
+    watcher?.dispose();
     session.removeListener(_changed);
     source.dispose();
     resume.dispose();
@@ -173,15 +191,24 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
     ]);
   }
 
-  bool get _canRun =>
+  bool get _canEdit =>
       !confirmingBudget &&
-      session.canPrepare &&
+      watcher?.original == null &&
+      watcher?.busy != true &&
+      session.canPrepare;
+
+  bool get _canRun =>
+      _canEdit &&
       widget.entry.hasEligibleDirectoryChannels &&
       handler != null &&
       kind != null &&
       widget.backend.supportsLocalChannels;
 
-  Future<bool> _approveRun(ChannelPrepareRequest request) async {
+  Future<bool> _approveRun(
+    ChannelPrepareRequest request, {
+    bool wait = false,
+  }) async {
+    final originalBackend = widget.backend;
     final generation = session.generation;
     setState(() => confirmingBudget = true);
     try {
@@ -198,6 +225,8 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
               [
                 if (request.changes case final review?) ...[
                   'Allow ${request.packageId} to read up to ${review.pageSize} change records for these cards once.',
+                  if (wait)
+                    'If these cards are caught up, wait up to ${request.lifetimeMs ~/ 1000} seconds for a change and run this page once. The wait and the plugin share the same deadline.',
                   review.cards.join('\n'),
                   review.previousCursor == null
                       ? 'Use the last confirmed position, or start at the beginning for a new selection.'
@@ -225,6 +254,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
       );
       return confirmed == true &&
           mounted &&
+          identical(widget.backend, originalBackend) &&
           session.generation == generation &&
           session.canPrepare &&
           widget.registryRevision == request.registryRevision &&
@@ -300,14 +330,27 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
         compatibilityBudget: compatibilityBudget,
         changes: review,
       );
+      final wait =
+          review != null &&
+          waitForChanges &&
+          widget.backend is ChangesWaitBackend;
       if ((compatibilityBudget || review != null) &&
-          !await _approveRun(request)) {
+          !await _approveRun(request, wait: wait)) {
         return;
       }
       inputFailure = null;
       peerReceipt = null;
       peerFailure = null;
-      await session.prepareAndRun(request, frames);
+      if (wait) {
+        watcher ??= ChangesPageWait(
+          widget.backend as ChangesWaitBackend,
+          (approved) =>
+              session.prepareAndRun(approved, const [], fromApprovedWait: true),
+        )..addListener(_changed);
+        await watcher!.start(request);
+      } else {
+        await session.prepareAndRun(request, frames);
+      }
     } catch (error) {
       inputFailure = error;
     }
@@ -375,7 +418,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                   for (final h in handlers)
                     DropdownMenuItem(value: h.name, child: Text(h.name)),
                 ],
-                onChanged: session.canPrepare
+                onChanged: _canEdit
                     ? (value) => setState(() => handler = value)
                     : null,
               ),
@@ -387,7 +430,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                     for (final k in widget.entry.channelKinds)
                       DropdownMenuItem(value: k, child: Text(k.name)),
                   ],
-                  onChanged: session.canPrepare
+                  onChanged: _canEdit
                       ? (value) => setState(() => kind = value)
                       : null,
                 ),
@@ -395,7 +438,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 CheckboxListTile(
                   title: const Text('Duplex peer (requires empty source)'),
                   value: duplex,
-                  onChanged: session.canPrepare
+                  onChanged: _canEdit
                       ? (value) => setState(() => duplex = value ?? false)
                       : null,
                 ),
@@ -404,7 +447,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 controller: source,
                 onChanged: changes ? (_) => setState(clearCheckpoint) : null,
                 maxLines: 6,
-                enabled: session.canPrepare,
+                enabled: _canEdit,
                 decoration: InputDecoration(
                   labelText: changes
                       ? 'Card IDs, one per line'
@@ -412,9 +455,22 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 ),
               ),
               if (changes) ...[
+                if (widget.backend is ChangesWaitBackend)
+                  CheckboxListTile(
+                    title: Text(
+                      Localizations.localeOf(context).languageCode == 'zh'
+                          ? '等待下一页变更并运行一次'
+                          : 'Wait for changes and run one page',
+                    ),
+                    value: waitForChanges,
+                    onChanged: _canRun
+                        ? (value) =>
+                              setState(() => waitForChanges = value ?? false)
+                        : null,
+                  ),
                 TextField(
                   controller: pageSize,
-                  enabled: session.canPrepare,
+                  enabled: _canEdit,
                   decoration: InputDecoration(
                     labelText: 'Records per approval (1–$maxPageSize)',
                   ),
@@ -422,7 +478,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 TextField(
                   controller: resume,
                   onChanged: (_) => setState(clearCheckpoint),
-                  enabled: session.canPrepare,
+                  enabled: _canEdit,
                   key: const ValueKey('channel-changes-resume'),
                   decoration: const InputDecoration(
                     labelText: 'Resume cursor (optional)',
@@ -450,6 +506,35 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 ],
               ],
               if (inputFailure != null) Text(inputFailure.toString()),
+              if (watcher case final w?) ...[
+                if (w.original != null)
+                  Wrap(
+                    children: [
+                      Text(
+                        w.failure != null ||
+                                w.phase == ChangesWaitPhase.unconfirmed
+                            ? 'Original wait outcome unconfirmed.'
+                            : 'Waiting on the reviewed cards.',
+                      ),
+                      TextButton(
+                        onPressed: w.busy ? null : () => unawaited(w.check()),
+                        child: const Text('Check original wait'),
+                      ),
+                      TextButton(
+                        onPressed: () => unawaited(w.check(cancel: true)),
+                        child: const Text('Cancel wait'),
+                      ),
+                    ],
+                  ),
+                if (w.phase == ChangesWaitPhase.expired)
+                  const Text('The wait expired.'),
+                if (w.phase == ChangesWaitPhase.changed)
+                  const Text(
+                    'The selection or confirmed cursor changed. Review the cards again.',
+                  ),
+                if (w.phase == ChangesWaitPhase.cancelled)
+                  const Text('Wait cancelled.'),
+              ],
               if (peerFailure != null)
                 Text('Peer receipt unconfirmed: $peerFailure'),
               if (peerReceipt case final receipt?)
@@ -510,7 +595,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
         ),
         TextButton(
           key: const ValueKey('channel-refresh'),
-          onPressed: current == null
+          onPressed: current == null && !session.canRecoverPreparedWait
               ? null
               : () => unawaited(session.refresh()),
           child: const Text('Inspect'),

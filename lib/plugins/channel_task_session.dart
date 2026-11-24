@@ -18,6 +18,9 @@ final class ChannelTaskSession extends ChangeNotifier {
   ChannelTaskSnapshot? observedTaskResult;
   Object? failure;
   bool uncertain = false, busy = false;
+  bool _fromWait = false;
+  bool get canRecoverPreparedWait =>
+      _fromWait && uncertain && snapshot == null && !busy;
   int _generation = 0;
   int get generation => _generation;
   int? _refreshGeneration;
@@ -119,13 +122,18 @@ final class ChannelTaskSession extends ChangeNotifier {
 
   Future<void> prepareAndRun(
     ChannelPrepareRequest value,
-    List<ChannelSourceFrame> frames,
-  ) async {
+    List<ChannelSourceFrame> frames, {
+    bool fromApprovedWait = false,
+  }) async {
     // Own the collection before validation or any listener can mutate it. Each
     // frame already owns immutable original bytes and cursor bytes.
     final sourceFrames = List<ChannelSourceFrame>.unmodifiable(frames);
     if (!canPrepare) {
       throw StateError('The previous local channel still needs confirmation');
+    }
+    if (fromApprovedWait &&
+        (value.changes == null || backend is! ChangesWaitBackend)) {
+      throw StateError('No reviewed changes wait is available');
     }
     if (sourceFrames.length != value.frameCount ||
         sourceFrames.fold<BigInt>(
@@ -153,6 +161,7 @@ final class ChannelTaskSession extends ChangeNotifier {
     _pollUntil = null;
     _refreshGeneration = null;
     request = value;
+    _fromWait = fromApprovedWait;
     snapshot = null;
     observedTaskResult = null;
     failure = null;
@@ -160,7 +169,11 @@ final class ChannelTaskSession extends ChangeNotifier {
     busy = true;
     notifyListeners();
     try {
-      final prepared = await backend.prepareChannel(value);
+      final prepared = fromApprovedWait
+          ? await (backend as ChangesWaitBackend).claimChangesWait(
+              value.submission,
+            )
+          : await backend.prepareChannel(value);
       if (generation != _generation) return;
       if (!ChannelValidation.same(prepared.submission, value.submission)) {
         throw const FormatException(
@@ -213,6 +226,45 @@ final class ChannelTaskSession extends ChangeNotifier {
 
   Future<void> refresh() async {
     final generation = _generation;
+    if (canRecoverPreparedWait) {
+      busy = true;
+      notifyListeners();
+      try {
+        final original = request!;
+        final proof = await (backend as ChangesWaitBackend).changesWaitStatus(
+          original.submission,
+        );
+        if (generation != _generation) return;
+        if (proof.phase == ChangesWaitPhase.prepared &&
+            proof.preparedKey != null) {
+          final state = await backend.statusChannel(proof.preparedKey!);
+          if (generation != _generation) return;
+          if (!ChannelValidation.same(state.submission, original.submission)) {
+            throw const FormatException(
+              'The original wait does not match the prepared channel',
+            );
+          }
+          _accept(state);
+          failure = null;
+          uncertain = false;
+        } else if (proof.phase == ChangesWaitPhase.cancelled ||
+            proof.phase == ChangesWaitPhase.changed ||
+            proof.phase == ChangesWaitPhase.expired) {
+          // The original host confirms this review ended before preparation.
+          _fromWait = false;
+          uncertain = false;
+          failure = null;
+        }
+      } catch (error) {
+        if (generation == _generation) failure = error;
+      } finally {
+        if (generation == _generation) {
+          busy = false;
+          notifyListeners();
+        }
+      }
+      return;
+    }
     final current = snapshot;
     if (current == null || _refreshGeneration == generation) {
       return;

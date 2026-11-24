@@ -14,6 +14,10 @@ pub(super) fn is_action(action: wire::Action) -> bool {
             | wire::Action::ChannelPrepareWithCompatibilityBudget
             | wire::Action::ChannelPrepareChanges
             | wire::Action::ChannelChangesCheckpoint
+            | wire::Action::ChannelChangesWait
+            | wire::Action::ChannelChangesWaitStatus
+            | wire::Action::ChannelChangesWaitClaim
+            | wire::Action::ChannelChangesWaitCancel
             | wire::Action::ChannelAppend
             | wire::Action::ChannelRun
             | wire::Action::ChannelStatus
@@ -94,6 +98,25 @@ fn state_reply(value: State, mut out: wire::channel_state::Builder<'_>) {
     out.set_worker_joined(value.worker_joined);
     out.set_snapshot_pending(value.snapshot_pending);
 }
+fn wait_reply(
+    view: crate::channel_tasks::ChangesWaitView,
+    mut out: wire::changes_wait_view::Builder<'_>,
+) {
+    use crate::channel_tasks::ChangesWaitPhase::*;
+    out.set_submission(&view.submission);
+    out.set_phase(match view.phase {
+        Waiting => 0,
+        Available => 1,
+        Prepared => 2,
+        Cancelled => 3,
+        Expired => 4,
+        Changed => 5,
+        Unconfirmed => 6,
+    });
+    if let Some(key) = view.prepared_key {
+        out.set_prepared_key(&key);
+    }
+}
 pub(super) fn handle(
     host: &mut Workbench,
     request: wire::request::Reader<'_>,
@@ -129,7 +152,8 @@ pub(super) fn handle(
     let state = match request.get_action()? {
         action @ (wire::Action::ChannelPrepare
         | wire::Action::ChannelPrepareWithCompatibilityBudget
-        | wire::Action::ChannelPrepareChanges) => {
+        | wire::Action::ChannelPrepareChanges
+        | wire::Action::ChannelChangesWait) => {
             let p = request.get_channel_prepare()?;
             let prepared = Prepare {
                 submission: id(p.get_submission()?)?,
@@ -148,18 +172,26 @@ pub(super) fn handle(
                 frame_count: p.get_frame_count(),
                 total_bytes: p.get_total_bytes(),
             };
-            if action == wire::Action::ChannelPrepareChanges {
+            if matches!(
+                action,
+                wire::Action::ChannelPrepareChanges | wire::Action::ChannelChangesWait
+            ) {
                 let selection = p.get_changes()?;
                 let (cards, previous_cursor) = reviewed_cards(selection)?;
-                host.prepare_changes_channel(
-                    prepared,
-                    ChangesSelection {
-                        cards,
-                        previous_cursor,
-                        page_size: selection.get_page_size(),
-                    },
-                    selection.get_compatibility_budget(),
-                )?
+                let changes = ChangesSelection {
+                    cards,
+                    previous_cursor,
+                    page_size: selection.get_page_size(),
+                };
+                let compatibility = selection.get_compatibility_budget();
+                if action == wire::Action::ChannelChangesWait {
+                    wait_reply(
+                        host.start_changes_wait(prepared, changes, compatibility)?,
+                        out.init_changes_wait(),
+                    );
+                    return Ok(());
+                }
+                host.prepare_changes_channel(prepared, changes, compatibility)?
             } else if p.has_changes() {
                 return Err("changes require explicit source approval".into());
             } else if action == wire::Action::ChannelPrepareWithCompatibilityBudget {
@@ -167,6 +199,18 @@ pub(super) fn handle(
             } else {
                 host.prepare_channel(prepared)?
             }
+        }
+        action @ (wire::Action::ChannelChangesWaitStatus
+        | wire::Action::ChannelChangesWaitCancel) => {
+            let view = host.changes_wait_status(
+                id(request.get_channel_key()?)?,
+                action == wire::Action::ChannelChangesWaitCancel,
+            )?;
+            wait_reply(view, out.init_changes_wait());
+            return Ok(());
+        }
+        wire::Action::ChannelChangesWaitClaim => {
+            host.claim_changes_wait(id(request.get_channel_key()?)?)?
         }
         wire::Action::ChannelAppend => {
             let p = request.get_channel_append()?;

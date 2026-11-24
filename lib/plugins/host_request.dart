@@ -35,6 +35,10 @@ Future<void> sendHostRequest(
       action == host.Action.channelPrepareWithCompatibilityBudget ||
       action == host.Action.channelPrepareChanges ||
       action == host.Action.channelChangesCheckpoint ||
+      action == host.Action.channelChangesWait ||
+      action == host.Action.channelChangesWaitStatus ||
+      action == host.Action.channelChangesWaitClaim ||
+      action == host.Action.channelChangesWaitCancel ||
       action == host.Action.channelAppend ||
       action == host.Action.channelRun ||
       action == host.Action.channelStatus ||

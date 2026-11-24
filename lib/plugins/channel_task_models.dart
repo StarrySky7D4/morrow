@@ -138,6 +138,31 @@ abstract interface class ChangesCheckpointBackend {
   );
 }
 
+enum ChangesWaitPhase {
+  waiting,
+  available,
+  prepared,
+  cancelled,
+  expired,
+  changed,
+  unconfirmed,
+}
+
+final class ChangesWaitStatus {
+  const ChangesWaitStatus(this.phase, this.preparedKey);
+  final ChangesWaitPhase phase;
+  final Uint8List? preparedKey;
+}
+
+abstract interface class ChangesWaitBackend {
+  Future<ChangesWaitStatus> startChangesWait(ChannelPrepareRequest request);
+  Future<ChangesWaitStatus> changesWaitStatus(
+    Uint8List submission, {
+    bool cancel = false,
+  });
+  Future<ChannelTaskSnapshot> claimChangesWait(Uint8List submission);
+}
+
 final class ChannelPrepareRequest {
   ChannelPrepareRequest({
     required List<int> submission,

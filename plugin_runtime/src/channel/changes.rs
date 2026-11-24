@@ -27,6 +27,9 @@ use std::{
 #[derive(Clone, Copy)]
 pub enum HistoryStart {
     Beginning,
+    /// A reviewed wait observed an empty history head. A concurrent ACK must
+    /// invalidate that observation rather than silently moving the start.
+    ConfirmedEmpty,
     LatestAck {
         subscription: [u8; 32],
         source_epoch: [u8; 32],
@@ -498,6 +501,7 @@ impl ChangesApproval {
                 .map_err(core_error)?;
             match start {
                 HistoryStart::Beginning => {}
+                HistoryStart::ConfirmedEmpty if current.is_none() => {}
                 HistoryStart::ExactAck {
                     subscription,
                     cursor,
@@ -514,6 +518,7 @@ impl ChangesApproval {
         };
         let start = match start {
             HistoryStart::Beginning => ChangesStart::Beginning,
+            HistoryStart::ConfirmedEmpty => return Err(Error::Denied),
             HistoryStart::LatestAck {
                 subscription,
                 source_epoch,

@@ -15,7 +15,10 @@ typedef ChannelTaskExchange = Future<T> Function<T>(
 
 /// Calls only the original local host; never uses business/service forwarding.
 final class NativeChannelTaskClient
-    implements ChannelTaskBackend, ChangesCheckpointBackend {
+    implements
+        ChannelTaskBackend,
+        ChangesCheckpointBackend,
+        ChangesWaitBackend {
   NativeChannelTaskClient(this._exchange, this._supported);
   final ChannelTaskExchange _exchange;
   final bool Function() _supported;
@@ -77,6 +80,75 @@ final class NativeChannelTaskClient
         return ReviewedChangesProgress(state, latest, info.pending);
       },
       clearReply: true,
+    );
+  }
+
+  @override
+  Future<ChangesWaitStatus> startChangesWait(ChannelPrepareRequest request) {
+    _requireSupported();
+    if (request.changes == null)
+      throw ArgumentError('Select cards for a changes wait');
+    return _exchange(
+      host.Action.channelChangesWait,
+      clearReply: true,
+      configure: (r) =>
+          ChannelTaskCodec.writePrepare(request, r.initChannelPrepare()),
+      decode: (r) => _waitStatus(r, request.submission),
+    );
+  }
+
+  @override
+  Future<ChangesWaitStatus> changesWaitStatus(
+    Uint8List submission, {
+    bool cancel = false,
+  }) {
+    _requireSupported();
+    final key = ChannelValidation.identity(submission);
+    return _exchange(
+      cancel
+          ? host.Action.channelChangesWaitCancel
+          : host.Action.channelChangesWaitStatus,
+      clearReply: true,
+      configure: (r) => r.channelKey = key,
+      decode: (r) => _waitStatus(r, key),
+    );
+  }
+
+  ChangesWaitStatus _waitStatus(host.ResponseReader reply, Uint8List key) {
+    final wait = reply.changesWait;
+    if (wait == null ||
+        wait.phase >= ChangesWaitPhase.values.length ||
+        !ChannelValidation.same(wait.submission ?? Uint8List(0), key)) {
+      throw const FormatException('Invalid changes wait receipt');
+    }
+    final phase = ChangesWaitPhase.values[wait.phase];
+    final bytes = wait.preparedKey;
+    final prepared = bytes == null || bytes.isEmpty
+        ? null
+        : ChannelValidation.identity(bytes);
+    if ((phase == ChangesWaitPhase.prepared) != (prepared != null)) {
+      throw const FormatException('Missing original prepared channel');
+    }
+    return ChangesWaitStatus(phase, prepared);
+  }
+
+  @override
+  Future<ChannelTaskSnapshot> claimChangesWait(Uint8List submission) {
+    _requireSupported();
+    final key = ChannelValidation.identity(submission);
+    return _exchange(
+      host.Action.channelChangesWaitClaim,
+      clearReply: true,
+      configure: (r) => r.channelKey = key,
+      decode: (r) {
+        final current = _snapshot(r);
+        if (!ChannelValidation.same(current.submission, key)) {
+          throw const FormatException(
+            'The prepared channel belongs to a different wait',
+          );
+        }
+        return current;
+      },
     );
   }
 

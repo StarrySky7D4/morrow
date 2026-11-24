@@ -383,6 +383,11 @@ def reviewed_card_history(value, platform):
             "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
             "durable_compare_and_swap": True,
         }, "reviewed card checkpoint lookup")
+    if "finite_wait_for_one_page" in value:
+        reviewed_workbench_fields(value, {
+            "finite_wait_for_one_page": "reviewed_cards_and_guest_share_original_deadline",
+            "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
+        }, "reviewed card wait")
 
 
 def reviewed_windows_accounts(value, platform):

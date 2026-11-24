@@ -131,8 +131,10 @@ class Profiles(unittest.TestCase):
         self.assertIs(sdk.validate_descriptor(item), item)
         detail['readonly_checkpoint_review'] = 'original_ack_and_reviewed_card_availability'
         self.assertIs(sdk.validate_descriptor(item), item)
+        detail['finite_wait_for_one_page'] = 'reviewed_cards_and_guest_share_original_deadline'
+        self.assertIs(sdk.validate_descriptor(item), item)
         for field, value in [('version', True), ('bookmark_bytes', 32), ('grants_card_content', 0),
-                             ('readonly_checkpoint_review', 'automatic_resume'),
+                             ('readonly_checkpoint_review', 'automatic_resume'), ('finite_wait_for_one_page', 'forever'),
                              ('fresh_approval_per_page', False), ('retained_ack_epochs_per_selection', 3),
                              ('durable_compare_and_swap', None), ('windows_workbench_compiled', False)]:
             with self.subTest(field=field), self.assertRaises(ValueError):

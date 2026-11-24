@@ -28,6 +28,8 @@ use std::{
 
 #[path = "channel_executor.rs"]
 mod executor;
+mod waiting;
+pub use waiting::{ChangesWaitPhase, ChangesWaitView};
 
 pub const MAX_SOURCE_FRAMES: u32 = 64;
 pub const MAX_JOB_BYTES: u64 = 1024 * 1024;
@@ -171,6 +173,7 @@ pub(crate) struct ChannelTasks {
     owner: Option<crate::channel_binding::OwnerBinding>,
     job: Option<Job>,
     seen: BTreeSet<[u8; 32]>,
+    changes_wait: Option<waiting::Wait>,
     requests: u64,
     reserved_bytes: u64,
     source_frames: u32,
@@ -201,6 +204,9 @@ impl ChannelTasks {
             .ok_or_else(|| "stale local channel job key".into())
     }
     pub(crate) fn request_stop(&mut self) {
+        if let Some(wait) = &mut self.changes_wait {
+            wait.stop();
+        }
         if let Some(job) = &mut self.job {
             job.stop();
         }
@@ -475,14 +481,14 @@ impl Workbench {
         Ok(())
     }
     pub fn prepare_channel(&mut self, request: Prepare) -> Result<State> {
-        self.prepare_channel_inner(request, false, None)
+        self.prepare_channel_inner(request, false, None, None)
     }
 
     pub(crate) fn prepare_channel_with_compatibility_budget(
         &mut self,
         request: Prepare,
     ) -> Result<State> {
-        self.prepare_channel_inner(request, true, None)
+        self.prepare_channel_inner(request, true, None, None)
     }
 
     pub fn prepare_changes_channel(
@@ -491,6 +497,11 @@ impl Workbench {
         changes: ChangesSelection,
         compatibility_budget: bool,
     ) -> Result<State> {
+        Self::validate_reviewed_page(&request, &changes)?;
+        self.prepare_channel_inner(request, compatibility_budget, Some(changes), None)
+    }
+
+    fn validate_reviewed_page(request: &Prepare, changes: &ChangesSelection) -> Result<()> {
         if request.kind != Kind::Events
             || request.duplex
             || request.frame_count != 0
@@ -503,7 +514,7 @@ impl Workbench {
         {
             return Err("invalid reviewed changes window".into());
         }
-        self.prepare_channel_inner(request, compatibility_budget, Some(changes))
+        Ok(())
     }
 
     pub fn inspect_changes_checkpoint(
@@ -534,6 +545,7 @@ impl Workbench {
         mut request: Prepare,
         compatibility_budget: bool,
         changes: Option<ChangesSelection>,
+        wait_deadline: Option<Instant>,
     ) -> Result<State> {
         self.channel_tasks.touch(false)?;
         self.product_gate().check()?;
@@ -546,8 +558,9 @@ impl Workbench {
         }
         if request.submission == [0; 32]
             || request.package_digest == [0; 32]
-            || self.channel_tasks.seen.contains(&request.submission)
-            || self.channel_tasks.seen.len() >= MAX_HOST_JOBS
+            || (wait_deadline.is_none()
+                && (self.channel_tasks.seen.contains(&request.submission)
+                    || self.channel_tasks.seen.len() >= MAX_HOST_JOBS))
             || request.lifetime_ms == 0
             || request.frame_count > MAX_SOURCE_FRAMES
             || request.total_bytes > MAX_JOB_BYTES
@@ -676,12 +689,25 @@ impl Workbench {
         getrandom::fill(&mut key)?;
         let start = state.start;
         let tick = now(start);
+        if let Some(deadline) = wait_deadline {
+            let left = deadline
+                .saturating_duration_since(Instant::now())
+                .as_millis();
+            request.lifetime_ms = request
+                .lifetime_ms
+                .min(u32::try_from(left).unwrap_or(u32::MAX));
+            if request.lifetime_ms == 0 {
+                return Err("the reviewed changes wait has expired".into());
+            }
+        }
         let expires = tick
             .checked_add(u64::from(request.lifetime_ms))
             .ok_or("channel deadline overflow")?;
-        let deadline = Instant::now()
+        let granted_deadline = Instant::now()
             .checked_add(Duration::from_millis(u64::from(request.lifetime_ms)))
             .ok_or("channel deadline overflow")?;
+        let deadline = wait_deadline
+            .map_or(granted_deadline, |original| original.min(granted_deadline));
         let (instance, broker, changes_source) = {
             let state = self.local_state_mut()?;
             state.host.prepare_write()?;
@@ -702,9 +728,14 @@ impl Workbench {
                         .host
                         .store_local()
                         .changes_scope_digest(request.package_digest, &review.cards)?;
+                    let beginning = if wait_deadline.is_some() {
+                        HistoryStart::ConfirmedEmpty
+                    } else {
+                        HistoryStart::Beginning
+                    };
                     let start = review
                         .previous_cursor
-                        .map_or(HistoryStart::Beginning, |cursor| HistoryStart::ExactAck {
+                        .map_or(beginning, |cursor| HistoryStart::ExactAck {
                             subscription: morrow_core::changes_metadata::reviewed_subscription(
                                 scope,
                             ),
