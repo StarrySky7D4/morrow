@@ -366,6 +366,14 @@ pub(crate) fn unprotect_http_credential(input: &[u8]) -> Result<Zeroizing<Vec<u8
 pub(crate) fn protect_tls_identity(input: &[u8]) -> Result<Vec<u8>> {
     platform::protect_tls(input)
 }
+#[cfg(target_os = "windows")]
+pub(crate) fn protect_oauth(input: &[u8]) -> Result<Vec<u8>> {
+    platform::protect_oauth(input)
+}
+#[cfg(target_os = "windows")]
+pub(crate) fn unprotect_oauth(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    platform::unprotect_oauth(input)
+}
 pub(crate) fn unprotect_tls_identity(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
     platform::unprotect_tls(input)
 }

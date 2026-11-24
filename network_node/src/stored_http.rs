@@ -63,6 +63,8 @@ impl Live {
 pub struct StoredHttpEndpoint {
     endpoint: Record,
     credential: Option<Record>,
+    #[cfg(windows)]
+    oauth_scope: Option<[u8; 32]>,
     live: Live,
 }
 fn current(record: &Record, now: u64) -> Result<()> {
@@ -196,9 +198,34 @@ impl StoredHttpEndpoint {
         };
         let mut created = endpoint.value().created_ms;
         let mut expires = endpoint.value().expires_ms;
+        #[cfg(windows)]
+        let mut oauth_scope = None;
         if let Some(record) = &credential {
             created = created.max(record.value().created_ms);
             expires = expires.min(record.value().expires_ms);
+            #[cfg(windows)]
+            if matches!(record.value().kind.as_ref(), Some(Kind::Credential(c)) if c.provider == morrow_core::outbound_authority::WINDOWS_OAUTH_PROVIDER)
+            {
+                let library = store.tls_store_identity().map_err(|_| Error::Denied)?;
+                let package = value
+                    .package_sha256
+                    .as_slice()
+                    .try_into()
+                    .map_err(|_| Error::Denied)?;
+                let scope = morrow_audit::oauth_credentials::resource_scope(
+                    &library,
+                    package,
+                    &value.origin,
+                );
+                let (expected, access_expires) =
+                    morrow_audit::oauth_credentials::access_policy(record)
+                        .map_err(|_| Error::Denied)?;
+                if scope != expected || now >= access_expires {
+                    return Err(Error::Denied);
+                }
+                expires = expires.min(access_expires);
+                oauth_scope = Some(scope);
+            }
         }
         let mut dependencies = vec![morrow_core::store::ServiceAuthorityResource::Outbound(
             *endpoint_reference,
@@ -230,6 +257,8 @@ impl StoredHttpEndpoint {
         Ok(Self {
             endpoint,
             credential,
+            #[cfg(windows)]
+            oauth_scope,
             live,
         })
     }
@@ -378,6 +407,15 @@ impl StoredHttpEndpoint {
         let (profile, limits) = validated_transport_policy(value)?;
         self.live.check()?;
         let credential = if let Some(record) = &self.credential {
+            #[cfg(windows)]
+            let credential = if let Some(scope) = self.oauth_scope {
+                let header = morrow_audit::oauth_credentials::bearer(scope, record)
+                    .map_err(|_| Error::Denied)?;
+                Credential::header(reference(record), "authorization", &header)?
+            } else {
+                resolve_secret(record)?
+            };
+            #[cfg(not(windows))]
             let credential = resolve_secret(record)?;
             if credential.reference() != reference(record) {
                 return Err(Error::Denied);

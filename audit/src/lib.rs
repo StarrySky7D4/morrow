@@ -34,4 +34,7 @@ pub mod build_receipt;
 pub mod credentials;
 
 #[cfg(target_os = "windows")]
+pub mod oauth_credentials;
+
+#[cfg(target_os = "windows")]
 pub mod tls_identity;

@@ -108,6 +108,13 @@ pub(super) fn unprotect_http(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
     crypt(input, false, HTTP_ENTROPY)
 }
 const TLS_ENTROPY: &[u8] = b"Morrow/tls/identity/current-user/v1";
+const OAUTH_ENTROPY: &[u8] = b"Morrow/oauth/account/current-user/v1";
+pub(super) fn protect_oauth(input: &[u8]) -> Result<Vec<u8>> {
+    Ok(crypt_bounded(input, true, OAUTH_ENTROPY, morrow_core::outbound_authority::MAX_CIPHERTEXT_BYTES)?.to_vec())
+}
+pub(super) fn unprotect_oauth(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    crypt_bounded(input, false, OAUTH_ENTROPY, morrow_core::outbound_authority::MAX_CIPHERTEXT_BYTES)
+}
 pub(super) fn protect_tls(input: &[u8]) -> Result<Vec<u8>> {
     Ok(crypt_bounded(
         input,

@@ -15,8 +15,11 @@ pub struct CredentialPage {
     pub snapshot: [u8; 32],
     pub next: Option<[u8; 32]>,
 }
+fn is_header_credential(record: &Record) -> bool {
+    matches!(&record.value().kind, Some(Kind::Credential(value)) if value.provider == morrow_core::outbound_authority::WINDOWS_DPAPI_PROVIDER)
+}
 fn info(record: &Record) -> Result<CredentialInfo> {
-    if !matches!(record.value().kind, Some(Kind::Credential(_))) {
+    if !is_header_credential(record) {
         return Err("credential reference has a different record type".into());
     }
     let value = record.value();
@@ -55,7 +58,7 @@ impl WorkbenchState {
             entries: page
                 .records
                 .iter()
-                .filter(|r| matches!(r.value().kind, Some(Kind::Credential(_))))
+                .filter(|record| is_header_credential(record))
                 .map(info)
                 .collect::<Result<_>>()?,
             snapshot: page.snapshot,

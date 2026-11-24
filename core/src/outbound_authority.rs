@@ -14,6 +14,7 @@ pub const MAX_LIFETIME_MS: u64 = 30 * 24 * 60 * 60 * 1000;
 pub const MAX_CIPHERTEXT_BYTES: usize = 32 * 1024;
 pub const MAX_CERTIFICATE_BYTES: usize = 32 * 1024;
 pub const WINDOWS_DPAPI_PROVIDER: &str = "windows-current-user-dpapi-http-v1";
+pub const WINDOWS_OAUTH_PROVIDER: &str = "windows-current-user-dpapi-oauth-v1";
 // No Debug: ciphertext and endpoint metadata must not appear in diagnostics.
 #[derive(Clone)]
 pub struct Record {
@@ -189,7 +190,10 @@ fn validate(value: &proto::Record) -> Result<[u8; 32]> {
         .ok_or(Error::Invalid("outbound authority kind"))?
     {
         proto::record::Kind::Credential(credential) => {
-            if credential.provider != WINDOWS_DPAPI_PROVIDER {
+            if !matches!(
+                credential.provider.as_str(),
+                WINDOWS_DPAPI_PROVIDER | WINDOWS_OAUTH_PROVIDER
+            ) {
                 return Err(Error::Invalid("outbound credential provider"));
             }
             if credential.ciphertext.is_empty()
@@ -290,7 +294,9 @@ fn preflight(mut raw: &[u8], level: u8) -> Result<()> {
         let limit = match (level, tag) {
             (0, 7 | 8) => MAX_RAW_BYTES,
             (0, 2) | (2, 2 | 6) => 32,
-            (1, 1) => WINDOWS_DPAPI_PROVIDER.len(),
+            (1, 1) => WINDOWS_DPAPI_PROVIDER
+                .len()
+                .max(WINDOWS_OAUTH_PROVIDER.len()),
             (1, 2) => MAX_CIPHERTEXT_BYTES,
             (2, 1) => 256,
             (2, 3) => 2048,

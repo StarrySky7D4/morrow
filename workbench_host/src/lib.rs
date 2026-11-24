@@ -74,6 +74,8 @@ pub mod content_api;
 mod content_projection;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod credential_control;
+#[cfg(target_os = "windows")]
+pub mod oauth_accounts;
 pub mod editor_commit_proof;
 pub mod editor_draft;
 mod editor_draft_api;

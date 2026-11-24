@@ -5297,6 +5297,8 @@ dependencies = [
 name = "morrow-workbench-host"
 version = "0.1.9-test.50"
 dependencies = [
+ "axum",
+ "base64 0.22.1",
  "capnp",
  "capnpc",
  "codex-utils-path-uri",
@@ -5329,12 +5331,14 @@ dependencies = [
  "rustls",
  "rustls-pki-types",
  "semver",
+ "serde",
  "serde_json",
  "sha2 0.10.9",
  "tempfile",
  "time",
  "tokio",
  "tokio-rustls",
+ "tokio-util",
  "url",
  "wasm-bindgen",
  "wat",

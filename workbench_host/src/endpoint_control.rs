@@ -176,8 +176,26 @@ impl WorkbenchState {
             let Some(Kind::Credential(value)) = credential.value().kind.as_ref() else {
                 return Err("credential reference has a different record type".into());
             };
-            if !cfg!(target_os = "windows") || value.provider != WINDOWS_DPAPI_PROVIDER {
+            if !cfg!(target_os = "windows")
+                || !matches!(
+                    value.provider.as_str(),
+                    WINDOWS_DPAPI_PROVIDER
+                        | morrow_core::outbound_authority::WINDOWS_OAUTH_PROVIDER
+                )
+            {
                 return Err("protected credentials are unavailable on this platform".into());
+            }
+            #[cfg(windows)]
+            if value.provider == morrow_core::outbound_authority::WINDOWS_OAUTH_PROVIDER {
+                let scope = morrow_audit::oauth_credentials::resource_scope(
+                    &self.host.store_local().tls_store_identity()?,
+                    &selection.digest,
+                    &policy.origin,
+                );
+                let (expected, _) = morrow_audit::oauth_credentials::access_policy(&credential)?;
+                if scope != expected {
+                    return Err("OAuth account belongs to another package or service".into());
+                }
             }
             credential.check_time(created)?;
             if expires > credential.value().expires_ms {

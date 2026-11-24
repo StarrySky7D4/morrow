@@ -92,6 +92,8 @@ const STORED_ENDPOINT: [u8; 32] = [31; 32];
 const STORED_CREDENTIAL: [u8; 32] = [32; 32];
 struct StoredSetup {
     credential: Option<StoredRecord>,
+    #[cfg(windows)]
+    make_credential: Option<fn(&Store, [u8; 32], &str) -> StoredRecord>,
     wall: Arc<AtomicU64>,
     provider_calls: Arc<AtomicUsize>,
     wrong_reference: bool,
@@ -102,6 +104,8 @@ struct StoredSetup {
 }
 fn stored_setup(credentials: bool) -> StoredSetup {
     StoredSetup {
+        #[cfg(windows)]
+        make_credential: None,
         credential: credentials.then(|| {
             StoredRecord::encode(outbound::Record {
                 schema_version: outbound_authority::VERSION,
@@ -284,7 +288,15 @@ impl Running {
             .unwrap();
         let mut store = Store::open(&dir.path().join("db"), EventBudget::default()).unwrap();
         let restored = if let Some(settings) = &stored {
-            if let Some(credential) = &settings.credential {
+            #[cfg(windows)]
+            let generated = settings
+                .make_credential
+                .map(|make| make(&store, digest, &approval.origin));
+            #[cfg(windows)]
+            let credential = generated.as_ref().or(settings.credential.as_ref());
+            #[cfg(not(windows))]
+            let credential = settings.credential.as_ref();
+            if let Some(credential) = credential {
                 store.save_outbound_authority_local(credential, 0).unwrap();
             }
             let mut endpoint = outbound::Endpoint {
@@ -297,9 +309,7 @@ impl Running {
                     NetworkProfile::LoopbackHttps => 3,
                 },
                 methods: vec!["GET".into(), "HEAD".into(), "POST".into()],
-                credential_reference: settings
-                    .credential
-                    .as_ref()
+                credential_reference: credential
                     .map_or_else(Vec::new, |_| STORED_CREDENTIAL.to_vec()),
                 root_certificate: approval.root_certificate.clone().unwrap_or_default(),
                 max_request_bytes: approval.limits.max_request_bytes as u64,
@@ -1264,6 +1274,75 @@ async fn stored_windows_dpapi_credential_injects_real_http_without_plaintext_in_
 
 #[path = "support/deferred_http_owner.rs"]
 mod deferred_http_owner;
+
+#[cfg(windows)]
+#[tokio::test]
+async fn stored_oauth_account_injects_only_access_and_stops_at_access_expiry() {
+    use morrow_audit::oauth_credentials::{self as oauth, Account, Tokens};
+    let mut server = Server::new(
+        Some(raw_response("200 OK", b"authorized resource")),
+        Duration::ZERO,
+    )
+    .await;
+    let mut settings = stored_setup(false);
+    settings.windows_provider = true;
+    settings.make_credential = Some(|store, package, origin| {
+        let resource_scope =
+            oauth::resource_scope(&store.tls_store_identity().unwrap(), &package, origin);
+        oauth::seal(
+            Account {
+                binding: [41; 32],
+                resource_scope,
+                reference: STORED_CREDENTIAL,
+                revision: 1,
+                created_ms: 1000,
+                expires_ms: 61000,
+            },
+            &Tokens {
+                access: TOKEN.to_owned().into(),
+                refresh: "fixture-refresh-never-sent".to_owned().into(),
+                access_expires_ms: 2000,
+            },
+        )
+        .unwrap()
+    });
+    let wall = settings.wall.clone();
+    let mut run = Running::stored(approval(&server.origin), true, settings).unwrap();
+    let mut input = submission(&run.endpoint, "windows-oauth-access");
+    input.credential = credential_wire_reference();
+    let (request, mut job) = run.submit(&input);
+    let report = consume(&mut job).await;
+    assert_eq!(
+        report.http_response.as_ref().unwrap().body,
+        b"authorized resource"
+    );
+    let wire = server.request().await;
+    let wire = String::from_utf8_lossy(&wire);
+    assert!(wire.contains(&format!("authorization: Bearer {TOKEN}\r\n")));
+    assert!(!wire.contains("fixture-refresh-never-sent"));
+    wall.store(2000, Ordering::SeqCst);
+    input.operation_id = b"windows-oauth-expired".to_vec();
+    let (_, mut expired) = run.submit(&input);
+    assert!(consume(&mut expired).await.http_response.is_none());
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    let host = run.finish().await;
+    assert_observed(&host, &request, "windows-oauth-access", &report);
+    for kind in [Kind::Request, Kind::Response] {
+        let material = host
+            .store_local()
+            .io_material(ID, "windows-oauth-access", kind)
+            .unwrap()
+            .unwrap();
+        for secret in [TOKEN, "fixture-refresh-never-sent"] {
+            assert!(
+                !material
+                    .payload()
+                    .windows(secret.len())
+                    .any(|v| v == secret.as_bytes())
+            );
+        }
+    }
+}
 
 #[path = "support/http_route_set.rs"]
 mod http_route_set;
