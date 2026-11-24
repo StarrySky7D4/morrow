@@ -325,6 +325,17 @@ class Palette {
         20 *
         visualStyle.radiusScale,
   );
+  BorderRadius componentBorderRadius(double base, {String? componentId}) {
+    if (!overridesMaterials && componentId != null) {
+      final local = surfaces.resolveComponent(componentId);
+      if (local?.enabled == true && local!.cornerRadius != null) {
+        return BorderRadius.circular(
+          base * local.cornerRadius!.clamp(0, 32) / 20 * visualStyle.radiusScale,
+        );
+      }
+    }
+    return borderRadius(base);
+  }
   Color tone(Color color) {
     final gray = .2126 * color.r + .7152 * color.g + .0722 * color.b;
     return Color.lerp(
@@ -569,6 +580,7 @@ class Glass extends StatelessWidget {
     this.dialog = false,
     this.componentId,
     this.recessed = false,
+    this.useBackdropGroup = true,
   });
   final Palette p;
   final Widget child;
@@ -576,6 +588,7 @@ class Glass extends StatelessWidget {
   final bool dialog;
   final String? componentId;
   final bool recessed;
+  final bool useBackdropGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -598,11 +611,13 @@ class Glass extends StatelessWidget {
         : p.mode;
     final clear = mode == GlassMode.clear;
     final liquid = mode == GlassMode.liquid;
-    final borderRadius = custom && local!.cornerRadius != null
-        ? BorderRadius.circular(radius * local.cornerRadius! / 20)
-        : p.borderRadius(radius);
+    final borderRadius = p.componentBorderRadius(
+      radius,
+      componentId: componentId,
+    );
     // Editors need a reading surface even when surrounding cards are clear.
-    final readable = dialog || MediaQuery.highContrastOf(context);
+    final highContrast = MediaQuery.highContrastOf(context);
+    final readable = dialog || highContrast;
     final top = clear
         ? (readable ? .86 : (p.dark ? .12 : .10))
         : p.overridesMaterials
@@ -613,26 +628,49 @@ class Glass extends StatelessWidget {
         : p.overridesMaterials
         ? .95
         : p.frostedOpacity.clamp(.2, 1).toDouble();
+    final flatShadows = recessed
+        ? const <BoxShadow>[]
+        : dialog
+        ? [
+            BoxShadow(
+              color: (p.dark ? Colors.black : const Color(0xFF322848))
+                  .withValues(alpha: p.dark ? .46 : .16),
+              blurRadius: 28,
+              offset: const Offset(0, 12),
+            ),
+            BoxShadow(
+              color: (p.dark ? Colors.black : const Color(0xFF322848))
+                  .withValues(alpha: p.dark ? .24 : .06),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ]
+        : [
+            BoxShadow(
+              color: (p.dark ? Colors.black : const Color(0xFF4A3F63))
+                  .withValues(
+                    alpha: p.dark
+                        ? (clear ? .24 : .32)
+                        : (clear ? .075 : .105),
+                  ),
+              blurRadius: clear ? 14 : 18,
+              offset: Offset(0, clear ? 5 : 7),
+            ),
+          ];
     final inherited = liquid
         ? GlassMaterial.liquid(
             tint: tint,
             dark: p.dark,
             readable: readable,
             borderRadius: borderRadius,
+            boxShadow: flatShadows,
           )
         : GlassMaterial(
             blur: clear ? 1 : 22,
             liquid: 0,
             decoration: BoxDecoration(
               borderRadius: borderRadius,
-              boxShadow: [
-                BoxShadow(
-                  color: (p.dark ? Colors.black : const Color(0xFF716386))
-                      .withValues(alpha: clear ? .025 : .035),
-                  blurRadius: clear ? 14 : 18,
-                  offset: Offset(0, clear ? 4 : 8),
-                ),
-              ],
+              boxShadow: flatShadows,
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -679,24 +717,39 @@ class Glass extends StatelessWidget {
         : styled;
     return TweenAnimationBuilder<GlassMaterial>(
       tween: GlassMaterialTween(end: target),
-      duration: motionDuration(context, 360),
-      curve: Curves.easeInOutCubic,
+      duration: motionDuration(context, 280),
+      curve: Curves.easeOutCubic,
       child: child,
-      builder: (context, material, child) => SurfacePaintBoundary(
-        child: NeumorphicSurface(
-          palette: styledPalette,
-          depth: recessed ? -1 : 0,
-          borderRadius: material.decoration.borderRadius! as BorderRadius,
-          child: LiquidGlassSurface(
-            material: material,
-            tint: tint,
-            dark: p.dark,
-            readable: dialog,
-            borderRadius: material.decoration.borderRadius! as BorderRadius,
-            child: child!,
-          ),
-        ),
-      ),
+      builder: (context, material, child) {
+        final effectiveRadius =
+            material.decoration.borderRadius! as BorderRadius;
+        final useGroup = useBackdropGroup && !dialog;
+        final backdropEnabled =
+            dialog ||
+            !useBackdropGroup ||
+            p.backdrop != BackgroundMode.transparent;
+        final glassSurface = LiquidGlassSurface(
+          material: material,
+          tint: tint,
+          dark: p.dark,
+          readable: dialog,
+          borderRadius: effectiveRadius,
+          useBackdropGroup: useGroup,
+          backdropEnabled: backdropEnabled,
+          child: child!,
+        );
+        final surfaceChild = (recessed || highContrast)
+            ? NeumorphicSurface(
+                palette: styledPalette,
+                depth: recessed ? -1 : 0,
+                borderRadius: effectiveRadius,
+                child: glassSurface,
+              )
+            : glassSurface;
+        return dialog
+            ? surfaceChild
+            : SurfacePaintBoundary(outset: 24, child: surfaceChild);
+      },
     );
   }
 }

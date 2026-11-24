@@ -57,4 +57,21 @@ class WorkbenchStrings {
   String get editCard => zh ? '编辑' : 'Edit';
   String filterChipLabel(String q) => zh ? '筛选: $q' : 'Filter: $q';
   String itemCountBadge(int count) => zh ? '$count 项' : '$count';
+
+  String get fontPickerTitle => zh ? '系统字体' : 'System fonts';
+  String get fontPickerSearchHint =>
+      zh ? '搜索系统字体名称…' : 'Search system fonts…';
+  String get fontPickerLoading =>
+      zh ? '正在读取系统字体…' : 'Loading system fonts…';
+  String get fontPickerEmpty =>
+      zh ? '没有找到匹配的系统字体' : 'No matching system fonts';
+  String get fontPickerRefreshTooltip =>
+      zh ? '刷新系统字体列表' : 'Refresh system fonts';
+  String get fontPickerDefaultSubtitle =>
+      zh ? '跟随应用默认字体' : 'Use the app default typeface';
+  String get fontPickerManualTitle =>
+      zh ? '自定义字体名称或导入文件' : 'Custom family or font file';
+  String get fontPickerActiveBadge => zh ? '当前字体' : 'Active';
+  String fontPickerCount(int shown, int total) =>
+      shown == total ? (zh ? '共 $total 款' : '$total fonts') : '$shown / $total';
 }

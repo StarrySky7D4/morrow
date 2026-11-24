@@ -2,8 +2,16 @@
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
 
+#include <cwchar>
+
 #include "flutter_window.h"
 #include "utils.h"
+
+// Request the high-performance GPU on hybrid-graphics systems.
+extern "C" {
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
@@ -18,6 +26,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
   flutter::DartProject project(L"data");
+  project.set_gpu_preference(flutter::GpuPreference::HighPerformancePreference);
+
+  // Flutter 3.50's experimental Windows Impeller (OpenGLESSDF) backend incurs
+  // ~550 MB extra UMA/driver RAM on Windows. Default to hardware-accelerated
+  // Skia over ANGLE D3D11 on the high-performance GPU, with opt-in Impeller
+  // via MORROW_ENABLE_IMPELLER=1.
+  wchar_t enable_impeller[8] = {};
+  const DWORD env_len = ::GetEnvironmentVariableW(
+      L"MORROW_ENABLE_IMPELLER", enable_impeller, 8);
+  if (env_len > 0 && wcscmp(enable_impeller, L"1") == 0) {
+    project.set_impeller_switch(flutter::ImpellerSwitch::Enabled);
+  } else {
+    project.set_impeller_switch(flutter::ImpellerSwitch::Disabled);
+  }
 
   std::vector<std::string> command_line_arguments =
       GetCommandLineArguments();

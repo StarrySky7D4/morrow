@@ -183,7 +183,11 @@ class _VisualStylePickerState extends State<VisualStylePicker> {
                                 child: LayoutBuilder(
                                   builder: (context, constraints) => Row(
                                     children: [
-                                      if (constraints.maxWidth >= 290) ...[
+                                      if (constraints.maxWidth >= 200 &&
+                                          MediaQuery.textScalerOf(
+                                                context,
+                                              ).scale(1) <=
+                                              1.35) ...[
                                         _StyleSwatch(p: p, style: style),
                                         const SizedBox(width: 12),
                                       ],

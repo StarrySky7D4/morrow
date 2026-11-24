@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'liquid_glass.dart';
 import 'ui/workbench_motion.dart';
 
 /// Keeps one live child through reversals: scroll, focus and player state survive.
@@ -28,6 +29,11 @@ class _CollapsiblePanelState extends State<CollapsiblePanel>
     reverseDuration: const Duration(milliseconds: 220),
     value: widget.expanded ? 1 : 0,
   );
+  late final CurvedAnimation _curved = CurvedAnimation(
+    parent: _progress,
+    curve: WorkbenchCurves.springOut,
+    reverseCurve: Curves.easeInCubic,
+  );
   bool _motionEnabled = true;
 
   @override
@@ -56,16 +62,17 @@ class _CollapsiblePanelState extends State<CollapsiblePanel>
 
   @override
   void dispose() {
+    _curved.dispose();
     _progress.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _progress,
+    animation: _curved,
     child: widget.child,
     builder: (context, child) {
-      final value = WorkbenchCurves.springOut.transform(_progress.value);
+      final value = _curved.value.clamp(0.0, 1.0);
       final reveal = Curves.easeOut.transform((value * 1.4).clamp(0.0, 1.0));
       final horizontal = widget.axis == Axis.horizontal;
       final panel = IgnorePointer(
@@ -79,13 +86,16 @@ class _CollapsiblePanelState extends State<CollapsiblePanel>
               child: Opacity(
                 opacity: reveal,
                 alwaysIncludeSemantics: true,
-                child: FractionalTranslation(
-                  translation: horizontal
-                      ? Offset(-0.035 * (1 - value), 0)
-                      : Offset(0, -0.05 * (1 - value)),
-                  child: horizontal
-                      ? SizedBox(width: widget.extent, child: child)
-                      : child,
+                child: BackdropFilterGuard(
+                  suspended: reveal < 0.999 || _progress.isAnimating,
+                  child: FractionalTranslation(
+                    translation: horizontal
+                        ? Offset(-0.035 * (1 - value), 0)
+                        : Offset(0, -0.05 * (1 - value)),
+                    child: horizontal
+                        ? SizedBox(width: widget.extent, child: child)
+                        : child,
+                  ),
                 ),
               ),
             ),

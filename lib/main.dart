@@ -43,6 +43,7 @@ import 'plugins/bootstrap_stub.dart'
 import 'plugins/studio_backend.dart';
 import 'plugins/workbench_backend.dart';
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -256,6 +257,13 @@ class _MorrowAppState extends State<MorrowApp> {
   @override
   void initState() {
     super.initState();
+    final cache = PaintingBinding.instance.imageCache;
+    if (cache.maximumSizeBytes > (32 << 20)) {
+      cache.maximumSizeBytes = 32 << 20;
+    }
+    if (cache.maximumSize > 48) {
+      cache.maximumSize = 48;
+    }
     storage = widget.storage ?? MemoryStorage();
     cardOrderPreferences =
         widget.cardOrderPreferences ??
@@ -504,6 +512,119 @@ class _MorrowAppState extends State<MorrowApp> {
     if (native) applyWindowBackground();
   }
 
+  Object? _cachedThemeKey;
+  ThemeData? _cachedThemeData;
+
+  ThemeData _themeFor(Palette palette) {
+    final fontFamily = _fontFamily ?? 'Segoe UI';
+    final key = (
+      palette.dark,
+      palette.accent.toARGB32(),
+      palette.onAccent.toARGB32(),
+      palette.surface.toARGB32(),
+      palette.ink.toARGB32(),
+      palette.muted.toARGB32(),
+      palette.line.toARGB32(),
+      palette.visualStyle,
+      palette.surfaces.styleDepth,
+      palette.cornerRadius,
+      fontFamily,
+      palette.uiTheme,
+    );
+    if (_cachedThemeData != null && _cachedThemeKey == key) {
+      return _cachedThemeData!;
+    }
+    final built = applyVisualStyleControls(
+      ThemeData(
+        useMaterial3: true,
+        brightness: palette.dark ? Brightness.dark : Brightness.light,
+        fontFamily: fontFamily,
+        fontFamilyFallback: const ['Microsoft YaHei', 'Arial'],
+        scaffoldBackgroundColor: Colors.transparent,
+        snackBarTheme: const SnackBarThemeData(
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating,
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: palette.borderRadius(12),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: palette.borderRadius(12),
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: palette.borderRadius(10),
+            ),
+          ),
+        ),
+        iconButtonTheme: IconButtonThemeData(
+          style: IconButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: palette.borderRadius(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: palette.surface.withValues(alpha: .13),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 15,
+          ),
+          labelStyle: TextStyle(color: palette.muted, fontSize: 12),
+          enabledBorder: StyledInputBorder(
+            borderRadius: palette.borderRadius(13),
+            borderSide: BorderSide(color: palette.line),
+          ),
+          focusedBorder: StyledInputBorder(
+            borderRadius: palette.borderRadius(13),
+            borderSide: BorderSide(color: palette.accent),
+          ),
+          border: StyledInputBorder(borderRadius: palette.borderRadius(13)),
+        ),
+        popupMenuTheme: PopupMenuThemeData(
+          color: palette.surface.withValues(alpha: .95),
+          shape: RoundedRectangleBorder(
+            borderRadius: palette.borderRadius(16),
+          ),
+          textStyle: TextStyle(color: palette.ink, fontSize: 12),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: palette.accent,
+          primary: palette.accent,
+          onPrimary: palette.onAccent,
+          secondary: palette.accent,
+          onSecondary: palette.onAccent,
+          tertiary: palette.accent,
+          onTertiary: palette.onAccent,
+          surface: palette.surface,
+          onSurface: palette.ink,
+          brightness: palette.dark ? Brightness.dark : Brightness.light,
+        ),
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: palette.ink, fontSize: 13),
+          bodySmall: TextStyle(color: palette.muted, fontSize: 12),
+        ),
+        tooltipTheme: const TooltipThemeData(
+          waitDuration: Duration(milliseconds: 400),
+        ),
+      ),
+      palette,
+    );
+    _cachedThemeKey = key;
+    _cachedThemeData = built;
+    return built;
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = Palette(
@@ -577,92 +698,9 @@ class _MorrowAppState extends State<MorrowApp> {
           ),
         );
       },
-      theme: applyVisualStyleControls(
-        ThemeData(
-          useMaterial3: true,
-          brightness: palette.dark ? Brightness.dark : Brightness.light,
-          fontFamily: _fontFamily ?? 'Segoe UI',
-          fontFamilyFallback: const ['Microsoft YaHei', 'Arial'],
-          scaffoldBackgroundColor: Colors.transparent,
-          snackBarTheme: const SnackBarThemeData(
-            showCloseIcon: true,
-            behavior: SnackBarBehavior.floating,
-          ),
-          filledButtonTheme: FilledButtonThemeData(
-            style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: palette.borderRadius(12),
-              ),
-            ),
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: palette.borderRadius(12),
-              ),
-            ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: palette.borderRadius(10),
-              ),
-            ),
-          ),
-          iconButtonTheme: IconButtonThemeData(
-            style: IconButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: palette.borderRadius(12),
-              ),
-            ),
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: palette.surface.withValues(alpha: .13),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 15,
-            ),
-            labelStyle: TextStyle(color: palette.muted, fontSize: 12),
-            enabledBorder: StyledInputBorder(
-              borderRadius: palette.borderRadius(13),
-              borderSide: BorderSide(color: palette.line),
-            ),
-            focusedBorder: StyledInputBorder(
-              borderRadius: palette.borderRadius(13),
-              borderSide: BorderSide(color: palette.accent),
-            ),
-            border: StyledInputBorder(borderRadius: palette.borderRadius(13)),
-          ),
-          popupMenuTheme: PopupMenuThemeData(
-            color: palette.surface.withValues(alpha: .95),
-            shape: RoundedRectangleBorder(
-              borderRadius: palette.borderRadius(16),
-            ),
-            textStyle: TextStyle(color: palette.ink, fontSize: 12),
-          ),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: palette.accent,
-            primary: palette.accent,
-            onPrimary: palette.onAccent,
-            secondary: palette.accent,
-            onSecondary: palette.onAccent,
-            tertiary: palette.accent,
-            onTertiary: palette.onAccent,
-            surface: palette.surface,
-            onSurface: palette.ink,
-            brightness: palette.dark ? Brightness.dark : Brightness.light,
-          ),
-          textTheme: TextTheme(
-            bodyMedium: TextStyle(color: palette.ink, fontSize: 13),
-            bodySmall: TextStyle(color: palette.muted, fontSize: 12),
-          ),
-          tooltipTheme: const TooltipThemeData(
-            waitDuration: Duration(milliseconds: 400),
-          ),
-        ),
-        palette,
-      ),
+      themeAnimationDuration: const Duration(milliseconds: 280),
+      themeAnimationCurve: Curves.easeOutCubic,
+      theme: _themeFor(palette),
       home: Studio(
         desktopCaption: widget.nativeBackground != null && isWindowsDesktop,
         palette: palette,
@@ -919,6 +957,7 @@ class Studio extends StatefulWidget {
 }
 
 class _StudioState extends State<Studio> with WidgetsBindingObserver {
+  final BackdropKey _workbenchBackdropKey = BackdropKey();
   EditorDraftHandoffCoordinator? _draftHandoffRecovery;
   EditorDraftHandoffCoordinator? _draftHandoffDialogOwner;
   DialogRoute<void>? _draftHandoffRoute;
@@ -1282,6 +1321,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     _localViews.clear();
     _queries.releaseCompletedViews();
     clearPluginCatalogSnapshots();
+    PaintingBinding.instance.imageCache.clear();
   }
 
   void refreshPage(VoidCallback update) => setState(update);
@@ -1898,10 +1938,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     activeProjectsCount: _activeProjectsCount,
     experimentsCount: _experimentsCount,
     favoritesCount: _favoritesCount,
-    quickCapture: quickCapture(),
-    scratchpad: scratchpad(),
-    musicPanel: musicPanel(),
-    appearance: appearance(showExpand: !compact),
+    quickCaptureBuilder: (_) => quickCapture(),
+    scratchpadBuilder: (_) => scratchpad(),
+    musicPanelBuilder: (_) => musicPanel(),
+    appearanceBuilder: (_) => appearance(showExpand: !compact),
     onSelectPage: (page) {
       if (compact) closeCompactSettings();
       selectSection(page);
@@ -1938,7 +1978,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             // Keep opaque modes opaque while their foregrounds crossfade.
             // This fill is inside DesktopFrame's clip, never in the native host.
             Positioned.fill(
-              child: ColoredBox(
+              child: AnimatedContainer(
+                duration: motionDuration(context, 280),
+                curve: Curves.easeOutCubic,
                 color: p.backdrop == BackgroundMode.transparent
                     ? (!kIsWeb &&
                               defaultTargetPlatform == TargetPlatform.android
@@ -1951,12 +1993,12 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
             Positioned.fill(
               child: AnimatedSwitcher(
-                duration: MediaQuery.disableAnimationsOf(context)
-                    ? Duration.zero
-                    : const Duration(milliseconds: 360),
+                duration: motionDuration(context, 280),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
                 child: RepaintBoundary(
                   key: ValueKey(
-                    '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
+                    '${p.theme.name}-${p.backdrop.name}-${p.uiTheme != null}',
                   ),
                   child: SizedBox.expand(
                     child:
@@ -1979,6 +2021,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   child: AnimatedContainer(
                     key: const ValueKey('transparent-canvas-tint'),
                     duration: motionDuration(context, 280),
+                    curve: Curves.easeOutCubic,
                     color: (p.surfaces.canvasColor ?? p.surface).withValues(
                       alpha: p.surfaces.canvasOpacity,
                     ),
@@ -2008,25 +2051,28 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               ),
             SafeArea(
               minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
-              child: CanvasNavigation(
-                navigatorKey: settingsNavigator,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final desktop = constraints.maxWidth >= 1050;
-                    final sidebar = constraints.maxWidth >= 760;
-                    final showInspector = desktop && showAppearance && !focusMode;
-                    return PopScope(
-                      canPop: !compactSettingsOpen,
-                      onPopInvokedWithResult: (didPop, result) {
-                        if (!didPop && compactSettingsOpen) {
-                          closeCompactSettings();
-                        }
-                      },
-                      child: SettingsPageTransition(
-                        showSettings: compactSettingsOpen,
-                        duration: motionDuration(context, 320),
-                        settings: compactSettings(),
-                        content: Padding(
+              child: BackdropGroup(
+                backdropKey: _workbenchBackdropKey,
+                child: CanvasNavigation(
+                  navigatorKey: settingsNavigator,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final desktop = constraints.maxWidth >= 1050;
+                      final sidebar = constraints.maxWidth >= 760;
+                      final showInspector =
+                          desktop && showAppearance && !focusMode;
+                      return PopScope(
+                        canPop: !compactSettingsOpen,
+                        onPopInvokedWithResult: (didPop, result) {
+                          if (!didPop && compactSettingsOpen) {
+                            closeCompactSettings();
+                          }
+                        },
+                        child: SettingsPageTransition(
+                          showSettings: compactSettingsOpen,
+                          duration: motionDuration(context, 320),
+                          settingsBuilder: (_) => compactSettings(),
+                          content: Padding(
                           padding: EdgeInsets.all(desktop ? 20 : 12),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2164,11 +2210,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                       ],
                                     ),
                                     AnimatedPositioned(
-                                      duration: workbenchDuration(
-                                        context,
-                                        WorkbenchDurations.medium,
-                                      ),
-                                      curve: WorkbenchCurves.springOut,
+                                      duration: workbenchDuration(context, 280),
+                                      curve: WorkbenchCurves.emphasized,
                                       left: 0,
                                       right: showInspector ? 320 : 0,
                                       bottom: sidebar || focusMode ? 0 : 72,
@@ -2223,6 +2266,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   },
                 ),
               ),
+              ),
             ),
           ],
         ),
@@ -2241,63 +2285,76 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
         (widget.workbench is WorkbenchEditorRecovery &&
             widget.workbench is WorkbenchEditorDraftImportSupport)) {
-      return PopupMenuButton<String>(
-        key: const ValueKey('editor-recovery-open'),
-        tooltip: l.mainEditorRecoveryTitle,
-        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
-        onSelected: (value) {
-          if (value == 'drafts') {
-            unawaited(reviewDraftJournal());
-          } else if (value == 'handoffs') {
-            unawaited(reviewDraftHandoffRecovery());
-          } else if (value == 'imports') {
-            unawaited(reviewDraftImportRecovery());
-          } else {
-            unawaited(reviewEditorRecovery());
-          }
-        },
-        itemBuilder: (_) => [
-          if (widget.workbench is WorkbenchEditorDraftRecovery)
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-drafts'),
-              value: 'drafts',
-              child: Text(l.mainDraftJournalTitle),
-            ),
-          if (widget.workbench is WorkbenchEditorRecovery)
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-edits'),
-              value: 'edits',
-              child: Text(l.mainEditorRecoveryTitle),
-            ),
-          if (widget.workbench is WorkbenchEditorDraftImportSupport)
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-imports'),
-              value: 'imports',
-              child: Text(l.mainDraftImportRecoveryTitle),
-            ),
-          if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport)
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-handoffs'),
-              value: 'handoffs',
-              child: Text(l.mainDraftHandoffRecoveryTitle),
-            ),
-        ],
+      return Material(
+        type: MaterialType.transparency,
+        child: PopupMenuButton<String>(
+          key: const ValueKey('editor-recovery-open'),
+          tooltip: l.mainEditorRecoveryTitle,
+          borderRadius: p.borderRadius(11),
+          shape: RoundedRectangleBorder(borderRadius: p.borderRadius(12)),
+          onSelected: (value) {
+            if (value == 'drafts') {
+              unawaited(reviewDraftJournal());
+            } else if (value == 'handoffs') {
+              unawaited(reviewDraftHandoffRecovery());
+            } else if (value == 'imports') {
+              unawaited(reviewDraftImportRecovery());
+            } else {
+              unawaited(reviewEditorRecovery());
+            }
+          },
+          itemBuilder: (_) => [
+            if (widget.workbench is WorkbenchEditorDraftRecovery)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-drafts'),
+                value: 'drafts',
+                child: Text(l.mainDraftJournalTitle),
+              ),
+            if (widget.workbench is WorkbenchEditorRecovery)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-edits'),
+                value: 'edits',
+                child: Text(l.mainEditorRecoveryTitle),
+              ),
+            if (widget.workbench is WorkbenchEditorDraftImportSupport)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-imports'),
+                value: 'imports',
+                child: Text(l.mainDraftImportRecoveryTitle),
+              ),
+            if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-handoffs'),
+                value: 'handoffs',
+                child: Text(l.mainDraftHandoffRecoveryTitle),
+              ),
+          ],
+          child: WorkbenchCommandBar.actionIconBox(
+            context: context,
+            p: p,
+            icon: Icon(Icons.history_rounded, size: 18, color: p.muted),
+          ),
+        ),
       );
     }
     if (widget.workbench is WorkbenchEditorRecovery) {
-      return IconButton(
+      return WorkbenchCommandBar.actionIconButton(
         key: const ValueKey('editor-recovery-open'),
+        context: context,
+        p: p,
         tooltip: l.mainEditorRecoveryTitle,
         onPressed: reviewEditorRecovery,
-        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+        icon: Icon(Icons.history_rounded, size: 18, color: p.muted),
       );
     }
     if (widget.workbench is WorkbenchEditorDraftImportSupport) {
-      return IconButton(
+      return WorkbenchCommandBar.actionIconButton(
         key: const ValueKey('draft-import-recovery-open'),
+        context: context,
+        p: p,
         tooltip: l.mainDraftImportRecoveryTitle,
         onPressed: reviewDraftImportRecovery,
-        icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+        icon: Icon(Icons.history_rounded, size: 18, color: p.muted),
       );
     }
     return null;
@@ -2308,7 +2365,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     if (p.uiTheme != null && plugin != null) {
       return ThemeArtwork(plugin: plugin);
     }
-    return CustomPaint(painter: OrbPainter(p));
+    return RepaintBoundary(child: CustomPaint(painter: OrbPainter(p)));
   }
 
   Widget workspaceViewport({required bool desktop, required bool sidebar}) {
@@ -2320,6 +2377,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     final showInlineCapture = !desktop || !showAppearance || focusMode;
     return WorkspaceViewport(
       page: section.id,
+      pageIndex: section.index,
       session: widget.workbench ?? this,
       queryPending: queryPending,
       compactList: compactCards,
@@ -2511,6 +2569,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
     return cardInteractions(
       idea,
+      radius: compactCards ? 16 : 20,
       compactCards
           ? WorkbenchIdeaListRow(
               palette: p,
@@ -2578,10 +2637,15 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     color: p.ink,
                   ),
                 ),
-                const Spacer(),
-                Text(
-                  s.quickCaptureSubtitle,
-                  style: TextStyle(fontSize: 9, color: p.muted),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    s.quickCaptureSubtitle,
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 9, color: p.muted),
+                  ),
                 ),
               ],
             ),
@@ -2618,6 +2682,15 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                       decoration: BoxDecoration(
                         color: p.accent,
                         borderRadius: p.borderRadius(11),
+                        boxShadow: [
+                          BoxShadow(
+                            color: p.accent.withValues(
+                              alpha: p.dark ? 0.30 : 0.24,
+                            ),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
                       child: Icon(
                         Icons.arrow_upward_rounded,
@@ -2924,8 +2997,12 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     widget.onAppearanceCommit();
   }
 
-  Widget cardInteractions(Idea idea, Widget child, {Key? key}) =>
-      ComponentContextMenu(
+  Widget cardInteractions(
+    Idea idea,
+    Widget child, {
+    Key? key,
+    double radius = 20,
+  }) => ComponentContextMenu(
         key: key,
         actions: () => [
           ComponentMenuAction(
@@ -2961,7 +3038,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
         ],
         child: SurfaceInteraction(
-          borderRadius: p.borderRadius(20),
+          borderRadius: p.componentBorderRadius(
+            radius,
+            componentId: 'card:${idea.id}',
+          ),
           child: child,
         ),
       );
@@ -3333,6 +3413,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                         child: Glass(
                           p: p,
                           radius: 13,
+                          useBackdropGroup: false,
                           child: Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -3572,7 +3653,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                 children: BackgroundMode.values
                     .map(
                       (mode) => SizedBox(
-                        width: (constraints.maxWidth - 8) / 2,
+                        width: (constraints.maxWidth - 12) / 2,
                         child: backgroundOption(mode),
                       ),
                     )
@@ -3619,9 +3700,21 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                               key: ValueKey('tint-$index'),
                               onTap: () => widget.onTint(index),
                               borderRadius: p.borderRadius(20),
-                              child: Container(
+                              child: AnimatedContainer(
+                                duration: motionDuration(context, 220),
+                                curve: Curves.easeOutCubic,
                                 width: 28,
                                 height: 28,
+                                transform: Matrix4.diagonal3Values(
+                                  p.customColor == null && p.solidTint == index
+                                      ? 1.08
+                                      : 1.0,
+                                  p.customColor == null && p.solidTint == index
+                                      ? 1.08
+                                      : 1.0,
+                                  1.0,
+                                ),
+                                transformAlignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: Palette(
                                     p.theme,
@@ -3636,7 +3729,11 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                             p.solidTint == index
                                         ? p.accent
                                         : p.line,
-                                    width: 1.5,
+                                    width:
+                                        p.customColor == null &&
+                                            p.solidTint == index
+                                        ? 2.0
+                                        : 1.5,
                                   ),
                                 ),
                                 child:
@@ -4052,7 +4149,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 10),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: p.borderRadius(4),
               child: TweenAnimationBuilder<double>(
                 tween: Tween(end: progress),
                 duration: workbenchDuration(context, WorkbenchDurations.medium),
@@ -6265,6 +6362,31 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
 class AmbientPainter extends CustomPainter {
   AmbientPainter(this.p);
   final Palette p;
+  static (int, int, Float32List)? _grainCache;
+
+  static Float32List _grainPoints(int w, int h) {
+    final cached = _grainCache;
+    if (cached != null && cached.$1 == w && cached.$2 == h) {
+      return cached.$3;
+    }
+    final cols = ((w - 2) / 7).ceil().clamp(0, 10000);
+    final rows = ((h - 2) / 7).ceil().clamp(0, 10000);
+    final pts = Float32List(cols * rows * 2);
+    final random = math.Random(19);
+    var offset = 0;
+    for (var y = 2.0; y < h; y += 7) {
+      for (var x = 2.0; x < w; x += 7) {
+        if (offset + 1 < pts.length) {
+          pts[offset++] = x + random.nextDouble() * 2;
+          pts[offset++] = y + random.nextDouble() * 2;
+        }
+      }
+    }
+    final trimmed = offset == pts.length ? pts : pts.sublist(0, offset);
+    _grainCache = (w, h, trimmed);
+    return trimmed;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (p.backdrop == BackgroundMode.transparent) return;
@@ -6275,17 +6397,14 @@ class AmbientPainter extends CustomPainter {
     canvas.drawRect(Offset.zero & size, Paint()..color = p.background);
     if (p.backdrop == BackgroundMode.texture) {
       final grain = Paint()
-        ..color = p.ink.withValues(alpha: p.dark ? .075 : .085);
-      final random = math.Random(19);
-      for (double y = 2; y < size.height; y += 7) {
-        for (double x = 2; x < size.width; x += 7) {
-          canvas.drawCircle(
-            Offset(x + random.nextDouble() * 2, y + random.nextDouble() * 2),
-            .45 + random.nextDouble() * .25,
-            grain,
-          );
-        }
-      }
+        ..color = p.ink.withValues(alpha: p.dark ? .075 : .085)
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round;
+      canvas.drawRawPoints(
+        ui.PointMode.points,
+        _grainPoints(size.width.ceil(), size.height.ceil()),
+        grain,
+      );
       return;
     }
     void glow(Offset center, double radius, Color color) {
@@ -6366,8 +6485,8 @@ class OrbPainter extends CustomPainter {
             .withValues(alpha: .15)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 21),
     );
-    for (var i = 0; i < 48; i++) {
-      final t = i / 47;
+    for (var i = 0; i < 16; i++) {
+      final t = i / 15;
       final ring = Rect.fromCenter(
         center: Offset(0, -10 + t * 23),
         width: 202 - math.sin(t * math.pi) * 21,
@@ -6377,7 +6496,7 @@ class OrbPainter extends CustomPainter {
         ring,
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.3
+          ..strokeWidth = 2.6
           ..shader = SweepGradient(
             colors: [
               p.themeTint(const Color(0xFFE5DBF0), .6).withValues(alpha: .65),

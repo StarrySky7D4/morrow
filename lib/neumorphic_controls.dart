@@ -42,7 +42,7 @@ class _NeumorphicSurfaceState extends State<NeumorphicSurface>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 160),
+    duration: const Duration(milliseconds: 260),
     value: 1,
   );
   late _SurfaceFrame _from = _SurfaceFrame.target(widget);

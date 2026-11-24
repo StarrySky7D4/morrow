@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'appearance.dart';
+import 'liquid_glass.dart';
 
 /// Multiline EditableText asks its inherited behavior to re-enable scrollbars.
 /// Override the builder itself so that request cannot introduce side rails.
@@ -47,21 +48,35 @@ class CanvasSettingsRoute<T> extends PageRouteBuilder<T> {
             animation: Listenable.merge([animation, secondaryAnimation]),
             child: child,
             builder: (context, child) {
-              final enter = Curves.easeOutCubic.transform(animation.value);
-              final leave = Curves.easeOutCubic.transform(
-                secondaryAnimation.value,
-              );
+              final enter = Curves.easeInOutCubic.transform(animation.value);
+              final stay =
+                  1 -
+                  const Interval(
+                    0.0,
+                    0.50,
+                    curve: Curves.easeOutCubic,
+                  ).transform(secondaryAnimation.value);
+              final opacity = (enter * stay).clamp(0.0, 1.0);
+              final transitioning =
+                  opacity < 0.999 ||
+                  animation.status == AnimationStatus.forward ||
+                  animation.status == AnimationStatus.reverse ||
+                  secondaryAnimation.status == AnimationStatus.forward ||
+                  secondaryAnimation.status == AnimationStatus.reverse;
               return IgnorePointer(
                 ignoring:
                     animation.status == AnimationStatus.reverse ||
                     secondaryAnimation.value > 0,
                 child: Opacity(
                   key: const ValueKey('settings-route-opacity'),
-                  opacity: enter * (1 - leave),
+                  opacity: opacity,
                   // Navigator owns when a covered route leaves semantics.
                   // Do not independently detach it at the zero-opacity frame.
                   alwaysIncludeSemantics: true,
-                  child: child,
+                  child: BackdropFilterGuard(
+                    suspended: transitioning,
+                    child: child!,
+                  ),
                 ),
               );
             },

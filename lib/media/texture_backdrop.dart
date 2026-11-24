@@ -180,6 +180,11 @@ class _TextureBackdropState extends State<TextureBackdrop>
       return const SizedBox.expand();
     }
 
+    final targetWidth =
+        (MediaQuery.sizeOf(context).width *
+                MediaQuery.devicePixelRatioOf(context))
+            .round()
+            .clamp(1, 2560);
     return IgnorePointer(
       child: TickerMode(
         enabled: shouldPlay,
@@ -188,12 +193,14 @@ class _TextureBackdropState extends State<TextureBackdrop>
                 resolved!.bytes!,
                 fit: BoxFit.cover,
                 gaplessPlayback: true,
+                cacheWidth: targetWidth,
                 errorBuilder: error,
               )
             : Image.network(
                 resolved!.uri,
                 fit: BoxFit.cover,
                 gaplessPlayback: true,
+                cacheWidth: targetWidth,
                 errorBuilder: error,
               ),
       ),

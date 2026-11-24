@@ -85,7 +85,8 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
           height: kWindowCaptionHeight,
           child: AnimatedContainer(
             key: const ValueKey('desktop-caption'),
-            duration: motionDuration(context, 220),
+            duration: motionDuration(context, 280),
+            curve: Curves.easeOutCubic,
             color: p.captionColor,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -164,7 +165,8 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
           child: IgnorePointer(
             child: AnimatedContainer(
               key: const ValueKey('desktop-outline'),
-              duration: motionDuration(context, 220),
+              duration: motionDuration(context, 280),
+              curve: Curves.easeOutCubic,
               decoration: BoxDecoration(
                 borderRadius: radius,
                 border: Border.all(
@@ -181,15 +183,13 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
     // The desktop frame is also used in MaterialApp.builder, outside the
     // Navigator's Overlay. Caption tooltips need their own full-window overlay.
     return _FrameOverlay(
-      child: maximized
+      child: maximized || p.windowRadius <= 0
           ? contents
           : DragToResizeArea(
               resizeEdgeSize: 5,
               child: ClipRRect(
                 key: const ValueKey('desktop-canvas-clip'),
                 borderRadius: radius,
-                // Composite overlapping canvas/caption/border layers first,
-                // then apply coverage once to avoid dark seams at the arc.
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: contents,
               ),

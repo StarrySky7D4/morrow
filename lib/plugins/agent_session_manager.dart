@@ -145,8 +145,8 @@ final class _AgentSessionManagerState extends State<AgentSessionManager> {
       child: Text(text.text(key)),
     );
     Widget field(AgentSessionDraft draft, String key, {int lines = 1}) =>
-        SizedBox(
-          width: lines > 1 ? 560 : 260,
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: lines > 1 ? 560 : 260),
           child: TextField(
             key: ValueKey('agent-session-draft-${draft.name}'),
             controller: _editors[draft],
@@ -192,17 +192,33 @@ final class _AgentSessionManagerState extends State<AgentSessionManager> {
           key: const ValueKey('agent-session-manager'),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              text.text('title'),
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(color: widget.ink),
+            Row(
+              children: [
+                Icon(Icons.terminal_rounded, size: 16, color: widget.ink),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    text.text('title'),
+                    style: TextStyle(
+                      color: widget.ink,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Text(text.text('summary'), style: TextStyle(color: widget.muted)),
+            const SizedBox(height: 10),
+            Text(
+              text.text('summary'),
+              style: TextStyle(fontSize: 11, height: 1.5, color: widget.muted),
+            ),
+            const SizedBox(height: 4),
             Text(
               text.text('readOnlyNotice'),
-              style: TextStyle(color: widget.muted),
+              style: TextStyle(fontSize: 11, height: 1.5, color: widget.muted),
             ),
+            const SizedBox(height: 8),
             Text(text.text(_observation(view.observation?.kind))),
             if (view.observation?.taskKey != null)
               SelectableText(_hex(view.observation!.taskKey!)),
@@ -240,17 +256,17 @@ final class _AgentSessionManagerState extends State<AgentSessionManager> {
                 button('detach', view.canDetach, workspace.detach),
               ],
             ),
-            Divider(color: widget.line),
+            Divider(height: 24, color: widget.line),
             Wrap(
-              spacing: 16,
-              runSpacing: 8,
+              spacing: 12,
+              runSpacing: 10,
               children: [
                 field(AgentSessionDraft.sessionId, 'sessionId'),
                 field(AgentSessionDraft.parent, 'parentSession'),
                 field(AgentSessionDraft.parentTail, 'parentTail'),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -274,6 +290,7 @@ final class _AgentSessionManagerState extends State<AgentSessionManager> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
             Text(text.text('sessionList')),
             for (final info in view.sessions)
               TextButton(
@@ -283,14 +300,16 @@ final class _AgentSessionManagerState extends State<AgentSessionManager> {
                     : () => workspace.selectSession(info.sessionId),
                 child: Text(info.sessionId),
               ),
+            const SizedBox(height: 8),
             Wrap(
-              spacing: 16,
-              runSpacing: 8,
+              spacing: 12,
+              runSpacing: 10,
               children: [
                 field(AgentSessionDraft.after, 'after'),
                 field(AgentSessionDraft.limit, 'limit'),
               ],
             ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,

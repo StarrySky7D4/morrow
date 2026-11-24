@@ -84,7 +84,10 @@ class WorkbenchBentoHero extends StatelessWidget {
                     ThemePluginScope.of(context)?.plugin != null)
                   Positioned.fill(
                     child: ClipRRect(
-                      borderRadius: p.borderRadius(22),
+                      borderRadius: p.componentBorderRadius(
+                        22,
+                        componentId: 'hero',
+                      ),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: SizedBox(

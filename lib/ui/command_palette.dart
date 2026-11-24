@@ -208,6 +208,28 @@ class _CommandPaletteDialogState extends State<_CommandPaletteDialog> {
     setState(() {
       _activeIndex = (_activeIndex + delta).clamp(0, count - 1);
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final position = _scrollController.position;
+      const estimatedExtent = 54.0;
+      final targetTop = _activeIndex * estimatedExtent;
+      final targetBottom = targetTop + estimatedExtent;
+      final viewTop = position.pixels;
+      final viewBottom = viewTop + position.viewportDimension;
+      double? destination;
+      if (targetTop < viewTop) {
+        destination = targetTop;
+      } else if (targetBottom > viewBottom) {
+        destination = targetBottom - position.viewportDimension;
+      }
+      if (destination != null) {
+        _scrollController.animateTo(
+          destination.clamp(0.0, position.maxScrollExtent),
+          duration: workbenchDuration(context, WorkbenchDurations.micro),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
   }
 
   @override

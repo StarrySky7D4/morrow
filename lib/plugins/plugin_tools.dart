@@ -140,12 +140,14 @@ class _PluginToolsState extends State<PluginTools> {
             children: [
               Icon(Icons.extension_outlined, size: 16, color: widget.ink),
               const SizedBox(width: 8),
-              Text(
-                L10n.of(context).pluginsWorkbench,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: widget.ink,
+              Expanded(
+                child: Text(
+                  L10n.of(context).pluginsWorkbench,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: widget.ink,
+                  ),
                 ),
               ),
             ],
@@ -217,8 +219,14 @@ class _PluginToolsState extends State<PluginTools> {
               style: TextStyle(fontSize: 11, color: widget.muted),
             ),
           ],
+          const SizedBox(height: 6),
           TextButton(
             onPressed: _busy ? null : _load,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             child: Text(L10n.of(context).pluginsRefreshState),
           ),
         ],

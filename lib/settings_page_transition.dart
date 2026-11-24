@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'liquid_glass.dart';
 
 /// Fades through the background so workspace and settings never overlap.
 class SettingsPageTransition extends StatefulWidget {
@@ -7,13 +8,15 @@ class SettingsPageTransition extends StatefulWidget {
     required this.showSettings,
     required this.duration,
     required this.content,
-    required this.settings,
-  });
+    this.settings,
+    this.settingsBuilder,
+  }) : assert((settings != null) ^ (settingsBuilder != null));
 
   final bool showSettings;
   final Duration duration;
   final Widget content;
-  final Widget settings;
+  final Widget? settings;
+  final WidgetBuilder? settingsBuilder;
 
   @override
   State<SettingsPageTransition> createState() => _SettingsPageTransitionState();
@@ -102,9 +105,15 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
                   opacity: contentOpacity,
                   // Offstage selects the accessible page even at zero opacity.
                   alwaysIncludeSemantics: true,
-                  child: Transform.translate(
-                    offset: Offset(-12 * (1 - contentOpacity), 0),
-                    child: widget.content,
+                  child: BackdropFilterGuard(
+                    suspended: motion.isAnimating || contentOpacity < 0.999,
+                    child: Transform.translate(
+                      offset: Offset(-12 * (1 - contentOpacity), 0),
+                      child: Transform.scale(
+                        scale: 0.988 + 0.012 * contentOpacity,
+                        child: widget.content,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -121,11 +130,19 @@ class _SettingsPageTransitionState extends State<SettingsPageTransition>
                     key: const ValueKey('settings-transition-opacity'),
                     opacity: settingsOpacity,
                     alwaysIncludeSemantics: true,
-                    child: Transform.translate(
-                      offset: Offset(12 * (1 - settingsOpacity), 0),
-                      child: FocusScope(
-                        node: _settingsFocus,
-                        child: widget.settings,
+                    child: BackdropFilterGuard(
+                      suspended: motion.isAnimating || settingsOpacity < 0.999,
+                      child: Transform.translate(
+                        offset: Offset(12 * (1 - settingsOpacity), 0),
+                        child: Transform.scale(
+                          scale: 0.988 + 0.012 * settingsOpacity,
+                          child: FocusScope(
+                            node: _settingsFocus,
+                            child:
+                                widget.settings ??
+                                widget.settingsBuilder!(context),
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -94,12 +94,14 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
           children: [
             Icon(Icons.key_rounded, size: 16, color: widget.ink),
             const SizedBox(width: 8),
-            Text(
-              L10n.of(context).pluginsProtection,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: widget.ink,
+            Expanded(
+              child: Text(
+                L10n.of(context).pluginsProtection,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: widget.ink,
+                ),
               ),
             ),
           ],

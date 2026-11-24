@@ -1518,7 +1518,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                       height: 1.5,
                     ),
                   ),
-                  trailing: const Icon(Icons.chevron_right_rounded),
+                  trailing: Icon(Icons.chevron_right_rounded, color: widget.muted),
                   onTap: _busy ? null : _openIo,
                 ),
               ),
@@ -1530,6 +1530,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                       ? '已读取此设备的插件目录。当前 Web 入口仅支持主题插件；若上次导入中断，请核对下方记录，不会自动重复导入或启用。'
                       : 'Loaded this device’s plugin catalog. Web imports support theme plugins only. After an interrupted import, check the list below; imports and activation are never retried automatically.',
                 ),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,

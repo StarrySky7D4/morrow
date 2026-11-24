@@ -191,7 +191,10 @@ extension _PageContent on _StudioState {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => openIdea(idea),
-          borderRadius: p.borderRadius(20),
+          borderRadius: p.componentBorderRadius(
+            20,
+            componentId: 'card:${idea.id}',
+          ),
           child: Padding(padding: const EdgeInsets.all(18), child: child),
         ),
       ),

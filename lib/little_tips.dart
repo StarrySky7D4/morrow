@@ -133,6 +133,7 @@ class FooterOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
     final customFooter = p.surfaces.resolveComponent('footer')?.enabled == true;
+    final footerRadius = p.componentBorderRadius(22, componentId: 'footer');
     final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
       child: MusicFooter(music: music),
@@ -144,17 +145,34 @@ class FooterOverlay extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 540),
           child: customFooter
-              ? Glass(componentId: 'footer', p: p, radius: 999, child: content)
-              : DecoratedBox(
+              ? Glass(
+                  componentId: 'footer',
+                  p: p,
+                  radius: 22,
+                  useBackdropGroup: false,
+                  child: content,
+                )
+              : AnimatedContainer(
+                  duration: motionDuration(context, 280),
+                  curve: Curves.easeOutCubic,
                   decoration: BoxDecoration(
-                    color: p.surface.withValues(alpha: p.dark ? 0.62 : 0.78),
-                    borderRadius: BorderRadius.circular(999),
+                    color: p.surface.withValues(alpha: p.dark ? 0.68 : 0.84),
+                    borderRadius: footerRadius,
                     border: Border.all(color: p.line),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: p.dark ? 0.22 : 0.06),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
+                        color: Colors.black.withValues(
+                          alpha: p.dark ? 0.34 : 0.11,
+                        ),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: p.dark ? 0.18 : 0.05,
+                        ),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),

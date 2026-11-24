@@ -1,7 +1,7 @@
 name: morrow_studio
 description: A glass-inspired playground for little tasks and big ideas.
 publish_to: none
-version: 0.1.9-test.58+62
+version: 0.1.9-modern-workbench.1+63
 environment:
   sdk: ^3.14.0
   flutter: 3.50.0

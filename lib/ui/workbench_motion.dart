@@ -1,18 +1,20 @@
 import 'package:material_ui/material_ui.dart';
 import '../appearance.dart';
+import '../liquid_glass.dart';
 import '../neumorphic_controls.dart';
 
 /// Unified motion curves for the modern workbench layout.
 abstract final class WorkbenchCurves {
-  static const Curve springOut = Cubic(0.16, 1.0, 0.3, 1.0);
+  static const Curve springOut = Cubic(0.22, 1.0, 0.36, 1.0);
   static const Curve emphasized = Cubic(0.2, 0.0, 0.0, 1.0);
-  static const Curve snappy = Cubic(0.25, 1.0, 0.5, 1.0);
+  static const Curve standard = Cubic(0.25, 0.1, 0.25, 1.0);
+  static const Curve snappy = Cubic(0.2, 0.85, 0.3, 1.0);
 }
 
 /// Standardized motion durations in milliseconds.
 abstract final class WorkbenchDurations {
   static const int micro = 140;
-  static const int short = 220;
+  static const int short = 240;
   static const int medium = 300;
   static const int page = 360;
 }
@@ -23,7 +25,7 @@ Duration workbenchDuration(BuildContext context, int milliseconds) =>
     ? Duration.zero
     : Duration(milliseconds: milliseconds);
 
-/// Shared-axis crossfade + subtle slide + scale transition for panels and tabs.
+/// Shared-axis crossfade + directional slide transition for panels and tabs.
 class SharedAxisSwitcher extends StatelessWidget {
   const SharedAxisSwitcher({
     super.key,
@@ -31,54 +33,162 @@ class SharedAxisSwitcher extends StatelessWidget {
     this.axis = Axis.vertical,
     this.durationMs = WorkbenchDurations.short,
     this.alignment = Alignment.topCenter,
+    this.fit = StackFit.loose,
     this.slideOffset = 0.03,
+    this.direction = 1,
   });
 
   final Widget child;
   final Axis axis;
   final int durationMs;
   final Alignment alignment;
+  final StackFit fit;
   final double slideOffset;
+  final int direction;
 
   @override
   Widget build(BuildContext context) {
     final duration = workbenchDuration(context, durationMs);
+    final dir = direction >= 0 ? 1.0 : -1.0;
     return AnimatedSwitcher(
       duration: duration,
-      reverseDuration: workbenchDuration(context, (durationMs * 0.75).round()),
-      switchInCurve: WorkbenchCurves.springOut,
-      switchOutCurve: Curves.easeInCubic,
-      layoutBuilder: (currentChild, previousChildren) => Stack(
-        alignment: alignment,
-        children: [?currentChild],
+      reverseDuration: workbenchDuration(context, (durationMs * 0.85).round()),
+      switchInCurve: Curves.linear,
+      switchOutCurve: Curves.linear,
+      layoutBuilder: (currentChild, previousChildren) => ClipRect(
+        child: Stack(
+          fit: fit,
+          alignment: alignment,
+          children: [
+            for (final prev in previousChildren)
+              IgnorePointer(child: ExcludeFocus(child: prev)),
+            ?currentChild,
+          ],
+        ),
       ),
       transitionBuilder: (child, animation) {
         if (duration == Duration.zero) return child;
-        final beginOffset = axis == Axis.vertical
-            ? Offset(0, slideOffset)
-            : Offset(slideOffset, 0);
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: WorkbenchCurves.springOut,
-        );
-        return FadeTransition(
-          opacity: animation,
-          alwaysIncludeSemantics: true,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: beginOffset,
-              end: Offset.zero,
-            ).animate(curved),
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.985, end: 1.0).animate(curved),
-              child: child,
+        final isIncoming = child.key == this.child.key;
+        final signedOffset = slideOffset * dir;
+        if (isIncoming) {
+          final beginOffset = axis == Axis.vertical
+              ? Offset(0, signedOffset)
+              : Offset(signedOffset, 0);
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: WorkbenchCurves.springOut,
+          );
+          final fade = CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.36, 1.0, curve: Curves.easeOutCubic),
+          );
+          return FadeTransition(
+            opacity: fade,
+            alwaysIncludeSemantics: true,
+            child: _TransitionBackdropGuard(
+              animation: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: beginOffset,
+                  end: Offset.zero,
+                ).animate(curved),
+                child: child,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          final endOffset = axis == Axis.vertical
+              ? Offset(0, -signedOffset * 0.75)
+              : Offset(-signedOffset * 0.75, 0);
+          final slideCurve = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          final fade = CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.62, 1.0, curve: Curves.easeOutCubic),
+          );
+          return FadeTransition(
+            opacity: fade,
+            alwaysIncludeSemantics: true,
+            child: _TransitionBackdropGuard(
+              animation: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: endOffset,
+                  end: Offset.zero,
+                ).animate(slideCurve),
+                child: child,
+              ),
+            ),
+          );
+        }
       },
       child: child,
     );
   }
+}
+
+class _TransitionBackdropGuard extends StatefulWidget {
+  const _TransitionBackdropGuard({
+    required this.animation,
+    required this.child,
+  });
+
+  final Animation<double> animation;
+  final Widget child;
+
+  @override
+  State<_TransitionBackdropGuard> createState() =>
+      _TransitionBackdropGuardState();
+}
+
+class _TransitionBackdropGuardState extends State<_TransitionBackdropGuard> {
+  late bool _suspended = _shouldSuspend(widget.animation);
+
+  static bool _shouldSuspend(Animation<double> a) =>
+      a.status == AnimationStatus.forward ||
+      a.status == AnimationStatus.reverse ||
+      (a.value > 0.0 && a.value < 0.999);
+
+  void _sync() {
+    final next = _shouldSuspend(widget.animation);
+    if (next != _suspended && mounted) {
+      setState(() => _suspended = next);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.animation.addListener(_sync);
+    widget.animation.addStatusListener(_onStatus);
+  }
+
+  void _onStatus(AnimationStatus _) => _sync();
+
+  @override
+  void didUpdateWidget(_TransitionBackdropGuard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.animation != widget.animation) {
+      oldWidget.animation.removeListener(_sync);
+      oldWidget.animation.removeStatusListener(_onStatus);
+      widget.animation.addListener(_sync);
+      widget.animation.addStatusListener(_onStatus);
+      _suspended = _shouldSuspend(widget.animation);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.animation.removeListener(_sync);
+    widget.animation.removeStatusListener(_onStatus);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      BackdropFilterGuard(suspended: _suspended, child: widget.child);
 }
 
 /// Bounded staggered entrance for cards and rows without dangling timers.
@@ -181,12 +291,14 @@ class SlidingSegmentBar<T> extends StatelessWidget {
     required this.options,
     required this.onChanged,
     this.height = 38,
+    this.durationMs = 280,
   });
 
   final T value;
   final List<SegmentOption<T>> options;
   final ValueChanged<T> onChanged;
   final double height;
+  final int durationMs;
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +307,7 @@ class SlidingSegmentBar<T> extends StatelessWidget {
     final selectedIndex = options.indexWhere((o) => o.value == value);
     final safeIndex = selectedIndex < 0 ? 0 : selectedIndex;
     final alignX = count <= 1 ? 0.0 : -1.0 + (2.0 * safeIndex) / (count - 1);
-    final duration = workbenchDuration(context, WorkbenchDurations.short);
+    final duration = workbenchDuration(context, durationMs);
 
     return NeumorphicSurface(
       palette: p,
@@ -229,6 +341,15 @@ class SlidingSegmentBar<T> extends StatelessWidget {
                       border: Border.all(
                         color: p.accent.withValues(alpha: 0.35),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(
+                            alpha: p.dark ? 0.28 : 0.08,
+                          ),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                   ),
                 ),

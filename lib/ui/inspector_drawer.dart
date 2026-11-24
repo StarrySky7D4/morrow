@@ -10,7 +10,7 @@ enum InspectorTab { studio, music, appearance }
 
 /// Dockable right-side workbench inspector (and compact settings body) organizing
 /// Quick Capture, Daily Tasks, Workspace Pulse, Music, and Appearance into 3 tabs.
-class WorkbenchInspector extends StatelessWidget {
+class WorkbenchInspector extends StatefulWidget {
   const WorkbenchInspector({
     super.key,
     required this.palette,
@@ -23,10 +23,10 @@ class WorkbenchInspector extends StatelessWidget {
     required this.activeProjectsCount,
     required this.experimentsCount,
     required this.favoritesCount,
-    required this.quickCapture,
-    required this.scratchpad,
-    required this.musicPanel,
-    required this.appearance,
+    required this.quickCaptureBuilder,
+    required this.scratchpadBuilder,
+    required this.musicPanelBuilder,
+    required this.appearanceBuilder,
     required this.onSelectPage,
     this.compact = false,
   });
@@ -41,30 +41,45 @@ class WorkbenchInspector extends StatelessWidget {
   final int activeProjectsCount;
   final int experimentsCount;
   final int favoritesCount;
-  final Widget quickCapture;
-  final Widget scratchpad;
-  final Widget musicPanel;
-  final Widget appearance;
+  final WidgetBuilder quickCaptureBuilder;
+  final WidgetBuilder scratchpadBuilder;
+  final WidgetBuilder musicPanelBuilder;
+  final WidgetBuilder appearanceBuilder;
   final ValueChanged<WorkbenchPage> onSelectPage;
   final bool compact;
 
   @override
+  State<WorkbenchInspector> createState() => _WorkbenchInspectorState();
+}
+
+class _WorkbenchInspectorState extends State<WorkbenchInspector> {
+  int _tabDirection = 1;
+
+  @override
+  void didUpdateWidget(WorkbenchInspector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.tab != widget.tab) {
+      _tabDirection = widget.tab.index >= oldWidget.tab.index ? 1 : -1;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final p = palette;
+    final p = widget.palette;
     final s = WorkbenchStrings.of(context);
 
     final segmentBar = ListenableBuilder(
-      listenable: music,
+      listenable: widget.music,
       builder: (context, _) => SlidingSegmentBar<InspectorTab>(
-        value: tab,
-        onChanged: onTabChanged,
+        value: widget.tab,
+        onChanged: widget.onTabChanged,
         options: [
           SegmentOption(
             value: InspectorTab.studio,
             icon: Icons.space_dashboard_outlined,
             label: s.tabStudio,
             itemKey: const ValueKey('inspector-tab-studio'),
-            badge: remainingDailyTasks > 0
+            badge: widget.remainingDailyTasks > 0
                 ? Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 5,
@@ -72,10 +87,10 @@ class WorkbenchInspector extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: p.accent.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: p.borderRadius(6),
                     ),
                     child: Text(
-                      '$remainingDailyTasks',
+                      '${widget.remainingDailyTasks}',
                       style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
@@ -90,7 +105,7 @@ class WorkbenchInspector extends StatelessWidget {
             icon: Icons.music_note_rounded,
             label: s.tabMusic,
             itemKey: const ValueKey('inspector-tab-music'),
-            badge: music.playing
+            badge: widget.music.playing
                 ? Container(
                     width: 6,
                     height: 6,
@@ -111,18 +126,23 @@ class WorkbenchInspector extends StatelessWidget {
       ),
     );
 
-    final body = SingleChildScrollView(
-      key: PageStorageKey('inspector-scroll-${tab.name}-$compact'),
-      padding: EdgeInsets.only(top: 14, bottom: compact ? 28 : 18),
-      child: SharedAxisSwitcher(
-        axis: Axis.horizontal,
-        slideOffset: 0.04,
+    final body = SharedAxisSwitcher(
+      axis: Axis.horizontal,
+      fit: StackFit.expand,
+      durationMs: 280,
+      slideOffset: 0.10,
+      direction: _tabDirection,
+      child: SingleChildScrollView(
+        key: PageStorageKey(
+          'inspector-scroll-${widget.tab.name}-${widget.compact}',
+        ),
+        padding: EdgeInsets.only(top: 14, bottom: widget.compact ? 28 : 18),
         child: KeyedSubtree(
-          key: ValueKey('inspector-body-${tab.name}'),
-          child: switch (tab) {
+          key: ValueKey('inspector-body-${widget.tab.name}'),
+          child: switch (widget.tab) {
             InspectorTab.studio => _buildStudioTab(context, p, s),
             InspectorTab.music => _buildMusicTab(context, p, s),
-            InspectorTab.appearance => appearance,
+            InspectorTab.appearance => widget.appearanceBuilder(context),
           },
         ),
       ),
@@ -144,18 +164,18 @@ class WorkbenchInspector extends StatelessWidget {
   ) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      quickCapture,
+      widget.quickCaptureBuilder(context),
       const SizedBox(height: 16),
-      scratchpad,
+      widget.scratchpadBuilder(context),
       const SizedBox(height: 16),
       _WorkspacePulseCard(
         palette: p,
         strings: s,
-        inboxCount: inboxCount,
-        activeProjectsCount: activeProjectsCount,
-        experimentsCount: experimentsCount,
-        favoritesCount: favoritesCount,
-        onSelectPage: onSelectPage,
+        inboxCount: widget.inboxCount,
+        activeProjectsCount: widget.activeProjectsCount,
+        experimentsCount: widget.experimentsCount,
+        favoritesCount: widget.favoritesCount,
+        onSelectPage: widget.onSelectPage,
       ),
     ],
   );
@@ -167,7 +187,7 @@ class WorkbenchInspector extends StatelessWidget {
   ) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      if (backgroundAudible)
+      if (widget.backgroundAudible)
         Padding(
           padding: const EdgeInsets.only(bottom: 14),
           child: Glass(
@@ -194,7 +214,7 @@ class WorkbenchInspector extends StatelessWidget {
             ),
           ),
         ),
-      musicPanel,
+      widget.musicPanelBuilder(context),
     ],
   );
 }

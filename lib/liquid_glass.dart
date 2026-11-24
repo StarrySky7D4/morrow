@@ -1,4 +1,6 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -17,12 +19,31 @@ class GlassMaterial {
     required bool dark,
     required bool readable,
     required BorderRadius borderRadius,
+    List<BoxShadow>? boxShadow,
   }) => GlassMaterial(
     blur: 5,
     liquid: 1,
     decoration: BoxDecoration(
       borderRadius: borderRadius,
       border: Border.all(color: Colors.transparent, width: 1.6),
+      boxShadow:
+          boxShadow ??
+          [
+            BoxShadow(
+              color: (dark ? Colors.black : const Color(0xFF3E3552)).withValues(
+                alpha: readable ? (dark ? .44 : .15) : (dark ? .28 : .08),
+              ),
+              blurRadius: readable ? 26 : 16,
+              offset: Offset(0, readable ? 10 : 6),
+            ),
+            BoxShadow(
+              color: (dark ? Colors.black : const Color(0xFF3E3552)).withValues(
+                alpha: readable ? (dark ? .22 : .06) : (dark ? .14 : .04),
+              ),
+              blurRadius: readable ? 8 : 4,
+              offset: Offset(0, readable ? 3 : 1.5),
+            ),
+          ],
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -74,6 +95,48 @@ class GlassMaterialTween extends Tween<GlassMaterial> {
   GlassMaterial lerp(double t) => GlassMaterial.lerp(begin!, end!, t);
 }
 
+/// Temporarily suspends descendant [BackdropFilter] layers while an ancestor
+/// opacity transition (`0 < opacity < 1`) is active, avoiding Skia
+/// `OpacityLayer + BackdropFilter` alpha overexposure over transparent/dark surfaces.
+class BackdropFilterSuspension extends InheritedWidget {
+  const BackdropFilterSuspension({
+    super.key,
+    required this.suspended,
+    required super.child,
+  });
+
+  final bool suspended;
+
+  static bool isSuspended(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BackdropFilterSuspension>()
+          ?.suspended ??
+      false;
+
+  @override
+  bool updateShouldNotify(BackdropFilterSuspension oldWidget) =>
+      suspended != oldWidget.suspended;
+}
+
+/// Propagates [suspended] downward while preserving any active outer
+/// [BackdropFilterSuspension] so nested animations never re-enable blurs early.
+class BackdropFilterGuard extends StatelessWidget {
+  const BackdropFilterGuard({
+    super.key,
+    required this.suspended,
+    required this.child,
+  });
+
+  final bool suspended;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => BackdropFilterSuspension(
+    suspended: suspended || BackdropFilterSuspension.isSuspended(context),
+    child: child,
+  );
+}
+
 /// A cross-platform optical material. Impeller gets curved per-pixel refraction;
 /// other backends use a real magnifying backdrop filter with the same light rim.
 class LiquidGlassSurface extends StatefulWidget {
@@ -87,6 +150,8 @@ class LiquidGlassSurface extends StatefulWidget {
     this.readable = false,
     this.transparentCanvas = true,
     this.material,
+    this.useBackdropGroup = true,
+    this.backdropEnabled = true,
   });
   final GlassMaterial? material;
   final Widget child;
@@ -96,6 +161,8 @@ class LiquidGlassSurface extends StatefulWidget {
   /// Only transparent canvases must leave the desktop-facing interior unpainted.
   final bool transparentCanvas;
   final BorderRadius borderRadius;
+  final bool useBackdropGroup;
+  final bool backdropEnabled;
   @override
   State<LiquidGlassSurface> createState() => _LiquidGlassSurfaceState();
 }
@@ -103,41 +170,80 @@ class LiquidGlassSurface extends StatefulWidget {
 class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
     with SingleTickerProviderStateMixin {
   static Future<ui.FragmentProgram>? _program;
+  static final Map<double, ui.ImageFilter> _blurCache = <double, ui.ImageFilter>{};
+
+  static ui.ImageFilter _cachedBlurFilter(double rawBlur) {
+    final mapped = rawBlur <= 6.0
+        ? rawBlur.clamp(0.0, 6.0)
+        : (6.0 + (rawBlur - 6.0) * 0.25).clamp(0.0, 10.0);
+    final quantized = (mapped * 2.0).round() / 2.0;
+    return _blurCache.putIfAbsent(quantized, () {
+      if (_blurCache.length >= 48) {
+        _blurCache.remove(_blurCache.keys.first);
+      }
+      return ui.ImageFilter.blur(sigmaX: quantized, sigmaY: quantized);
+    });
+  }
+
+  static bool _isOpaqueSurface(GlassMaterial material) {
+    final color = material.decoration.color;
+    if (color != null && color.a >= 0.65) return true;
+    final gradient = material.decoration.gradient;
+    if (gradient is LinearGradient && gradient.colors.isNotEmpty) {
+      var minAlpha = 1.0;
+      for (final c in gradient.colors) {
+        if (c.a < minAlpha) minAlpha = c.a;
+      }
+      return minAlpha >= 0.65;
+    }
+    return false;
+  }
+
   ui.FragmentShader? _shader;
   bool _loadingShader = false;
-  late final AnimationController _press;
-  final ValueNotifier<Offset> _light = ValueNotifier(const Offset(-.65, -.8));
-  late final Listenable _optics = Listenable.merge([_light, _press]);
+  AnimationController? _press;
+  ValueNotifier<Offset>? _light;
+  Listenable? _optics;
   bool get _filterEnabled => !widget.canvas || !widget.transparentCanvas;
   bool get _needsRefraction => (widget.material?.liquid ?? 1) > .001;
 
-  @override
-  void initState() {
-    super.initState();
-    _press =
+  Listenable _ensureOptics() {
+    if (_optics case final optics?) return optics;
+    final press = _press ??=
         AnimationController(
           vsync: this,
           duration: const Duration(milliseconds: 180),
           reverseDuration: const Duration(milliseconds: 320),
         )..addStatusListener((status) {
-          if (status == AnimationStatus.completed) _press.reverse();
+          if (status == AnimationStatus.completed) _press?.reverse();
         });
-    if (_filterEnabled &&
-        _needsRefraction &&
-        ui.ImageFilter.isShaderFilterSupported) {
-      _loadShader();
+    final light = _light ??= ValueNotifier(const Offset(-.65, -.8));
+    return _optics = Listenable.merge([light, press]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (_filterEnabled && _needsRefraction) {
+      _ensureOptics();
+      if (ui.ImageFilter.isShaderFilterSupported) {
+        _loadShader();
+      }
     }
   }
 
   @override
   void didUpdateWidget(LiquidGlassSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_needsRefraction) _resetInteraction();
-    if (_filterEnabled &&
-        _needsRefraction &&
-        _shader == null &&
-        ui.ImageFilter.isShaderFilterSupported) {
-      _loadShader();
+    if (!_needsRefraction) {
+      _resetInteraction();
+      _shader?.dispose();
+      _shader = null;
+    } else if (_filterEnabled) {
+      _ensureOptics();
+      if (_shader == null && ui.ImageFilter.isShaderFilterSupported) {
+        _loadShader();
+      }
     }
   }
 
@@ -148,12 +254,17 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
   }
 
   bool get _motionEnabled =>
-      !MediaQuery.disableAnimationsOf(context) && TickerMode.valuesOf(context).enabled;
+      !MediaQuery.disableAnimationsOf(context) &&
+      TickerMode.valuesOf(context).enabled;
 
   void _resetInteraction() {
-    if (_press.isAnimating || _press.value != 0) _press.reset();
-    if (_light.value != const Offset(-.65, -.8)) {
-      _light.value = const Offset(-.65, -.8);
+    final press = _press;
+    if (press != null && (press.isAnimating || press.value != 0)) {
+      press.reset();
+    }
+    final light = _light;
+    if (light != null && light.value != const Offset(-.65, -.8)) {
+      light.value = const Offset(-.65, -.8);
     }
   }
 
@@ -176,30 +287,32 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
 
   @override
   void dispose() {
-    _press.dispose();
-    _light.dispose();
+    _press?.dispose();
+    _light?.dispose();
     _shader?.dispose();
     super.dispose();
   }
 
   ui.ImageFilter _filter(Size size, GlassMaterial material) {
     if (material.liquid <= .001) {
-      return ui.ImageFilter.blur(sigmaX: material.blur, sigmaY: material.blur);
+      return _cachedBlurFilter(material.blur);
     }
+    final light = _light?.value ?? const Offset(-.65, -.8);
+    final pressValue = _press?.value ?? 0.0;
     final ui.ImageFilter refraction;
     if (_shader case final shader?) {
       shader.setFloat(2, widget.borderRadius.topLeft.x);
       shader.setFloat(3, (widget.canvas ? 4 : 9) * material.liquid);
-      shader.setFloat(4, _light.value.dx);
-      shader.setFloat(5, _light.value.dy);
-      shader.setFloat(6, _press.value);
+      shader.setFloat(4, light.dx);
+      shader.setFloat(5, light.dy);
+      shader.setFloat(6, pressValue);
       refraction = ui.ImageFilter.shader(shader);
     } else {
       final zoom =
           1 +
           (widget.canvas ? .004 : .014) *
               material.liquid *
-              (1 + .3 * _press.value);
+              (1 + .3 * pressValue);
       final transform = Matrix4.identity()
         ..setEntry(0, 0, zoom)
         ..setEntry(1, 1, zoom)
@@ -208,7 +321,7 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
       refraction = ui.ImageFilter.matrix(transform.storage);
     }
     return ui.ImageFilter.compose(
-      outer: ui.ImageFilter.blur(sigmaX: material.blur, sigmaY: material.blur),
+      outer: _cachedBlurFilter(material.blur),
       inner: refraction,
     );
   }
@@ -216,12 +329,14 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
   void _updateLight(PointerEvent event) {
     final box = context.findRenderObject() as RenderBox?;
     if (box == null || box.size.isEmpty) return;
+    final light = _light;
+    if (light == null) return;
     final point = box.globalToLocal(event.position);
     final next = Offset(
       (point.dx / box.size.width * 2 - 1).clamp(-1.0, 1.0),
       (point.dy / box.size.height * 2 - 1).clamp(-1.0, 1.0),
     );
-    if ((_light.value - next).distanceSquared > .0004) _light.value = next;
+    if ((light.value - next).distanceSquared > .0025) light.value = next;
   }
 
   void _pressAt(PointerDownEvent event) {
@@ -230,8 +345,9 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
         (event.buttons & kPrimaryButton) == 0) {
       return;
     }
+    _ensureOptics();
     _updateLight(event);
-    _press.forward(from: 0);
+    _press?.forward(from: 0);
   }
 
   @override
@@ -245,21 +361,77 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
           readable: MediaQuery.highContrastOf(context) || widget.readable,
           borderRadius: widget.borderRadius,
         );
+    final needsRefraction = _needsRefraction;
+    final optics = needsRefraction ? _ensureOptics() : null;
+    final surfaceDecoration = material.decoration.copyWith(boxShadow: const []);
+    final canGroup =
+        widget.useBackdropGroup &&
+        !widget.canvas &&
+        !widget.readable &&
+        BackdropGroup.of(context) != null;
+    final suspendBackdrop =
+        !widget.backdropEnabled ||
+        BackdropFilterSuspension.isSuspended(context);
+
+    Widget buildBackdrop() {
+      final box = DecoratedBox(decoration: surfaceDecoration);
+      if (suspendBackdrop) return box;
+      if (!needsRefraction) {
+        if (material.blur <= .001) return box;
+        final blur = _cachedBlurFilter(material.blur);
+        return canGroup
+            ? BackdropFilter.grouped(filter: blur, child: box)
+            : BackdropFilter(filter: blur, child: box);
+      }
+      if (_shader != null) {
+        return AnimatedBuilder(
+          animation: optics!,
+          child: DecoratedBox(decoration: surfaceDecoration),
+          builder: (_, backdropChild) => BackdropFilter(
+            filter: _filter(Size.zero, material),
+            child: backdropChild,
+          ),
+        );
+      }
+      return AnimatedBuilder(
+        animation: _press!,
+        child: DecoratedBox(decoration: surfaceDecoration),
+        builder: (_, backdropChild) {
+          if (canGroup && _press!.value <= 0.001) {
+            return BackdropFilter.grouped(
+              filter: _cachedBlurFilter(material.blur),
+              child: backdropChild,
+            );
+          }
+          return LayoutBuilder(
+            builder: (_, constraints) => BackdropFilter(
+              filter: _filter(constraints.biggest, material),
+              child: backdropChild,
+            ),
+          );
+        },
+      );
+    }
+
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: _pressAt,
       onPointerCancel: (_) => _resetInteraction(),
       child: MouseRegion(
-        onHover: !motionEnabled || !_needsRefraction ? null : _updateLight,
-        onExit: !motionEnabled || !_needsRefraction
+        onHover: !motionEnabled || !needsRefraction ? null : _updateLight,
+        onExit: !motionEnabled || !needsRefraction
             ? null
-            : (_) => _light.value = const Offset(-.65, -.8),
+            : (_) {
+                final light = _light;
+                if (light != null) light.value = const Offset(-.65, -.8);
+              },
         child: CustomPaint(
           painter: widget.canvas
               ? null
-              : _OuterGlassShadowPainter(
+              : OuterShadowPainter(
                   borderRadius: widget.borderRadius,
                   shadows: material.decoration.boxShadow ?? const [],
+                  opaqueInterior: _isOpaqueSurface(material),
                 ),
           child: ClipRRect(
             borderRadius: widget.borderRadius,
@@ -267,38 +439,35 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
               children: [
                 // The transparent canvas cannot sample the OS desktop through a
                 // Flutter backdrop. Leave its interior unpainted; retain the rim.
-                if (_filterEnabled)
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _optics,
-                      builder: (_, _) => LayoutBuilder(
-                        builder: (_, constraints) => BackdropFilter(
-                          filter: _filter(constraints.biggest, material),
-                          child: DecoratedBox(
-                            decoration: material.decoration.copyWith(
-                              boxShadow: const [],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                if (_filterEnabled) Positioned.fill(child: buildBackdrop()),
                 widget.child,
                 Positioned.fill(
                   child: IgnorePointer(
-                    child: AnimatedBuilder(
-                      animation: _optics,
-                      builder: (_, _) => CustomPaint(
-                        painter: LiquidRimPainter(
-                          radius: widget.borderRadius.topLeft.x,
-                          light: _light.value,
-                          dark: widget.dark,
-                          canvas: widget.canvas,
-                          intensity: material.liquid,
-                          press: _press.value,
-                        ),
-                      ),
-                    ),
+                    child: optics != null
+                        ? AnimatedBuilder(
+                            animation: optics,
+                            builder: (_, _) => CustomPaint(
+                              painter: LiquidRimPainter(
+                                radius: widget.borderRadius.topLeft.x,
+                                light:
+                                    _light?.value ?? const Offset(-.65, -.8),
+                                dark: widget.dark,
+                                canvas: widget.canvas,
+                                intensity: material.liquid,
+                                press: _press?.value ?? 0.0,
+                              ),
+                            ),
+                          )
+                        : CustomPaint(
+                            painter: LiquidRimPainter(
+                              radius: widget.borderRadius.topLeft.x,
+                              light: const Offset(-.65, -.8),
+                              dark: widget.dark,
+                              canvas: widget.canvas,
+                              intensity: 0,
+                              press: 0,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -310,39 +479,80 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface>
   }
 }
 
-/// Keeps blurred shadows outside the original glass outline. Clear materials
-/// have a transparent fill, so a shifted shadow must not tint their interior.
-class _OuterGlassShadowPainter extends CustomPainter {
-  const _OuterGlassShadowPainter({
+/// Keeps blurred shadows outside the original outline. Clear materials have a
+/// transparent fill, so a shifted shadow must not tint their interior.
+class OuterShadowPainter extends CustomPainter {
+  const OuterShadowPainter({
     required this.borderRadius,
     required this.shadows,
+    this.opaqueInterior = false,
   });
 
   final BorderRadius borderRadius;
   final List<BoxShadow> shadows;
+  final bool opaqueInterior;
 
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty || shadows.isEmpty) return;
     final outline = borderRadius.toRRect(Offset.zero & size);
-    canvas.save();
-    final outside = Path()
-      ..fillType = ui.PathFillType.evenOdd
-      ..addRect(canvas.getLocalClipBounds())
-      ..addRRect(outline);
-    canvas.clipPath(outside);
-    for (final shadow in shadows) {
-      canvas.drawRRect(
-        outline.shift(shadow.offset).inflate(shadow.spreadRadius),
-        shadow.toPaint(),
-      );
+    if (opaqueInterior) {
+      for (final shadow in shadows) {
+        canvas.drawRRect(
+          outline.shift(shadow.offset).inflate(shadow.spreadRadius),
+          shadow.toPaint(),
+        );
+      }
+      return;
     }
-    canvas.restore();
+    for (final shadow in shadows) {
+      final sigma = shadow.blurSigma;
+      if (sigma > 0.01) {
+        final dx = shadow.offset.dx;
+        final dy = shadow.offset.dy;
+        final spread = shadow.spreadRadius;
+        final envelope = RRect.fromLTRBAndCorners(
+          outline.left + math.min(0.0, dx * 0.45) - spread,
+          outline.top + math.min(0.0, dy * 0.45) - spread,
+          outline.right + math.max(0.0, dx * 0.45) + spread,
+          outline.bottom + math.max(0.0, dy * 0.45) + spread,
+          topLeft: outline.tlRadius,
+          topRight: outline.trRadius,
+          bottomRight: outline.brRadius,
+          bottomLeft: outline.blRadius,
+        );
+        canvas.drawRRect(
+          envelope,
+          Paint()
+            ..color = shadow.color
+            ..maskFilter = MaskFilter.blur(ui.BlurStyle.outer, sigma),
+        );
+      } else if (shadow.offset != Offset.zero || shadow.spreadRadius > 0) {
+        final expand =
+            shadow.spreadRadius.abs() +
+            shadow.offset.dx.abs() +
+            shadow.offset.dy.abs() +
+            2;
+        canvas.save();
+        final outside = Path()
+          ..fillType = ui.PathFillType.evenOdd
+          ..addRect((Offset.zero & size).inflate(expand))
+          ..addRRect(outline);
+        canvas.clipPath(outside);
+        canvas.drawRRect(
+          outline.shift(shadow.offset).inflate(shadow.spreadRadius),
+          shadow.toPaint(),
+        );
+        canvas.restore();
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(_OuterGlassShadowPainter old) =>
-      old.borderRadius != borderRadius || old.shadows != shadows;
+  bool shouldRepaint(OuterShadowPainter old) =>
+      old.opaqueInterior != opaqueInterior ||
+      old.borderRadius != borderRadius ||
+      !listEquals(old.shadows, shadows);
 }
 
 class LiquidRimPainter extends CustomPainter {

@@ -1,4 +1,4 @@
-import 'surface_paint_boundary.dart';
+import 'liquid_glass.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 import 'ui/workbench_motion.dart';
@@ -67,7 +67,7 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
     final hovered = active && _hovered && !pressed;
     // Hover must not grow with the card width and consume adjacent gutters.
     final scale = pressed ? 0.984 : 1.0;
-    final rise = hovered ? -3.0 : 0.0;
+    final hoverTarget = hovered ? 1.0 : 0.0;
     return MouseRegion(
       onEnter: (_) {
         if (widget.enabled) setState(() => _hovered = true);
@@ -95,26 +95,19 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
         },
         onPointerUp: (event) => _release(event.pointer),
         onPointerCancel: (event) => _release(event.pointer),
-        child: SurfacePaintBoundary(
-          child: AnimatedContainer(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(end: hoverTarget),
+          duration: motion,
+          curve: WorkbenchCurves.snappy,
+          child: AnimatedScale(
+            scale: scale,
             duration: motion,
             curve: WorkbenchCurves.snappy,
-            transformAlignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(0, 0, scale)
-              ..setEntry(1, 1, scale)
-              ..setEntry(1, 3, rise),
-            decoration: BoxDecoration(
-              borderRadius: widget.borderRadius,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: hovered ? 0.10 : 0),
-                  blurRadius: hovered ? 14 : 0,
-                  offset: Offset(0, hovered ? 5 : 0),
-                ),
-              ],
-            ),
             child: widget.child,
+          ),
+          builder: (context, hoverAmount, child) => Transform.translate(
+            offset: Offset(0, -2.5 * hoverAmount),
+            child: child,
           ),
         ),
       ),
@@ -157,20 +150,28 @@ class SurfaceAttachment extends StatelessWidget {
           opacity: attached ? 1 : 0.95,
           duration: duration,
           curve: Curves.easeOutCubic,
-          child: AnimatedContainer(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(end: attached ? 0.0 : 1.0),
             duration: duration,
             curve: Curves.easeOutCubic,
-            decoration: BoxDecoration(
-              borderRadius: borderRadius,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: attached ? 0 : 0.10),
-                  blurRadius: attached ? 0 : 18,
-                  offset: Offset(0, attached ? 0 : 7),
-                ),
-              ],
-            ),
             child: child,
+            builder: (context, floatAmount, child) => CustomPaint(
+              painter: floatAmount <= 0.001
+                  ? null
+                  : OuterShadowPainter(
+                      borderRadius: borderRadius,
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withValues(
+                            alpha: 0.10 * floatAmount,
+                          ),
+                          blurRadius: 16,
+                          offset: Offset(0, 7 * floatAmount),
+                        ),
+                      ],
+                    ),
+              child: child,
+            ),
           ),
         ),
       ),

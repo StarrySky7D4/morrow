@@ -54,7 +54,13 @@ class WorkbenchIdeaCard extends StatefulWidget {
 }
 
 class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
-  bool _hovered = false;
+  final ValueNotifier<bool> _hovered = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    _hovered.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +75,8 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
         : 0.0;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
+      onEnter: (_) => _hovered.value = true,
+      onExit: (_) => _hovered.value = false,
       child: Glass(
         componentId: 'card:${widget.id}',
         p: p,
@@ -79,7 +85,10 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
           color: Colors.transparent,
           child: InkWell(
             onTap: widget.onTap,
-            borderRadius: p.borderRadius(20),
+            borderRadius: p.componentBorderRadius(
+              20,
+              componentId: 'card:${widget.id}',
+            ),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(18, 15, 14, 15),
               child: Column(
@@ -92,7 +101,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                         height: 20,
                         decoration: BoxDecoration(
                           color: readableTint,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: p.borderRadius(2),
                         ),
                       ),
                       const SizedBox(width: 9),
@@ -194,7 +203,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: p.borderRadius(4),
                             child: TweenAnimationBuilder<double>(
                               tween: Tween(end: progress),
                               duration: workbenchDuration(
@@ -256,44 +265,48 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                         style: TextStyle(fontSize: 10, color: p.muted),
                       ),
                       const Spacer(),
-                      IgnorePointer(
-                        ignoring: !_hovered,
-                        child: AnimatedOpacity(
-                          opacity: _hovered ? 1 : 0,
-                          alwaysIncludeSemantics: true,
-                          duration: workbenchDuration(
-                            context,
-                            WorkbenchDurations.micro,
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _hovered,
+                        builder: (context, hovered, child) => IgnorePointer(
+                          ignoring: !hovered,
+                          child: AnimatedOpacity(
+                            opacity: hovered ? 1 : 0,
+                            alwaysIncludeSemantics: true,
+                            duration: workbenchDuration(
+                              context,
+                              WorkbenchDurations.micro,
+                            ),
+                            child: child,
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (widget.canEdit && widget.onEdit != null)
-                                Tooltip(
-                                  message: s.editCard,
-                                  child: InkWell(
-                                    borderRadius: p.borderRadius(7),
-                                    onTap: widget.onEdit,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Icon(
-                                        Icons.edit_outlined,
-                                        size: 14,
-                                        color: p.muted,
-                                      ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.canEdit && widget.onEdit != null)
+                              Tooltip(
+                                message: s.editCard,
+                                child: InkWell(
+                                  borderRadius: p.borderRadius(7),
+                                  onTap: widget.onEdit,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.edit_outlined,
+                                      size: 14,
+                                      color: p.muted,
                                     ),
                                   ),
                                 ),
-                              const SizedBox(width: 2),
-                              ExcludeSemantics(
-                                child: Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: 14,
-                                  color: p.accent,
-                                ),
                               ),
-                            ],
-                          ),
+                            const SizedBox(width: 2),
+                            ExcludeSemantics(
+                              child: Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 14,
+                                color: p.accent,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -361,7 +374,7 @@ class WorkbenchIdeaListRow extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: p.borderRadius(16),
+          borderRadius: p.componentBorderRadius(16, componentId: 'card:$id'),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(

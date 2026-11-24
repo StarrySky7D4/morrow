@@ -238,7 +238,7 @@ class _MusicPanelState extends State<MusicPanel> {
     return ListenableBuilder(
       listenable: music,
       builder: (context, _) => SurfaceInteraction(
-        borderRadius: p.borderRadius(22),
+        borderRadius: p.componentBorderRadius(22, componentId: 'music'),
         child: Glass(
           componentId: 'music',
           p: p,
@@ -468,6 +468,10 @@ class _MusicPanelState extends State<MusicPanel> {
                   child: _playlistVisited
                       ? SurfaceAttachment(
                           attached: expanded,
+                          borderRadius: p.componentBorderRadius(
+                            14,
+                            componentId: 'music',
+                          ),
                           child: Column(
                             key: const ValueKey('music-playlist'),
                             children: [

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
@@ -8,6 +8,7 @@ import 'package:morrow_studio/fonts/font_choice.dart';
 import 'package:morrow_studio/fonts/font_repository.dart';
 import 'package:morrow_studio/fonts/font_storage_native.dart' as native_fonts;
 import 'package:morrow_studio/fonts/font_settings.dart';
+import 'package:morrow_studio/fonts/system_fonts.dart';
 import 'package:morrow_studio/settings_surface.dart';
 
 void main() {
@@ -82,6 +83,11 @@ void main() {
       await t.pumpAndSettle();
       final studio = t.state(find.byType(Studio));
       Future<void> open() async {
+        final tab = find.byKey(const ValueKey('inspector-tab-appearance'));
+        if (tab.evaluate().isNotEmpty) {
+          await t.tap(tab);
+          await t.pumpAndSettle();
+        }
         await t.ensureVisible(find.byKey(const ValueKey('font-settings')));
         await t.tap(find.byKey(const ValueKey('font-settings')));
         await t.pumpAndSettle();
@@ -154,4 +160,128 @@ void main() {
     expect(controller.value, draft);
     expect(t.takeException(), isNull);
   });
+  test(
+    'system font catalog normalizes, deduplicates, filters invalid names, and refreshes cache',
+    () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      SystemFontCatalog.clearCache();
+      var calls = 0;
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemFontCatalog.channel, (
+        call,
+      ) async {
+        calls++;
+        expect(call.method, 'listSystemFonts');
+        return [
+          {'family': 'Microsoft YaHei', 'displayName': '微软雅黑'},
+          {'family': 'microsoft yahei', 'displayName': 'Duplicate'},
+          {'family': 'bad\nfont', 'displayName': 'Bad'},
+          {'family': 'Consolas', 'displayName': 'Consolas'},
+        ];
+      });
+      addTearDown(() {
+        messenger.setMockMethodCallHandler(SystemFontCatalog.channel, null);
+        SystemFontCatalog.clearCache();
+      });
+
+      final first = await SystemFontCatalog.load(locale: 'zh-CN');
+      expect(calls, 1);
+      expect(first.length, 2);
+      expect(
+        first,
+        containsAll([
+          const SystemFontEntry(family: 'Microsoft YaHei', displayName: '微软雅黑'),
+          const SystemFontEntry(family: 'Consolas', displayName: 'Consolas'),
+        ]),
+      );
+
+      final cached = await SystemFontCatalog.load(locale: 'zh-CN');
+      expect(calls, 1);
+      expect(cached, first);
+
+      await SystemFontCatalog.load(locale: 'zh-CN', refresh: true);
+      expect(calls, 2);
+    },
+  );
+  testWidgets(
+    'system font picker filters, applies selected font, and restores default',
+    (t) async {
+      SystemFontCatalog.clearCache();
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemFontCatalog.channel, (
+        call,
+      ) async {
+        return [
+          {'family': 'Microsoft YaHei', 'displayName': '微软雅黑'},
+          {'family': 'Consolas', 'displayName': 'Consolas'},
+          {'family': 'Georgia', 'displayName': 'Georgia'},
+        ];
+      });
+      addTearDown(() {
+        messenger.setMockMethodCallHandler(SystemFontCatalog.channel, null);
+        SystemFontCatalog.clearCache();
+      });
+
+      t.view.devicePixelRatio = 1;
+      t.view.physicalSize = const Size(1440, 1100);
+      addTearDown(t.view.reset);
+
+      final storage = MemoryStorage();
+      await t.pumpWidget(
+        MorrowApp(storage: storage, initialLocale: const Locale('zh')),
+      );
+      await t.pumpAndSettle();
+
+      final tab = find.byKey(const ValueKey('inspector-tab-appearance'));
+      if (tab.evaluate().isNotEmpty) {
+        await t.tap(tab);
+        await t.pumpAndSettle();
+      }
+      await t.ensureVisible(find.byKey(const ValueKey('font-settings')));
+      await t.tap(find.byKey(const ValueKey('font-settings')));
+      await t.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('system-font-picker')), findsOneWidget);
+      expect(find.byKey(const ValueKey('system-font-list')), findsOneWidget);
+
+      await t.enterText(
+        find.byKey(const ValueKey('system-font-search')),
+        '微软雅黑',
+      );
+      await t.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('system-font-Microsoft YaHei')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('system-font-Consolas')), findsNothing);
+
+      await t.tap(find.byKey(const ValueKey('system-font-Microsoft YaHei')));
+      await t.pumpAndSettle();
+
+      expect(storage.data!['uiFont']['family'], 'Microsoft YaHei');
+      expect(
+        Theme.of(
+          t.element(find.byType(FontSettingsPage)),
+        ).textTheme.bodyMedium!.fontFamily,
+        'Microsoft YaHei',
+      );
+      expect(
+        t.widget<TextField>(find.byKey(const ValueKey('font-family'))).controller!
+            .text,
+        'Microsoft YaHei',
+      );
+
+      await t.enterText(find.byKey(const ValueKey('system-font-search')), '');
+      await t.pumpAndSettle();
+
+      await t.tap(find.byKey(const ValueKey('system-font-default')));
+      await t.pumpAndSettle();
+
+      expect(storage.data!['uiFont']['family'], '');
+      expect(t.takeException(), isNull);
+    },
+  );
 }

@@ -586,24 +586,28 @@ final class _AgentWrapperLibraryState extends State<AgentWrapperLibrary> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Text(
-        tr('会话与安全执行插件', 'Session and safe execution plugins'),
-        style: TextStyle(
-          color: widget.ink,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(19),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          tr('会话与安全执行插件', 'Session and safe execution plugins'),
+          style: TextStyle(
+            color: widget.ink,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-      _note(
-        tr(
-          '完整包的权限需要独立审查。安装、选择、批准和启用是分开的操作。',
-          'Review permissions for the complete package. Installation, selection, approval and activation are separate actions.',
+        const SizedBox(height: 8),
+        _note(
+          tr(
+            '完整包的权限需要独立审查。安装、选择、批准和启用是分开的操作。',
+            'Review permissions for the complete package. Installation, selection, approval and activation are separate actions.',
+          ),
         ),
-      ),
-      Wrap(
+        const SizedBox(height: 8),
+        Wrap(
         spacing: 8,
         runSpacing: 8,
         children: [
@@ -697,14 +701,15 @@ final class _AgentWrapperLibraryState extends State<AgentWrapperLibrary> {
             ],
           ),
         ),
-      if (!_confirmed && _entries.isNotEmpty)
-        _note(
-          tr(
-            '下列为上次观察结果；请查询列表后再操作。',
-            'These are earlier observations. Read the list before taking an action.',
+        if (!_confirmed && _entries.isNotEmpty)
+          _note(
+            tr(
+              '下列为上次观察结果；请查询列表后再操作。',
+              'These are earlier observations. Read the list before taking an action.',
+            ),
           ),
-        ),
-      for (final entry in _entries) _entry(entry),
-    ],
+        for (final entry in _entries) _entry(entry),
+      ],
+    ),
   );
 }

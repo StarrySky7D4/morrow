@@ -36,6 +36,14 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> openAppearanceTab(WidgetTester tester) async {
+    final tab = find.byKey(const ValueKey('inspector-tab-appearance'));
+    if (tab.evaluate().isNotEmpty) {
+      await tester.tap(tab);
+      await tester.pumpAndSettle();
+    }
+  }
+
   Palette palette(WidgetTester tester) =>
       tester.widget<Studio>(find.byType(Studio)).palette;
 
@@ -136,6 +144,7 @@ void main() {
         MorrowApp(initialLocale: const Locale('zh'), storage: storage),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(palette(tester).surfaces.componentCustom, isFalse);
       await tap(tester, 'background-transparent');
       await slide(tester, 'canvas-opacity', .3);
@@ -225,6 +234,7 @@ void main() {
         MorrowApp(initialLocale: const Locale('zh'), storage: storage),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(find.byKey(const ValueKey('theme-mist')), findsNothing);
       expect(find.byKey(const ValueKey('corners-square')), findsNothing);
       expect(find.byKey(const ValueKey('theme-grayscale')), findsNothing);
@@ -266,6 +276,7 @@ void main() {
         MorrowApp(initialLocale: const Locale('zh'), storage: storage),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(palette(tester).background, custom.background);
       expect(palette(tester).borderRadius(20), BorderRadius.zero);
       expect(find.byKey(const ValueKey('theme-grayscale')), findsNothing);
@@ -285,6 +296,7 @@ void main() {
         MorrowApp(initialLocale: const Locale('zh'), storage: storage),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       await slide(tester, 'corner-radius', 32);
       final count = (storage.data!['ideas'] as List).length;
       storage.data!.addAll({'theme': 'mist', 'rounded': false});
@@ -293,6 +305,7 @@ void main() {
         MorrowApp(initialLocale: const Locale('zh'), storage: storage),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(palette(tester).theme, StudioTheme.custom);
       expect(palette(tester).cornerRadius, 0);
       await slide(tester, 'corner-radius', 12);
@@ -313,7 +326,7 @@ void main() {
         await tester.pumpAndSettle();
         final footer = find.byKey(const ValueKey('footer-dock'));
         final rect = tester.getRect(footer);
-        expect(rect.bottom, closeTo(900 - (width >= 1050 ? 24 : 12), .1));
+        expect(rect.bottom, closeTo(900 - (width >= 1050 ? 20 : width >= 760 ? 12 : 84), .1));
         final page = find.byKey(const ValueKey('page-workbench.page.overview'));
         final scrollable = find
             .descendant(of: page, matching: find.byType(Scrollable))
@@ -335,6 +348,11 @@ void main() {
         if (width < 1050) {
           expect(footer, findsNothing);
           await tester.tap(find.byKey(const ValueKey('compact-settings-back')));
+          await tester.pumpAndSettle();
+        } else {
+          expect(tester.getRect(footer).bottom, rect.bottom);
+          expect(tester.getRect(footer).left, closeTo(rect.left + 160, .1));
+          await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
           await tester.pumpAndSettle();
         }
         expect(tester.getRect(footer).bottom, rect.bottom);
@@ -371,6 +389,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(calls.last.arguments, 20.0);
       expect(
         tester
@@ -403,6 +422,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await openAppearanceTab(tester);
       expect(calls.last.arguments, 12.0);
       expect(find.byType(DesktopFrame), findsOneWidget);
       await tap(tester, 'background-transparent');
