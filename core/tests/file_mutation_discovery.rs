@@ -3,6 +3,7 @@
 use morrow_core::{
     Error,
     file_mutation::{Disposition, MutationRequest, RequestRecord, Target},
+    file_path::RelativeFilePath,
     io_evidence::{Kind, Material},
     io_intent::Record,
     store::{EventBudget, Store},
@@ -23,20 +24,13 @@ fn prepare(
         approval_sha256: [2; 32],
         target: Target {
             reference: [3; 32],
-            relative_path: None,
+            relative_path: (disposition == Disposition::Rename)
+                .then(|| RelativeFilePath::parse("renamed.txt").unwrap()),
         },
         disposition,
         expected_identity: Some([4; 32]),
-        content_length: if disposition == Disposition::Delete {
-            0
-        } else {
-            1
-        },
-        content_sha256: if disposition == Disposition::Delete {
-            None
-        } else {
-            Some([5; 32])
-        },
+        content_length: u64::from(disposition.writes_content()),
+        content_sha256: disposition.writes_content().then_some([5; 32]),
     })
     .unwrap();
     let record = Record::prepared(plan.command().unwrap()).unwrap();
@@ -53,6 +47,52 @@ fn prepare(
         .unwrap();
     plan
 }
+
+#[test]
+fn reopened_history_finds_the_original_plan_for_each_protocol() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("db");
+    let mut store = Store::open(&path, EventBudget::default()).unwrap();
+    let rename = prepare(
+        &mut store,
+        "rename-file",
+        SUBJECT,
+        [1; 32],
+        Disposition::Rename,
+    );
+    let replace = prepare(
+        &mut store,
+        "replace-file",
+        SUBJECT,
+        [1; 32],
+        Disposition::Replace,
+    );
+    prepare(
+        &mut store,
+        "other-package",
+        SUBJECT,
+        [9; 32],
+        Disposition::Rename,
+    );
+    drop(store);
+
+    let store = Store::open_existing(&path, EventBudget::default()).unwrap();
+    for (disposition, original) in [
+        (Disposition::Rename, rename),
+        (Disposition::Replace, replace),
+    ] {
+        let mut cursor = store
+            .open_file_mutation_plan_cursor(SUBJECT, [1; 32], disposition)
+            .unwrap();
+        let page = store
+            .read_file_mutation_plan_page(&mut cursor, 8, || Ok(()))
+            .unwrap();
+        assert!(page.done);
+        assert_eq!(page.plans.len(), 1);
+        assert_eq!(page.plans[0].container(), original.container());
+    }
+}
+
 #[test]
 fn reopened_and_snapshot_libraries_discover_exact_originals_with_bounded_sparse_pages() {
     let dir = tempfile::tempdir().unwrap();

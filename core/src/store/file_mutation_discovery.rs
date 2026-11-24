@@ -211,7 +211,7 @@ impl Store {
             }
             if command.package_sha256 != cursor.package
                 || command.capability != cursor.disposition.capability()
-                || command.protocol_sha256 != file_mutation::schema_digest()
+                || command.protocol_sha256 != file_mutation::protocol_digest(command.capability)
             {
                 continue;
             }
