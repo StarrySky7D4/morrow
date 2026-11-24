@@ -4293,6 +4293,8 @@ final class ChangesCheckpointReader extends StructReader {
   Uint8List? get latest => getDataField(0);
 
   bool get pending => getBoolField(16);
+
+  bool get temporarilyBusy => getBoolField(17);
 }
 
 final class ChangesCheckpointBuilder extends StructBuilder {
@@ -4311,6 +4313,10 @@ final class ChangesCheckpointBuilder extends StructBuilder {
 
   set pending(bool v) {
     setBoolField(16, v);
+  }
+
+  set temporarilyBusy(bool v) {
+    setBoolField(17, v);
   }
 }
 
@@ -4363,6 +4369,14 @@ const StructSchemaInfo changesCheckpointSchema = StructSchemaInfo(
       codeOrder: 2,
       body: SlotFieldSchemaInfo(
         offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'temporarilyBusy',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
         type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
@@ -13878,6 +13892,8 @@ final class ChangesWindowReviewReader extends StructReader {
   Uint8List? get previousCursor => getDataField(1);
 
   bool get compatibilityBudget => getBoolField(16);
+
+  bool get observeAvailability => getBoolField(17);
 }
 
 final class ChangesWindowReviewBuilder extends StructBuilder {
@@ -13901,6 +13917,10 @@ final class ChangesWindowReviewBuilder extends StructBuilder {
 
   set compatibilityBudget(bool v) {
     setBoolField(16, v);
+  }
+
+  set observeAvailability(bool v) {
+    setBoolField(17, v);
   }
 }
 
@@ -13962,6 +13982,14 @@ const StructSchemaInfo changesWindowReviewSchema = StructSchemaInfo(
       codeOrder: 3,
       body: SlotFieldSchemaInfo(
         offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'observeAvailability',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
         type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),

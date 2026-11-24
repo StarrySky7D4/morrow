@@ -129,14 +129,27 @@ pub(super) fn handle(
         }
         let selection = request.get_changes_checkpoint_query()?;
         let (cards, bookmark) = reviewed_cards(selection)?;
-        let progress = host.inspect_changes_checkpoint(
+        let result = host.inspect_changes_checkpoint(
             &text(request.get_id())?,
             id(request.get_sha256()?)?,
             request.get_revision(),
             &cards,
             bookmark,
-        )?;
+        );
         let mut reply = out.init_changes_checkpoint();
+        let progress = match result {
+            Err(error)
+                if selection.get_observe_availability()
+                    && matches!(
+                        error.downcast_ref::<crate::io_tasks::AccessError>(),
+                        Some(crate::io_tasks::AccessError::Busy)
+                    ) =>
+            {
+                reply.set_temporarily_busy(true);
+                return Ok(());
+            }
+            other => other?,
+        };
         reply.set_bookmark_state(match progress.bookmark {
             BookmarkState::NotSupplied => 0,
             BookmarkState::Current => 1,

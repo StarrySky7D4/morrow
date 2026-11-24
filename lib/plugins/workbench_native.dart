@@ -59,6 +59,7 @@ import 'blob_plan_models.dart';
 import 'blob_plan_native.dart';
 import 'channel_task_models.dart';
 import 'channel_task_native.dart';
+import 'card_changes_watch.dart';
 import 'channel_task_codec_native.dart';
 import 'mutation_task_models.dart';
 import 'mutation_task_native.dart';
@@ -240,6 +241,7 @@ class RustWorkbench
         NativeDirectoryPickerCapabilities,
         ChannelTaskBackend,
         ChangesCheckpointBackend,
+        ChangesObservationBackend,
         ChangesWaitBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
@@ -1412,6 +1414,10 @@ class RustWorkbench
   Future<ReviewedChangesProgress> inspectChangesCheckpoint(
     String packageId, Uint8List digest, BigInt revision, ChangesWindowReview selection,
   ) => _channelTasks.inspectChangesCheckpoint(packageId, digest, revision, selection);
+  @override
+  Future<ReviewedChangesProgress?> observeChangesCheckpoint(
+    String packageId, Uint8List digest, BigInt revision, ChangesWindowReview selection,
+  ) => _channelTasks.observeChangesCheckpoint(packageId, digest, revision, selection);
   @override
   Future<ChangesWaitStatus> startChangesWait(ChannelPrepareRequest request) =>
       _channelTasks.startChangesWait(request);
@@ -3727,6 +3733,7 @@ class RustWorkbench
 
   Future<void> _closeProcess() async {
     // Seal local presentation synchronously. This is not remote detach or join.
+    CardChangesWatch.closeFor(this);
     _agentSessions?.dispose();
     Object? failure;
     StackTrace? failureStack;

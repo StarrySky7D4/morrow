@@ -104,7 +104,7 @@ struct OAuthView {
 }
 struct ChangesCheckpoint {
  # 0 no bookmark supplied, 1 current, 2 older retained ACK, 3 unconfirmed for this selection.
- bookmarkState @0 :UInt16; latest @1 :Data; pending @2 :Bool;
+ bookmarkState @0 :UInt16; latest @1 :Data; pending @2 :Bool; temporarilyBusy @3 :Bool;
 }
 struct ChangesWaitView {
  # Phase is waiting, available, prepared, cancelled, expired, selection changed, or outcome unconfirmed.
@@ -429,6 +429,7 @@ struct ChannelPrepare {
 }
 struct ChangesWindowReview {
  cards @0 :List(Text); pageSize @1 :UInt16; previousCursor @2 :Data; compatibilityBudget @3 :Bool;
+ observeAvailability @4 :Bool;
 }
 struct ChannelAppend { key @0 :Data; sequence @1 :UInt64; bytes @2 :Data; cursor @3 :Data; }
 struct ChannelRun { key @0 :Data; input @1 :Data; }

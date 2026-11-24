@@ -18,6 +18,7 @@ final class NativeChannelTaskClient
     implements
         ChannelTaskBackend,
         ChangesCheckpointBackend,
+        ChangesObservationBackend,
         ChangesWaitBackend {
   NativeChannelTaskClient(this._exchange, this._supported);
   final ChannelTaskExchange _exchange;
@@ -44,7 +45,35 @@ final class NativeChannelTaskClient
     Uint8List digest,
     BigInt revision,
     ChangesWindowReview selection,
-  ) {
+  ) async => (await _readChangesCheckpoint(
+    packageId,
+    digest,
+    revision,
+    selection,
+    observe: false,
+  ))!;
+
+  @override
+  Future<ReviewedChangesProgress?> observeChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection,
+  ) => _readChangesCheckpoint(
+    packageId,
+    digest,
+    revision,
+    selection,
+    observe: true,
+  );
+
+  Future<ReviewedChangesProgress?> _readChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection, {
+    required bool observe,
+  }) {
     _requireSupported();
     return _exchange(
       host.Action.channelChangesCheckpoint,
@@ -54,9 +83,19 @@ final class NativeChannelTaskClient
         r.revisionBigInt = revision;
         final query = r.initChangesCheckpointQuery();
         ChannelTaskCodec.writeReviewedCards(selection, query);
+        query.observeAvailability = observe;
       },
       decode: (reply) {
         final info = reply.changesCheckpoint;
+        if (info != null && info.temporarilyBusy) {
+          if (!observe ||
+              info.pending ||
+              info.bookmarkState != 0 ||
+              (info.latest?.isNotEmpty ?? false)) {
+            throw const FormatException('Invalid busy checkpoint observation');
+          }
+          return null;
+        }
         if (info == null ||
             info.bookmarkState >= ChangesBookmarkState.values.length) {
           throw const FormatException('Invalid changes checkpoint reply');

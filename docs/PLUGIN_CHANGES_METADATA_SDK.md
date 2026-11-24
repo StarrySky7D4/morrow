@@ -2,7 +2,7 @@
 
 当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
 
-`changes-metadata-v1` 是独立实验扩展，使用原 `channel-v1` 的 Events / Receive / ACK 传输，支持宿主批准的有限固定卡片集合。它不改变 SDK327、冻结原件或旧 channel wire，不提供内容读取权限、长期 watch 或自动同步。
+`changes-metadata-v1` 是独立实验扩展，使用原 `channel-v1` 的 Events / Receive / ACK 传输，支持宿主批准的有限固定卡片集合。Windows 工作台支持持续观察所选卡片的游标和逐页批准元数据交付。正文读取需要单独批准。SDK327、冻结原件与原 channel wire 继续沿用。
 
 ## 查询选定宿主
 
@@ -44,6 +44,8 @@ Rust 库与 C / C++ 头文件位于 `extensions/changes-metadata-v1`，不属于
 
 ### Windows 工作台的单次授权分页
 
+“持续观察这些卡片”会在当前工作台中保留一份只读观察，最长一小时。关闭通道窗口后，可以编辑卡片并回到同一插件查看状态。工作台定期向原资料库核对最新确认位置和是否有新变更。原库正忙时显示等待状态。用户可随时停止观察。关闭原工作台、变更插件授权或观察时间结束后，要再次观察需重新选择卡片。向插件交付每一页仍需批准。
+
 勾选“等待变更并运行一页”后，批准窗口会列出接收插件、卡片和等待时限。若当前已经读完，工作台可继续显示和编辑卡片。选中的卡片有新记录时，原批准可运行一页。等待和插件执行共用同一个截止时间，最多 30 秒，以插件声明的较短时限为准。等待期间可以取消。插件授权变化、另一读取已经推进游标或超过时限，均需重新确认。若退出工作台后重新打开，可先核对资料库中已确认的游标。
 
 在已启用插件的通道窗口选择 `changes.metadata`，逐行填写卡片 ID，并选择本次最多读取的记录数。工作台显示接收插件、卡片集合和元数据字段，用户每次确认一页。插件仍通过原 Events 接口接收记录和提交 ACK。卡片集合上限为 32，每页最多 64 条，插件声明的较小预算优先。
@@ -54,4 +56,4 @@ Windows 资料库格式 28 为每个批准集合保存当前游标。每次 ACK 
 
 Windows C02 的普通合成 Store、有限 source 与三语言新 guest 已限定通过；C03 新增只读发现和静态准备兼容资格。见 [Windows 复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)与[C03 接入验证](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)。
 
-长期 watch、其他平台和整个 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。C08原owner fresh-secret入口已有独立限定Windows资格，见 [C08记录](../reports/reconstruction-2026-10-05/directory-secret-factory.md)，完整范围与后续门槛见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；当前C09新增原root至相对descendant的持有链接线，新20、factory14、原owner115及原件42分别实际通过，Workbench仅Release库check通过、protected产品NOT_RUN；C09 network100和Clippy NOT_RUN，见 [C09范围](../reports/reconstruction-2026-10-05/directory-selection-owner.md)；不证明picker／root以上来源，不新增目录guest或blob耐久后端。发现信息不能替代运行和授权。
+面向插件的长期后台推送、其他平台和完整 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。C08原owner fresh-secret入口已有独立限定Windows资格，见 [C08记录](../reports/reconstruction-2026-10-05/directory-secret-factory.md)，完整范围与后续门槛见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；当前C09新增原root至相对descendant的持有链接线，新20、factory14、原owner115及原件42分别实际通过，Workbench仅Release库check通过、protected产品NOT_RUN；C09 network100和Clippy NOT_RUN，见 [C09范围](../reports/reconstruction-2026-10-05/directory-selection-owner.md)；不证明picker／root以上来源，不新增目录guest或blob耐久后端。发现信息不能替代运行和授权。

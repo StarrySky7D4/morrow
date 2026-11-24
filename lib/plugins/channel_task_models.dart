@@ -138,6 +138,16 @@ abstract interface class ChangesCheckpointBackend {
   );
 }
 
+abstract interface class ChangesObservationBackend {
+  /// No observation is available while the original worker owns the library.
+  Future<ReviewedChangesProgress?> observeChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection,
+  );
+}
+
 enum ChangesWaitPhase {
   waiting,
   available,

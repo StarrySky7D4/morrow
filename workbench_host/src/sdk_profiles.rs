@@ -667,6 +667,7 @@ pub fn descriptor() -> Value {
                 "retained_ack_epochs_per_selection": 2, "durable_compare_and_swap": true,
                 "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
                 "finite_wait_for_one_page": "reviewed_cards_and_guest_share_original_deadline",
+                "workbench_cursor_watch": "one_hour_readonly_on_original_selection",
                 "fresh_approval_per_page": true, "grants_card_content": false
             },
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",

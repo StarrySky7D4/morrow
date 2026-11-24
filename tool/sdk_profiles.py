@@ -388,6 +388,11 @@ def reviewed_card_history(value, platform):
             "finite_wait_for_one_page": "reviewed_cards_and_guest_share_original_deadline",
             "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
         }, "reviewed card wait")
+    if "workbench_cursor_watch" in value:
+        reviewed_workbench_fields(value, {
+            "workbench_cursor_watch": "one_hour_readonly_on_original_selection",
+            "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
+        }, "workbench cursor watch")
 
 
 def reviewed_windows_accounts(value, platform):

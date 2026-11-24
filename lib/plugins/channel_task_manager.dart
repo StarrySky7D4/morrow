@@ -6,8 +6,10 @@ import 'dart:typed_data';
 import 'package:material_ui/material_ui.dart';
 
 import 'channel_task_models.dart';
+import 'card_changes_watch.dart';
 import 'channel_task_session.dart';
 import 'changes_page_wait.dart';
+import 'changes_watch_controls.dart';
 import 'plugin_library.dart';
 
 /// Starts a finite caller-provided source or an explicitly reviewed card history.
@@ -58,6 +60,17 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
     handler = handlers.firstOrNull?.name;
     kind = widget.entry.channelKinds.firstOrNull;
     pageSize.text = min(16, maxPageSize).toString();
+    if (widget.backend case final ChangesObservationBackend backend) {
+      final watch = CardChangesWatch.forBackend(backend);
+      if (watch.active &&
+          watch.matches(
+            widget.entry.id,
+            widget.entry.digest,
+            widget.registryRevision,
+          )) {
+        source.text = watch.selection!.cards.join('\n');
+      }
+    }
   }
 
   void _changed() {
@@ -504,6 +517,16 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                           .join(),
                     ),
                 ],
+                if (widget.backend
+                    case final ChangesObservationBackend observer)
+                  ChangesWatchControls(
+                    backend: observer,
+                    packageId: widget.entry.id,
+                    digest: widget.entry.digest,
+                    revision: widget.registryRevision,
+                    readSelection: () => reviewedCards(1),
+                    enabled: _canEdit,
+                  ),
               ],
               if (inputFailure != null) Text(inputFailure.toString()),
               if (watcher case final w?) ...[

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:morrow_studio/plugins/card_changes_watch.dart';
 import 'package:morrow_studio/plugins/changes_page_wait.dart';
 import 'package:morrow_studio/plugins/channel_task_models.dart';
 import 'package:morrow_studio/plugins/channel_task_session.dart';
@@ -295,6 +296,68 @@ void main() {
             final afterRevoke = await inspect(delivered.changesCursor);
             expect(afterRevoke.latest, orderedEquals(delivered.changesCursor));
             expect(afterRevoke.pending, isFalse);
+            final original = await review(after: delivered.changesCursor);
+            final observation = CardChangesWatch.forBackend(product);
+            await observation.start(
+              original.packageId,
+              original.packageDigest,
+              original.registryRevision,
+              original.changes!,
+            );
+            expect(observation.progress?.pending, isFalse);
+            expect(
+              observation.progress?.latest,
+              orderedEquals(delivered.changesCursor),
+            );
+            if (language == 'rust') {
+              // Keep the actual original owner past the maximum guest task lifetime.
+              await Future<void>.delayed(const Duration(seconds: 31));
+              expect(observation.active, isTrue);
+            }
+            await write('other', revision: 1);
+            await observation.check();
+            expect(observation.progress?.pending, isFalse);
+            await write('chosen', revision: 3);
+            await observation.check();
+            expect(observation.progress?.pending, isTrue);
+            expect(
+              (await inspect(delivered.changesCursor)).latest,
+              orderedEquals(delivered.changesCursor),
+            );
+            final next = await finish(
+              await product.prepareChannel(
+                await review(after: delivered.changesCursor),
+              ),
+            );
+            await observation.check();
+            expect(observation.progress?.latest, orderedEquals(next));
+            expect(observation.progress?.pending, isFalse);
+            await write('chosen', revision: 4);
+            await observation.check();
+            expect(observation.progress?.pending, isTrue);
+            expect(observation.progress?.latest, orderedEquals(next));
+            if (language == 'rust') {
+              final current = await entireCatalog(product);
+              await product.configureExternal(
+                current.entries.singleWhere((p) => p.id == changes.id),
+                current.revision,
+                [],
+                false,
+              );
+              await observation.check();
+              expect(observation.active, isFalse);
+              expect(observation.failure, isNotNull);
+            } else if (language == 'c') {
+              observation.stop();
+              expect(observation.active, isFalse);
+            } else {
+              await closeOwner(product);
+              owner = null;
+              expect(observation.active, isFalse);
+              product = owner = await open();
+              expect(CardChangesWatch.forBackend(product).active, isFalse);
+              expect((await inspect(next)).latest, orderedEquals(next));
+            }
           } finally {
             watcher.dispose();
           }
