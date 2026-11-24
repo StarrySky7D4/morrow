@@ -389,6 +389,10 @@ def reviewed_windows_accounts(value, platform):
         "account_reference": "package_library_and_service_bound", "refresh": "single_claim_rotation",
         "guest_secret_access": False,
     }, "reviewed Windows accounts")
+    if "in_flight_sign_out" in value:
+        reviewed_workbench_fields(value, {
+            "in_flight_sign_out": "reviewed_account_original_owner_receipt",
+        }, "in-flight Windows account sign-out")
     controls = value.get("user_controls")
     strings(controls, "Windows account controls")
     if sorted(controls) != ["choose_account", "refresh", "sign_in", "sign_out"]:

@@ -141,6 +141,128 @@ fn register(w: &mut Workbench, s: &Selection, service: &Service) -> [u8; 32] {
     .unwrap()
 }
 #[test]
+fn sign_out_while_the_original_guest_request_is_waiting_is_account_scoped_and_durable() {
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(1)
+        .enable_all()
+        .build()
+        .unwrap();
+    for language in ["rust", "c", "cpp"] {
+        for active in 0..2 {
+            let (service, server) = rt.block_on(super::service_with_lifetime(90));
+            let directory = tempfile::tempdir().unwrap();
+            let mut w = Workbench::open_managed(directory.path(), None).unwrap();
+            w.bind_supervised_channel_owner().unwrap();
+            let s = install_frozen(&mut w, language);
+            let provider = register(&mut w, &s, &service);
+            let mut accounts = vec![];
+            for (i, name) in ["alpha", "beta"].iter().enumerate() {
+                let login_id = 30 + i as u8;
+                let start = login(&mut w, &s, provider, login_id);
+                confirm(&rt, &start.url, name);
+                let row = completed(&mut w, &s, provider, login_id).accounts[0];
+                let endpoint = account_endpoint(&mut w, &s, &service.origin, row.0);
+                accounts.push((row, endpoint));
+            }
+            assert_eq!(
+                w.oauth_account_page(&s, provider, None, None)
+                    .unwrap()
+                    .0
+                    .len(),
+                2
+            );
+            let mut request = resource_request(&s, &accounts[active].1, 81);
+            request.target = "/waiting".into();
+            let task = w.start_http(request).unwrap();
+            rt.block_on(async {
+                tokio::time::timeout(Duration::from_secs(4), service.arrived.notified())
+                    .await
+                    .unwrap()
+            });
+            assert!(w.local_state().is_err());
+            let (reference, revision, _) = accounts[0].0;
+            let withdraw = |w: &mut Workbench, expected, nonce: u8| {
+                call(w, &s, Action::Logout, |mut p| {
+                    p.set_service(&provider);
+                    p.set_account(&reference);
+                    p.set_expected_revision(expected);
+                    p.set_key(&[nonce; 32]);
+                })
+            };
+            assert!(!withdraw(&mut w, revision + 1, 82).error.is_empty());
+            let waiting = withdraw(&mut w, revision, 83);
+            assert_eq!(waiting.phase, 1, "{}", waiting.error);
+            assert!(waiting.accounts.is_empty());
+            assert_eq!(waiting.account, reference);
+            assert!(!withdraw(&mut w, revision, 83).error.is_empty());
+            let mut other_selection = s.clone();
+            other_selection.revision += 1;
+            assert!(
+                !query(&mut w, &other_selection, provider, 83, Action::Poll)
+                    .error
+                    .is_empty()
+            );
+            service.release.notify_one();
+            crate::http_tasks_tests::ready(&mut w, task);
+            let response = w.read_io(task, 512 * 1024).unwrap().unwrap();
+            if active == 0 {
+                assert!(
+                    response.unknown
+                        || response.cancelled
+                        || response.task.execution.outcome.is_err()
+                );
+                assert!(
+                    response
+                        .http_response
+                        .as_ref()
+                        .is_none_or(|r| r.http_status != 200 && r.body.is_empty())
+                );
+            } else {
+                assert!(
+                    !response.unknown
+                        && !response.cancelled
+                        && response.task.execution.outcome.is_ok()
+                );
+                let http = response.http_response.unwrap();
+                assert_eq!((http.http_status, http.body), (200, b"beta".to_vec()));
+            }
+            crate::http_tasks_tests::reclaimed(&mut w, task);
+            w.acknowledge_io(task).unwrap();
+            let done = completed(&mut w, &s, provider, 83);
+            assert_eq!(done.phase, 2);
+            assert_eq!(done.accounts, [(reference, revision + 1, 4)]);
+            assert_eq!(
+                query(&mut w, &s, provider, 83, Action::Cancel).accounts,
+                done.accounts
+            );
+            assert!(!withdraw(&mut w, revision, 83).error.is_empty());
+            w.finish().unwrap();
+            drop(w);
+            let mut w = Workbench::open_managed(directory.path(), None).unwrap();
+            w.bind_supervised_channel_owner().unwrap();
+            assert_eq!(register(&mut w, &s, &service), provider);
+            let missing = query(&mut w, &s, provider, 83, Action::Poll);
+            assert_eq!(missing.phase, 5);
+            assert!(missing.account.is_empty() && missing.accounts.is_empty());
+            let rows = w.oauth_account_page(&s, provider, None, None).unwrap().0;
+            assert!(rows.iter().any(|r| r.reference == reference
+                && r.revision == revision + 1
+                && r.state == super::State::SignedOut));
+            assert!(
+                w.start_http(resource_request(&s, &accounts[0].1, 85))
+                    .is_err()
+            );
+            resource_call(&mut w, &s, &accounts[1].1, 86, "beta");
+            assert_eq!(
+                service.data.lock().unwrap().resource_accounts,
+                [Some(["alpha", "beta"][active].into()), Some("beta".into())]
+            );
+            w.finish().unwrap();
+            server.abort();
+        }
+    }
+}
+#[test]
 fn original_windows_control_two_accounts_reopen_refresh_signout_and_cancel() {
     let rt = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(1)
@@ -349,11 +471,55 @@ fn resource_call(
     }
     w.acknowledge_io(key).unwrap();
 }
+fn install_frozen(w: &mut Workbench, language: &str) -> Selection {
+    use morrow_core::plugin_package::catalog;
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(format!(
+        "../sdk/compat/transport-v1-rc1/{language}-io.mplugin"
+    ));
+    let pkg = catalog::read_file(&path).unwrap();
+    let id = pkg.manifest().package_id.clone();
+    w.import_plugin(&path, &pkg.digest(), test_plugin::revision(w))
+        .unwrap();
+    w.configure_external(&id, &pkg.digest(), test_plugin::revision(w), &[], true)
+        .unwrap();
+    test_plugin::approve(w, &pkg, true);
+    Selection {
+        package: id,
+        digest: pkg.digest(),
+        revision: test_plugin::revision(w),
+    }
+}
+fn account_endpoint(
+    w: &mut Workbench,
+    s: &Selection,
+    origin: &str,
+    account: [u8; 32],
+) -> crate::endpoint_control::EndpointInfo {
+    w.save_endpoint(crate::endpoint_control::EndpointUpdate {
+        reference: vec![],
+        expected_revision: 0,
+        registry_revision: s.revision,
+        lifetime_days: 1,
+        policy: morrow_core::outbound_authority::proto::Endpoint {
+            package_id: s.package.clone(),
+            package_sha256: s.digest.into(),
+            origin: origin.into(),
+            profile: 2,
+            methods: vec!["GET".into()],
+            credential_reference: account.to_vec(),
+            root_certificate: vec![],
+            max_request_bytes: 65536,
+            max_response_bytes: 65536,
+            max_header_bytes: 16384,
+            max_concurrent: 1,
+            timeout_ms: 5000,
+            max_frame_bytes: 128 * 1024,
+        },
+    })
+    .unwrap()
+}
 #[test]
 fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_one() {
-    use crate::endpoint_control::EndpointUpdate;
-    use morrow_core::outbound_authority::proto::Endpoint;
-    use morrow_core::plugin_package::catalog;
     let rt = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(1)
         .enable_all()
@@ -364,21 +530,7 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
         let directory = tempfile::tempdir().unwrap();
         let mut w = Workbench::open_managed(directory.path(), None).unwrap();
         w.bind_supervised_channel_owner().unwrap();
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(format!(
-            "../sdk/compat/transport-v1-rc1/{language}-io.mplugin"
-        ));
-        let pkg = catalog::read_file(&path).unwrap();
-        let id = pkg.manifest().package_id.clone();
-        w.import_plugin(&path, &pkg.digest(), test_plugin::revision(&w))
-            .unwrap();
-        w.configure_external(&id, &pkg.digest(), test_plugin::revision(&w), &[], true)
-            .unwrap();
-        test_plugin::approve(&mut w, &pkg, true);
-        let s = Selection {
-            package: id.clone(),
-            digest: pkg.digest(),
-            revision: test_plugin::revision(&w),
-        };
+        let s = install_frozen(&mut w, language);
         let service_id = register(&mut w, &s, &service);
         let mut accounts = vec![];
         for (i, name) in ["alpha", "beta"].into_iter().enumerate() {
@@ -389,30 +541,7 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
             let done = completed(&mut w, &s, service_id, n);
             assert_eq!(done.phase, 2);
             let account = done.accounts[0];
-            let policy = Endpoint {
-                package_id: id.clone(),
-                package_sha256: s.digest.into(),
-                origin: service.origin.clone(),
-                profile: 2,
-                methods: vec!["GET".into()],
-                credential_reference: account.0.to_vec(),
-                root_certificate: vec![],
-                max_request_bytes: 65536,
-                max_response_bytes: 65536,
-                max_header_bytes: 16384,
-                max_concurrent: 1,
-                timeout_ms: 5000,
-                max_frame_bytes: 128 * 1024,
-            };
-            let ep = w
-                .save_endpoint(EndpointUpdate {
-                    reference: vec![],
-                    expected_revision: 0,
-                    registry_revision: s.revision,
-                    lifetime_days: 1,
-                    policy,
-                })
-                .unwrap();
+            let ep = account_endpoint(&mut w, &s, &service.origin, account.0);
             resource_call(&mut w, &s, &ep, 40 + i as u8, name);
             accounts.push((account, ep));
         }

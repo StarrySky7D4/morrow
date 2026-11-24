@@ -48,6 +48,8 @@ class Accounts extends endpoints.FakeEndpoints
   final calls = <OAuthCommand>[];
   List<OAuthEntry> rows = [];
   bool loseLogin = false;
+  bool waitForSignOut = false;
+  Uint8List? withdrawal;
   String? browserOverride;
   @override
   Future<OAuthResult> accountControl(
@@ -77,6 +79,16 @@ class Accounts extends endpoints.FakeEndpoints
         );
       case OAuthAction.refresh:
       case OAuthAction.poll:
+        if (withdrawal != null &&
+            accountHex(cmd.key!) == accountHex(withdrawal!)) {
+          rows = [OAuthEntry(ref(5), BigInt.two, OAuthState.signedOut, 0)];
+          return OAuthResult(
+            key: cmd.key,
+            account: ref(5),
+            phase: OAuthPhase.done,
+            accounts: rows,
+          );
+        }
         rows = [
           OAuthEntry(
             ref(5),
@@ -92,8 +104,21 @@ class Accounts extends endpoints.FakeEndpoints
           accounts: rows,
         );
       case OAuthAction.logout:
+        withdrawal = cmd.key!;
+        if (waitForSignOut) {
+          return OAuthResult(
+            key: cmd.key,
+            account: ref(5),
+            phase: OAuthPhase.waiting,
+          );
+        }
         rows = [OAuthEntry(ref(5), BigInt.two, OAuthState.signedOut, 0)];
-        return OAuthResult(accounts: rows);
+        return OAuthResult(
+          key: cmd.key,
+          account: ref(5),
+          phase: OAuthPhase.done,
+          accounts: rows,
+        );
     }
   }
 }
@@ -183,6 +208,40 @@ void main() {
         BigInt.one,
       );
       expect(find.text('Signed out'), findsOneWidget);
+    },
+  );
+  testWidgets(
+    'pending sign-out keeps the original receipt until the owner confirms it',
+    (t) async {
+      final a = Accounts()
+        ..waitForSignOut = true
+        ..rows = [
+          OAuthEntry(
+            ref(5),
+            BigInt.one,
+            OAuthState.available,
+            DateTime(2099).millisecondsSinceEpoch,
+          ),
+        ];
+      await mount(t, a, []);
+      await tap(t, 'Sign out');
+      await tap(t, 'Sign out', last: true);
+      final original = a.calls.singleWhere(
+        (v) => v.action == OAuthAction.logout,
+      );
+      expect(original.key, hasLength(32));
+      expect(find.text('Signed out'), findsNothing);
+      expect(find.text('Cancel request'), findsNothing);
+      await tap(t, 'Check status');
+      expect(find.text('Signed out'), findsOneWidget);
+      expect(
+        a.calls.singleWhere((v) => v.action == OAuthAction.poll).key,
+        orderedEquals(original.key!),
+      );
+      expect(
+        a.calls.where((v) => v.action == OAuthAction.logout),
+        hasLength(1),
+      );
     },
   );
   testWidgets(

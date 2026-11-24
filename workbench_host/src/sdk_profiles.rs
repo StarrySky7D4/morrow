@@ -679,6 +679,7 @@ pub fn descriptor() -> Value {
             "credential_storage": "windows_current_user_dpapi",
             "account_reference": "package_library_and_service_bound",
             "refresh": "single_claim_rotation", "guest_secret_access": false,
+            "in_flight_sign_out": "reviewed_account_original_owner_receipt",
             "user_controls": ["choose_account", "sign_in", "refresh", "sign_out"]
         })) } else { None },
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",

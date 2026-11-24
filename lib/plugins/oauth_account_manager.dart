@@ -28,6 +28,7 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
   OAuthService? _service;
   List<OAuthEntry> _accounts = [];
   Uint8List? _key;
+  OAuthEntry? _withdrawing;
   int _generation = 0;
   bool _busy = false;
   String _message = '';
@@ -48,6 +49,7 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
       _plugin = null;
       _service = null;
       _key = null;
+      _withdrawing = null;
       _accounts = [];
       _services = [];
       _busy = false;
@@ -167,8 +169,13 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
               ) ||
               !current(g)))
         return;
-      if (op == OAuthAction.login || op == OAuthAction.refresh) {
-        setState(() => _key = newOAuthKey());
+      if (op == OAuthAction.login ||
+          op == OAuthAction.refresh ||
+          op == OAuthAction.logout) {
+        setState(() {
+          _key = newOAuthKey();
+          _withdrawing = op == OAuthAction.logout ? row : null;
+        });
       }
       final cmd = OAuthCommand(
         op,
@@ -198,12 +205,41 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
       }
       if (view.phase == OAuthPhase.waiting) {
         setState(
-          () => _message = t(
-            'Waiting for the original request. Check status when ready.',
-            '正在等待本次请求。完成后请查看状态。',
-          ),
+          () => _message = _withdrawing != null
+              ? t(
+                  'Sign-out submitted. Check status for the result.',
+                  '退出请求已提交。请查看状态以确认结果。',
+                )
+              : t(
+                  'Waiting for the original request. Check status when ready.',
+                  '正在等待本次请求。完成后请查看状态。',
+                ),
         );
       } else {
+        final original = _withdrawing;
+        if (original != null && view.phase == OAuthPhase.done) {
+          final confirmed = view.accounts.single;
+          if (confirmed.state != OAuthState.signedOut ||
+              accountHex(confirmed.reference) !=
+                  accountHex(original.reference) ||
+              confirmed.revision != original.revision + BigInt.one) {
+            throw const FormatException('Unexpected sign-out receipt');
+          }
+          setState(() {
+            _accounts = [
+              for (final item in _accounts)
+                if (accountHex(item.reference) ==
+                    accountHex(original.reference))
+                  confirmed
+                else
+                  item,
+            ];
+            _key = null;
+            _withdrawing = null;
+            _message = t('Signed out of this account.', '已退出此账户。');
+          });
+          return;
+        }
         final message = switch (view.phase) {
           OAuthPhase.unconfirmed => t(
             'Outcome unconfirmed. Review the account before signing in again.',
@@ -218,6 +254,7 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
         };
         setState(() {
           _key = null;
+          _withdrawing = null;
           _message = message;
         });
         await loadAccounts(g, s);
@@ -312,10 +349,11 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
                   onPressed: _busy ? null : () => perform(OAuthAction.poll),
                   child: Text(t('Check status', '查看状态')),
                 ),
-                TextButton(
-                  onPressed: _busy ? null : () => perform(OAuthAction.cancel),
-                  child: Text(t('Cancel request', '取消请求')),
-                ),
+                if (_withdrawing == null)
+                  TextButton(
+                    onPressed: _busy ? null : () => perform(OAuthAction.cancel),
+                    child: Text(t('Cancel request', '取消请求')),
+                  ),
               ],
             ),
           for (final row in _accounts)

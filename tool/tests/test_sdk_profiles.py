@@ -147,8 +147,11 @@ class Profiles(unittest.TestCase):
         }
         item['reviewed_windows_accounts'] = detail
         self.assertIs(sdk.validate_descriptor(item), item)
+        detail['in_flight_sign_out'] = 'reviewed_account_original_owner_receipt'
+        self.assertIs(sdk.validate_descriptor(item), item)
         for field, value in [('authorization_code_pkce', 'plain'), ('guest_secret_access', 0),
-                             ('account_reference', 'global'), ('user_controls', ['sign_in'] * 4)]:
+                             ('account_reference', 'global'), ('user_controls', ['sign_in'] * 4),
+                             ('in_flight_sign_out', True)]:
             with self.subTest(field=field), self.assertRaises(ValueError):
                 item['reviewed_windows_accounts'] = dict(detail, **{field: value})
                 sdk.validate_descriptor(item)

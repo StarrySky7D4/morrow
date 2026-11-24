@@ -81,13 +81,19 @@ pub(super) fn handle(
             }
         }
         A::Logout => {
-            let row = host.oauth_sign_out(
-                &sel,
-                id(p.get_service()?)?,
-                id(p.get_account()?)?,
-                p.get_expected_revision(),
-            )?;
-            account(row, out.init_accounts(1).get(0));
+            let service = id(p.get_service()?)?;
+            let reference = id(p.get_account()?)?;
+            let revision = p.get_expected_revision();
+            if let Some(key) = optional(p.get_key()?)? {
+                return write_work(
+                    host.oauth_withdraw(&sel, service, reference, revision, key)?,
+                    out,
+                );
+            }
+            account(
+                host.oauth_sign_out(&sel, service, reference, revision)?,
+                out.init_accounts(1).get(0),
+            );
         }
         A::Login | A::Refresh | A::Poll | A::Cancel => {
             let service = id(p.get_service()?)?;
@@ -99,24 +105,31 @@ pub(super) fn handle(
                 }
                 _ => host.oauth_poll(&sel, service, key, action == A::Cancel)?,
             };
-            out.set_key(&view.key);
-            if let Some(account) = view.account {
-                out.set_account(&account);
-            }
-            out.set_phase(match view.phase {
-                Phase::Waiting => 1,
-                Phase::Done => 2,
-                Phase::Cancelled => 3,
-                Phase::SignInRequired => 4,
-                Phase::Unconfirmed => 5,
-            });
-            if let Some(url) = view.browser_url {
-                out.set_browser_url(url.as_str());
-            }
-            if let Some(status) = view.status {
-                account(status, out.init_accounts(1).get(0));
-            }
+            return write_work(view, out);
         }
+    }
+    Ok(())
+}
+fn write_work(
+    view: crate::oauth_control::Work,
+    mut out: wire::o_auth_view::Builder<'_>,
+) -> Result<()> {
+    out.set_key(&view.key);
+    if let Some(account) = view.account {
+        out.set_account(&account);
+    }
+    out.set_phase(match view.phase {
+        Phase::Waiting => 1,
+        Phase::Done => 2,
+        Phase::Cancelled => 3,
+        Phase::SignInRequired => 4,
+        Phase::Unconfirmed => 5,
+    });
+    if let Some(url) = view.browser_url {
+        out.set_browser_url(url.as_str());
+    }
+    if let Some(status) = view.status {
+        account(status, out.init_accounts(1).get(0));
     }
     Ok(())
 }

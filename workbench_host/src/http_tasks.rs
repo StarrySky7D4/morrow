@@ -154,6 +154,9 @@ impl Workbench {
             utc,
         )?;
         let credential = stored.credential_reference().unwrap_or_default();
+        #[cfg(windows)]
+        self.oauth_accounts
+            .prepare_withdrawals(self.state.local_mut()?.host.store_local_mut())?;
         let operation = request
             .submission
             .iter()

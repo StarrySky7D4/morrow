@@ -1,10 +1,11 @@
 //! Account controls on the original Windows workbench. Only trusted host
 //! provisioning adds an approved service. The private UI wire carries IDs.
+mod withdrawal;
 use crate::{
     Result, Workbench, WorkbenchState,
     oauth_accounts::{
         Error, Provider,
-        accounts::{Account, Enrollment, Refresh, Status, Update},
+        accounts::{Account, Enrollment, Refresh, State as AccountState, Status, Update},
     },
     product_gate::StopRegistration,
 };
@@ -38,7 +39,7 @@ pub struct ServiceReview {
     pub client_id: String,
     pub scopes: String,
 }
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Selection {
     pub package: String,
     pub digest: [u8; 32],
@@ -94,6 +95,8 @@ pub(crate) struct Accounts {
     services: BTreeMap<[u8; 32], Service>,
     seen: BTreeSet<[u8; 32]>,
     job: Option<Job>,
+    reviewed: BTreeMap<[u8; 32], withdrawal::Reviewed>,
+    withdrawal: Option<withdrawal::Withdrawal>,
     runtime: Option<Runtime>,
 }
 fn wall() -> Result<u64> {
@@ -162,13 +165,15 @@ impl Accounts {
             .clone())
     }
     fn reserve(&mut self, nonce: [u8; 32]) -> Result<()> {
-        if nonce == [0; 32] || self.seen.len() >= 256 || self.seen.contains(&nonce) {
-            return Err(Error::Limit.into());
-        }
         if self.job.as_ref().is_some_and(|j| j.worker.is_some()) {
             return Err(Error::Busy.into());
         }
-        self.seen.insert(nonce);
+        self.remember(nonce)
+    }
+    fn remember(&mut self, nonce: [u8; 32]) -> Result<()> {
+        if nonce == [0; 32] || self.seen.len() >= 256 || !self.seen.insert(nonce) {
+            return Err(Error::Limit.into());
+        }
         Ok(())
     }
     pub(crate) fn stop(&mut self) {
@@ -247,7 +252,16 @@ impl Workbench {
         self.product_gate().check()?;
         selected(self.local_state()?, sel, false)?;
         let service = self.oauth_accounts.service(sel, key)?;
-        let store = self.state.local_mut()?.host.store_local_mut();
+        let state = self.state.local_mut()?;
+        let witness = state
+            .manager
+            .as_ref()
+            .ok_or(Error::NotApproved)?
+            .account_revision();
+        self.oauth_accounts
+            .reviewed
+            .retain(|_, entry| entry.is_current());
+        let store = state.host.store_local_mut();
         let page = store.list_outbound_authorities_local(after, snapshot, 16)?;
         let now = wall()?;
         let mut entries = vec![];
@@ -256,8 +270,26 @@ impl Workbench {
             {
                 continue;
             }
-            match service.account(record.reference())?.status(store, now) {
-                Ok(status) => entries.push(status),
+            let account = service.account(record.reference())?;
+            match account.reviewed_record(store, &record, now) {
+                Ok(status) => {
+                    if status.state == AccountState::SignedOut {
+                        self.oauth_accounts.reviewed.remove(&status.reference);
+                    } else {
+                        let marker = account.signed_out_marker(store, &record)?;
+                        self.oauth_accounts.reviewed.insert(
+                            status.reference,
+                            withdrawal::Reviewed::new(
+                                sel,
+                                key,
+                                witness.clone(),
+                                status.revision,
+                                marker,
+                            ),
+                        );
+                    }
+                    entries.push(status);
+                }
                 Err(Error::NotApproved) => {}
                 Err(e) => return Err(e.into()),
             }
@@ -382,6 +414,12 @@ impl Workbench {
         cancel: bool,
     ) -> Result<Work> {
         let gate = self.product_gate();
+        if let Some(withdrawal) = &mut self.oauth_accounts.withdrawal
+            && withdrawal.key() == key
+        {
+            gate.check()?;
+            return withdrawal.poll(sel, service);
+        }
         let authorized = gate.check().is_ok() && selected(self.local_state()?, sel, true).is_ok();
         let accounts = &mut self.oauth_accounts;
         if accounts.job.as_ref().is_none_or(|j| j.view.key != key) {

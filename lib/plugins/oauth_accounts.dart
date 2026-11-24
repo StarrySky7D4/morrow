@@ -248,7 +248,7 @@ class OAuthCommand {
         snapshot: _id(r.snapshot),
         next: (r.next?.isEmpty ?? true) ? null : _id(r.next),
       );
-    if (action == OAuthAction.logout) {
+    if (action == OAuthAction.logout && key == null) {
       if (entries.length != 1 ||
           entries.single.state != OAuthState.signedOut ||
           accountHex(entries.single.reference) != accountHex(account!))
@@ -273,7 +273,10 @@ class OAuthCommand {
         (action != OAuthAction.login && url.isNotEmpty) ||
         (r.phase == 2 &&
             (entries.length != 1 ||
-                accountHex(entries.single.reference) != accountHex(ref)))) {
+                accountHex(entries.single.reference) != accountHex(ref) ||
+                (action == OAuthAction.logout &&
+                    entries.single.state != OAuthState.signedOut))) ||
+        (r.phase != 2 && entries.isNotEmpty)) {
       throw const FormatException('Unexpected Windows account result');
     }
     return OAuthResult(

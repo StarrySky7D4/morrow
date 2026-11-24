@@ -275,6 +275,27 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    #[cfg(windows)]
+    pub(crate) fn withdraw_windows_account(
+        &self,
+        record: morrow_core::outbound_authority::Record,
+        expected: u64,
+    ) -> Result<morrow_plugin_runtime::io_jobs::ServiceUpdateHandle> {
+        let unavailable = self.local().err().ok_or(AccessError::Busy)?;
+        if !matches!(unavailable.downcast_ref::<AccessError>(), Some(AccessError::Busy)) {
+            return Err(unavailable);
+        }
+        let worker = self.task.as_ref()
+            .and_then(|task| task.worker.as_ref())
+            .ok_or(AccessError::Busy)?;
+        match worker {
+            Executor::Io(io) => io.withdraw_windows_account(record, expected),
+            Executor::Service(service) => service.withdraw_windows_account(record, expected),
+            _ => return Err(AccessError::Busy.into()),
+        }
+        .map_err(|e| format!("account withdrawal could not be queued: {e:?}").into())
+    }
+
     pub(crate) fn require_history_idle(&self) -> Result<()> {
         self.local()?;
         if self.task.is_some() || self.upload_task.is_some() {

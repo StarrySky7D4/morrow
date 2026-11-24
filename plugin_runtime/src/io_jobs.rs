@@ -729,6 +729,7 @@ struct State {
     phase: Phase,
     next: u64,
     jobs: BTreeMap<u64, Slot>,
+    pending_service_updates: usize,
     bytes: u64,
     owner_commands: usize,
     owner_command_bytes: usize,
@@ -1421,6 +1422,7 @@ impl<O: HostOwner> IoWorker<O> {
                     phase: Phase::Running,
                     next: 1,
                     jobs: BTreeMap::new(),
+                    pending_service_updates: 0,
                     bytes: 0,
                     owner_commands: 0,
                     owner_command_bytes: 0,
@@ -1576,8 +1578,38 @@ impl<O: HostOwner> IoWorker<O> {
     /// deliver. A later conflict or storage failure never revives old grants.
     /// Reopening publication requires a fresh resolution and fresh grants.
     pub fn update_service(&self, update: ServiceUpdate) -> Result<ServiceUpdateHandle, JobError> {
-        let state = self.control.lock();
-        if state.phase != Phase::Running {
+        self.enqueue_service_update(update, false)
+    }
+    /// A reviewed account withdrawal may also stop a credential-dependent request
+    /// while its one-shot worker is draining. Only an explicitly disabled account
+    /// record can use this lane. CAS and persistence stay on the original Store.
+    #[cfg(windows)]
+    pub fn withdraw_windows_account(
+        &self,
+        value: morrow_core::outbound_authority::Record,
+        expected_revision: u64,
+    ) -> Result<ServiceUpdateHandle, JobError> {
+        use morrow_core::outbound_authority::{WINDOWS_OAUTH_PROVIDER, proto::record::Kind};
+        let v = value.value();
+        if !v.disabled
+            || expected_revision == 0
+            || expected_revision.checked_add(1) != Some(v.revision)
+            || !matches!(&v.kind, Some(Kind::Credential(c)) if c.provider == WINDOWS_OAUTH_PROVIDER)
+        {
+            return Err(JobError::InvalidOptions);
+        }
+        self.enqueue_service_update(
+            ServiceUpdate::Outbound { value, expected_revision },
+            true,
+        )
+    }
+    fn enqueue_service_update(
+        &self,
+        update: ServiceUpdate,
+        allow_draining: bool,
+    ) -> Result<ServiceUpdateHandle, JobError> {
+        let mut state = self.control.lock();
+        if state.phase != Phase::Running && !(allow_draining && state.phase == Phase::Draining) {
             return Err(JobError::Closed);
         }
         let (sender, receiver) = mpsc::sync_channel(1);
@@ -1599,6 +1631,7 @@ impl<O: HostOwner> IoWorker<O> {
                 mpsc::TrySendError::Full(_) => JobError::Busy,
                 mpsc::TrySendError::Disconnected(_) => JobError::Closed,
             })?;
+        state.pending_service_updates += 1;
         self.service_authority.revoke_resource(&resource);
         drop(state);
         Ok(ServiceUpdateHandle {
@@ -2282,14 +2315,20 @@ fn execute<O: HostOwner>(
                 // Gentle draining preserves a valid Ready result until consumed,
                 // dropped or expired; then disconnection cannot discard success.
                 Phase::Draining => {
-                    idle && state.jobs.values().all(|slot| {
-                        slot.report.as_ref().is_some_and(|report| report.cancelled)
-                            || control.fault(&slot.cancel).is_some()
-                    })
+                    state.pending_service_updates == 0
+                        && idle
+                        && state.jobs.values().all(|slot| {
+                            slot.report.as_ref().is_some_and(|report| report.cancelled)
+                                || control.fault(&slot.cancel).is_some()
+                        })
                 }
                 Phase::Stopping | Phase::Stopped | Phase::Failed => idle,
             };
             if finished {
+                if state.phase == Phase::Draining {
+                    // Seal the same lock used by withdrawal admission before leaving the loop.
+                    state.phase = Phase::Stopping;
+                }
                 break;
             }
         }
@@ -2342,6 +2381,7 @@ fn execute<O: HostOwner>(
                         .store_local_mut()
                         .save_outbound_authority_local(&value, expected_revision),
                 };
+                control.lock().pending_service_updates -= 1;
                 let _ = reply.try_send(result);
                 continue;
             }

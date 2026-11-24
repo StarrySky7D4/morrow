@@ -102,6 +102,18 @@ pub(super) struct ServiceExecution {
     join: Option<JoinHandle<std::result::Result<WorkerExit<WorkbenchState>, JobError>>>,
 }
 impl ServiceExecution {
+    #[cfg(windows)]
+    pub(super) fn withdraw_windows_account(
+        &self,
+        value: morrow_core::outbound_authority::Record,
+        expected_revision: u64,
+    ) -> std::result::Result<morrow_plugin_runtime::io_jobs::ServiceUpdateHandle, JobError> {
+        self.host.update_service(morrow_plugin_runtime::io_jobs::ServiceUpdate::Outbound {
+            value,
+            expected_revision,
+        })
+    }
+
     fn launch(
         host: ServiceHost<WorkbenchState>,
         configured: ConfiguredService,
@@ -482,6 +494,8 @@ impl Workbench {
         };
         let selected =
             SelectedService::resolve(state.host.store_local_mut(), resolved, outbound, utc)?;
+        #[cfg(windows)]
+        self.oauth_accounts.prepare_withdrawals(state.host.store_local_mut())?;
         let start = state.start;
         let time = now(start);
         let expires = time

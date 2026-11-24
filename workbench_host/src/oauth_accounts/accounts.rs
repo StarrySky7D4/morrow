@@ -113,18 +113,29 @@ impl Account {
     }
     pub fn status(&self, store: &Store, now_ms: u64) -> Result<Status> {
         let record = self.load(store)?;
+        self.reviewed_record(store, &record, now_ms)
+    }
+    pub(crate) fn reviewed_record(
+        &self,
+        store: &Store,
+        record: &Record,
+        now_ms: u64,
+    ) -> Result<Status> {
+        if record.reference() != self.reference {
+            return Err(Error::NotApproved);
+        }
         let binding = self.binding(store)?;
         let v = record.value();
         let (state, expires) = if v.disabled {
-            (inspect_marker(&record, binding)?, None)
+            (inspect_marker(record, binding)?, None)
         } else {
-            if protected::binding_hint(&record)
+            if protected::binding_hint(record)
                 .map_err(|_| Error::NotApproved)?
                 .is_some_and(|hint| hint != binding)
             {
                 return Err(Error::NotApproved);
             }
-            let tokens = protected::open(binding, &record).map_err(|_| Error::NotApproved)?;
+            let tokens = protected::open(binding, record).map_err(|_| Error::NotApproved)?;
             if now_ms < v.created_ms || now_ms >= v.expires_ms {
                 (State::SignInRequired, None)
             } else {
@@ -138,21 +149,27 @@ impl Account {
             access_expires_ms: expires,
         })
     }
+    pub(crate) fn signed_out_marker(&self, store: &Store, record: &Record) -> Result<Record> {
+        if record.reference() != self.reference {
+            return Err(Error::NotApproved);
+        }
+        marker(record, self.binding(store)?, State::SignedOut)
+    }
     pub fn sign_out(
         &self,
         store: &mut Store,
         expected_revision: u64,
         now_ms: u64,
     ) -> Result<Status> {
-        let status = self.status(store, now_ms)?;
+        let record = self.load(store)?;
+        let status = self.reviewed_record(store, &record, now_ms)?;
         if status.revision != expected_revision {
             return Err(Error::Busy);
         }
         if status.state == State::SignedOut {
             return Ok(status);
         }
-        let record = self.load(store)?;
-        let cleared = marker(&record, self.binding(store)?, State::SignedOut)?;
+        let cleared = self.signed_out_marker(store, &record)?;
         save(store, &cleared, expected_revision)?;
         self.status(store, now_ms)
     }

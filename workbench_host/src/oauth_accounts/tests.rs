@@ -36,6 +36,8 @@ struct Service {
     origin: String,
     access_seconds: u32,
     data: Arc<Mutex<Data>>,
+    arrived: Arc<tokio::sync::Notify>,
+    release: Arc<tokio::sync::Notify>,
 }
 async fn authorize(
     ServerState(service): ServerState<Service>,
@@ -143,17 +145,36 @@ async fn resource(
 async fn service() -> (Service, JoinHandle<()>) {
     service_with_lifetime(3).await
 }
+async fn delayed_resource(
+    ServerState(service): ServerState<Service>,
+    headers: HeaderMap,
+) -> axum::response::Response {
+    let response = resource(ServerState(service.clone()), headers).await;
+    service.arrived.notify_one();
+    match tokio::time::timeout(
+        std::time::Duration::from_secs(8),
+        service.release.notified(),
+    )
+    .await
+    {
+        Ok(()) => response,
+        Err(_) => StatusCode::GATEWAY_TIMEOUT.into_response(),
+    }
+}
 async fn service_with_lifetime(access_seconds: u32) -> (Service, JoinHandle<()>) {
     let socket = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let service = Service {
         access_seconds,
         origin: format!("http://{}", socket.local_addr().unwrap()),
         data: Default::default(),
+        arrived: Default::default(),
+        release: Default::default(),
     };
     let routes = Router::new()
         .route("/authorize", get(authorize))
         .route("/token", post(token))
         .route("/resource", get(resource))
+        .route("/waiting", get(delayed_resource))
         .with_state(service.clone());
     (
         service,
