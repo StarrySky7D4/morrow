@@ -32,6 +32,16 @@ python tool/morrow_sdk_diagnostics.py preflight NEW_PACKAGE.mplugin --host PATH_
 
 ## 三语言 SDK
 
+Windows 预览的 SDK 源码包从 v4 起包含 `extensions/changes-metadata-v1`。其中有 Rust 实现、C11 和 C++17 接口、三种语言的插件样例和共用的测试数据。解压后可在包根目录运行以下命令，输出写入相邻的新目录。
+
+```text
+python -B tool/package_plugin_sdk.py verify-directory .
+cargo test --locked --offline --manifest-path extensions/changes-metadata-v1/Cargo.toml -p morrow-changes-metadata-v1 --target-dir ../changes-native
+python -B tool/prepare_changes_metadata_guests.py --sdk-only --output ../changes-guests --rust-target ../changes-rust --c-target ../changes-c --wasi-sdk WASI_SDK_ROOT --pack-executable PATH_TO_TRUSTED_CHANGES_PACKER
+```
+
+最后一条命令需要已安装的 Rust Wasm 目标、Cap'n Proto、WASI 工具链和本地可信打包器 `changes_metadata_package`。打包器可由同版本仓库的 `core/examples/changes_metadata_package.rs` 构建。工具会记录实际使用的打包器及三份插件的 SHA-256。Windows 上单独安装 LLVM 和 WASI sysroot 时，可同时传入 `--clang`、`--clangxx`、`--sysroot`。要在工作台运行，需为所选的卡片集合确认一页变更。
+
 Rust 库与 C / C++ 头文件位于 `extensions/changes-metadata-v1`，不属于冻结的 SDK327 分发。Rust codec 和 C ABI 校验 payload；C++ 包装使用同一 C ABI。真实 guest 通过原 Events endpoint 消费 metadata，验证 scope、epoch、cursor、sequence，再提交原 ACK。
 
 准备新测试 guest 可使用 `tool/prepare_changes_metadata_guests.py`。原 WASI SDK 布局保持可用；Windows 安装 LLVM 与 sysroot 分离时，必须同时提供 `--clang`、`--clangxx`、`--sysroot`，任一缺失就拒绝。输出和两个 Cargo target 必须是明确的外部目录；工具不会下载依赖、覆盖输出或重建冻结原件。C / C++ guest 链接单个合并 Rust archive，避免同时链接两套 Rust runtime。

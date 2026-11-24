@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tomllib
 
 PROFILE = '07fc0dc4c48eb17f85309207a441d6a07f3fb8e06aab5e2ce337a4b3c98f9089'
@@ -29,10 +30,21 @@ def external(path):
     return value
 
 
-def validate_contract():
-    core = ROOT / 'core/schemas/changes_metadata_v1.wire'
+def validate_contract(sdk_only=False):
     sdk = EXT / 'contracts/changes_metadata_v1.wire'
-    if core.read_bytes() != sdk.read_bytes() or sha(sdk) != PROFILE:
+    if sha(sdk) != PROFILE:
+        raise ValueError('Core/extension contract bytes or frozen profile digest mismatch')
+    if sdk_only:
+        # Reading a standalone bundle must not introduce __pycache__ in its inventory.
+        previous = sys.dont_write_bytecode
+        try:
+            sys.dont_write_bytecode = True
+            import package_plugin_sdk as distribution
+            if distribution.verify_distribution(ROOT)['profile'] != distribution.PROFILE:
+                raise ValueError('card changes require a verified SDK source bundle with the extension')
+        finally:
+            sys.dont_write_bytecode = previous
+    elif (ROOT / 'core/schemas/changes_metadata_v1.wire').read_bytes() != sdk.read_bytes():
         raise ValueError('Core/extension contract bytes or frozen profile digest mismatch')
 
 
@@ -62,11 +74,13 @@ def main():
     p.add_argument('--c-target', required=True)
     p.add_argument('--wasi-sdk', required=True)
     p.add_argument('--pack-executable', required=True)
+    p.add_argument('--sdk-only', action='store_true',
+                   help='build from a verified standalone SDK using the supplied trusted pack executable')
     p.add_argument('--clang', help='explicit C compiler; requires --clangxx and --sysroot')
     p.add_argument('--clangxx', help='explicit C++ compiler; requires --clang and --sysroot')
     p.add_argument('--sysroot', help='explicit WASI sysroot; requires both compilers')
     args = p.parse_args()
-    validate_contract()
+    validate_contract(args.sdk_only)
     original={p['name']:(p['version'],p.get('checksum')) for p in tomllib.loads((ROOT/'sdk/rust/Cargo.lock').read_text())['package'] if 'source' in p}
     for dependency in tomllib.loads((EXT/'Cargo.lock').read_text())['package']:
         if 'source' in dependency and original.get(dependency['name'])!=(dependency['version'],dependency.get('checksum')):
@@ -82,13 +96,16 @@ def main():
         if path == output or output in path.parents:
             raise ValueError('reusable cache must not be inside output')
     source_paths = sorted(x for x in EXT.rglob('*') if x.is_file() and 'target' not in x.parts)
-    source_paths += [Path(__file__).resolve(), ROOT / 'core/examples/changes_metadata_package.rs']
+    source_paths.append(Path(__file__).resolve())
+    if not args.sdk_only:
+        source_paths.append(ROOT / 'core/examples/changes_metadata_package.rs')
     before = {str(x.relative_to(ROOT)): sha(x) for x in source_paths}
     # Include exact original transport source bytes; copying a compiler cache is
     # not a claim that any historical guest has been requalified.
     transport = {str(x.relative_to(ROOT)): sha(x) for x in sorted((ROOT/'sdk').rglob('*')) if x.is_file()}
     output.mkdir(parents=True, exist_ok=False)
     manifest = {'profile': PROFILE, 'sources': before, 'transport_sources': transport,
+                'source_mode': 'verified-sdk-bundle' if args.sdk_only else 'repository',
                 'pack_executable': {'path': str(pack), 'sha256': sha(pack)},
                 'targets': list(map(str,targets)), 'commands': [], 'artifacts': {}, 'status': 'building'}
     def save():
@@ -137,7 +154,11 @@ def main():
             manifest['artifacts'][language]={kind:{'path':str(file),'sha256':sha(file),'bytes':file.stat().st_size} for kind,file in [('wasm',module),('package',package)]};save()
         if before!={str(x.relative_to(ROOT)):sha(x) for x in source_paths} or transport!={str(x.relative_to(ROOT)):sha(x) for x in sorted((ROOT/'sdk').rglob('*')) if x.is_file()}:
             raise ValueError('source bytes changed during build')
-        validate_contract();manifest['status']='built_not_runtime_qualified';save()
+        if sha(pack) != manifest['pack_executable']['sha256']:
+            raise ValueError('supplied pack executable changed during build')
+        validate_contract(args.sdk_only)
+        manifest['status'] = 'built_not_runtime_qualified'
+        save()
         print(json.dumps(manifest['artifacts'],indent=2))
     except Exception as e:
         manifest['status']='failed';manifest['failure']=str(e);save();raise

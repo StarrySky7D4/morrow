@@ -102,6 +102,26 @@ class SdkDistributionTests(unittest.TestCase):
         self.assertEqual(report['semantics'], 'NOT_PROVED')
         self.assertEqual(tool.sdk_lock.inventory(self.bundle/'sdk'), tool.sdk_lock.inventory(self.source/'sdk'))
 
+    def test_card_changes_consumers_require_v4_and_open_without_core(self):
+        manifest = distribution.verify_zip(self.archive)
+        self.assertEqual(manifest['profile'], 'morrow-sdk-source-distribution-v4')
+        current = set(manifest['files'])
+        for name in distribution.CHANGES_INPUTS:
+            self.assertEqual((self.bundle/name).read_bytes(), (self.source/name).read_bytes())
+        old = current - distribution.CHANGES_INPUTS
+        distribution.validate_payload_names(old, distribution_profile=distribution.RENAME_PROFILE)
+        with self.assertRaises(distribution.DistributionError):
+            distribution.validate_payload_names(old)
+        with self.assertRaises(distribution.DistributionError):
+            distribution.validate_payload_names(current, distribution_profile=distribution.RENAME_PROFILE)
+        expected = (self.source/'core/schemas/changes_metadata_v1.wire').read_bytes()
+        self.assertEqual((self.bundle/distribution.CHANGES_WIRE).read_bytes(), expected)
+        subprocess.run([sys.executable, '-B', '-c',
+                        "import sys; sys.path.insert(0, 'tool'); "
+                        "import prepare_changes_metadata_guests as p; p.validate_contract(sdk_only=True)"],
+                       cwd=self.bundle, check=True)
+        self.assertEqual(distribution.verify_distribution(self.bundle), manifest)
+
     def test_self_rehashed_missing_public_input_is_rejected(self):
         for name in ('sdk/c/include/morrow_plugin_task.h', 'sdk/cpp/include/morrow_plugin_ui.hpp', 'sdk/rust/src/lib.rs', 'sdk/rust/src/service_resources.rs', 'sdk/rust/src/channel/transport.rs'):
             path = self.bundle/name

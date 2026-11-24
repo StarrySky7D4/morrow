@@ -46,7 +46,7 @@ class PreparationTests(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):M.compiler_paths(td,cc,cc,Path(td)/'missing-sysroot')
     def test_existing_sdk_layout_keeps_defaults_and_windows_exe_selection(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);(root/'bin').mkdir();(root/'share/wasi-sysroot').mkdir(parents=True)
+            root=Path(td).resolve(strict=True);(root/'bin').mkdir();(root/'share/wasi-sysroot').mkdir(parents=True)
             for name in ['clang','clang++','clang.exe','clang++.exe']:(root/'bin'/name).write_bytes(b'synthetic')
             with patch.object(M,'os',type('OS',(),{'name':'nt'})()):
                 self.assertEqual(M.compiler_paths(root),(root/'bin/clang.exe',root/'bin/clang++.exe',root/'share/wasi-sysroot'))

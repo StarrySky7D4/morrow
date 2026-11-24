@@ -2,6 +2,15 @@
 /NOTICE text eol=lf
 /docs/PLUGIN_PROJECT_TOOLS.md text eol=lf
 /docs/PLUGIN_SDK_COMPATIBILITY.md text eol=lf
+/docs/PLUGIN_CHANGES_METADATA_SDK.md text eol=lf
+/tool/prepare_changes_metadata_guests.py text eol=lf
+/extensions/changes-metadata-v1/Cargo.* text eol=lf
+/extensions/changes-metadata-v1/README.md text eol=lf
+/extensions/changes-metadata-v1/src/*.rs text eol=lf
+/extensions/changes-metadata-v1/include/* text eol=lf
+/extensions/changes-metadata-v1/guests/** text eol=lf
+/extensions/changes-metadata-v1/tests/conformance.c text eol=lf
+/extensions/changes-metadata-v1/tests/vectors.bin -text
 /sdk/*.md text eol=lf
 /sdk/LICENSE text eol=lf
 /sdk/c/include/*.h text eol=lf
