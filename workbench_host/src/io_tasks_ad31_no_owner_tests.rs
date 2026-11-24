@@ -42,6 +42,8 @@ impl Fixture {
             submission: None,
         };
         let app = Workbench {
+            #[cfg(windows)]
+            oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(),
             state,

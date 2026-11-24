@@ -108,6 +108,21 @@ fn endpoint(text: &str, local_fixture: bool) -> Result<Url> {
     Ok(url)
 }
 impl Provider {
+    pub(crate) fn review_fields(&self) -> (&str, &str, &str, String) {
+        (
+            &self.issuer,
+            self.authorize.as_str(),
+            self.resource.as_str(),
+            self.scopes.iter().cloned().collect::<Vec<_>>().join(" "),
+        )
+    }
+    pub(crate) fn identity(&self, library: &[u8; 32], package: &[u8; 32]) -> Result<[u8; 32]> {
+        self.binding(
+            library,
+            package,
+            &Sha256::digest(b"Morrow/OAuth/approved-service/v1").into(),
+        )
+    }
     pub fn reviewed(
         issuer: &str,
         authorize: &str,

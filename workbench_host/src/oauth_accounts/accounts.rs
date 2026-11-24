@@ -118,6 +118,12 @@ impl Account {
         let (state, expires) = if v.disabled {
             (inspect_marker(&record, binding)?, None)
         } else {
+            if protected::binding_hint(&record)
+                .map_err(|_| Error::NotApproved)?
+                .is_some_and(|hint| hint != binding)
+            {
+                return Err(Error::NotApproved);
+            }
             let tokens = protected::open(binding, &record).map_err(|_| Error::NotApproved)?;
             if now_ms < v.created_ms || now_ms >= v.expires_ms {
                 (State::SignInRequired, None)
@@ -177,6 +183,21 @@ impl Account {
             expires_ms: value.expires_ms,
             refresh: tokens.refresh,
         }))
+    }
+    pub(crate) fn interrupt_rotation(&self, store: &mut Store, claim: u64) -> Result<()> {
+        let record = self.load(store)?;
+        let binding = self.binding(store)?;
+        if record.value().revision != claim
+            || !record.value().disabled
+            || inspect_marker(&record, binding)? != State::Refreshing
+        {
+            return Err(Error::Busy);
+        }
+        save(
+            store,
+            &marker(&record, binding, State::SignInRequired)?,
+            claim,
+        )
     }
 }
 
@@ -250,6 +271,9 @@ pub struct Rotation {
     refresh: Zeroizing<String>,
 }
 impl Rotation {
+    pub(crate) fn claim_owner(&self) -> (Account, u64) {
+        (self.account.clone(), self.claim)
+    }
     pub async fn exchange(self, now_ms: u64, cancel: CancellationToken) -> Update {
         let tokens = self
             .account

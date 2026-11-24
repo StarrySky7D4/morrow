@@ -673,6 +673,14 @@ pub fn descriptor() -> Value {
         "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery(), "agent_discovery": agent_discovery(), "observation_and_upload_discovery": observation_and_upload_discovery()},
         "unsupported_requirements": ["workbench_public_channel_binding", "network_sse_websocket_backend", "cloud_account_change_subscription", "arbitrary_os_access", "untrusted_native_library", "multi_version_schema_fallback"],
         "legacy_abi1": {"runtime_route_exists": true, "frozen_original_profile": false},
+        "reviewed_windows_accounts": if cfg!(windows) { Some(json!({
+            "provider_registration": "trusted_host",
+            "authorization_code_pkce": "S256", "browser": "external",
+            "credential_storage": "windows_current_user_dpapi",
+            "account_reference": "package_library_and_service_bound",
+            "refresh": "single_claim_rotation", "guest_secret_access": false,
+            "user_controls": ["choose_account", "sign_in", "refresh", "sign_out"]
+        })) } else { None },
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",
         "diagnostic_capabilities": {"package_preflight": crate::sdk_preflight::advertisement()},
         "package_preflight_required": true

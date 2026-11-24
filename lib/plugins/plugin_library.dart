@@ -9,6 +9,8 @@ import 'io_settings_page.dart';
 import 'plugin_content_task.dart';
 import 'plugin_content_dialog.dart';
 import 'credential_manager.dart';
+import 'oauth_accounts.dart';
+import 'oauth_account_manager.dart';
 import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
 import 'http_task_manager.dart';
@@ -1969,6 +1971,23 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ),
             ),
           ],
+          if (widget.backend case final WorkbenchOAuthControl oauth
+              when oauth.supportsOAuthAccounts &&
+                  _confirmed &&
+                  _revision != null &&
+                  _entries.any(
+                    (e) =>
+                        e.declaredIo.contains('http-request') &&
+                        e.declaredIo.contains('credential-use'),
+                  ))
+            _ioGroup(
+              'OAuthAccountManager',
+              OAuthAccountManager(
+                backend: oauth,
+                entries: _entries,
+                revision: _revision!,
+              ),
+            ),
           if (widget.backend is WorkbenchCredentialControl) ...[
             _ioGroup(
               'CredentialManager',

@@ -34,6 +34,7 @@ import 'agent_session_workspace.dart';
 import 'agent_session_controller.dart';
 import 'qualification_session_contract.dart';
 import 'credential_manager.dart';
+import 'oauth_accounts.dart';
 import 'endpoint_control.dart';
 import 'service_control.dart';
 import 'service_codec_native.dart';
@@ -219,6 +220,7 @@ class RustWorkbench
         WorkbenchAgentSessionSupport,
         ThemePackageImportControl,
         WorkbenchCredentialControl,
+        WorkbenchOAuthControl,
         WorkbenchEndpointControl,
         WorkbenchServiceControl,
         WorkbenchServiceRunControl,
@@ -1288,6 +1290,30 @@ class RustWorkbench
     r.id = entry.id;
     r.sha256 = entry.digest;
     r.revisionBigInt = revision;
+  }
+
+  @override
+  bool get supportsOAuthAccounts => Platform.isWindows;
+
+  @override
+  Future<OAuthResult> accountControl(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    OAuthCommand command,
+  ) {
+    if (!supportsOAuthAccounts) throw UnsupportedError('Windows accounts');
+    return _callDecoded<OAuthResult>(
+      host.Action.oauthControl,
+      configure: (r) {
+        _externalSelection(r, entry, revision);
+        command.encode(r.initOauthControl());
+      },
+      decode: (r) => command.decode(
+        r.oauthView ??
+            (throw const FormatException('Missing Windows account response')),
+      ),
+      clearReply: true,
+    );
   }
 
   @override

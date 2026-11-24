@@ -264,6 +264,8 @@ pub struct Manager {
     identity: Arc<()>,
     // Invalidate before any selected-registry mutation; old approvals never revive.
     changes_revision: Arc<AtomicBool>,
+    #[cfg(windows)]
+    account_revision_stop: Option<Weak<dyn Fn() + Send + Sync>>,
     registry: Registry,
     limits: Limits,
     instances: BTreeMap<String, Vec<Weak<Control>>>,
@@ -277,6 +279,8 @@ impl Manager {
         Self {
             identity: Arc::new(()),
             changes_revision: Arc::new(AtomicBool::new(false)),
+            #[cfg(windows)]
+            account_revision_stop: None,
             registry,
             limits,
             instances: BTreeMap::new(),
@@ -290,6 +294,32 @@ impl Manager {
     }
     pub(crate) fn changes_revision_guard(&self) -> Arc<AtomicBool> {
         Arc::clone(&self.changes_revision)
+    }
+    /// One original account worker may wait on the selected registry revision.
+    /// Replacing any selection cancels it before registry changes are published.
+    #[cfg(windows)]
+    pub fn watch_account_revision(
+        &mut self,
+        revision: u64,
+        stop: &Arc<dyn Fn() + Send + Sync>,
+    ) -> Result<()> {
+        if self.revision() != revision
+            || self
+                .account_revision_stop
+                .as_ref()
+                .and_then(Weak::upgrade)
+                .is_some()
+        {
+            return Err(Error::RevisionConflict.into());
+        }
+        self.account_revision_stop = Some(Arc::downgrade(stop));
+        Ok(())
+    }
+    #[cfg(windows)]
+    fn stop_account_revision(&mut self) {
+        if let Some(stop) = self.account_revision_stop.take().and_then(|s| s.upgrade()) {
+            stop();
+        }
     }
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
     pub(crate) fn upload_revision_guard(&self) -> Arc<AtomicBool> {
@@ -496,6 +526,8 @@ impl Manager {
         {
             control.stop();
         }
+        #[cfg(windows)]
+        self.stop_account_revision();
         self.changes_revision.store(true, Ordering::Release);
         self.changes_revision = Arc::new(AtomicBool::new(false));
         // Snapshot the old graph before registry mutation removes or replaces its edges.
@@ -1242,6 +1274,8 @@ impl Manager {
 }
 impl Drop for Manager {
     fn drop(&mut self) {
+        #[cfg(windows)]
+        self.stop_account_revision();
         for controls in self.instances.values() {
             for control in controls.iter().filter_map(Weak::upgrade) {
                 control.stop();

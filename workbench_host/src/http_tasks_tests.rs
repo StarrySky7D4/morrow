@@ -248,7 +248,7 @@ impl Drop for Server {
         }
     }
 }
-fn ready(app: &mut Workbench, key: TaskKey) {
+pub(crate) fn ready(app: &mut Workbench, key: TaskKey) {
     let deadline = Instant::now() + WAIT;
     loop {
         match app.poll_io(key).unwrap().delivery {
@@ -260,7 +260,7 @@ fn ready(app: &mut Workbench, key: TaskKey) {
         thread::sleep(Duration::from_millis(2));
     }
 }
-fn reclaimed(app: &mut Workbench, key: TaskKey) {
+pub(crate) fn reclaimed(app: &mut Workbench, key: TaskKey) {
     let deadline = Instant::now() + WAIT;
     loop {
         let snapshot = app.poll_io(key).unwrap();

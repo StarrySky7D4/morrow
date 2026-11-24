@@ -35,6 +35,9 @@ mod guest_mutation;
 #[cfg(windows)]
 #[path = "mutation_task_protocol.rs"]
 mod mutation_task;
+#[cfg(windows)]
+#[path = "oauth_protocol.rs"]
+mod oauth;
 #[path = "service_run_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod service_run;
@@ -408,6 +411,10 @@ impl ResponseTarget for Workbench {
         mut out: wire::response::Builder<'_>,
     ) -> Result<()> {
         let action = r.get_action()?;
+        #[cfg(windows)]
+        if action == wire::Action::OauthControl {
+            return oauth::handle(self, r, out);
+        }
         #[cfg(not(target_arch = "wasm32"))]
         if channel_task::is_action(action) {
             return channel_task::handle(self, r, out);
@@ -1292,6 +1299,9 @@ fn handle_business(
             }
             crate::plugin_content::handle(host, &id, r.get_sha256()?, r.get_revision(),
                 r.get_plugin_content_task()?, out.reborrow().init_plugin_content_result())?;
+        }
+        wire::Action::OauthControl => {
+            return Err("account controls require the original Windows workbench".into());
         }
         wire::Action::PluginTransform => {
             out.set_payload(&host.run_external_transform(

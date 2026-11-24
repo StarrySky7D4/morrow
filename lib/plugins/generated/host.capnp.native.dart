@@ -199,6 +199,7 @@ enum Action {
   channelPrepareWithCompatibilityBudget,
   pluginContentTask,
   channelPrepareChanges,
+  oauthControl,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -703,12 +704,34 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 192,
       ordinal: 192,
     ),
+    EnumerantSchemaInfo(name: 'oauthControl', codeOrder: 193, ordinal: 193),
   ],
 );
 
 Action? actionFromUint16(int v) =>
     v < Action.values.length ? Action.values[v] : null;
 int actionToUint16(Action v) => v.index;
+
+enum OAuthAction { services, accounts, login, refresh, poll, cancel, logout }
+
+const EnumSchemaInfo oAuthActionSchema = EnumSchemaInfo(
+  id: 0x88e4252b90a1e673,
+  displayName: 'host.capnp:OAuthAction',
+  shortName: 'OAuthAction',
+  enumerants: [
+    EnumerantSchemaInfo(name: 'services', codeOrder: 0, ordinal: 0),
+    EnumerantSchemaInfo(name: 'accounts', codeOrder: 1, ordinal: 1),
+    EnumerantSchemaInfo(name: 'login', codeOrder: 2, ordinal: 2),
+    EnumerantSchemaInfo(name: 'refresh', codeOrder: 3, ordinal: 3),
+    EnumerantSchemaInfo(name: 'poll', codeOrder: 4, ordinal: 4),
+    EnumerantSchemaInfo(name: 'cancel', codeOrder: 5, ordinal: 5),
+    EnumerantSchemaInfo(name: 'logout', codeOrder: 6, ordinal: 6),
+  ],
+);
+
+OAuthAction? oAuthActionFromUint16(int v) =>
+    v < OAuthAction.values.length ? OAuthAction.values[v] : null;
+int oAuthActionToUint16(OAuthAction v) => v.index;
 
 enum PluginContentStatus { unknown, committed, chunk, absent, rejected }
 
@@ -1003,6 +1026,11 @@ final class RequestReader extends StructReader {
   PluginContentTaskReader? get pluginContentTask => getStructFieldWith(
     64,
     (r) => PluginContentTaskReader(r, capabilities: capabilityTable),
+  );
+
+  OAuthControlReader? get oauthControl => getStructFieldWith(
+    65,
+    (r) => OAuthControlReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1473,6 +1501,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasPluginContentTask() => hasPointerField(64);
+
+  OAuthControlBuilder initOauthControl() {
+    return initStructFieldWith(65, (r) => OAuthControlBuilder(r), 2, 5);
+  }
+
+  bool hasOauthControl() => hasPointerField(65);
 }
 
 final class _RequestFactory
@@ -1482,7 +1516,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 65;
+  int get ptrWords => 66;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1499,7 +1533,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 11,
-  pointerWords: 65,
+  pointerWords: 66,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2173,6 +2207,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xc37375b66bc3a025),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'oauthControl',
+      codeOrder: 84,
+      body: SlotFieldSchemaInfo(
+        offset: 65,
+        type: StructRefTypeSchemaInfo(0xf731de5b61841655),
+      ),
+    ),
   ],
 );
 
@@ -2450,6 +2492,11 @@ final class ResponseReader extends StructReader {
   PluginContentResultReader? get pluginContentResult => getStructFieldWith(
     54,
     (r) => PluginContentResultReader(r, capabilities: capabilityTable),
+  );
+
+  OAuthViewReader? get oauthView => getStructFieldWith(
+    55,
+    (r) => OAuthViewReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -2909,6 +2956,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasPluginContentResult() => hasPointerField(54);
+
+  OAuthViewBuilder initOauthView() {
+    return initStructFieldWith(55, (r) => OAuthViewBuilder(r), 1, 7);
+  }
+
+  bool hasOauthView() => hasPointerField(55);
 }
 
 final class _ResponseFactory
@@ -2918,7 +2971,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 55;
+  int get ptrWords => 56;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2935,7 +2988,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 55,
+  pointerWords: 56,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -3505,10 +3558,615 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0x942c146f0800297e),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'oauthView',
+      codeOrder: 71,
+      body: SlotFieldSchemaInfo(
+        offset: 55,
+        type: StructRefTypeSchemaInfo(0xb7bbb3677ba70d25),
+      ),
+    ),
   ],
 );
 
 final responseFactory = _ResponseFactory();
+
+final class OAuthControlReader extends StructReader {
+  OAuthControlReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = oAuthControlSchema;
+
+  OAuthAction? get action => oAuthActionFromUint16(getUint16Field(0));
+
+  Uint8List? get service => getDataField(0);
+
+  Uint8List? get account => getDataField(1);
+
+  Uint8List? get key => getDataField(2);
+
+  int get expectedRevision => getUint64Field(8);
+  BigInt get expectedRevisionBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get days => getUint16Field(2);
+
+  Uint8List? get cursor => getDataField(3);
+
+  Uint8List? get snapshot => getDataField(4);
+}
+
+final class OAuthControlBuilder extends StructBuilder {
+  OAuthControlBuilder(super.raw);
+
+  @override
+  OAuthControlReader asReader() => OAuthControlReader(rawToReader());
+
+  set action(OAuthAction v) {
+    setUint16Field(0, oAuthActionToUint16(v));
+  }
+
+  set service(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set account(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set key(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set expectedRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field expectedRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set days(int v) {
+    setUint16Field(2, v);
+  }
+
+  set cursor(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set snapshot(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _OAuthControlFactory
+    extends StructFactory<OAuthControlReader, OAuthControlBuilder> {
+  @override
+  StructSchemaInfo get schema => oAuthControlSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 5;
+  @override
+  OAuthControlReader fromRawReader(RawStructReader r) => OAuthControlReader(r);
+  @override
+  OAuthControlReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OAuthControlReader(r, capabilities: capabilities);
+  @override
+  OAuthControlBuilder fromRawBuilder(RawStructBuilder r) =>
+      OAuthControlBuilder(r);
+}
+
+const StructSchemaInfo oAuthControlSchema = StructSchemaInfo(
+  id: 0xf731de5b61841655,
+  displayName: 'host.capnp:OAuthControl',
+  shortName: 'OAuthControl',
+  dataWords: 2,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'action',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: EnumRefTypeSchemaInfo(0x88e4252b90a1e673),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'service',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'account',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'days',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cursor',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'snapshot',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final oAuthControlFactory = _OAuthControlFactory();
+
+final class OAuthServiceReader extends StructReader {
+  OAuthServiceReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = oAuthServiceSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  String? get name => getTextField(1);
+
+  String? get issuer => getTextField(2);
+
+  String? get authorize => getTextField(3);
+
+  String? get resource => getTextField(4);
+
+  String? get scopes => getTextField(5);
+}
+
+final class OAuthServiceBuilder extends StructBuilder {
+  OAuthServiceBuilder(super.raw);
+
+  @override
+  OAuthServiceReader asReader() => OAuthServiceReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set name(String? v) {
+    setTextField(1, v);
+  }
+
+  set issuer(String? v) {
+    setTextField(2, v);
+  }
+
+  set authorize(String? v) {
+    setTextField(3, v);
+  }
+
+  set resource(String? v) {
+    setTextField(4, v);
+  }
+
+  set scopes(String? v) {
+    setTextField(5, v);
+  }
+}
+
+final class _OAuthServiceFactory
+    extends StructFactory<OAuthServiceReader, OAuthServiceBuilder> {
+  @override
+  StructSchemaInfo get schema => oAuthServiceSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 6;
+  @override
+  OAuthServiceReader fromRawReader(RawStructReader r) => OAuthServiceReader(r);
+  @override
+  OAuthServiceReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OAuthServiceReader(r, capabilities: capabilities);
+  @override
+  OAuthServiceBuilder fromRawBuilder(RawStructBuilder r) =>
+      OAuthServiceBuilder(r);
+}
+
+const StructSchemaInfo oAuthServiceSchema = StructSchemaInfo(
+  id: 0x8553b0a91266bb16,
+  displayName: 'host.capnp:OAuthService',
+  shortName: 'OAuthService',
+  dataWords: 0,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'issuer',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'authorize',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'resource',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'scopes',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final oAuthServiceFactory = _OAuthServiceFactory();
+
+final class OAuthAccountReader extends StructReader {
+  OAuthAccountReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = oAuthAccountSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+  BigInt get revisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get state => getUint16Field(8);
+
+  int get accessExpiresMs => getUint64Field(16);
+  BigInt get accessExpiresMsBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+}
+
+final class OAuthAccountBuilder extends StructBuilder {
+  OAuthAccountBuilder(super.raw);
+
+  @override
+  OAuthAccountReader asReader() => OAuthAccountReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set revisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field revision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set state(int v) {
+    setUint16Field(8, v);
+  }
+
+  set accessExpiresMs(int v) {
+    setUint64Field(16, v);
+  }
+
+  set accessExpiresMsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field accessExpiresMs');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+}
+
+final class _OAuthAccountFactory
+    extends StructFactory<OAuthAccountReader, OAuthAccountBuilder> {
+  @override
+  StructSchemaInfo get schema => oAuthAccountSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 1;
+  @override
+  OAuthAccountReader fromRawReader(RawStructReader r) => OAuthAccountReader(r);
+  @override
+  OAuthAccountReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OAuthAccountReader(r, capabilities: capabilities);
+  @override
+  OAuthAccountBuilder fromRawBuilder(RawStructBuilder r) =>
+      OAuthAccountBuilder(r);
+}
+
+const StructSchemaInfo oAuthAccountSchema = StructSchemaInfo(
+  id: 0xf2eb7db58da2ecd2,
+  displayName: 'host.capnp:OAuthAccount',
+  shortName: 'OAuthAccount',
+  dataWords: 3,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'state',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'accessExpiresMs',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final oAuthAccountFactory = _OAuthAccountFactory();
+
+final class OAuthViewReader extends StructReader {
+  OAuthViewReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = oAuthViewSchema;
+
+  ListReader<OAuthServiceReader>? get services => getStructListFieldWith(
+    0,
+    (r) => OAuthServiceReader(r, capabilities: capabilityTable),
+  );
+
+  ListReader<OAuthAccountReader>? get accounts => getStructListFieldWith(
+    1,
+    (r) => OAuthAccountReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get key => getDataField(2);
+
+  Uint8List? get account => getDataField(3);
+
+  int get phase => getUint16Field(0);
+
+  String? get browserUrl => getTextField(4);
+
+  Uint8List? get next => getDataField(5);
+
+  Uint8List? get snapshot => getDataField(6);
+}
+
+final class OAuthViewBuilder extends StructBuilder {
+  OAuthViewBuilder(super.raw);
+
+  @override
+  OAuthViewReader asReader() => OAuthViewReader(rawToReader());
+
+  ListBuilder<OAuthServiceBuilder> initServices(int length) {
+    return initStructListFieldWith(
+      0,
+      length,
+      (r) => OAuthServiceBuilder(r),
+      0,
+      6,
+    );
+  }
+
+  ListBuilder<OAuthAccountBuilder> initAccounts(int length) {
+    return initStructListFieldWith(
+      1,
+      length,
+      (r) => OAuthAccountBuilder(r),
+      3,
+      1,
+    );
+  }
+
+  set key(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set account(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set browserUrl(String? v) {
+    setTextField(4, v);
+  }
+
+  set next(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set snapshot(Uint8List? v) {
+    setDataField(6, v);
+  }
+}
+
+final class _OAuthViewFactory
+    extends StructFactory<OAuthViewReader, OAuthViewBuilder> {
+  @override
+  StructSchemaInfo get schema => oAuthViewSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 7;
+  @override
+  OAuthViewReader fromRawReader(RawStructReader r) => OAuthViewReader(r);
+  @override
+  OAuthViewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OAuthViewReader(r, capabilities: capabilities);
+  @override
+  OAuthViewBuilder fromRawBuilder(RawStructBuilder r) => OAuthViewBuilder(r);
+}
+
+const StructSchemaInfo oAuthViewSchema = StructSchemaInfo(
+  id: 0xb7bbb3677ba70d25,
+  displayName: 'host.capnp:OAuthView',
+  shortName: 'OAuthView',
+  dataWords: 1,
+  pointerWords: 7,
+  fields: [
+    FieldSchemaInfo(
+      name: 'services',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x8553b0a91266bb16)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'accounts',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xf2eb7db58da2ecd2)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'account',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'browserUrl',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'next',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'snapshot',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final oAuthViewFactory = _OAuthViewFactory();
 
 final class PluginContentTaskReader extends StructReader {
   PluginContentTaskReader(super.raw, {super.capabilities});

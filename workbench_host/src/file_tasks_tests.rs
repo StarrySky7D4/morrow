@@ -65,6 +65,8 @@ impl Setup {
         let storage = crate::storage::Storage::open(&dir.path().join("db")).unwrap();
         let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
         let app = Workbench {
+            #[cfg(windows)]
+            oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(),
             #[cfg(windows)]

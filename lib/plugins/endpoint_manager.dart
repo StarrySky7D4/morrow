@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'credential_manager.dart';
+import 'oauth_accounts.dart';
 import 'endpoint_control.dart';
 import 'plugin_library.dart';
 
@@ -48,6 +49,9 @@ class _EndpointManagerState extends State<EndpointManager> {
   };
   List<StoredEndpoint> _entries = [];
   List<StoredCredential> _credentials = [];
+  final _serviceAccounts = <String, Uint8List>{};
+  String? _accountOrigin;
+  bool _loadingAccounts = false;
   StoredEndpoint? _replacing;
   String? _packageId;
   String _credential = '';
@@ -144,6 +148,9 @@ class _EndpointManagerState extends State<EndpointManager> {
       _trusted = false;
       _entries = [];
       _credentials = [];
+      _serviceAccounts.clear();
+      _accountOrigin = null;
+      _loadingAccounts = false;
       _replacing = null;
       _message = null;
       unawaited(_refresh());
@@ -334,8 +341,86 @@ class _EndpointManagerState extends State<EndpointManager> {
     }
   }
 
+  String? get _resourceOrigin {
+    final uri = Uri.tryParse(_origin.text.trim());
+    if (uri == null ||
+        uri.scheme != 'https' ||
+        uri.host.isEmpty ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasQuery ||
+        uri.hasFragment ||
+        (uri.path.isNotEmpty && uri.path != '/'))
+      return null;
+    return uri.origin;
+  }
+
+  Future<void> _loadServiceAccounts() async {
+    final backend = widget.backend,
+        selected = _selected,
+        origin = _resourceOrigin;
+    if (backend is! WorkbenchOAuthControl ||
+        selected == null ||
+        !_canUseCredential(selected) ||
+        origin == null)
+      return;
+    final oauth = backend as WorkbenchOAuthControl;
+    if (!oauth.supportsOAuthAccounts) return;
+    final form = _formEpoch, epoch = _epoch;
+    bool current() =>
+        _current(backend, epoch) &&
+        _form &&
+        _formEpoch == form &&
+        _selected?.id == selected.id &&
+        _resourceOrigin == origin;
+    setState(() {
+      _loadingAccounts = true;
+      _serviceAccounts.clear();
+      _accountOrigin = null;
+    });
+    try {
+      final known = await oauth.accountControl(
+        selected,
+        widget.registryRevision,
+        const OAuthCommand(OAuthAction.services),
+      );
+      if (!current()) return;
+      final matches = <String, Uint8List>{};
+      for (final service in known.services.where(
+        (s) => s.resource.origin == origin,
+      )) {
+        final rows = await readOAuthAccounts(
+          oauth,
+          selected,
+          widget.registryRevision,
+          service,
+          current,
+        );
+        if (!current()) return;
+        for (final row in rows.where(
+          (a) =>
+              a.state == OAuthState.available &&
+              a.accessExpiresMs > DateTime.now().millisecondsSinceEpoch,
+        )) {
+          matches[_hex(row.reference)] = row.reference;
+        }
+      }
+      setState(() {
+        _serviceAccounts.addAll(matches);
+        _accountOrigin = origin;
+      });
+    } catch (_) {
+      if (current())
+        setState(() => _message = (l) => l.pluginsEndpointCredentialsFailed);
+    } finally {
+      if (current()) setState(() => _loadingAccounts = false);
+    }
+  }
+
   void _open([StoredEndpoint? old]) {
     if (_busy || !_trusted) return;
+    _serviceAccounts.clear();
+    _accountOrigin = null;
+    _loadingAccounts = false;
     _formEpoch++;
     _replacing = old;
     final p = old?.policy;
@@ -488,9 +573,15 @@ class _EndpointManagerState extends State<EndpointManager> {
       final matches = _validCredentials.where(
         (c) => _hex(c.reference) == _credential,
       );
-      if (!_canUseCredential(p) || matches.isEmpty) return null;
+      if (!_canUseCredential(p)) return null;
       // Preserve the requested duration. The server rejects a shorter credential.
-      credential = Uint8List.fromList(matches.single.reference);
+      final ref = matches.isNotEmpty
+          ? matches.single.reference
+          : (_accountOrigin == uri.origin
+                ? _serviceAccounts[_credential]
+                : null);
+      if (ref == null) return null;
+      credential = Uint8List.fromList(ref);
     }
     return EndpointPolicy(
       packageId: p.id,
@@ -659,6 +750,15 @@ class _EndpointManagerState extends State<EndpointManager> {
       key: ValueKey('endpoint-$key'),
       controller: controller,
       enabled: !_busy,
+      onChanged: key != 'origin'
+          ? null
+          : (_) => setState(() {
+              if (_serviceAccounts.containsKey(_credential)) _credential = '';
+              _serviceAccounts.clear();
+              _accountOrigin = null;
+              _loadingAccounts = false;
+              _formEpoch++;
+            }),
       keyboardType: numeric ? TextInputType.number : TextInputType.url,
       decoration: InputDecoration(labelText: label),
       style: TextStyle(color: widget.ink, fontSize: 12),
@@ -670,7 +770,9 @@ class _EndpointManagerState extends State<EndpointManager> {
     final credentials = _validCredentials;
     final credentialKnown =
         _credential.isEmpty ||
-        credentials.any((c) => _hex(c.reference) == _credential);
+        credentials.any((c) => _hex(c.reference) == _credential) ||
+        (_accountOrigin == _resourceOrigin &&
+            _serviceAccounts.containsKey(_credential));
     final labels = [
       l.pluginsEndpointRequestBytes,
       l.pluginsEndpointResponseBytes,
@@ -709,6 +811,10 @@ class _EndpointManagerState extends State<EndpointManager> {
               : (id) => setState(() {
                   _packageId = id;
                   _credential = '';
+                  _serviceAccounts.clear();
+                  _accountOrigin = null;
+                  _loadingAccounts = false;
+                  _formEpoch++;
                 }),
         ),
         if (selected == null)
@@ -769,6 +875,28 @@ class _EndpointManagerState extends State<EndpointManager> {
         ),
         _field(l.pluginsEndpointLifetime, 'days', _days, numeric: true),
         _note(l.pluginsEndpointCredentialLifetime),
+        if (widget.backend case final WorkbenchOAuthControl oauth
+            when oauth.supportsOAuthAccounts &&
+                selected != null &&
+                _canUseCredential(selected))
+          TextButton(
+            onPressed: _busy || _loadingAccounts || _resourceOrigin == null
+                ? null
+                : _loadServiceAccounts,
+            child: Text(
+              Localizations.localeOf(context).languageCode == 'zh'
+                  ? '读取此目标的服务账户'
+                  : 'Load service accounts for this origin',
+            ),
+          ),
+        if (_accountOrigin != null &&
+            _accountOrigin == _resourceOrigin &&
+            _serviceAccounts.isEmpty)
+          _note(
+            Localizations.localeOf(context).languageCode == 'zh'
+                ? '此目标暂无可用账户。'
+                : 'No accessible accounts for this origin.',
+          ),
         DropdownButtonFormField<String>(
           key: ValueKey('endpoint-credential-$_formEpoch-$_packageId'),
           initialValue: credentialKnown ? _credential : null,
@@ -779,6 +907,15 @@ class _EndpointManagerState extends State<EndpointManager> {
               value: '',
               child: Text(l.pluginsEndpointNoCredential),
             ),
+            if (_accountOrigin == _resourceOrigin)
+              for (final id in _serviceAccounts.keys)
+                DropdownMenuItem(
+                  value: id,
+                  child: Text(
+                    'OAuth ' + id.substring(0, 8) + '…' + id.substring(56),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
             ...credentials.map(
               (c) => DropdownMenuItem(
                 value: _hex(c.reference),

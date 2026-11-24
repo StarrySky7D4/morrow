@@ -100,6 +100,8 @@ fn tight_total_setup() -> Setup {
     let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
     Setup {
         app: Workbench {
+            #[cfg(windows)]
+            oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(),
             #[cfg(windows)]

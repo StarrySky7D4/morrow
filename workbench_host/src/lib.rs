@@ -76,6 +76,8 @@ mod content_projection;
 pub mod credential_control;
 #[cfg(target_os = "windows")]
 pub mod oauth_accounts;
+#[cfg(windows)]
+pub mod oauth_control;
 pub mod editor_commit_proof;
 pub mod editor_draft;
 mod editor_draft_api;
@@ -148,6 +150,8 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    #[cfg(windows)]
+    oauth_accounts: oauth_control::Accounts,
     #[cfg(not(target_arch = "wasm32"))]
     upload_plans: blob_upload_plans::Plans,
     #[cfg(not(target_arch = "wasm32"))]
@@ -963,6 +967,8 @@ impl Workbench {
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
+            #[cfg(windows)]
+            oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(),
             http_tasks: Default::default(),
@@ -974,6 +980,8 @@ impl Workbench {
     }
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
+            #[cfg(windows)]
+            oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(),
             http_tasks: Default::default(),
@@ -1033,6 +1041,8 @@ impl Workbench {
     }
     pub fn finish(&mut self) -> Result<()> {
         self.state.request_stop();
+        #[cfg(windows)]
+        self.stop_oauth_account_job();
         self.history_deliveries.finish()?;
         self.upload_plans.finish()?;
         self.finish_channels()?;

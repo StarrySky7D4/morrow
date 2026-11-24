@@ -66,6 +66,8 @@ impl Fixture {
         };
         Self {
             app: Workbench {
+                #[cfg(windows)]
+                oauth_accounts: Default::default(),
             upload_plans: Default::default(),
             history_deliveries: Default::default(), state, channel_tasks: Default::default(),
                 http_tasks: Default::default(), product_session_wire: Default::default() },

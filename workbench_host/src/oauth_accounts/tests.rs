@@ -2,6 +2,7 @@ use super::{
     accounts::{Account, Enrollment, Refresh, State, Update},
     *,
 };
+use crate::Workbench;
 use axum::{
     Json, Router,
     extract::{Form, Query, State as ServerState},
@@ -16,17 +17,24 @@ use std::{
     sync::{Arc, Mutex},
 };
 use tokio::task::JoinHandle;
+#[path = "../../tests/support/outbound_plugin.rs"]
+mod test_plugin;
+#[path = "workbench_tests.rs"]
+mod workbench_tests;
 
 #[derive(Default)]
 struct Data {
     codes: HashMap<String, (String, String, String)>,
     refresh: HashMap<String, String>,
+    access: HashMap<String, String>,
+    resource_accounts: Vec<Option<String>>,
     rotations: usize,
     exchanges: usize,
 }
 #[derive(Clone)]
 struct Service {
     origin: String,
+    access_seconds: u32,
     data: Arc<Mutex<Data>>,
 }
 async fn authorize(
@@ -110,17 +118,41 @@ async fn token(
     };
     let refresh = format!("fixture-refresh-{account}-{generation}");
     d.refresh.insert(refresh.clone(), account.clone());
-    (StatusCode::OK,Json(json!({"access_token":format!("fixture-access-{account}-{generation}"),"refresh_token":refresh,"token_type":"Bearer","expires_in":3,"scope":"cards.read"}))).into_response()
+    let access = format!("fixture-access-{account}-{generation}");
+    d.access.insert(access.clone(), account);
+    (StatusCode::OK,Json(json!({"access_token":access,"refresh_token":refresh,"token_type":"Bearer","expires_in":service.access_seconds,"scope":"cards.read"}))).into_response()
+}
+async fn resource(
+    ServerState(service): ServerState<Service>,
+    headers: HeaderMap,
+) -> axum::response::Response {
+    let mut data = service.data.lock().unwrap();
+    let account = headers
+        .get("authorization")
+        .and_then(|v| v.to_str().ok())
+        .and_then(|v| v.strip_prefix("Bearer "))
+        .and_then(|token| data.access.get(token))
+        .cloned();
+    data.resource_accounts.push(account.clone());
+    match account {
+        Some(name) => (StatusCode::OK, name).into_response(),
+        None => StatusCode::UNAUTHORIZED.into_response(),
+    }
 }
 async fn service() -> (Service, JoinHandle<()>) {
+    service_with_lifetime(3).await
+}
+async fn service_with_lifetime(access_seconds: u32) -> (Service, JoinHandle<()>) {
     let socket = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let service = Service {
+        access_seconds,
         origin: format!("http://{}", socket.local_addr().unwrap()),
         data: Default::default(),
     };
     let routes = Router::new()
         .route("/authorize", get(authorize))
         .route("/token", post(token))
+        .route("/resource", get(resource))
         .with_state(service.clone());
     (
         service,

@@ -69,9 +69,10 @@ pub fn seal(account: Account, tokens: &Tokens) -> Result<Record> {
     let raw = Zeroizing::new(secret.encode_to_vec());
     let protected = keys::protect_oauth(&raw).map_err(|_| Error::Protection)?;
     let ciphertext = [
-        b"MOAO1".as_slice(),
+        b"MOAO2".as_slice(),
         &account.resource_scope,
         &tokens.access_expires_ms.to_le_bytes(),
+        &account.binding,
         &protected,
     ]
     .concat();
@@ -107,7 +108,8 @@ pub fn access_policy(record: &Record) -> Result<([u8; 32], u64)> {
     if value.disabled
         || blob.provider != outbound_authority::WINDOWS_OAUTH_PROVIDER
         || blob.ciphertext.len() <= 45
-        || !blob.ciphertext.starts_with(b"MOAO1")
+        || !(blob.ciphertext.starts_with(b"MOAO1")
+            || (blob.ciphertext.starts_with(b"MOAO2") && blob.ciphertext.len() > 77))
     {
         return Err(Error::Format);
     }
@@ -124,13 +126,30 @@ pub fn access_policy(record: &Record) -> Result<([u8; 32], u64)> {
     }
     Ok((scope, expires))
 }
+pub fn binding_hint(record: &Record) -> Result<Option<[u8; 32]>> {
+    access_policy(record)?;
+    let Some(Kind::Credential(blob)) = &record.value().kind else {
+        return Err(Error::Format);
+    };
+    if blob.ciphertext.starts_with(b"MOAO2") {
+        Ok(Some(
+            blob.ciphertext[45..77]
+                .try_into()
+                .map_err(|_| Error::Format)?,
+        ))
+    } else {
+        Ok(None)
+    }
+}
 fn material(record: &Record) -> Result<(Account, Tokens)> {
     let value = record.value();
     let (resource_scope, expires) = access_policy(record)?;
     let Some(Kind::Credential(blob)) = &value.kind else {
         return Err(Error::Format);
     };
-    let raw = keys::unprotect_oauth(&blob.ciphertext[45..]).map_err(|_| Error::Protection)?;
+    let hint = binding_hint(record)?;
+    let offset = if hint.is_some() { 77 } else { 45 };
+    let raw = keys::unprotect_oauth(&blob.ciphertext[offset..]).map_err(|_| Error::Protection)?;
     if raw.len() > 9216 {
         return Err(Error::Format);
     }
@@ -147,7 +166,8 @@ fn material(record: &Record) -> Result<(Account, Tokens)> {
         created_ms: value.created_ms,
         expires_ms: value.expires_ms,
     };
-    if secret.resource_scope != resource_scope
+    if hint.is_some_and(|binding| secret.binding != binding)
+        || secret.resource_scope != resource_scope
         || secret.access_expires_ms != expires
         || secret.reference != value.reference
         || secret.revision != value.revision
@@ -179,4 +199,52 @@ pub fn bearer(scope: [u8; 32], record: &Record) -> Result<Zeroizing<String>> {
         return Err(Error::Format);
     }
     Ok(Zeroizing::new(format!("Bearer {}", tokens.access.as_str())))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn original_windows_account_envelope_and_scoped_successor_reopen() {
+        let account = Account {
+            binding: [1; 32],
+            resource_scope: [2; 32],
+            reference: [3; 32],
+            revision: 1,
+            created_ms: 1000,
+            expires_ms: 10000,
+        };
+        let tokens = Tokens {
+            access: Zeroizing::new("local-access-fixture".into()),
+            refresh: Zeroizing::new("local-refresh-fixture".into()),
+            access_expires_ms: 5000,
+        };
+        let record = seal(account, &tokens).unwrap();
+        assert_eq!(binding_hint(&record).unwrap(), Some(account.binding));
+        let mut prior = record.value().clone();
+        let Some(Kind::Credential(blob)) = prior.kind.as_mut() else {
+            panic!("expected account")
+        };
+        // The original format held the same DPAPI payload immediately after expiry.
+        blob.ciphertext[4] = b'1';
+        blob.ciphertext.drain(45..77);
+        let legacy = Record::encode(prior).unwrap();
+        assert_eq!(binding_hint(&legacy).unwrap(), None);
+        for saved in [&legacy, &record] {
+            assert_eq!(
+                access_policy(saved).unwrap(),
+                (account.resource_scope, 5000)
+            );
+            assert_eq!(
+                open(account.binding, saved).unwrap().refresh.as_str(),
+                "local-refresh-fixture"
+            );
+            assert_eq!(
+                bearer(account.resource_scope, saved).unwrap().as_str(),
+                "Bearer local-access-fixture"
+            );
+            assert!(open([4; 32], saved).is_err());
+        }
+    }
 }
