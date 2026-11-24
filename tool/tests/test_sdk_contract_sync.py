@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp", "channel.capnp")
+SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp", "mutation_rename.capnp", "channel.capnp")
 VERSIONS = ("version.txt", "task-version.txt", "ui-version.txt")
 
 
@@ -91,6 +91,15 @@ class ContractSyncTests(unittest.TestCase):
         result = self.run_sync("--check")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Stale guest SDK contract: mutation.capnp", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_rename_only_drift_is_detected_without_repair(self):
+        source = self.root / "core/schemas/mutation_rename.capnp"
+        source.write_bytes(source.read_bytes() + b"# Changed rename extension")
+        before = self.snapshot()
+        result = self.run_sync("--check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Stale guest SDK contract: mutation_rename.capnp", result.stderr)
         self.assertEqual(self.snapshot(), before)
 
     def test_channel_only_drift_is_detected_without_repair(self):
