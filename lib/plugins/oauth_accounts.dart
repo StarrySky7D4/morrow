@@ -55,10 +55,12 @@ class OAuthService {
     this.authorize,
     this.resource,
     this.scopes,
+    this.tokenEndpoint,
+    this.clientId,
   );
   final Uint8List key;
-  final String name, scopes;
-  final Uri issuer, authorize, resource;
+  final String name, scopes, clientId;
+  final Uri issuer, authorize, resource, tokenEndpoint;
   Uri browser(String raw) {
     final value = Uri.tryParse(raw);
     if (raw.length > 8192 ||
@@ -71,10 +73,11 @@ class OAuthService {
       throw const FormatException('Unexpected sign-in destination');
     final p = value.queryParametersAll;
     final redirect = Uri.tryParse(p['redirect_uri']?.singleOrNull ?? '');
-    if (p.values.any((items) => items.length != 1) ||
+    if (p.length != 7 ||
+        p.values.any((items) => items.length != 1) ||
         p['response_type']?.singleOrNull != 'code' ||
         p['code_challenge_method']?.singleOrNull != 'S256' ||
-        !(p['client_id']?.singleOrNull?.isNotEmpty ?? false) ||
+        p['client_id']?.singleOrNull != clientId ||
         !RegExp(r'^[A-Za-z0-9_-]{43}$')
             .hasMatch(p['code_challenge']?.singleOrNull ?? '') ||
         !RegExp(r'^[A-Za-z0-9_-]{43}$')
@@ -202,11 +205,16 @@ class OAuthCommand {
     if ((serviceRows?.length ?? 0) > 8 || (rows?.length ?? 0) > 16)
       throw const FormatException('Invalid Windows account page size');
     for (final s in serviceRows ?? <host.OAuthServiceReader>[]) {
-      final name = s.name ?? '', scopes = s.scopes ?? '';
+      final name = s.name ?? '',
+          scopes = s.scopes ?? '',
+          clientId = s.clientId ?? '';
       if (name.isEmpty ||
           name.length > 100 ||
           scopes.isEmpty ||
-          scopes.length > 512)
+          scopes.length > 512 ||
+          clientId.isEmpty ||
+          clientId.length > 256 ||
+          clientId.codeUnits.any((v) => v < 0x21 || v > 0x7e))
         throw const FormatException('Invalid reviewed service');
       services.add(
         OAuthService(
@@ -216,6 +224,8 @@ class OAuthCommand {
           _endpoint(s.authorize),
           _endpoint(s.resource),
           scopes,
+          _endpoint(s.tokenEndpoint),
+          clientId,
         ),
       );
     }
@@ -250,8 +260,12 @@ class OAuthCommand {
         accountHex(_id(r.key)) != accountHex(key!))
       throw const FormatException('Invalid Windows account operation');
     final url = r.browserUrl ?? '';
-    if (r.phase==5 && (r.account?.isEmpty??true) && (action==OAuthAction.poll || action==OAuthAction.cancel) && url.isEmpty && entries.isEmpty) {
-      return OAuthResult(key:_id(r.key),phase:OAuthPhase.unconfirmed);
+    if (r.phase == 5 &&
+        (r.account?.isEmpty ?? true) &&
+        (action == OAuthAction.poll || action == OAuthAction.cancel) &&
+        url.isEmpty &&
+        entries.isEmpty) {
+      return OAuthResult(key: _id(r.key), phase: OAuthPhase.unconfirmed);
     }
     final ref = _id(r.account);
     if ((account != null && accountHex(account!) != accountHex(ref)) ||

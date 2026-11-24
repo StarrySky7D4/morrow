@@ -145,6 +145,8 @@ class _OAuthManagerState extends State<OAuthAccountManager> {
           s.name,
           t('Issuer', '签发方') + ' ' + s.issuer.toString(),
           t('Browser destination', '浏览器地址') + ' ' + s.authorize.toString(),
+          t('Token exchange', '凭据交换地址') + ' ' + s.tokenEndpoint.toString(),
+          t('Client ID', '客户端标识') + ' ' + s.clientId,
           t('Resource', '访问目标') + ' ' + s.resource.toString(),
           t('Permissions', '权限') + ' ' + s.scopes,
           t('Local approval lasts 7 days.', '本机批准有效期为 7 天。'),

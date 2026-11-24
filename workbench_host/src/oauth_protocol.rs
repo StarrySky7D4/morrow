@@ -58,7 +58,9 @@ pub(super) fn handle(
                 row.set_name(s.name.as_str());
                 row.set_issuer(s.issuer.as_str());
                 row.set_authorize(s.authorize.as_str());
+                row.set_token_endpoint(s.token.as_str());
                 row.set_resource(s.resource.as_str());
+                row.set_client_id(s.client_id.as_str());
                 row.set_scopes(s.scopes.as_str());
             }
         }

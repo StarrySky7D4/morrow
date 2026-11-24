@@ -86,7 +86,8 @@ class PackagePreflight(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
-        self.root = Path(temporary.name)
+        # The CLI passes resolved paths, including when Windows TEMP uses an 8.3 alias.
+        self.root = Path(temporary.name).resolve()
         self.host = self.root/'trusted-host'
         self.host.write_bytes(b'synthetic-host-fixture')
         self.archive = b'synthetic-selected-archive'

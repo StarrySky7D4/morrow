@@ -7,7 +7,7 @@ use url::Url;
 use wire::OAuthAction as Action;
 #[derive(Default)]
 struct View {
-    services: Vec<[u8; 32]>,
+    services: Vec<([u8; 32], String, String)>,
     accounts: Vec<([u8; 32], u64, u16)>,
     phase: u16,
     url: String,
@@ -48,7 +48,17 @@ fn call(
             .get_services()
             .unwrap()
             .iter()
-            .map(|v| v.get_key().unwrap().try_into().unwrap())
+            .map(|v| {
+                (
+                    v.get_key().unwrap().try_into().unwrap(),
+                    v.get_token_endpoint()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_string(),
+                    v.get_client_id().unwrap().to_str().unwrap().to_string(),
+                )
+            })
             .collect(),
         accounts: v
             .get_accounts()
@@ -152,7 +162,11 @@ fn original_windows_control_two_accounts_reopen_refresh_signout_and_cancel() {
     let key = register(&mut w, &s, &service);
     assert_eq!(
         call(&mut w, &s, Action::Services, |_| {}).services,
-        vec![key]
+        vec![(
+            key,
+            format!("{}/token", service.origin),
+            "morrow-windows-test".into()
+        )]
     );
     let mut refs = vec![];
     for (name, nonce) in [("alpha", 11), ("beta", 12)] {
@@ -275,6 +289,24 @@ fn losing_the_selected_manager_closes_the_pending_browser_callback_before_poll()
     server.abort();
 }
 
+fn resource_request(
+    s: &Selection,
+    endpoint: &crate::endpoint_control::EndpointInfo,
+    nonce: u8,
+) -> crate::http_tasks::HttpStart {
+    crate::http_tasks::HttpStart {
+        submission: [nonce; 32],
+        endpoint: endpoint.reference,
+        endpoint_revision: endpoint.revision,
+        package_digest: s.digest,
+        registry_revision: s.revision,
+        method: "GET".into(),
+        target: "/resource".into(),
+        headers: vec![],
+        body: vec![],
+        timeout_ms: 5000,
+    }
+}
 fn resource_call(
     w: &mut Workbench,
     s: &Selection,
@@ -286,19 +318,7 @@ fn resource_call(
         io::{Request, Response},
         io_evidence::Kind,
     };
-    let input = crate::http_tasks::HttpStart {
-        submission: [nonce; 32],
-        endpoint: endpoint.reference,
-        endpoint_revision: endpoint.revision,
-        package_digest: s.digest,
-        registry_revision: s.revision,
-        method: "GET".into(),
-        target: "/resource".into(),
-        headers: vec![],
-        body: vec![],
-        timeout_ms: 5000,
-    };
-    let key = w.start_http(input).unwrap();
+    let key = w.start_http(resource_request(s, endpoint, nonce)).unwrap();
     crate::http_tasks_tests::ready(w, key);
     let report = w.read_io(key, 512 * 1024).unwrap().unwrap();
     assert!(!report.unknown && !report.cancelled && report.task.execution.outcome.is_ok());
@@ -340,7 +360,7 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
         .build()
         .unwrap();
     for language in ["rust", "c", "cpp"] {
-        let (service, server) = rt.block_on(super::service_with_lifetime(90));
+        let (service, server) = rt.block_on(super::service_with_lifetime(5));
         let directory = tempfile::tempdir().unwrap();
         let mut w = Workbench::open_managed(directory.path(), None).unwrap();
         w.bind_supervised_channel_owner().unwrap();
@@ -396,30 +416,66 @@ fn frozen_guests_choose_two_signed_in_accounts_on_the_same_origin_and_withdraw_o
             resource_call(&mut w, &s, &ep, 40 + i as u8, name);
             accounts.push((account, ep));
         }
+        let listed = w.oauth_account_page(&s, service_id, None, None).unwrap().0;
+        assert_eq!(listed.len(), 2);
+        let expires = listed
+            .iter()
+            .map(|entry| entry.access_expires_ms.unwrap())
+            .max()
+            .unwrap();
+        w.finish().unwrap();
+        drop(w);
+        let mut w = Workbench::open_managed(directory.path(), None).unwrap();
+        w.bind_supervised_channel_owner().unwrap();
+        assert_eq!(register(&mut w, &s, &service), service_id);
+        let cutoff = std::time::UNIX_EPOCH + Duration::from_millis(expires + 1);
+        std::thread::sleep(
+            cutoff
+                .duration_since(std::time::SystemTime::now())
+                .unwrap_or_default(),
+        );
+        // An expired account cannot send through either original approved endpoint.
+        for (i, (_, endpoint)) in accounts.iter().enumerate() {
+            assert!(
+                w.start_http(resource_request(&s, endpoint, 51 + i as u8))
+                    .is_err()
+            );
+        }
+        assert_eq!(service.data.lock().unwrap().resource_accounts.len(), 2);
+        for (i, ((reference, revision, _), endpoint)) in accounts.iter().enumerate() {
+            let nonce = 60 + i as u8;
+            let refresh = call(&mut w, &s, Action::Refresh, |mut p| {
+                p.set_service(&service_id);
+                p.set_account(reference);
+                p.set_key(&[nonce; 32]);
+            });
+            assert_eq!(refresh.phase, 1, "{}", refresh.error);
+            let done = completed(&mut w, &s, service_id, nonce);
+            assert_eq!(done.accounts, vec![(*reference, revision + 2, 1)]);
+            assert_eq!(
+                query(&mut w, &s, service_id, nonce, Action::Poll).accounts,
+                done.accounts
+            );
+            resource_call(&mut w, &s, endpoint, 70 + i as u8, ["alpha", "beta"][i]);
+        }
+        {
+            let observed = service.data.lock().unwrap();
+            assert_eq!((observed.exchanges, observed.rotations), (2, 2));
+        }
         let ((ref_a, revision_a, _), ep_a) = &accounts[0];
         let out = call(&mut w, &s, Action::Logout, |mut p| {
             p.set_service(&service_id);
             p.set_account(ref_a);
-            p.set_expected_revision(*revision_a);
+            p.set_expected_revision(revision_a + 2);
         });
         assert_eq!(out.accounts[0].2, 4);
-        let input = crate::http_tasks::HttpStart {
-            submission: [45; 32],
-            endpoint: ep_a.reference,
-            endpoint_revision: ep_a.revision,
-            package_digest: s.digest,
-            registry_revision: s.revision,
-            method: "GET".into(),
-            target: "/resource".into(),
-            headers: vec![],
-            body: vec![],
-            timeout_ms: 5000,
-        };
-        assert!(w.start_http(input).is_err());
+        assert!(w.start_http(resource_request(&s, ep_a, 45)).is_err());
         resource_call(&mut w, &s, &accounts[1].1, 46, "beta");
         assert_eq!(
             service.data.lock().unwrap().resource_accounts,
             vec![
+                Some("alpha".into()),
+                Some("beta".into()),
                 Some("alpha".into()),
                 Some("beta".into()),
                 Some("beta".into())

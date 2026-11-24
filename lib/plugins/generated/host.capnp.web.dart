@@ -1902,6 +1902,10 @@ final class OAuthServiceReader extends StructReader {
   String? get resource => getTextField(4);
 
   String? get scopes => getTextField(5);
+
+  String? get tokenEndpoint => getTextField(6);
+
+  String? get clientId => getTextField(7);
 }
 
 final class OAuthServiceBuilder extends StructBuilder {
@@ -1933,6 +1937,14 @@ final class OAuthServiceBuilder extends StructBuilder {
   set scopes(String? v) {
     setTextField(5, v);
   }
+
+  set tokenEndpoint(String? v) {
+    setTextField(6, v);
+  }
+
+  set clientId(String? v) {
+    setTextField(7, v);
+  }
 }
 
 final class _OAuthServiceFactory
@@ -1940,7 +1952,7 @@ final class _OAuthServiceFactory
   @override
   int get dataWords => 0;
   @override
-  int get ptrWords => 6;
+  int get ptrWords => 8;
   @override
   OAuthServiceReader fromRawReader(RawStructReader r) => OAuthServiceReader(r);
   @override
@@ -2078,7 +2090,7 @@ final class OAuthViewBuilder extends StructBuilder {
       length,
       (r) => OAuthServiceBuilder(r),
       0,
-      6,
+      8,
     );
   }
 

@@ -108,11 +108,13 @@ fn endpoint(text: &str, local_fixture: bool) -> Result<Url> {
     Ok(url)
 }
 impl Provider {
-    pub(crate) fn review_fields(&self) -> (&str, &str, &str, String) {
+    pub(crate) fn review_fields(&self) -> (&str, &str, &str, &str, &str, String) {
         (
             &self.issuer,
             self.authorize.as_str(),
+            self.token.as_str(),
             self.resource.as_str(),
+            &self.client_id,
             self.scopes.iter().cloned().collect::<Vec<_>>().join(" "),
         )
     }

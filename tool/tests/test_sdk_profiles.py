@@ -116,6 +116,49 @@ class Profiles(unittest.TestCase):
         self.assertEqual(value['authority'],'none')
         self.assertFalse(value['profiles'][0]['workbench_constraints']['dependency_calls'])
 
+    def test_windows_reviewed_history_supports_original_and_durable_bookmarks(self):
+        item = payload_descriptor()
+        channel = next(p for p in item['profiles'] if p['id'] == 'morrow.channel.v1')
+        detail = {
+            'version': 1, 'handler': 'changes.metadata', 'windows_workbench_compiled': True,
+            'max_reviewed_cards': 32, 'max_records_per_page': 64, 'bookmark_bytes': 73,
+            'receipt': 'epoch_sequence_metadata_sha256', 'fresh_approval_per_page': True,
+            'grants_card_content': False,
+        }
+        channel['reviewed_card_history'] = detail
+        self.assertIs(sdk.validate_descriptor(item), item)
+        detail.update(retained_ack_epochs_per_selection=2, durable_compare_and_swap=True)
+        self.assertIs(sdk.validate_descriptor(item), item)
+        for field, value in [('version', True), ('bookmark_bytes', 32), ('grants_card_content', 0),
+                             ('fresh_approval_per_page', False), ('retained_ack_epochs_per_selection', 3),
+                             ('durable_compare_and_swap', None), ('windows_workbench_compiled', False)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                channel['reviewed_card_history'] = dict(detail, **{field: value})
+                sdk.validate_descriptor(item)
+
+    def test_windows_account_discovery_keeps_the_approved_scope_and_secret_boundary(self):
+        item = descriptor()
+        item['platform']['os'] = 'windows'
+        detail = {
+            'provider_registration': 'trusted_host', 'authorization_code_pkce': 'S256',
+            'browser': 'external', 'credential_storage': 'windows_current_user_dpapi',
+            'account_reference': 'package_library_and_service_bound', 'refresh': 'single_claim_rotation',
+            'guest_secret_access': False, 'user_controls': ['choose_account', 'sign_in', 'refresh', 'sign_out'],
+        }
+        item['reviewed_windows_accounts'] = detail
+        self.assertIs(sdk.validate_descriptor(item), item)
+        for field, value in [('authorization_code_pkce', 'plain'), ('guest_secret_access', 0),
+                             ('account_reference', 'global'), ('user_controls', ['sign_in'] * 4)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                item['reviewed_windows_accounts'] = dict(detail, **{field: value})
+                sdk.validate_descriptor(item)
+        item['platform']['os'] = 'linux'
+        item['reviewed_windows_accounts'] = detail
+        with self.assertRaises(ValueError):
+            sdk.validate_descriptor(item)
+        item['reviewed_windows_accounts'] = None
+        self.assertIs(sdk.validate_descriptor(item), item)
+
     def test_channel_profile_cannot_claim_unbound_workbench_network_cloud_or_replay(self):
         item=descriptor();channel=copy.deepcopy(item['profiles'][0]);channel['id']='morrow.channel.v1'
         channel['status']='experimental';channel['contracts']['channel']={'version':1,'sha256':'1'*64}

@@ -119,6 +119,7 @@ async fn token(
     let refresh = format!("fixture-refresh-{account}-{generation}");
     d.refresh.insert(refresh.clone(), account.clone());
     let access = format!("fixture-access-{account}-{generation}");
+    d.access.retain(|_, owner| owner != &account);
     d.access.insert(access.clone(), account);
     (StatusCode::OK,Json(json!({"access_token":access,"refresh_token":refresh,"token_type":"Bearer","expires_in":service.access_seconds,"scope":"cards.read"}))).into_response()
 }

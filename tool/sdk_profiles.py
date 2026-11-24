@@ -358,6 +358,43 @@ def directory_request_discovery(detail, platform, base_profiles, legacy_discover
         raise ValueError("missing directory request prerequisites")
 
 
+def reviewed_workbench_fields(value, expected, label):
+    if not isinstance(value, dict) or any(type(value.get(k)) is not type(v) or value[k] != v
+                                          for k, v in expected.items()):
+        raise ValueError("invalid " + label)
+
+
+def reviewed_card_history(value, platform):
+    reviewed_workbench_fields(value, {
+        "version": 1, "handler": "changes.metadata",
+        "windows_workbench_compiled": platform["os"] == "windows",
+        "max_reviewed_cards": 32, "max_records_per_page": 64, "bookmark_bytes": 73,
+        "receipt": "epoch_sequence_metadata_sha256", "fresh_approval_per_page": True,
+        "grants_card_content": False,
+    }, "reviewed card history")
+    # The original version-one descriptor predates durable history. A host
+    # advertising the later extension must report both halves of its contract.
+    if {"retained_ack_epochs_per_selection", "durable_compare_and_swap"} & value.keys():
+        reviewed_workbench_fields(value, {
+            "retained_ack_epochs_per_selection": 2, "durable_compare_and_swap": True,
+        }, "durable reviewed card history")
+
+
+def reviewed_windows_accounts(value, platform):
+    if platform["os"] != "windows":
+        raise ValueError("Windows account controls require a Windows host")
+    reviewed_workbench_fields(value, {
+        "provider_registration": "trusted_host", "authorization_code_pkce": "S256",
+        "browser": "external", "credential_storage": "windows_current_user_dpapi",
+        "account_reference": "package_library_and_service_bound", "refresh": "single_claim_rotation",
+        "guest_secret_access": False,
+    }, "reviewed Windows accounts")
+    controls = value.get("user_controls")
+    strings(controls, "Windows account controls")
+    if sorted(controls) != ["choose_account", "refresh", "sign_in", "sign_out"]:
+        raise ValueError("invalid Windows account controls")
+
+
 def validate_descriptor(value):
     if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
         raise ValueError("unsupported SDK descriptor schema")
@@ -387,6 +424,8 @@ def validate_descriptor(value):
         if profile["id"] == "morrow.channel.v1":
             if not {"runtime", "task", "channel"}.issubset(contracts):
                 raise ValueError("missing channel profile contracts")
+            if "reviewed_card_history" in profile:
+                reviewed_card_history(profile["reviewed_card_history"], platform)
             scope = profile.get("channel_scope")
             expected = {"trusted_local_sources": True, "managed_binding_required": True,
                         "workbench_binding": False, "network_backend": False,
@@ -424,6 +463,8 @@ def validate_descriptor(value):
         if type(defaults.get("host_calls")) is not int or defaults["host_calls"] < 0:
             raise ValueError("invalid default host calls")
     strings(value.get("unsupported_requirements"), "unsupported requirements")
+    if value.get("reviewed_windows_accounts") is not None:
+        reviewed_windows_accounts(value["reviewed_windows_accounts"], platform)
     experiments = value.get("experimental_extensions")
     if not isinstance(experiments, dict) or experiments.get("status") != "recognized_experimental_not_fully_discovered":
         raise ValueError("invalid experimental extension status")

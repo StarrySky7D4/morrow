@@ -33,7 +33,9 @@ pub struct ServiceReview {
     pub name: String,
     pub issuer: String,
     pub authorize: String,
+    pub token: String,
     pub resource: String,
+    pub client_id: String,
     pub scopes: String,
 }
 #[derive(Clone)]
@@ -119,13 +121,15 @@ fn selected(state: &WorkbenchState, selection: &Selection, active: bool) -> Resu
 }
 impl Service {
     fn review(&self) -> ServiceReview {
-        let (issuer, authorize, resource, scopes) = self.provider.review_fields();
+        let (issuer, authorize, token, resource, client_id, scopes) = self.provider.review_fields();
         ServiceReview {
             key: self.key,
             name: self.name.clone(),
             issuer: issuer.into(),
             authorize: authorize.into(),
+            token: token.into(),
             resource: resource.into(),
+            client_id: client_id.into(),
             scopes,
         }
     }

@@ -16,6 +16,8 @@ final service = OAuthService(
   Uri.parse('https://id.example/authorize'),
   Uri.parse('https://api.example.com'),
   'cards.read',
+  Uri.parse('https://id.example/token'),
+  'workbench',
 );
 final foreign = OAuthService(
   ref(4),
@@ -24,6 +26,8 @@ final foreign = OAuthService(
   Uri.parse('https://other.example/authorize'),
   Uri.parse('https://other-api.example'),
   'cards.write',
+  Uri.parse('https://other.example/token'),
+  'other-workbench',
 );
 Uri signInUrl() => service.authorize.replace(
   queryParameters: {
@@ -147,6 +151,8 @@ void main() {
       await mount(t, a, opened);
       await tap(t, 'Sign in');
       expect(find.textContaining('cards.read'), findsOneWidget);
+      expect(find.textContaining('https://id.example/token'), findsOneWidget);
+      expect(find.textContaining('Client ID workbench'), findsOneWidget);
       await tap(t, 'Cancel');
       expect(a.calls.where((v) => v.action == OAuthAction.login), isEmpty);
       expect(opened, isEmpty);
@@ -260,6 +266,15 @@ void main() {
         original.replace(path: '/other'),
         original.replace(fragment: 'x'),
         original.replace(query: original.query + '&scope=excess'),
+        original.replace(
+          queryParameters: {
+            ...original.queryParameters,
+            'client_id': 'another-client',
+          },
+        ),
+        original.replace(
+          queryParameters: {...original.queryParameters, 'extra': 'unreviewed'},
+        ),
         original.replace(
           queryParameters: {
             ...original.queryParameters,

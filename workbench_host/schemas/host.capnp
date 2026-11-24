@@ -93,7 +93,7 @@ struct OAuthControl {
  action @0 :OAuthAction; service @1 :Data; account @2 :Data; key @3 :Data;
  expectedRevision @4 :UInt64; days @5 :UInt16; cursor @6 :Data; snapshot @7 :Data;
 }
-struct OAuthService { key @0 :Data; name @1 :Text; issuer @2 :Text; authorize @3 :Text; resource @4 :Text; scopes @5 :Text; }
+struct OAuthService { key @0 :Data; name @1 :Text; issuer @2 :Text; authorize @3 :Text; resource @4 :Text; scopes @5 :Text; tokenEndpoint @6 :Text; clientId @7 :Text; }
 struct OAuthAccount { reference @0 :Data; revision @1 :UInt64; state @2 :UInt16; accessExpiresMs @3 :UInt64; }
 struct OAuthView {
  services @0 :List(OAuthService); accounts @1 :List(OAuthAccount); key @2 :Data; account @3 :Data;
