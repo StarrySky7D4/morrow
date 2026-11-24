@@ -10,6 +10,7 @@ const schemaIds = <String, String>{
   'oAuthServiceSchema': '8553b0a91266bb16',
   'oAuthAccountSchema': 'f2eb7db58da2ecd2',
   'oAuthViewSchema': 'b7bbb3677ba70d25',
+  'changesCheckpointSchema': '9ea4cdaea36fef1c',
   'pluginContentTaskSchema': 'c37375b66bc3a025',
   'pluginContentCreateSchema': 'cb1a27fc6e759318',
   'pluginContentEditSchema': 'e4ae22b7dc7a360f',

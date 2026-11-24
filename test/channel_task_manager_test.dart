@@ -41,7 +41,61 @@ PluginLibraryEntry entry({bool changes = false}) => PluginLibraryEntry(
   channelBudget: budget(),
 );
 
+final class ProgressBackend extends Fake
+    implements ChannelTaskBackend, ChangesCheckpointBackend {
+  final selections = <ChangesWindowReview>[];
+  @override
+  bool get supportsLocalChannels => true;
+  @override
+  Future<ReviewedChangesProgress> inspectChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection,
+  ) async {
+    selections.add(selection);
+    return const ReviewedChangesProgress(
+      ChangesBookmarkState.notSupplied,
+      null,
+      true,
+    );
+  }
+}
+
 void main() {
+  testWidgets(
+    'checking progress reads only the typed cards and clears the result on a changed selection',
+    (tester) async {
+      final backend = ProgressBackend();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChannelTaskManager(
+            backend: backend,
+            entry: entry(changes: true),
+            registryRevision: BigInt.one,
+          ),
+        ),
+      );
+      final input = find.byKey(const ValueKey('channel-source-bytes'));
+      await tester.enterText(input, 'card-a\ncard-b');
+      final check = find.text('Check confirmed cursor');
+      await tester.ensureVisible(check);
+      await tester.tap(check);
+      await tester.pumpAndSettle();
+      expect(backend.selections.single.cards, ['card-a', 'card-b']);
+      expect(
+        find.textContaining('Changes are available to read.'),
+        findsOneWidget,
+      );
+      await tester.enterText(input, 'card-b');
+      await tester.pump();
+      expect(
+        find.textContaining('Changes are available to read.'),
+        findsNothing,
+      );
+      expect(backend.selections, hasLength(1));
+    },
+  );
   testWidgets(
     'review displays selected cards and cancel leaves history unopened',
     (tester) async {

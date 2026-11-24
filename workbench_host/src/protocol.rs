@@ -1025,6 +1025,7 @@ fn handle_business(
         wire::Action::ChannelPrepare
         | wire::Action::ChannelPrepareWithCompatibilityBudget
         | wire::Action::ChannelPrepareChanges
+        | wire::Action::ChannelChangesCheckpoint
         | wire::Action::ChannelAppend
         | wire::Action::ChannelRun
         | wire::Action::ChannelStatus

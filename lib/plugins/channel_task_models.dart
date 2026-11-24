@@ -120,6 +120,24 @@ final class ChangesWindowReview {
   final Uint8List? previousCursor;
 }
 
+enum ChangesBookmarkState { notSupplied, current, retained, unavailable }
+
+final class ReviewedChangesProgress {
+  const ReviewedChangesProgress(this.bookmark, this.latest, this.pending);
+  final ChangesBookmarkState bookmark;
+  final Uint8List? latest;
+  final bool pending;
+}
+
+abstract interface class ChangesCheckpointBackend {
+  Future<ReviewedChangesProgress> inspectChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection,
+  );
+}
+
 final class ChannelPrepareRequest {
   ChannelPrepareRequest({
     required List<int> submission,

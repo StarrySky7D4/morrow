@@ -129,6 +129,83 @@ impl Store {
     pub fn reviewed_changes_cursor(&self, sub: &[u8; 32]) -> Result<Option<ChangesCursor>> {
         Ok(load(&self.connection, sub)?.map(|(cursor, _)| cursor))
     }
+    /// Read the confirmed position and availability for just these reviewed cards.
+    /// One SQLite snapshot covers the head, original ACK, anchor and card indexes.
+    /// A foreign or retired bookmark cannot identify another library's progress.
+    pub fn inspect_reviewed_changes(
+        &self,
+        package: [u8; 32],
+        cards: &[String],
+        presented: Option<ChangesCursor>,
+    ) -> Result<crate::changes_metadata::ReviewedProgress> {
+        use crate::changes_metadata::{BookmarkState, ReviewedProgress, canonical_cards};
+        let cards = canonical_cards(cards)?;
+        let tx = sql(self.connection.unchecked_transaction())?;
+        let sub = reviewed_subscription(self.changes_scope_digest(package, &cards)?);
+        let saved = load(&tx, &sub)?;
+        let mut lower = 0;
+        if let Some((head, _)) = saved {
+            let checkpoint = super::channel_journal::checkpoint(&tx, &sub, &head.epoch)?
+                .ok_or(Error::Integrity)?;
+            let receipt = super::channel_journal::receipt(&tx, &sub, &head.epoch, head.sequence)?
+                .ok_or(Error::Integrity)?;
+            if checkpoint != receipt.checkpoint || original(&receipt, &sub)? != head {
+                return Err(Error::Integrity);
+            }
+            let event = Metadata::decode(&Frame::decode(&receipt.frame_wire)?.bytes)?;
+            if cards.binary_search(&event.card_id).is_err() {
+                return Err(Error::Integrity);
+            }
+            lower = sql(tx.query_row(
+                "SELECT h.sequence FROM operation_events e JOIN changes_history_cards h ON h.sequence=e.sequence WHERE e.id=?1 AND h.card=?2",
+                params![event.operation_id, event.card_id], |r| r.get::<_, i64>(0)
+            ).optional())?.filter(|sequence| *sequence > 0).ok_or(Error::Integrity)?;
+        }
+        let latest = saved.map(|(head, _)| head);
+        let bookmark = match presented {
+            None => BookmarkState::NotSupplied,
+            Some(cursor) if Some(cursor) == latest => BookmarkState::Current,
+            Some(cursor)
+                if saved.is_some_and(|(head, prior)| {
+                    cursor.epoch == head.epoch || Some(cursor.epoch) == prior
+                }) =>
+            {
+                let end = super::channel_journal::checkpoint(&tx, &sub, &cursor.epoch)?
+                    .ok_or(Error::Integrity)?;
+                if cursor.sequence > 0 && cursor.sequence <= end.sequence {
+                    let receipt =
+                        super::channel_journal::receipt(&tx, &sub, &cursor.epoch, cursor.sequence)?
+                            .ok_or(Error::Integrity)?;
+                    if original(&receipt, &sub)? == cursor {
+                        BookmarkState::Retained
+                    } else {
+                        BookmarkState::Unavailable
+                    }
+                } else {
+                    BookmarkState::Unavailable
+                }
+            }
+            Some(_) => BookmarkState::Unavailable,
+        };
+        let mut pending = false;
+        {
+            let mut stmt = sql(tx.prepare(
+                "SELECT EXISTS(SELECT 1 FROM changes_history_cards WHERE card=?1 AND sequence>?2)",
+            ))?;
+            for card in &cards {
+                if sql(stmt.query_row(params![card, lower], |r| r.get(0)))? {
+                    pending = true;
+                    break;
+                }
+            }
+        }
+        sql(tx.commit())?;
+        Ok(ReviewedProgress {
+            latest,
+            bookmark,
+            pending,
+        })
+    }
 }
 /// Merge at most one pending event per reviewed card. Index seeks skip unrelated
 /// history without loading private events, including when a library has a long gap.

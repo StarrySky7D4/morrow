@@ -14,7 +14,8 @@ typedef ChannelTaskExchange = Future<T> Function<T>(
 });
 
 /// Calls only the original local host; never uses business/service forwarding.
-final class NativeChannelTaskClient implements ChannelTaskBackend {
+final class NativeChannelTaskClient
+    implements ChannelTaskBackend, ChangesCheckpointBackend {
   NativeChannelTaskClient(this._exchange, this._supported);
   final ChannelTaskExchange _exchange;
   final bool Function() _supported;
@@ -32,6 +33,51 @@ final class NativeChannelTaskClient implements ChannelTaskBackend {
       throw const FormatException('Local channel job identity changed');
     }
     return value;
+  }
+
+  @override
+  Future<ReviewedChangesProgress> inspectChangesCheckpoint(
+    String packageId,
+    Uint8List digest,
+    BigInt revision,
+    ChangesWindowReview selection,
+  ) {
+    _requireSupported();
+    return _exchange(
+      host.Action.channelChangesCheckpoint,
+      configure: (r) {
+        r.id = packageId;
+        r.sha256 = ChannelValidation.identity(digest);
+        r.revisionBigInt = revision;
+        final query = r.initChangesCheckpointQuery();
+        ChannelTaskCodec.writeReviewedCards(selection, query);
+      },
+      decode: (reply) {
+        final info = reply.changesCheckpoint;
+        if (info == null ||
+            info.bookmarkState >= ChangesBookmarkState.values.length) {
+          throw const FormatException('Invalid changes checkpoint reply');
+        }
+        final state = ChangesBookmarkState.values[info.bookmarkState];
+        final bytes = info.latest;
+        final latest = bytes == null || bytes.isEmpty
+            ? null
+            : ChannelValidation.changesCursor(bytes);
+        final provided = selection.previousCursor;
+        if ((provided == null) != (state == ChangesBookmarkState.notSupplied) ||
+            (state == ChangesBookmarkState.retained && latest == null) ||
+            (provided != null &&
+                (state == ChangesBookmarkState.current) !=
+                    (latest != null &&
+                        ChannelValidation.same(provided, latest)))) {
+          throw const FormatException(
+            'Changes checkpoint does not match the reviewed bookmark',
+          );
+        }
+        return ReviewedChangesProgress(state, latest, info.pending);
+      },
+      clearReply: true,
+    );
   }
 
   @override

@@ -665,6 +665,7 @@ pub fn descriptor() -> Value {
                 "handler": "changes.metadata", "max_reviewed_cards": 32, "max_records_per_page": 64,
                 "bookmark_bytes": 73, "receipt": "epoch_sequence_metadata_sha256",
                 "retained_ack_epochs_per_selection": 2, "durable_compare_and_swap": true,
+                "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
                 "fresh_approval_per_page": true, "grants_card_content": false
             },
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",

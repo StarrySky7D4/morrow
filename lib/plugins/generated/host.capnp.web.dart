@@ -204,6 +204,7 @@ enum Action {
   pluginContentTask,
   channelPrepareChanges,
   oauthControl,
+  channelChangesCheckpoint,
 }
 
 Action? actionFromUint16(int v) =>
@@ -500,6 +501,11 @@ final class RequestReader extends StructReader {
   OAuthControlReader? get oauthControl => getStructFieldWith(
     65,
     (r) => OAuthControlReader(r, capabilities: capabilityTable),
+  );
+
+  ChangesWindowReviewReader? get changesCheckpointQuery => getStructFieldWith(
+    66,
+    (r) => ChangesWindowReviewReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -994,6 +1000,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasOauthControl() => hasPointerField(65);
+
+  ChangesWindowReviewBuilder initChangesCheckpointQuery() {
+    return initStructFieldWith(66, (r) => ChangesWindowReviewBuilder(r), 1, 2);
+  }
+
+  bool hasChangesCheckpointQuery() => hasPointerField(66);
 }
 
 final class _RequestFactory
@@ -1001,7 +1013,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 66;
+  int get ptrWords => 67;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1290,6 +1302,11 @@ final class ResponseReader extends StructReader {
   OAuthViewReader? get oauthView => getStructFieldWith(
     55,
     (r) => OAuthViewReader(r, capabilities: capabilityTable),
+  );
+
+  ChangesCheckpointReader? get changesCheckpoint => getStructFieldWith(
+    56,
+    (r) => ChangesCheckpointReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1773,6 +1790,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasOauthView() => hasPointerField(55);
+
+  ChangesCheckpointBuilder initChangesCheckpoint() {
+    return initStructFieldWith(56, (r) => ChangesCheckpointBuilder(r), 1, 1);
+  }
+
+  bool hasChangesCheckpoint() => hasPointerField(56);
 }
 
 final class _ResponseFactory
@@ -1780,7 +1803,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 56;
+  int get ptrWords => 57;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2147,6 +2170,56 @@ final class _OAuthViewFactory
 }
 
 final oAuthViewFactory = _OAuthViewFactory();
+
+final class ChangesCheckpointReader extends StructReader {
+  ChangesCheckpointReader(super.raw, {super.capabilities});
+
+  int get bookmarkState => getUint16Field(0);
+
+  Uint8List? get latest => getDataField(0);
+
+  bool get pending => getBoolField(16);
+}
+
+final class ChangesCheckpointBuilder extends StructBuilder {
+  ChangesCheckpointBuilder(super.raw);
+
+  @override
+  ChangesCheckpointReader asReader() => ChangesCheckpointReader(rawToReader());
+
+  set bookmarkState(int v) {
+    setUint16Field(0, v);
+  }
+
+  set latest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set pending(bool v) {
+    setBoolField(16, v);
+  }
+}
+
+final class _ChangesCheckpointFactory
+    extends StructFactory<ChangesCheckpointReader, ChangesCheckpointBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 1;
+  @override
+  ChangesCheckpointReader fromRawReader(RawStructReader r) =>
+      ChangesCheckpointReader(r);
+  @override
+  ChangesCheckpointReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChangesCheckpointReader(r, capabilities: capabilities);
+  @override
+  ChangesCheckpointBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChangesCheckpointBuilder(r);
+}
+
+final changesCheckpointFactory = _ChangesCheckpointFactory();
 
 final class PluginContentTaskReader extends StructReader {
   PluginContentTaskReader(super.raw, {super.capabilities});

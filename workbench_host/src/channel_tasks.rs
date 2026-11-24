@@ -506,6 +506,29 @@ impl Workbench {
         self.prepare_channel_inner(request, compatibility_budget, Some(changes))
     }
 
+    pub fn inspect_changes_checkpoint(
+        &self,
+        package_id: &str,
+        digest: [u8; 32],
+        revision: u64,
+        cards: &[String],
+        bookmark: Option<ChangesCursor>,
+    ) -> Result<morrow_core::changes_metadata::ReviewedProgress> {
+        self.product_gate().check()?;
+        crate::channel_binding::require_owner(self.channel_tasks.owner)?;
+        let state = self.local_state()?;
+        let manager = state.manager.as_ref().ok_or("plugin manager unavailable")?;
+        let entry = manager.selection(package_id).ok_or("plugin is not selected")?;
+        if manager.revision() != revision
+            || entry.digest != digest
+            || !entry.enabled
+            || !manager.installed_package(digest)?.is_changes_metadata()
+        {
+            return Err("reviewed changes plugin selection changed".into());
+        }
+        Ok(state.host.store_local().inspect_reviewed_changes(digest, cards, bookmark)?)
+    }
+
     fn prepare_channel_inner(
         &mut self,
         mut request: Prepare,

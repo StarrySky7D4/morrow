@@ -378,6 +378,11 @@ def reviewed_card_history(value, platform):
         reviewed_workbench_fields(value, {
             "retained_ack_epochs_per_selection": 2, "durable_compare_and_swap": True,
         }, "durable reviewed card history")
+    if "readonly_checkpoint_review" in value:
+        reviewed_workbench_fields(value, {
+            "readonly_checkpoint_review": "original_ack_and_reviewed_card_availability",
+            "durable_compare_and_swap": True,
+        }, "reviewed card checkpoint lookup")
 
 
 def reviewed_windows_accounts(value, platform):

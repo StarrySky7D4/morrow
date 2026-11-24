@@ -56,6 +56,20 @@ pub fn reviewed_subscription(scope: [u8; 32]) -> [u8; 32] {
     digest.update(scope);
     digest.finalize().into()
 }
+/// Describes a caller's bookmark against the original library's retained ACKs.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BookmarkState {
+    NotSupplied,
+    Current,
+    Retained,
+    Unavailable,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ReviewedProgress {
+    pub latest: Option<ChangesCursor>,
+    pub bookmark: BookmarkState,
+    pub pending: bool,
+}
 #[derive(Clone, Copy, Default)]
 pub enum CheckpointMode {
     #[default]

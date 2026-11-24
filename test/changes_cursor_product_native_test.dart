@@ -151,15 +151,44 @@ void main() {
             return progress.changesCursor;
           }
 
+          Future<ReviewedChangesProgress> inspect(
+            List<String> cards,
+            Uint8List? cursor,
+          ) async {
+            final selection = await prepare(cards, cursor);
+            return product.inspectChangesCheckpoint(
+              selection.packageId,
+              selection.packageDigest,
+              selection.registryRevision,
+              selection.changes!,
+            );
+          }
+
+          const reviewed = ['card-a', 'card-b'];
+          final initial = await inspect(reviewed, null);
+          expect(initial.latest, isNull);
+          expect(initial.bookmark, ChangesBookmarkState.notSupplied);
+          expect(initial.pending, isTrue);
+          expect((await inspect(['unused-card'], null)).pending, isFalse);
           final first = await runPage(null, 1);
           await closeOwner(product);
           owner = null;
           product = owner = await open();
+          final restored = await inspect(reviewed, first);
+          expect(restored.latest, orderedEquals(first));
+          expect(restored.bookmark, ChangesBookmarkState.current);
+          expect(restored.pending, isTrue);
+          final otherProgress = await inspect(['other'], first);
+          expect(otherProgress.latest, isNull);
+          expect(otherProgress.bookmark, ChangesBookmarkState.unavailable);
           final foreign = await prepare(['other'], first);
           await expectLater(product.prepareChannel(foreign), throwsA(anything));
           for (final index in [33, 72]) {
             final unconfirmed = Uint8List.fromList(first);
             unconfirmed[index] ^= 2;
+            final checked = await inspect(reviewed, unconfirmed);
+            expect(checked.bookmark, ChangesBookmarkState.unavailable);
+            expect(checked.latest, orderedEquals(first));
             final invalid = await prepare(['card-a', 'card-b'], unconfirmed);
             await expectLater(
               product.prepareChannel(invalid),
@@ -168,10 +197,18 @@ void main() {
           }
           final second = await runPage(first, 1);
           expect(second, isNot(first));
+          final earlier = await inspect(reviewed, first);
+          expect(earlier.latest, orderedEquals(second));
+          expect(earlier.bookmark, ChangesBookmarkState.retained);
+          expect(earlier.pending, isFalse);
           final stale = await prepare(['card-a', 'card-b'], first);
           await expectLater(product.prepareChannel(stale), throwsA(anything));
           await runPage(second, 0);
           await runPage(null, 0);
+          final empty = await inspect(reviewed, second);
+          expect(empty.bookmark, ChangesBookmarkState.current);
+          expect(empty.latest, orderedEquals(second));
+          expect(empty.pending, isFalse);
           final catalog = await entireCatalog(product);
           await product.configureExternal(
             catalog.entries.singleWhere((e) => e.id == changes.id),
@@ -183,6 +220,7 @@ void main() {
             product.prepareChannel(await prepare(['card-a', 'card-b'], second)),
             throwsA(anything),
           );
+          await expectLater(inspect(reviewed, second), throwsA(anything));
         } finally {
           if (owner != null) await closeOwner(owner);
         }

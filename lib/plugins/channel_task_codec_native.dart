@@ -59,14 +59,21 @@ abstract final class ChannelTaskCodec {
     row.totalBytesBigInt = value.totalBytes;
     if (value.changes case final review?) {
       final detail = row.initChanges();
-      final cards = detail.initCards(review.cards.length);
-      for (var i = 0; i < review.cards.length; i++) {
-        cards[i] = review.cards[i];
-      }
+      writeReviewedCards(review, detail);
       detail.pageSize = review.pageSize;
-      detail.previousCursor = review.previousCursor ?? Uint8List(0);
       detail.compatibilityBudget = value.compatibilityBudget;
     }
+  }
+
+  static void writeReviewedCards(
+    ChangesWindowReview review,
+    host.ChangesWindowReviewBuilder detail,
+  ) {
+    final cards = detail.initCards(review.cards.length);
+    for (var i = 0; i < review.cards.length; i++) {
+      cards[i] = review.cards[i];
+    }
+    detail.previousCursor = review.previousCursor ?? Uint8List(0);
   }
 
   static ChannelDirectory directory(Uint8List bytes) {

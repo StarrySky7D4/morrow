@@ -200,6 +200,7 @@ enum Action {
   pluginContentTask,
   channelPrepareChanges,
   oauthControl,
+  channelChangesCheckpoint,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -705,6 +706,11 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       ordinal: 192,
     ),
     EnumerantSchemaInfo(name: 'oauthControl', codeOrder: 193, ordinal: 193),
+    EnumerantSchemaInfo(
+      name: 'channelChangesCheckpoint',
+      codeOrder: 194,
+      ordinal: 194,
+    ),
   ],
 );
 
@@ -1031,6 +1037,11 @@ final class RequestReader extends StructReader {
   OAuthControlReader? get oauthControl => getStructFieldWith(
     65,
     (r) => OAuthControlReader(r, capabilities: capabilityTable),
+  );
+
+  ChangesWindowReviewReader? get changesCheckpointQuery => getStructFieldWith(
+    66,
+    (r) => ChangesWindowReviewReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1507,6 +1518,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasOauthControl() => hasPointerField(65);
+
+  ChangesWindowReviewBuilder initChangesCheckpointQuery() {
+    return initStructFieldWith(66, (r) => ChangesWindowReviewBuilder(r), 1, 2);
+  }
+
+  bool hasChangesCheckpointQuery() => hasPointerField(66);
 }
 
 final class _RequestFactory
@@ -1516,7 +1533,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 66;
+  int get ptrWords => 67;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1533,7 +1550,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 11,
-  pointerWords: 66,
+  pointerWords: 67,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2215,6 +2232,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xf731de5b61841655),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'changesCheckpointQuery',
+      codeOrder: 85,
+      body: SlotFieldSchemaInfo(
+        offset: 66,
+        type: StructRefTypeSchemaInfo(0xbe08a13a8fcaff3f),
+      ),
+    ),
   ],
 );
 
@@ -2497,6 +2522,11 @@ final class ResponseReader extends StructReader {
   OAuthViewReader? get oauthView => getStructFieldWith(
     55,
     (r) => OAuthViewReader(r, capabilities: capabilityTable),
+  );
+
+  ChangesCheckpointReader? get changesCheckpoint => getStructFieldWith(
+    56,
+    (r) => ChangesCheckpointReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -2962,6 +2992,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasOauthView() => hasPointerField(55);
+
+  ChangesCheckpointBuilder initChangesCheckpoint() {
+    return initStructFieldWith(56, (r) => ChangesCheckpointBuilder(r), 1, 1);
+  }
+
+  bool hasChangesCheckpoint() => hasPointerField(56);
 }
 
 final class _ResponseFactory
@@ -2971,7 +3007,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 56;
+  int get ptrWords => 57;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2988,7 +3024,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 56,
+  pointerWords: 57,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -3564,6 +3600,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 55,
         type: StructRefTypeSchemaInfo(0xb7bbb3677ba70d25),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'changesCheckpoint',
+      codeOrder: 72,
+      body: SlotFieldSchemaInfo(
+        offset: 56,
+        type: StructRefTypeSchemaInfo(0x9ea4cdaea36fef1c),
       ),
     ),
   ],
@@ -4195,6 +4239,94 @@ const StructSchemaInfo oAuthViewSchema = StructSchemaInfo(
 );
 
 final oAuthViewFactory = _OAuthViewFactory();
+
+final class ChangesCheckpointReader extends StructReader {
+  ChangesCheckpointReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = changesCheckpointSchema;
+
+  int get bookmarkState => getUint16Field(0);
+
+  Uint8List? get latest => getDataField(0);
+
+  bool get pending => getBoolField(16);
+}
+
+final class ChangesCheckpointBuilder extends StructBuilder {
+  ChangesCheckpointBuilder(super.raw);
+
+  @override
+  ChangesCheckpointReader asReader() => ChangesCheckpointReader(rawToReader());
+
+  set bookmarkState(int v) {
+    setUint16Field(0, v);
+  }
+
+  set latest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set pending(bool v) {
+    setBoolField(16, v);
+  }
+}
+
+final class _ChangesCheckpointFactory
+    extends StructFactory<ChangesCheckpointReader, ChangesCheckpointBuilder> {
+  @override
+  StructSchemaInfo get schema => changesCheckpointSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 1;
+  @override
+  ChangesCheckpointReader fromRawReader(RawStructReader r) =>
+      ChangesCheckpointReader(r);
+  @override
+  ChangesCheckpointReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChangesCheckpointReader(r, capabilities: capabilities);
+  @override
+  ChangesCheckpointBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChangesCheckpointBuilder(r);
+}
+
+const StructSchemaInfo changesCheckpointSchema = StructSchemaInfo(
+  id: 0x9ea4cdaea36fef1c,
+  displayName: 'host.capnp:ChangesCheckpoint',
+  shortName: 'ChangesCheckpoint',
+  dataWords: 1,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'bookmarkState',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'latest',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'pending',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final changesCheckpointFactory = _ChangesCheckpointFactory();
 
 final class PluginContentTaskReader extends StructReader {
   PluginContentTaskReader(super.raw, {super.capabilities});

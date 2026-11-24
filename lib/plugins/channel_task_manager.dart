@@ -38,6 +38,9 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   bool duplex = false;
   bool confirmingBudget = false;
   Object? inputFailure;
+  ReviewedChangesProgress? checkpoint;
+  int lookupGeneration = 0;
+  bool checkingCheckpoint = false;
   Object? peerFailure;
   ChannelSentFrame? peerReceipt;
   late int receiptGeneration;
@@ -58,11 +61,91 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
       setState(() {
         if (receiptGeneration != session.generation) {
           receiptGeneration = session.generation;
+          clearCheckpoint();
           peerReceipt = null;
           peerFailure = null;
         }
       });
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant ChannelTaskManager oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.backend != widget.backend ||
+        oldWidget.registryRevision != widget.registryRevision ||
+        !ChannelValidation.same(oldWidget.entry.digest, widget.entry.digest)) {
+      clearCheckpoint();
+    }
+  }
+
+  void clearCheckpoint() {
+    lookupGeneration++;
+    checkpoint = null;
+    checkingCheckpoint = false;
+  }
+
+  ChangesWindowReview reviewedCards(int count) => ChangesWindowReview(
+    cards: source.text
+        .split('\n')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList(),
+    pageSize: count,
+    previousCursor: resume.text.trim().isEmpty ? null : _hex(resume.text),
+  );
+  Future<void> inspectCheckpoint(ChangesCheckpointBackend backend) async {
+    final generation = ++lookupGeneration;
+    setState(() {
+      checkingCheckpoint = true;
+      checkpoint = null;
+      inputFailure = null;
+    });
+    try {
+      final result = await backend.inspectChangesCheckpoint(
+        widget.entry.id,
+        widget.entry.digest,
+        widget.registryRevision,
+        reviewedCards(1),
+      );
+      if (mounted && generation == lookupGeneration)
+        setState(() => checkpoint = result);
+    } catch (error) {
+      if (mounted && generation == lookupGeneration)
+        setState(() => inputFailure = error);
+    } finally {
+      if (mounted && generation == lookupGeneration)
+        setState(() => checkingCheckpoint = false);
+    }
+  }
+
+  String get checkpointMessage {
+    final progress = checkpoint!;
+    final zh = Localizations.localeOf(context).languageCode == 'zh';
+    final text = switch (progress.bookmark) {
+      ChangesBookmarkState.current =>
+        zh ? '输入的游标是当前已确认的位置。' : 'The entered cursor is current.',
+      ChangesBookmarkState.retained =>
+        zh
+            ? '这条回执仍可核对，资料库已有更近的确认位置。'
+            : 'This receipt is retained. A newer position is confirmed.',
+      ChangesBookmarkState.unavailable =>
+        zh
+            ? '此卡片集合无法核实输入的游标。'
+            : 'This selection has no retained receipt for the entered cursor.',
+      ChangesBookmarkState.notSupplied =>
+        progress.latest == null
+            ? (zh
+                  ? '此卡片集合尚无已确认的游标。'
+                  : 'No cursor has been confirmed for these cards.')
+            : (zh
+                  ? '已查到此卡片集合的确认位置。'
+                  : 'A confirmed cursor is available for these cards.'),
+    };
+    return '$text ' +
+        (progress.pending
+            ? (zh ? '有待读取的变更。' : 'Changes are available to read.')
+            : (zh ? '截至本次核对已读完。' : 'Caught up at the time of this check.'));
   }
 
   @override
@@ -165,13 +248,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
       final frames = <ChannelSourceFrame>[];
       final lines = source.text.split('\n').where((s) => s.trim().isNotEmpty);
       final review = changes
-          ? ChangesWindowReview(
-              cards: lines.map((s) => s.trim()).toList(),
-              pageSize: int.parse(pageSize.text.trim()),
-              previousCursor: resume.text.trim().isEmpty
-                  ? null
-                  : _hex(resume.text),
-            )
+          ? reviewedCards(int.parse(pageSize.text.trim()))
           : null;
       for (final line in changes ? const <String>[] : lines) {
         if (frames.length >= 64) {
@@ -325,6 +402,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
               TextField(
                 key: const ValueKey('channel-source-bytes'),
                 controller: source,
+                onChanged: changes ? (_) => setState(clearCheckpoint) : null,
                 maxLines: 6,
                 enabled: session.canPrepare,
                 decoration: InputDecoration(
@@ -343,12 +421,33 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
                 ),
                 TextField(
                   controller: resume,
+                  onChanged: (_) => setState(clearCheckpoint),
                   enabled: session.canPrepare,
                   key: const ValueKey('channel-changes-resume'),
                   decoration: const InputDecoration(
                     labelText: 'Resume cursor (optional)',
                   ),
                 ),
+                if (widget.backend case final ChangesCheckpointBackend backend)
+                  TextButton(
+                    onPressed: session.canPrepare && !checkingCheckpoint
+                        ? () => inspectCheckpoint(backend)
+                        : null,
+                    child: Text(
+                      Localizations.localeOf(context).languageCode == 'zh'
+                          ? '核对已确认的游标'
+                          : 'Check confirmed cursor',
+                    ),
+                  ),
+                if (checkpoint case final result?) ...[
+                  Text(checkpointMessage),
+                  if (result.latest case final latest?)
+                    SelectableText(
+                      latest
+                          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+                          .join(),
+                    ),
+                ],
               ],
               if (inputFailure != null) Text(inputFailure.toString()),
               if (peerFailure != null)

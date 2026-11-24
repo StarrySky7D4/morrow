@@ -239,6 +239,7 @@ class RustWorkbench
         DirectoryTaskPlatformCapabilities,
         NativeDirectoryPickerCapabilities,
         ChannelTaskBackend,
+        ChangesCheckpointBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
         GuestMutationSupport,
@@ -1406,6 +1407,10 @@ class RustWorkbench
     updatePresentation: false,
     routeBusiness: false,
   );
+  @override
+  Future<ReviewedChangesProgress> inspectChangesCheckpoint(
+    String packageId, Uint8List digest, BigInt revision, ChangesWindowReview selection,
+  ) => _channelTasks.inspectChangesCheckpoint(packageId, digest, revision, selection);
   @override
   Future<ChannelTaskSnapshot> prepareChannel(ChannelPrepareRequest request) =>
       _channelTasks.prepareChannel(request);

@@ -13,6 +13,7 @@ pub(super) fn is_action(action: wire::Action) -> bool {
         wire::Action::ChannelPrepare
             | wire::Action::ChannelPrepareWithCompatibilityBudget
             | wire::Action::ChannelPrepareChanges
+            | wire::Action::ChannelChangesCheckpoint
             | wire::Action::ChannelAppend
             | wire::Action::ChannelRun
             | wire::Action::ChannelStatus
@@ -34,6 +35,34 @@ fn budget(value: wire::channel_budget::Reader<'_>) -> Budget {
 }
 fn id(bytes: &[u8]) -> Result<[u8; 32]> {
     Ok(bytes.try_into().map_err(|_| "channel identity length")?)
+}
+fn reviewed_cards(
+    selection: wire::changes_window_review::Reader<'_>,
+) -> Result<(
+    Vec<String>,
+    Option<morrow_core::changes_metadata::ChangesCursor>,
+)> {
+    let list = selection.get_cards()?;
+    if list.is_empty() || list.len() as usize > morrow_core::changes_metadata::MAX_CARDS {
+        return Err("choose 1 to 32 cards".into());
+    }
+    let cards = list
+        .iter()
+        .map(|item| {
+            let value = item?.to_str()?;
+            if value.len() > 256 {
+                return Err("invalid card identity".into());
+            }
+            Ok(value.to_owned())
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let bytes = selection.get_previous_cursor()?;
+    let previous_cursor = if bytes.is_empty() {
+        None
+    } else {
+        Some(morrow_plugin_runtime::channel::changes::ChangesCursor::decode(bytes)?)
+    };
+    Ok((cards, previous_cursor))
 }
 fn state_reply(value: State, mut out: wire::channel_state::Builder<'_>) {
     out.set_key(&value.key);
@@ -70,6 +99,33 @@ pub(super) fn handle(
     request: wire::request::Reader<'_>,
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
+    if request.get_action()? == wire::Action::ChannelChangesCheckpoint {
+        use morrow_core::changes_metadata::BookmarkState;
+        if !request.has_changes_checkpoint_query() {
+            return Err("missing checkpoint selection".into());
+        }
+        let selection = request.get_changes_checkpoint_query()?;
+        let (cards, bookmark) = reviewed_cards(selection)?;
+        let progress = host.inspect_changes_checkpoint(
+            &text(request.get_id())?,
+            id(request.get_sha256()?)?,
+            request.get_revision(),
+            &cards,
+            bookmark,
+        )?;
+        let mut reply = out.init_changes_checkpoint();
+        reply.set_bookmark_state(match progress.bookmark {
+            BookmarkState::NotSupplied => 0,
+            BookmarkState::Current => 1,
+            BookmarkState::Retained => 2,
+            BookmarkState::Unavailable => 3,
+        });
+        if let Some(cursor) = progress.latest {
+            reply.set_latest(&cursor.encode());
+        }
+        reply.set_pending(progress.pending);
+        return Ok(());
+    }
     let state = match request.get_action()? {
         action @ (wire::Action::ChannelPrepare
         | wire::Action::ChannelPrepareWithCompatibilityBudget
@@ -94,27 +150,7 @@ pub(super) fn handle(
             };
             if action == wire::Action::ChannelPrepareChanges {
                 let selection = p.get_changes()?;
-                let list = selection.get_cards()?;
-                if list.is_empty() || list.len() as usize > morrow_core::changes_metadata::MAX_CARDS
-                {
-                    return Err("choose 1 to 32 cards".into());
-                }
-                let cards = list
-                    .iter()
-                    .map(|item| {
-                        let value = item?.to_str()?;
-                        if value.len() > 256 {
-                            return Err("invalid card identity".into());
-                        }
-                        Ok(value.to_owned())
-                    })
-                    .collect::<Result<Vec<_>>>()?;
-                let bytes = selection.get_previous_cursor()?;
-                let previous_cursor = if bytes.is_empty() {
-                    None
-                } else {
-                    Some(morrow_plugin_runtime::channel::changes::ChangesCursor::decode(bytes)?)
-                };
+                let (cards, previous_cursor) = reviewed_cards(selection)?;
                 host.prepare_changes_channel(
                     prepared,
                     ChangesSelection {
