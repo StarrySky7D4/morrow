@@ -10,6 +10,21 @@ extern "C" {
 #define MC_METADATA_V1_CORRELATION 3u
 #define MC_METADATA_V1_LIMIT 4u
 #define MC_METADATA_V1_MAX_BYTES 662u
+#define MC_METADATA_V1_BOOKMARK_BYTES 73u
+
+/* Workbench bookmark fields from a confirmed metadata frame. The host
+ * checks the original ACK when resuming. Serialize with the functions below. */
+typedef struct mc_metadata_v1_bookmark {
+    uint8_t window_id[32];
+    uint64_t sequence;
+    uint8_t metadata_cursor[32];
+} mc_metadata_v1_bookmark;
+
+/* Errors leave output unchanged. An encoded bookmark occupies exactly 73 bytes. */
+uint32_t mc_metadata_v1_bookmark_decode(const uint8_t *wire, uint32_t length,
+    mc_metadata_v1_bookmark *out, uint32_t out_size);
+uint32_t mc_metadata_v1_bookmark_encode(const mc_metadata_v1_bookmark *value,
+    uint8_t *out, uint32_t capacity);
 /* Owned output, no pointers. IDs have explicit lengths; no NUL termination.
  * Card hash covers all Card.encode() bytes. No value grants authority.
  * Inputs must remain readable during the call. Output must be aligned and

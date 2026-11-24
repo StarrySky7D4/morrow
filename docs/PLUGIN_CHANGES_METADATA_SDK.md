@@ -62,6 +62,8 @@ Rust 库与 C / C++ 头文件位于 `extensions/changes-metadata-v1`，不属于
 
 续读栏留空时，工作台在本次批准后查找原库中同一插件和卡片集合的进度。首次从头读取，已有记录则从最近一次确认后继续。也可粘贴上次复制的游标。插件完成、生产者正常结束、资源已回收且宿主核实原库 ACK 后，页面显示可复制的游标。空页保留已有进度。工作台书签以十六进制表示 73 字节，绑定格式版本、窗口标识、确认序号和元数据摘要。能力描述的 `reviewed_card_history` 给出当前程序编译的入口。
 
+插件可以用 Rust 的 `morrow_changes_metadata_v1::Bookmark`、C 的 `mc_metadata_v1_bookmark` 或 C++ 的 `morrow::changes_metadata_v1::bookmark` 读写同一份书签。收到与原 ACK 请求匹配的 `Acked` 回应且 `last_acked` 等于帧序号后，把该帧的窗口标识、序号和 32 字节元数据游标传给编码器。反向读取时，把工作台显示的 146 个十六进制字符解码为 73 字节，再调用书签解码器。字节布局依次为版本 1、32 字节窗口标识、8 字节小端序序号和 32 字节元数据游标。申请续读时，宿主仍核对当前批准的插件、卡片集合及原库中保留的 ACK。
+
 Windows 资料库格式 28 为每个批准集合保存当前游标。每次 ACK 会在同一笔事务中核对前一位置、写入回执并推进游标。同一位置的两个并发读取只有一个能推进。每个集合保留当前和上一个有 ACK 的窗口回执。卡片操作历史继续保存在原库。过时的游标、缺失的回执或采集预算耗尽时，工作台报告错误；重新审阅该集合可读取已确认的位置。逐卡索引能跳过其他卡片的大段历史。
 
 Windows C02 的普通合成 Store、有限 source 与三语言新 guest 已限定通过；C03 新增只读发现和静态准备兼容资格。见 [Windows 复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)与[C03 接入验证](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)。

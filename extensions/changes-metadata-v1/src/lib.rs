@@ -15,6 +15,101 @@ const CURSOR_DOMAIN: &[u8] = b"Morrow/changes-metadata/cursor/v1\0";
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u32)]
 pub enum Error { Invalid = 1, Contract = 2, Correlation = 3, Limit = 4 }
+
+/// Position of an acknowledged card change in the Windows workbench.
+/// The original library checks the ACK and current selection when resuming.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(C)]
+pub struct Bookmark {
+    pub window_id: [u8; 32],
+    pub sequence: u64,
+    pub metadata_cursor: [u8; 32],
+}
+
+impl Bookmark {
+    pub const BYTES: usize = 73;
+
+    fn validate(&self) -> Result<(), Error> {
+        if self.sequence == 0 || self.window_id == [0; 32] || self.metadata_cursor == [0; 32] {
+            return Err(Error::Invalid);
+        }
+        Ok(())
+    }
+
+    /// Encode the window, frame sequence and metadata cursor after its ACK.
+    pub fn encode(&self) -> Result<[u8; Self::BYTES], Error> {
+        self.validate()?;
+        let mut wire = [0; Self::BYTES];
+        wire[0] = 1;
+        wire[1..33].copy_from_slice(&self.window_id);
+        wire[33..41].copy_from_slice(&self.sequence.to_le_bytes());
+        wire[41..].copy_from_slice(&self.metadata_cursor);
+        Ok(wire)
+    }
+
+    pub fn decode(wire: &[u8]) -> Result<Self, Error> {
+        let wire: &[u8; Self::BYTES] = wire.try_into().map_err(|_| Error::Invalid)?;
+        if wire[0] != 1 {
+            return Err(Error::Contract);
+        }
+        let value = Self {
+            window_id: wire[1..33].try_into().unwrap(),
+            sequence: u64::from_le_bytes(wire[33..41].try_into().unwrap()),
+            metadata_cursor: wire[41..].try_into().unwrap(),
+        };
+        value.validate()?;
+        Ok(value)
+    }
+}
+
+/// # Safety
+/// `wire` must be readable for `length` bytes and `out` aligned and writable
+/// for a Bookmark. Only a successful call writes to the output.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mc_metadata_v1_bookmark_decode(
+    wire: *const u8,
+    length: u32,
+    out: *mut Bookmark,
+    out_size: u32,
+) -> u32 {
+    if wire.is_null()
+        || length as usize != Bookmark::BYTES
+        || out.is_null()
+        || (out_size as usize) < std::mem::size_of::<Bookmark>()
+    {
+        return Error::Invalid as u32;
+    }
+    let bytes = unsafe { std::slice::from_raw_parts(wire, Bookmark::BYTES) };
+    match Bookmark::decode(bytes) {
+        Ok(value) => {
+            unsafe { out.write(value) };
+            0
+        }
+        Err(error) => error as u32,
+    }
+}
+
+/// # Safety
+/// `value` must be aligned and readable for a Bookmark. `out` must be
+/// writable for `capacity` bytes. Success writes exactly Bookmark::BYTES.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mc_metadata_v1_bookmark_encode(
+    value: *const Bookmark,
+    out: *mut u8,
+    capacity: u32,
+) -> u32 {
+    if value.is_null() || out.is_null() || (capacity as usize) < Bookmark::BYTES {
+        return Error::Invalid as u32;
+    }
+    match unsafe { value.read() }.encode() {
+        Ok(wire) => {
+            unsafe { std::ptr::copy_nonoverlapping(wire.as_ptr(), out, wire.len()) };
+            0
+        }
+        Err(error) => error as u32,
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Metadata<'a> {
     pub scope_digest: [u8; 32],
@@ -94,6 +189,31 @@ pub unsafe extern "C" fn mc_metadata_v1_decode(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn workbench_bookmark_wire_layout_and_invalid_fields() {
+        let mut wire = [0; Bookmark::BYTES];
+        wire[0] = 1;
+        wire[1..33].fill(0x2a);
+        wire[33..41].copy_from_slice(&[1, 2, 3, 4, 5, 6, 7, 8]);
+        wire[41..].fill(0xd7);
+        let value = Bookmark {
+            window_id: [0x2a; 32],
+            sequence: 0x0807_0605_0403_0201,
+            metadata_cursor: [0xd7; 32],
+        };
+        assert_eq!(Bookmark::decode(&wire), Ok(value));
+        assert_eq!(value.encode(), Ok(wire));
+        assert_eq!(Bookmark::decode(&wire[..72]), Err(Error::Invalid));
+        assert_eq!(Bookmark::decode(&[0; 74]), Err(Error::Invalid));
+        for field in [1..33, 33..41, 41..73] {
+            let mut invalid = wire;
+            invalid[field].fill(0);
+            assert_eq!(Bookmark::decode(&invalid), Err(Error::Invalid));
+        }
+        wire[0] = 2;
+        assert_eq!(Bookmark::decode(&wire), Err(Error::Contract));
+        assert_eq!(Bookmark { sequence: 0, ..value }.encode(), Err(Error::Invalid));
+    }
     #[test] fn contract_is_exact_bytes() { assert_eq!(Sha256::digest(CONTRACT).as_slice(), PROFILE_DIGEST); }
     #[test] fn bounded_ffi_errors_do_not_touch_output() {
         let mut out = [0xa5u8; std::mem::size_of::<View>()];
