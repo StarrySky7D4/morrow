@@ -20,6 +20,9 @@ class WorkbenchIdeaCard extends StatefulWidget {
     required this.favoriteTooltip,
     required this.attachmentCount,
     this.attachmentHintLabel,
+    this.scheduleLabel,
+    this.scheduleCompleted = false,
+    this.onTapSchedule,
     this.completedSteps = 0,
     this.totalSteps = 0,
     this.ambiguousSteps = 0,
@@ -41,6 +44,9 @@ class WorkbenchIdeaCard extends StatefulWidget {
   final String favoriteTooltip;
   final int attachmentCount;
   final String? attachmentHintLabel;
+  final String? scheduleLabel;
+  final bool scheduleCompleted;
+  final VoidCallback? onTapSchedule;
   final int completedSteps;
   final int totalSteps;
   final int ambiguousSteps;
@@ -127,7 +133,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                         child: Text(
                           widget.categoryLabel,
                           style: TextStyle(
-                            fontSize: 9,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             color: readableTint,
                           ),
@@ -176,7 +182,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 12.5,
                         color: p.muted,
                         height: 1.65,
                       ),
@@ -195,7 +201,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                         Text(
                           '${widget.completedSteps}/${widget.totalSteps}',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: p.ink,
                           ),
@@ -250,10 +256,65 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                               widget.attachmentHintLabel!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 10, color: p.accent),
+                              style: TextStyle(fontSize: 11, color: p.accent),
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                  if (widget.scheduleLabel != null) ...[
+                    const SizedBox(height: 10),
+                    InkWell(
+                      key: ValueKey('card-schedule-badge-${widget.id}'),
+                      borderRadius: p.borderRadius(7),
+                      onTap: widget.onTapSchedule,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: widget.scheduleCompleted
+                              ? p.surface.withValues(alpha: p.dark ? 0.25 : 0.45)
+                              : p.accent.withValues(alpha: 0.10),
+                          borderRadius: p.borderRadius(7),
+                          border: Border.all(
+                            color: widget.scheduleCompleted
+                                ? p.line
+                                : p.accent.withValues(alpha: 0.24),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event_rounded,
+                              size: 12,
+                              color: widget.scheduleCompleted
+                                  ? p.muted
+                                  : p.accent,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                widget.scheduleLabel!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.scheduleCompleted
+                                      ? p.muted
+                                      : p.accent,
+                                  decoration: widget.scheduleCompleted
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -262,7 +323,7 @@ class _WorkbenchIdeaCardState extends State<WorkbenchIdeaCard> {
                     children: [
                       Text(
                         widget.timeLabel,
-                        style: TextStyle(fontSize: 10, color: p.muted),
+                        style: TextStyle(fontSize: 11, color: p.muted),
                       ),
                       const Spacer(),
                       ValueListenableBuilder<bool>(
@@ -336,6 +397,9 @@ class WorkbenchIdeaListRow extends StatelessWidget {
     required this.favorite,
     required this.favoriteTooltip,
     required this.attachmentCount,
+    this.scheduleLabel,
+    this.scheduleCompleted = false,
+    this.onTapSchedule,
     this.completedSteps = 0,
     this.totalSteps = 0,
     required this.onTap,
@@ -353,6 +417,9 @@ class WorkbenchIdeaListRow extends StatelessWidget {
   final bool favorite;
   final String favoriteTooltip;
   final int attachmentCount;
+  final String? scheduleLabel;
+  final bool scheduleCompleted;
+  final VoidCallback? onTapSchedule;
   final int completedSteps;
   final int totalSteps;
   final VoidCallback onTap;
@@ -420,7 +487,7 @@ class WorkbenchIdeaListRow extends StatelessWidget {
                     child: Text(
                       '$completedSteps/$totalSteps',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: readableTint,
                       ),
@@ -440,9 +507,51 @@ class WorkbenchIdeaListRow extends StatelessWidget {
                         const SizedBox(width: 2),
                         Text(
                           '$attachmentCount',
-                          style: TextStyle(fontSize: 10, color: p.accent),
+                          style: TextStyle(fontSize: 11, color: p.accent),
                         ),
                       ],
+                    ),
+                  ),
+                if (scheduleLabel != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      key: ValueKey('card-schedule-badge-$id'),
+                      borderRadius: p.borderRadius(6),
+                      onTap: onTapSchedule,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: scheduleCompleted
+                              ? p.surface.withValues(alpha: p.dark ? 0.25 : 0.45)
+                              : p.accent.withValues(alpha: 0.10),
+                          borderRadius: p.borderRadius(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event_rounded,
+                              size: 11,
+                              color: scheduleCompleted ? p.muted : p.accent,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              scheduleLabel!,
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                color: scheduleCompleted ? p.muted : p.accent,
+                                decoration: scheduleCompleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 Container(
@@ -456,13 +565,13 @@ class WorkbenchIdeaListRow extends StatelessWidget {
                   ),
                   child: Text(
                     categoryLabel,
-                    style: TextStyle(fontSize: 9, color: readableTint),
+                    style: TextStyle(fontSize: 10.5, color: readableTint),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   timeLabel,
-                  style: TextStyle(fontSize: 10, color: p.muted),
+                  style: TextStyle(fontSize: 11, color: p.muted),
                 ),
                 const SizedBox(width: 4),
                 IconButton(

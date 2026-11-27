@@ -11,6 +11,7 @@ add_executable(${BINARY_NAME} WIN32
   "canvas_backdrop.cpp"
   "office_clipboard.cpp"
   "system_fonts.cpp"
+  "detached_widgets.cpp"
   "main.cpp"
   "utils.cpp"
   "win32_window.cpp"

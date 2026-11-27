@@ -24,10 +24,15 @@ class WorkbenchInspector extends StatefulWidget {
     required this.experimentsCount,
     required this.favoritesCount,
     required this.quickCaptureBuilder,
+    required this.timerBuilder,
+    required this.scheduleBuilder,
+    required this.countdownBuilder,
+    required this.automationBuilder,
     required this.scratchpadBuilder,
     required this.musicPanelBuilder,
     required this.appearanceBuilder,
     required this.onSelectPage,
+    this.currentPage,
     this.compact = false,
   });
 
@@ -42,10 +47,15 @@ class WorkbenchInspector extends StatefulWidget {
   final int experimentsCount;
   final int favoritesCount;
   final WidgetBuilder quickCaptureBuilder;
+  final WidgetBuilder timerBuilder;
+  final WidgetBuilder scheduleBuilder;
+  final WidgetBuilder countdownBuilder;
+  final WidgetBuilder automationBuilder;
   final WidgetBuilder scratchpadBuilder;
   final WidgetBuilder musicPanelBuilder;
   final WidgetBuilder appearanceBuilder;
   final ValueChanged<WorkbenchPage> onSelectPage;
+  final WorkbenchPage? currentPage;
   final bool compact;
 
   @override
@@ -53,7 +63,24 @@ class WorkbenchInspector extends StatefulWidget {
 }
 
 class _WorkbenchInspectorState extends State<WorkbenchInspector> {
+  static const _collapsedStorageKey = ValueKey<String>(
+    'inspector-collapsed-modules',
+  );
+
   int _tabDirection = 1;
+  Set<String> _collapsedModules = <String>{};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final stored = PageStorage.maybeOf(context)?.readState(
+      context,
+      identifier: _collapsedStorageKey,
+    );
+    if (stored is Set<String>) {
+      _collapsedModules = Set<String>.from(stored);
+    }
+  }
 
   @override
   void didUpdateWidget(WorkbenchInspector oldWidget) {
@@ -61,6 +88,19 @@ class _WorkbenchInspectorState extends State<WorkbenchInspector> {
     if (oldWidget.tab != widget.tab) {
       _tabDirection = widget.tab.index >= oldWidget.tab.index ? 1 : -1;
     }
+  }
+
+  void _toggleModule(String id) {
+    setState(() {
+      if (!_collapsedModules.remove(id)) {
+        _collapsedModules.add(id);
+      }
+      PageStorage.maybeOf(context)?.writeState(
+        context,
+        Set<String>.from(_collapsedModules),
+        identifier: _collapsedStorageKey,
+      );
+    });
   }
 
   @override
@@ -92,7 +132,7 @@ class _WorkbenchInspectorState extends State<WorkbenchInspector> {
                     child: Text(
                       '${widget.remainingDailyTasks}',
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 10.5,
                         fontWeight: FontWeight.w700,
                         color: p.accent,
                       ),
@@ -126,24 +166,28 @@ class _WorkbenchInspectorState extends State<WorkbenchInspector> {
       ),
     );
 
-    final body = SharedAxisSwitcher(
-      axis: Axis.horizontal,
-      fit: StackFit.expand,
-      durationMs: 280,
-      slideOffset: 0.10,
-      direction: _tabDirection,
-      child: SingleChildScrollView(
-        key: PageStorageKey(
-          'inspector-scroll-${widget.tab.name}-${widget.compact}',
-        ),
-        padding: EdgeInsets.only(top: 14, bottom: widget.compact ? 28 : 18),
-        child: KeyedSubtree(
-          key: ValueKey('inspector-body-${widget.tab.name}'),
-          child: switch (widget.tab) {
-            InspectorTab.studio => _buildStudioTab(context, p, s),
-            InspectorTab.music => _buildMusicTab(context, p, s),
-            InspectorTab.appearance => widget.appearanceBuilder(context),
-          },
+    final body = ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+      child: SharedAxisSwitcher(
+        axis: Axis.horizontal,
+        fit: StackFit.expand,
+        durationMs: 280,
+        slideOffset: 0.10,
+        direction: _tabDirection,
+        child: SingleChildScrollView(
+          key: PageStorageKey(
+            'inspector-scroll-${widget.tab.name}-${widget.compact}',
+          ),
+          primary: false,
+          padding: EdgeInsets.only(top: 14, bottom: widget.compact ? 28 : 18),
+          child: KeyedSubtree(
+            key: ValueKey('inspector-body-${widget.tab.name}'),
+            child: switch (widget.tab) {
+              InspectorTab.studio => _buildStudioTab(context, p, s),
+              InspectorTab.music => _buildMusicTab(context, p, s),
+              InspectorTab.appearance => widget.appearanceBuilder(context),
+            },
+          ),
         ),
       ),
     );
@@ -161,24 +205,132 @@ class _WorkbenchInspectorState extends State<WorkbenchInspector> {
     BuildContext context,
     Palette p,
     WorkbenchStrings s,
-  ) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      widget.quickCaptureBuilder(context),
-      const SizedBox(height: 16),
-      widget.scratchpadBuilder(context),
-      const SizedBox(height: 16),
-      _WorkspacePulseCard(
-        palette: p,
-        strings: s,
-        inboxCount: widget.inboxCount,
-        activeProjectsCount: widget.activeProjectsCount,
-        experimentsCount: widget.experimentsCount,
-        favoritesCount: widget.favoritesCount,
-        onSelectPage: widget.onSelectPage,
+  ) {
+    final modules = [
+      (
+        'quick-capture',
+        s.moduleQuickCapture,
+        Icons.edit_note_rounded,
+        widget.quickCaptureBuilder,
       ),
-    ],
-  );
+      ('timer', s.moduleTimer, Icons.timer_outlined, widget.timerBuilder),
+      (
+        'schedule',
+        s.moduleSchedule,
+        Icons.calendar_month_rounded,
+        widget.scheduleBuilder,
+      ),
+      (
+        'countdown',
+        s.moduleCountdown,
+        Icons.hourglass_bottom_rounded,
+        widget.countdownBuilder,
+      ),
+      (
+        'automation',
+        s.moduleAutomation,
+        Icons.bolt_rounded,
+        widget.automationBuilder,
+      ),
+      (
+        'scratchpad',
+        s.moduleScratchpad,
+        Icons.checklist_rounded,
+        widget.scratchpadBuilder,
+      ),
+    ];
+    final duration = workbenchDuration(context, WorkbenchDurations.short);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final mod in modules) ...[
+              Builder(
+                builder: (context) {
+                  final expanded = !_collapsedModules.contains(mod.$1);
+                  return Tooltip(
+                    message: s.moduleToggleTooltip(mod.$2, !expanded),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        key: ValueKey('inspector-module-toggle-${mod.$1}'),
+                        borderRadius: p.borderRadius(9),
+                        onTap: () => _toggleModule(mod.$1),
+                        child: AnimatedContainer(
+                          duration: duration,
+                          curve: WorkbenchCurves.snappy,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: expanded
+                                ? p.accent.withValues(alpha: p.dark ? 0.20 : 0.12)
+                                : p.surface.withValues(
+                                    alpha: p.dark ? 0.25 : 0.42,
+                                  ),
+                            borderRadius: p.borderRadius(9),
+                            border: Border.all(
+                              color: expanded
+                                  ? p.accent.withValues(alpha: 0.36)
+                                  : p.line,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                mod.$3,
+                                size: 12,
+                                color: expanded ? p.accent : p.muted,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                mod.$2,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: expanded
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: expanded ? p.accent : p.muted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
+        for (final mod in modules)
+          if (!_collapsedModules.contains(mod.$1))
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: mod.$4(context),
+            ),
+        if (widget.currentPage != WorkbenchPage.overview) ...[
+          const SizedBox(height: 14),
+          _WorkspacePulseCard(
+            palette: p,
+            strings: s,
+            inboxCount: widget.inboxCount,
+            activeProjectsCount: widget.activeProjectsCount,
+            experimentsCount: widget.experimentsCount,
+            favoritesCount: widget.favoritesCount,
+            onSelectPage: widget.onSelectPage,
+          ),
+        ],
+      ],
+    );
+  }
 
   Widget _buildMusicTab(
     BuildContext context,
@@ -203,7 +355,7 @@ class _WorkbenchInspectorState extends State<WorkbenchInspector> {
                     child: Text(
                       s.musicBlockedBanner,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 12,
                         height: 1.5,
                         color: p.muted,
                       ),
@@ -287,7 +439,7 @@ class _WorkspacePulseCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: p.ink,
                     ),
@@ -340,7 +492,7 @@ class _WorkspacePulseCard extends StatelessWidget {
                             tile.$2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 10, color: p.muted),
+                            style: TextStyle(fontSize: 11, color: p.muted),
                           ),
                         ],
                       ),
@@ -351,7 +503,7 @@ class _WorkspacePulseCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               l.mainCuriosity,
-              style: TextStyle(fontSize: 10, height: 1.6, color: p.muted),
+              style: TextStyle(fontSize: 11, height: 1.6, color: p.muted),
             ),
           ],
         ),

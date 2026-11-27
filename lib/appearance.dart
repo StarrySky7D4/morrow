@@ -785,16 +785,127 @@ class StudioDialog extends StatelessWidget {
     this.subtitle,
     this.icon = Icons.auto_awesome_outlined,
     this.actions = const [],
+    this.headerActions = const [],
     this.width = 460,
     this.canClose = true,
+    this.draggable = false,
+    this.resizable = false,
+    this.minWidth = 420,
+    this.maxWidth = 1280,
+    this.minHeight = 320,
+    this.maxHeight = 960,
+    this.initialHeight,
+    this.onDragOutside,
   });
   final String title;
   final String? subtitle;
   final IconData icon;
   final Widget content;
   final List<Widget> actions;
+  final List<Widget> headerActions;
   final double width;
   final bool canClose;
+  final bool draggable;
+  final bool resizable;
+  final double minWidth;
+  final double maxWidth;
+  final double minHeight;
+  final double maxHeight;
+  final double? initialHeight;
+  final void Function(Offset globalOffset)? onDragOutside;
+
+  Widget _buildHeader(BuildContext context, Palette p) => Row(
+    children: [
+      Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: p.accent.withValues(alpha: .15),
+          borderRadius: p.borderRadius(13),
+        ),
+        child: Icon(icon, color: p.accent, size: 21),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'MORROW / A LITTLE POSSIBILITY',
+              style: TextStyle(
+                color: p.muted,
+                fontSize: 9.5,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: p.ink,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+      ...headerActions,
+      IconButton(
+        tooltip: L10n.of(context).visualCloseDialog,
+        onPressed: canClose ? () => Navigator.pop(context) : null,
+        icon: Icon(Icons.close_rounded, size: 18, color: p.muted),
+      ),
+    ],
+  );
+
+  Widget _buildBody(
+    BuildContext context,
+    Palette p, {
+    required bool fillHeight,
+  }) => Column(
+    mainAxisSize: fillHeight ? MainAxisSize.max : MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      _buildHeader(context, p),
+      if (subtitle != null) ...[
+        const SizedBox(height: 12),
+        Text(
+          subtitle!,
+          style: TextStyle(color: p.muted, fontSize: 12, height: 1.7),
+        ),
+      ],
+      const SizedBox(height: 22),
+      if (fillHeight)
+        Expanded(
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: SingleChildScrollView(primary: false, child: content),
+          ),
+        )
+      else
+        Flexible(
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: SingleChildScrollView(primary: false, child: content),
+          ),
+        ),
+      if (actions.isNotEmpty) ...[
+        const SizedBox(height: 20),
+        Divider(height: 1, color: p.line),
+        const SizedBox(height: 16),
+        Wrap(
+          alignment: WrapAlignment.end,
+          spacing: 8,
+          runSpacing: 8,
+          children: actions,
+        ),
+      ],
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
@@ -803,6 +914,15 @@ class StudioDialog extends StatelessWidget {
                 MediaQuery.viewInsetsOf(context).bottom -
                 40)
             .clamp(160.0, 760.0);
+
+    if (draggable || resizable) {
+      return _MovableResizableDialogFrame(
+        palette: p,
+        dialog: this,
+        defaultHeight: (initialHeight ?? height).clamp(minHeight, maxHeight),
+      );
+    }
+
     return Dialog(
       key: const ValueKey('studio-dialog'),
       backgroundColor: Colors.transparent,
@@ -817,77 +937,357 @@ class StudioDialog extends StatelessWidget {
           radius: 28,
           child: Padding(
             padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: p.accent.withValues(alpha: .15),
-                        borderRadius: p.borderRadius(13),
-                      ),
-                      child: Icon(icon, color: p.accent, size: 21),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'MORROW / A LITTLE POSSIBILITY',
-                            style: TextStyle(
-                              color: p.muted,
-                              fontSize: 8,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            title,
-                            style: TextStyle(
-                              color: p.ink,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: L10n.of(context).visualCloseDialog,
-                      onPressed: canClose ? () => Navigator.pop(context) : null,
-                      icon: Icon(Icons.close_rounded, size: 18, color: p.muted),
-                    ),
-                  ],
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 12),
-                  Text(
-                    subtitle!,
-                    style: TextStyle(color: p.muted, fontSize: 11, height: 1.7),
-                  ),
-                ],
-                const SizedBox(height: 22),
-                Flexible(child: SingleChildScrollView(child: content)),
-                if (actions.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Divider(height: 1, color: p.line),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    alignment: WrapAlignment.end,
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: actions,
-                  ),
-                ],
-              ],
-            ),
+            child: _buildBody(context, p, fillHeight: false),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _MovableResizableDialogFrame extends StatefulWidget {
+  const _MovableResizableDialogFrame({
+    required this.palette,
+    required this.dialog,
+    required this.defaultHeight,
+  });
+
+  final Palette palette;
+  final StudioDialog dialog;
+  final double defaultHeight;
+
+  @override
+  State<_MovableResizableDialogFrame> createState() =>
+      _MovableResizableDialogFrameState();
+}
+
+class _MovableResizableDialogFrameState
+    extends State<_MovableResizableDialogFrame> {
+  final ScrollController _scrollController = ScrollController();
+  double? _left;
+  double? _top;
+  double? _width;
+  double? _height;
+  bool _detachedByDrag = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.palette;
+    final d = widget.dialog;
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    return Dialog(
+      key: const ValueKey('studio-dialog'),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: EdgeInsets.zero,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final media = MediaQuery.sizeOf(context);
+          final viewW = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : media.width;
+          final viewH = constraints.maxHeight.isFinite
+              ? constraints.maxHeight
+              : media.height;
+          final availW = (viewW - 16).clamp(240.0, d.maxWidth);
+          final availH = (viewH - bottomInset - 16).clamp(220.0, d.maxHeight);
+          final effMinW = d.minWidth.clamp(240.0, availW);
+          final effMinH = d.minHeight.clamp(220.0, availH);
+
+          _width ??= d.width.clamp(effMinW, availW);
+          _height ??= widget.defaultHeight.clamp(effMinH, availH);
+          _left ??= (viewW - _width!) * 0.5;
+          _top ??= ((viewH - bottomInset) - _height!) * 0.5;
+
+          final w = _width!.clamp(effMinW, availW);
+          final h = _height!.clamp(effMinH, availH);
+          final minLeft = d.onDragOutside != null ? -w * 0.65 : 8.0;
+          final maxLeft = d.onDragOutside != null
+              ? viewW - w * 0.35
+              : (viewW - w - 8.0).clamp(8.0, viewW);
+          final minTop = d.onDragOutside != null ? -120.0 : 8.0;
+          final maxTop = d.onDragOutside != null
+              ? viewH - 40.0
+              : (viewH - h - 8.0).clamp(8.0, viewH);
+          final left = _left!.clamp(minLeft, maxLeft);
+          final top = _top!.clamp(minTop, maxTop);
+
+          return SizedBox(
+            width: viewW,
+            height: viewH,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  left: left,
+                  top: top,
+                  width: w,
+                  height: h,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Positioned.fill(
+                        child: Glass(
+                          p: p,
+                          dialog: true,
+                          radius: 28,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (d.draggable)
+                                MouseRegion(
+                                  cursor: SystemMouseCursors.move,
+                                  child: GestureDetector(
+                                    key: const ValueKey('studio-dialog-drag'),
+                                    behavior: HitTestBehavior.translucent,
+                                    onPanUpdate: (details) {
+                                      setState(() {
+                                        _left = (_left ?? left) + details.delta.dx;
+                                        _top = (_top ?? top) + details.delta.dy;
+                                      });
+                                      if (!_detachedByDrag &&
+                                          d.onDragOutside != null) {
+                                        final gx = details.globalPosition.dx;
+                                        final gy = details.globalPosition.dy;
+                                        final nearEdge =
+                                            (gx <= 4 && details.delta.dx < 0) ||
+                                            (gy <= 4 && details.delta.dy < 0) ||
+                                            (gx >= viewW - 4 &&
+                                                details.delta.dx > 0) ||
+                                            (gy >= viewH - 4 &&
+                                                details.delta.dy > 0);
+                                        final farOut = _left! < -56.0 ||
+                                            _top! < -56.0 ||
+                                            _left! + w > viewW + 56.0 ||
+                                            _top! + h > viewH + 56.0;
+                                        if (nearEdge || farOut) {
+                                          _detachedByDrag = true;
+                                          d.onDragOutside!(Offset(_left!, _top!));
+                                        }
+                                      }
+                                    },
+                                    onPanEnd: (_) {
+                                      if (_detachedByDrag ||
+                                          d.onDragOutside == null) {
+                                        return;
+                                      }
+                                      const outThreshold = 40.0;
+                                      final curLeft = _left ?? left;
+                                      final curTop = _top ?? top;
+                                      final outside =
+                                          curLeft < -outThreshold ||
+                                          curTop < -outThreshold ||
+                                          curLeft + w > viewW + outThreshold ||
+                                          curTop + h > viewH + outThreshold;
+                                      if (outside) {
+                                        _detachedByDrag = true;
+                                        d.onDragOutside!(
+                                          Offset(curLeft, curTop),
+                                        );
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        24,
+                                        24,
+                                        24,
+                                        0,
+                                      ),
+                                      child: d._buildHeader(context, p),
+                                    ),
+                                  ),
+                                )
+                              else
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    24,
+                                    24,
+                                    24,
+                                    0,
+                                  ),
+                                  child: d._buildHeader(context, p),
+                                ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    24,
+                                    0,
+                                    24,
+                                    24,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (d.subtitle != null) ...[
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          d.subtitle!,
+                                          style: TextStyle(
+                                            color: p.muted,
+                                            fontSize: 12,
+                                            height: 1.7,
+                                          ),
+                                        ),
+                                      ],
+                                      const SizedBox(height: 18),
+                                      Expanded(
+                                        child: ScrollConfiguration(
+                                          behavior: ScrollConfiguration.of(
+                                            context,
+                                          ).copyWith(scrollbars: false),
+                                          child: SingleChildScrollView(
+                                            controller: _scrollController,
+                                            primary: false,
+                                            child: d.content,
+                                          ),
+                                        ),
+                                      ),
+                                      if (d.actions.isNotEmpty) ...[
+                                        const SizedBox(height: 16),
+                                        Divider(height: 1, color: p.line),
+                                        const SizedBox(height: 14),
+                                        Wrap(
+                                          alignment: WrapAlignment.end,
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: d.actions,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (d.resizable) ...[
+                        Positioned(
+                          left: 0,
+                          top: 48,
+                          bottom: 24,
+                          width: 8,
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.resizeLeftRight,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onPanUpdate: (details) => setState(() {
+                                final fixedRight = left + w;
+                                final maxFromRight = (fixedRight - 8.0).clamp(
+                                  effMinW,
+                                  availW,
+                                );
+                                final nextW = (w - details.delta.dx).clamp(
+                                  effMinW,
+                                  maxFromRight,
+                                );
+                                _left = fixedRight - nextW;
+                                _width = nextW;
+                              }),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 48,
+                          bottom: 24,
+                          width: 8,
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.resizeLeftRight,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onPanUpdate: (details) => setState(() {
+                                _left = left;
+                                final maxWForPos = (viewW - left - 8.0).clamp(
+                                  effMinW,
+                                  availW,
+                                );
+                                _width = (w + details.delta.dx).clamp(
+                                  effMinW,
+                                  maxWForPos,
+                                );
+                              }),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 24,
+                          right: 24,
+                          bottom: 0,
+                          height: 8,
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.resizeUpDown,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onPanUpdate: (details) => setState(() {
+                                _top = top;
+                                final maxHForPos = (viewH - top - 8.0).clamp(
+                                  effMinH,
+                                  availH,
+                                );
+                                _height = (h + details.delta.dy).clamp(
+                                  effMinH,
+                                  maxHForPos,
+                                );
+                              }),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 6,
+                          bottom: 6,
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.resizeUpLeftDownRight,
+                            child: GestureDetector(
+                              key: const ValueKey('studio-dialog-resize'),
+                              behavior: HitTestBehavior.opaque,
+                              onPanUpdate: (details) => setState(() {
+                                _left = left;
+                                _top = top;
+                                final maxWForPos = (viewW - left - 8.0).clamp(
+                                  effMinW,
+                                  availW,
+                                );
+                                final maxHForPos = (viewH - top - 8.0).clamp(
+                                  effMinH,
+                                  availH,
+                                );
+                                _width = (w + details.delta.dx).clamp(
+                                  effMinW,
+                                  maxWForPos,
+                                );
+                                _height = (h + details.delta.dy).clamp(
+                                  effMinH,
+                                  maxHForPos,
+                                );
+                              }),
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: Icon(
+                                  Icons.south_east_rounded,
+                                  size: 14,
+                                  color: p.muted,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

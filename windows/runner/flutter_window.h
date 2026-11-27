@@ -11,6 +11,7 @@
 #include "win32_window.h"
 #include "office_clipboard.h"
 #include "system_fonts.h"
+#include "detached_widgets.h"
 #include "canvas_backdrop.h"
 #include "canvas_probe.h"
 
@@ -37,6 +38,7 @@ class FlutterWindow : public Win32Window {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> shape_channel_;
   std::unique_ptr<OfficeClipboard> office_clipboard_;
   std::unique_ptr<SystemFonts> system_fonts_;
+  std::unique_ptr<DetachedWidgets> detached_widgets_;
   CanvasBackdrop canvas_backdrop_;
   CanvasProbe canvas_probe_;
   double corner_radius_ = 20;

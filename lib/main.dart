@@ -92,6 +92,17 @@ import 'ui/command_palette.dart';
 import 'ui/inspector_drawer.dart';
 import 'ui/workspace_header.dart';
 import 'ui/idea_card.dart';
+import 'schedule/schedule_store.dart';
+import 'ui/schedule_calendar_panel.dart';
+import 'widgets_suite/automation_engine.dart';
+import 'widgets_suite/countdown_store.dart';
+import 'widgets_suite/detached_window_bridge.dart';
+import 'widgets_suite/footer_reminder_controller.dart';
+import 'widgets_suite/timer_controller.dart';
+import 'ui/timer_widget_card.dart';
+import 'ui/countdown_widget_card.dart';
+import 'ui/automation_widget_card.dart';
+import 'ui/floating_widget_overlay.dart';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -139,7 +150,19 @@ class MorrowApp extends StatefulWidget {
     this.themePlugins,
     this.tipPreferences,
     this.cardOrderPreferences,
+    this.schedulePreferences,
+    this.timerController,
+    this.countdownPreferences,
+    this.automationPreferences,
+    this.footerReminders,
+    this.detachedWindowBridge,
   });
+  final FooterReminderController? footerReminders;
+  final DetachedWindowBridge? detachedWindowBridge;
+  final AutomationPreferences? automationPreferences;
+  final CountdownPreferences? countdownPreferences;
+  final TimerController? timerController;
+  final SchedulePreferences? schedulePreferences;
   final CardOrderPreferences? cardOrderPreferences;
   final TipPreferences? tipPreferences;
   final ThemePluginController? themePlugins;
@@ -160,6 +183,10 @@ class _MorrowAppState extends State<MorrowApp> {
   late final ThemePluginController themePlugins;
   late final TipPreferences tipPreferences;
   late final CardOrderPreferences cardOrderPreferences;
+  late final SchedulePreferences schedulePreferences;
+  late final TimerController timerController;
+  late final CountdownPreferences countdownPreferences;
+  late final AutomationPreferences automationPreferences;
 
   void _themePluginChanged() {
     if (mounted) setState(() {});
@@ -171,6 +198,10 @@ class _MorrowAppState extends State<MorrowApp> {
     if (widget.themePlugins == null) themePlugins.dispose();
     if (widget.tipPreferences == null) tipPreferences.dispose();
     if (widget.cardOrderPreferences == null) cardOrderPreferences.dispose();
+    if (widget.schedulePreferences == null) schedulePreferences.dispose();
+    if (widget.timerController == null) timerController.dispose();
+    if (widget.countdownPreferences == null) countdownPreferences.dispose();
+    if (widget.automationPreferences == null) automationPreferences.dispose();
     super.dispose();
   }
 
@@ -283,6 +314,44 @@ class _MorrowAppState extends State<MorrowApp> {
               : LocalTipStore(libraryDirectory: widget.libraryDirectory),
         );
     if (widget.tipPreferences == null) unawaited(tipPreferences.restore());
+    schedulePreferences =
+        widget.schedulePreferences ??
+        SchedulePreferences(
+          storage is MemoryStorage
+              ? MemoryScheduleStore()
+              : LocalScheduleStore(libraryDirectory: widget.libraryDirectory),
+        );
+    if (widget.schedulePreferences == null) {
+      unawaited(schedulePreferences.restore());
+    }
+    timerController =
+        widget.timerController ??
+        TimerController(
+          storage is MemoryStorage
+              ? MemoryTimerStore()
+              : LocalTimerStore(libraryDirectory: widget.libraryDirectory),
+        );
+    if (widget.timerController == null) unawaited(timerController.restore());
+    countdownPreferences =
+        widget.countdownPreferences ??
+        CountdownPreferences(
+          storage is MemoryStorage
+              ? MemoryCountdownStore()
+              : LocalCountdownStore(libraryDirectory: widget.libraryDirectory),
+        );
+    if (widget.countdownPreferences == null) {
+      unawaited(countdownPreferences.restore());
+    }
+    automationPreferences =
+        widget.automationPreferences ??
+        AutomationPreferences(
+          storage is MemoryStorage
+              ? MemoryAutomationStore()
+              : LocalAutomationStore(libraryDirectory: widget.libraryDirectory),
+        );
+    if (widget.automationPreferences == null) {
+      unawaited(automationPreferences.restore());
+    }
     themePlugins =
         widget.themePlugins ??
         ThemePluginController(
@@ -703,6 +772,8 @@ class _MorrowAppState extends State<MorrowApp> {
       theme: _themeFor(palette),
       home: Studio(
         desktopCaption: widget.nativeBackground != null && isWindowsDesktop,
+        footerReminders: widget.footerReminders,
+        detachedWindowBridge: widget.detachedWindowBridge,
         palette: palette,
         onTheme: (value) =>
             appearanceChanged(() => theme = value, native: true),
@@ -764,11 +835,23 @@ class _MorrowAppState extends State<MorrowApp> {
         },
       ),
     );
-    return CardOrderScope(
-      controller: cardOrderPreferences,
-      child: TipPreferencesScope(
-        controller: tipPreferences,
-        child: ThemePluginScope(controller: themePlugins, child: app),
+    return AutomationScope(
+      controller: automationPreferences,
+      child: CountdownScope(
+        controller: countdownPreferences,
+        child: TimerScope(
+          controller: timerController,
+          child: SchedulePreferencesScope(
+            controller: schedulePreferences,
+            child: CardOrderScope(
+              controller: cardOrderPreferences,
+              child: TipPreferencesScope(
+                controller: tipPreferences,
+                child: ThemePluginScope(controller: themePlugins, child: app),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -933,7 +1016,11 @@ class Studio extends StatefulWidget {
     this.workbench,
     this.desktopCaption = false,
     this.onSurfaces,
+    this.footerReminders,
+    this.detachedWindowBridge,
   });
+  final FooterReminderController? footerReminders;
+  final DetachedWindowBridge? detachedWindowBridge;
   final ValueChanged<SurfaceSettings>? onSurfaces;
   final WorkbenchBackend? workbench;
   final bool desktopCaption;
@@ -1035,6 +1122,22 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
   WorkbenchFilter filter = GeneralFilter.all;
   String query = '';
+  DateTime _selectedScheduleDate = ScheduleEntry.dateOnly(DateTime.now());
+  late final FooterReminderController _footerReminders;
+  late final DetachedWindowBridge _detachedBridge;
+  final List<FloatingWindowState> _floatingWindows = [];
+  final Map<String, bool> _detachedWidgetPinned = {};
+  final Map<String, DetachedIdeaDraft> _detachedEditors = {};
+  final Map<String, bool> _detachedEditorPinned = {};
+  final Set<String> _firedScheduleReminders = {};
+  final Set<String> _firedCountdownReminders = {};
+  Timer? _scheduleWatchTimer;
+  TimerController? _boundTimer;
+  SchedulePreferences? _boundSchedule;
+  CountdownPreferences? _boundCountdown;
+  AutomationPreferences? _boundAutomation;
+  String? _lastDetachedThemeSig;
+  bool _suiteHooksAttached = false;
   final search = TextEditingController();
   final quickNote = TextEditingController();
   final searchFocus = FocusNode();
@@ -1224,6 +1327,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _footerReminders = widget.footerReminders ?? FooterReminderController();
+    _detachedBridge = widget.detachedWindowBridge ?? DetachedWindowBridge();
+    _detachedBridge.onNativeAction = _handleDetachedAction;
+    _detachedBridge.onEditorAction = _handleDetachedEditorAction;
     search.addListener(() {
       final composing = search.value.composing;
       final active = composing.isValid && !composing.isCollapsed;
@@ -1328,6 +1435,21 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _scheduleWatchTimer?.cancel();
+    _scheduleWatchTimer = null;
+    if (_boundTimer?.onStarted == _handleTimerStarted) {
+      _boundTimer?.onStarted = null;
+    }
+    if (_boundTimer?.onCompleted == _handleTimerCompleted) {
+      _boundTimer?.onCompleted = null;
+    }
+    _boundTimer?.removeListener(_syncDetachedWindows);
+    _boundSchedule?.removeListener(_onScheduleOrCountdownChanged);
+    _boundCountdown?.removeListener(_onScheduleOrCountdownChanged);
+    _boundAutomation?.removeListener(_syncDetachedWindows);
+    unawaited(_detachedBridge.closeAll());
+    if (widget.detachedWindowBridge == null) _detachedBridge.dispose();
+    if (widget.footerReminders == null) _footerReminders.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _queries.dispose();
     _dismissDraftHandoffRoute();
@@ -1337,6 +1459,163 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     quickNote.dispose();
     searchFocus.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final timer = TimerScope.of(context);
+    final schedule = SchedulePreferencesScope.of(context);
+    final countdown = CountdownScope.of(context);
+    final automation = AutomationScope.of(context);
+    if (!identical(_boundTimer, timer)) {
+      _boundTimer?.removeListener(_syncDetachedWindows);
+      if (_boundTimer?.onStarted == _handleTimerStarted) {
+        _boundTimer?.onStarted = null;
+      }
+      if (_boundTimer?.onCompleted == _handleTimerCompleted) {
+        _boundTimer?.onCompleted = null;
+      }
+      _boundTimer = timer;
+      _boundTimer?.onStarted = _handleTimerStarted;
+      _boundTimer?.onCompleted = _handleTimerCompleted;
+      _boundTimer?.addListener(_syncDetachedWindows);
+    }
+    if (!identical(_boundSchedule, schedule)) {
+      _boundSchedule?.removeListener(_onScheduleOrCountdownChanged);
+      _boundSchedule = schedule;
+      _boundSchedule?.addListener(_onScheduleOrCountdownChanged);
+    }
+    if (!identical(_boundCountdown, countdown)) {
+      _boundCountdown?.removeListener(_onScheduleOrCountdownChanged);
+      _boundCountdown = countdown;
+      _boundCountdown?.addListener(_onScheduleOrCountdownChanged);
+    }
+    if (!identical(_boundAutomation, automation)) {
+      _boundAutomation?.removeListener(_syncDetachedWindows);
+      _boundAutomation = automation;
+      _boundAutomation?.addListener(_syncDetachedWindows);
+    }
+    if (!_suiteHooksAttached) {
+      _suiteHooksAttached = true;
+      _scheduleWatchTimer?.cancel();
+      _scheduleWatchTimer = Timer.periodic(
+        const Duration(seconds: 20),
+        (_) => _checkDueSchedulesAndCountdowns(),
+      );
+    }
+    final themeSig = _detachedTheme().signature;
+    if (_lastDetachedThemeSig != themeSig) {
+      _lastDetachedThemeSig = themeSig;
+      if (_detachedWidgetPinned.isNotEmpty || _detachedEditors.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _syncDetachedWindows();
+          _syncDetachedEditorsTheme();
+        });
+      }
+    }
+  }
+
+  AutomationRuntime _automationRuntime() => AutomationRuntime(
+    onPlayMusic: () {
+      if (!music.playing && music.current != null && !music.blocked) {
+        unawaited(music.toggle());
+      }
+    },
+    onPauseMusic: () {
+      if (music.playing) {
+        unawaited(music.pause());
+      }
+    },
+    onFooterReminder: (alert) => _footerReminders.post(alert),
+    onEnterFocusMode: () {
+      if (!focusMode && mounted) {
+        setState(() {
+          focusMode = true;
+          compactSettingsOpen = false;
+        });
+      }
+    },
+    onExitFocusMode: () {
+      if (focusMode && mounted) {
+        setState(() => focusMode = false);
+      }
+    },
+    onStartTimer: () => _boundTimer?.start(),
+  );
+
+  void _handleTimerStarted() {
+    final auto = AutomationScope.of(context);
+    if (auto == null || !mounted) return;
+    auto.trigger(
+      AutomationTrigger.timerStarted,
+      runtime: _automationRuntime(),
+      subject: _boundTimer?.linkedLabel,
+      linkedCardId: _boundTimer?.linkedCardId,
+    );
+  }
+
+  void _handleTimerCompleted() {
+    final auto = AutomationScope.of(context);
+    if (auto == null || !mounted) return;
+    auto.trigger(
+      AutomationTrigger.timerCompleted,
+      runtime: _automationRuntime(),
+      subject: _boundTimer?.linkedLabel,
+      linkedCardId: _boundTimer?.linkedCardId,
+    );
+  }
+
+  void _onScheduleOrCountdownChanged() {
+    _checkDueSchedulesAndCountdowns();
+    _syncDetachedWindows();
+  }
+
+  void _checkDueSchedulesAndCountdowns() {
+    if (!mounted) return;
+    final auto = AutomationScope.of(context);
+    final schedule = _boundSchedule;
+    final countdown = _boundCountdown;
+    if (auto == null) return;
+    final now = DateTime.now();
+    if (schedule != null) {
+      for (final entry in schedule.entriesForDate(now)) {
+        if (entry.completed || entry.isAllDay) continue;
+        final parts = entry.timeText.split(':');
+        if (parts.length != 2) continue;
+        final hh = int.tryParse(parts[0]);
+        final mm = int.tryParse(parts[1]);
+        if (hh == null || mm == null) continue;
+        final due = DateTime(now.year, now.month, now.day, hh, mm);
+        final diff = now.difference(due).inMinutes;
+        final fireKey = '${entry.id}@${entry.dateKey}';
+        if (diff >= 0 && diff <= 60 && _firedScheduleReminders.add(fireKey)) {
+          auto.trigger(
+            AutomationTrigger.scheduleDue,
+            runtime: _automationRuntime(),
+            subject: '${entry.timeText} ${entry.title}',
+            scheduleDate: entry.date,
+            linkedCardId: entry.linkedCardId,
+            now: now,
+          );
+        }
+      }
+    }
+    if (countdown != null) {
+      for (final item in countdown.todayItems(now)) {
+        final fireKey = '${item.id}@${item.targetDateKey}';
+        if (_firedCountdownReminders.add(fireKey)) {
+          auto.trigger(
+            AutomationTrigger.countdownToday,
+            runtime: _automationRuntime(),
+            subject: item.title,
+            linkedCardId: item.linkedCardId,
+            now: now,
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -1834,6 +2113,30 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           onRun: createIdea,
         ),
         CommandPaletteActionItem(
+          id: 'new-schedule',
+          label: s.scheduleAdd,
+          icon: Icons.event_note_rounded,
+          onRun: () => _createOrEditSchedule(date: _selectedScheduleDate),
+        ),
+        CommandPaletteActionItem(
+          id: 'float-timer',
+          label: '${s.timerTitle} (${s.widgetFloatTooltip})',
+          icon: Icons.timer_outlined,
+          onRun: () => _openFloatingWidget('timer'),
+        ),
+        CommandPaletteActionItem(
+          id: 'new-countdown',
+          label: s.countdownAdd,
+          icon: Icons.hourglass_bottom_rounded,
+          onRun: () => _createOrEditCountdown(),
+        ),
+        CommandPaletteActionItem(
+          id: 'new-automation',
+          label: s.automationAdd,
+          icon: Icons.bolt_rounded,
+          onRun: _createAutomationRule,
+        ),
+        CommandPaletteActionItem(
           id: 'focus-mode',
           label: focusMode ? s.actionFocusOff : s.actionFocusOn,
           shortcut: 'Ctrl+Shift+F',
@@ -1939,6 +2242,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     experimentsCount: _experimentsCount,
     favoritesCount: _favoritesCount,
     quickCaptureBuilder: (_) => quickCapture(),
+    timerBuilder: (_) => timerWidget(),
+    scheduleBuilder: (_) => scheduleWidget(),
+    countdownBuilder: (_) => countdownWidget(),
+    automationBuilder: (_) => automationWidget(),
     scratchpadBuilder: (_) => scratchpad(),
     musicPanelBuilder: (_) => musicPanel(),
     appearanceBuilder: (_) => appearance(showExpand: !compact),
@@ -1946,6 +2253,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       if (compact) closeCompactSettings();
       selectSection(page);
     },
+    currentPage: section,
     compact: compact,
   );
 
@@ -2217,9 +2525,52 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                       bottom: sidebar || focusMode ? 0 : 72,
                                       child: componentInteractions(
                                         'footer',
-                                        FooterOverlay(music: music),
+                                        FooterOverlay(
+                                          music: music,
+                                          timer: TimerScope.of(context),
+                                          schedule:
+                                              SchedulePreferencesScope.of(context),
+                                          countdown: CountdownScope.of(context),
+                                          reminders: _footerReminders,
+                                          onTapTimer: () =>
+                                              _openFloatingWidget('timer'),
+                                          onTapSchedule: _focusScheduleDate,
+                                          onTapCard: _openCardById,
+                                        ),
                                       ),
                                     ),
+                                    if (_floatingWindows.isNotEmpty)
+                                      Positioned.fill(
+                                        child: FloatingWidgetLayer(
+                                          palette: p,
+                                          windows: _floatingWindows,
+                                          viewportSize: Size(
+                                            constraints.maxWidth,
+                                            constraints.maxHeight,
+                                          ),
+                                          canDetach: (_) =>
+                                              _detachedBridge.supportedPlatform,
+                                          contentBuilder:
+                                              _buildFloatingWidgetContent,
+                                          onMove: _moveFloatingWidget,
+                                          onResize: _resizeFloatingWidget,
+                                          onFocus: _focusFloatingWidget,
+                                          onDetach: (id) {
+                                            final idx = _floatingWindows
+                                                .indexWhere((w) => w.id == id);
+                                            final relPos = idx >= 0
+                                                ? _floatingWindows[idx].offset
+                                                : null;
+                                            _closeFloatingWidget(id);
+                                            _detachNativeWidget(
+                                              id,
+                                              relPos: relPos,
+                                            );
+                                          },
+                                          onDragEnd: _handleFloatingDragEnd,
+                                          onClose: _closeFloatingWidget,
+                                        ),
+                                      ),
                                     if (!sidebar && !focusMode)
                                       Positioned(
                                         left: 0,
@@ -2566,6 +2917,22 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             idea.attachments.first.source.name,
           )
         : null;
+    final schedulePrefs = SchedulePreferencesScope.of(context);
+    final cardSchedules =
+        schedulePrefs?.entriesForCard(idea.id) ?? const <ScheduleEntry>[];
+    final primarySchedule = schedulePrefs?.primaryEntryForCard(idea.id);
+    final s = WorkbenchStrings.of(context);
+    final scheduleLabel = primarySchedule == null
+        ? null
+        : s.formatCardScheduleBadge(
+            primarySchedule,
+            DateTime.now(),
+            cardSchedules.length,
+          );
+    final scheduleCompleted = primarySchedule?.completed ?? false;
+    final onTapSchedule = primarySchedule == null
+        ? null
+        : () => _focusScheduleDate(primarySchedule.date);
 
     return cardInteractions(
       idea,
@@ -2583,6 +2950,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               favorite: idea.favorite,
               favoriteTooltip: favoriteTooltip,
               attachmentCount: idea.attachments.length,
+              scheduleLabel: scheduleLabel,
+              scheduleCompleted: scheduleCompleted,
+              onTapSchedule: onTapSchedule,
               completedSteps: completedSteps,
               totalSteps: totalSteps,
               onTap: () => openIdea(idea),
@@ -2601,6 +2971,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               favoriteTooltip: favoriteTooltip,
               attachmentCount: idea.attachments.length,
               attachmentHintLabel: attachmentHintLabel,
+              scheduleLabel: scheduleLabel,
+              scheduleCompleted: scheduleCompleted,
+              onTapSchedule: onTapSchedule,
               completedSteps: completedSteps,
               totalSteps: totalSteps,
               ambiguousSteps: ambiguousSteps,
@@ -2610,6 +2983,826 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               onEdit: () => openIdea(idea, initialAction: 'edit'),
             ),
     );
+  }
+
+  List<ScheduleCardOption> _scheduleCardOptions() => [
+    for (final idea in ideas)
+      ScheduleCardOption(
+        id: idea.id,
+        title: displayTitle(idea),
+        categoryLabel: categoryLabel(idea.category),
+        icon: idea.icon,
+        color: idea.color,
+      ),
+  ];
+
+  void _focusScheduleDate(DateTime date) {
+    final normalized = ScheduleEntry.dateOnly(date);
+    final desktop = MediaQuery.sizeOf(context).width >= 1050;
+    setState(() {
+      _selectedScheduleDate = normalized;
+      inspectorTab = InspectorTab.studio;
+      if (desktop) {
+        focusMode = false;
+        showAppearance = true;
+      } else {
+        compactSettingsOpen = true;
+      }
+    });
+    persist();
+  }
+
+  Future<void> _createOrEditSchedule({
+    ScheduleEntry? entry,
+    DateTime? date,
+    String? linkedCardId,
+    String? suggestedTitle,
+  }) async {
+    final prefs = SchedulePreferencesScope.of(context);
+    if (prefs == null) return;
+    final result = await showScheduleEntryDialog(
+      context: context,
+      palette: p,
+      cards: _scheduleCardOptions(),
+      initialDate: entry?.date ?? date ?? _selectedScheduleDate,
+      initialEntry: entry,
+      initialLinkedCardId: linkedCardId,
+      initialTitle: suggestedTitle,
+    );
+    if (!mounted || result == null) return;
+    if (entry == null) {
+      await prefs.add(
+        title: result.title,
+        date: result.date,
+        timeText: result.timeText,
+        note: result.note,
+        linkedCardId: result.linkedCardId,
+      );
+    } else {
+      await prefs.update(result);
+    }
+    if (!mounted) return;
+    setState(() => _selectedScheduleDate = result.date);
+  }
+
+  void _openCardById(String cardId) {
+    for (final idea in ideas) {
+      if (idea.id == cardId) {
+        openIdea(idea);
+        return;
+      }
+    }
+  }
+
+  Future<void> _createOrEditCountdown({
+    CountdownItem? item,
+    String? linkedCardId,
+  }) async {
+    final prefs = CountdownScope.of(context);
+    if (prefs == null) return;
+    final result = await showCountdownDialog(
+      context: context,
+      palette: p,
+      cards: _scheduleCardOptions(),
+      initialItem: item,
+      initialLinkedCardId: linkedCardId,
+    );
+    if (!mounted || result == null) return;
+    if (item == null) {
+      await prefs.add(
+        title: result.title,
+        targetDate: result.targetDate,
+        note: result.note,
+        pinned: result.pinned,
+        linkedCardId: result.linkedCardId,
+      );
+    } else {
+      await prefs.update(result);
+    }
+  }
+
+  Future<void> _createAutomationRule() async {
+    final auto = AutomationScope.of(context);
+    if (auto == null) return;
+    final result = await showAutomationRuleDialog(context: context, palette: p);
+    if (!mounted || result == null) return;
+    await auto.addRule(
+      name: result.name,
+      trigger: result.trigger,
+      action: result.action,
+      customMessage: result.customMessage,
+    );
+  }
+
+  void _openFloatingWidget(String id) {
+    final s = WorkbenchStrings.of(context);
+    final existingIdx = _floatingWindows.indexWhere((w) => w.id == id);
+    if (existingIdx >= 0) {
+      _focusFloatingWidget(id);
+      return;
+    }
+    final meta = switch (id) {
+      'timer' => (s.timerTitle, Icons.timer_outlined, const Size(320, 290)),
+      'schedule' => (
+        s.scheduleTitle,
+        Icons.calendar_month_rounded,
+        const Size(340, 420),
+      ),
+      'countdown' => (
+        s.countdownTitle,
+        Icons.hourglass_bottom_rounded,
+        const Size(320, 300),
+      ),
+      _ => (s.automationTitle, Icons.bolt_rounded, const Size(340, 340)),
+    };
+    final step = _floatingWindows.length * 28.0;
+    setState(() {
+      _floatingWindows.add(
+        FloatingWindowState(
+          id: id,
+          title: meta.$1,
+          icon: meta.$2,
+          offset: Offset(120 + step, 96 + step),
+          size: meta.$3,
+        ),
+      );
+    });
+  }
+
+  void _focusFloatingWidget(String id) {
+    final idx = _floatingWindows.indexWhere((w) => w.id == id);
+    if (idx < 0 || idx == _floatingWindows.length - 1) return;
+    setState(() {
+      final item = _floatingWindows.removeAt(idx);
+      _floatingWindows.add(item);
+    });
+  }
+
+  void _moveFloatingWidget(String id, Offset delta) {
+    final idx = _floatingWindows.indexWhere((w) => w.id == id);
+    if (idx < 0) return;
+    setState(() {
+      final cur = _floatingWindows[idx];
+      _floatingWindows[idx] = cur.copyWith(offset: cur.offset + delta);
+    });
+  }
+
+  void _resizeFloatingWidget(String id, Offset delta) {
+    final idx = _floatingWindows.indexWhere((w) => w.id == id);
+    if (idx < 0) return;
+    setState(() {
+      final cur = _floatingWindows[idx];
+      _floatingWindows[idx] = cur.copyWith(
+        size: Size(
+          (cur.size.width + delta.dx).clamp(
+            FloatingWindowState.minWidth,
+            FloatingWindowState.maxWidth,
+          ),
+          (cur.size.height + delta.dy).clamp(
+            FloatingWindowState.minHeight,
+            FloatingWindowState.maxHeight,
+          ),
+        ),
+      );
+    });
+  }
+
+  void _closeFloatingWidget(String id) {
+    setState(() {
+      _floatingWindows.removeWhere((w) => w.id == id);
+    });
+  }
+
+  void _handleFloatingDragEnd(String id, Size viewportSize) {
+    final idx = _floatingWindows.indexWhere((w) => w.id == id);
+    if (idx < 0 || !_detachedBridge.supportedPlatform) return;
+    final cur = _floatingWindows[idx];
+    const threshold = 36.0;
+    final outside = cur.offset.dx < -threshold ||
+        cur.offset.dy < -threshold ||
+        cur.offset.dx + cur.size.width > viewportSize.width + threshold ||
+        cur.offset.dy + cur.size.height > viewportSize.height + threshold;
+    if (outside) {
+      final relPos = cur.offset;
+      _closeFloatingWidget(id);
+      _detachNativeWidget(id, relPos: relPos);
+    }
+  }
+
+  final Map<String, Offset> _detachedWidgetRelPos = {};
+
+  void _detachNativeWidget(String id, {Offset? relPos}) {
+    if (!_detachedBridge.supportedPlatform) return;
+    setState(() {
+      _detachedWidgetPinned[id] = _detachedWidgetPinned[id] ?? true;
+      if (relPos != null) {
+        _detachedWidgetRelPos[id] = relPos;
+      }
+    });
+    _syncDetachedWindows();
+  }
+
+  void _handleDetachedAction(String id, String action) {
+    if (!mounted) return;
+    switch (action) {
+      case 'toggle':
+        _boundTimer?.toggle();
+      case 'reset':
+        _boundTimer?.reset();
+      case 'togglePin':
+        setState(() {
+          _detachedWidgetPinned[id] = !(_detachedWidgetPinned[id] ?? true);
+        });
+        _syncDetachedWindows();
+      case 'dock':
+        setState(() {
+          _detachedWidgetPinned.remove(id);
+          _detachedWidgetRelPos.remove(id);
+        });
+        unawaited(_detachedBridge.close(id));
+    }
+  }
+
+  DetachedWindowTheme _detachedTheme() {
+    final surfaceColor = p.overridesMaterials
+        ? p.surface
+        : (p.backdrop == BackgroundMode.solid ? p.solidColor : p.surface);
+    final radius = p.overridesMaterials ? p.uiTheme!.radius : p.cornerRadius;
+    final family =
+        Theme.of(context).textTheme.bodyMedium?.fontFamily ??
+        'Microsoft YaHei UI';
+    return DetachedWindowTheme(
+      dark: p.dark,
+      surfaceArgb: surfaceColor.toARGB32(),
+      bgArgb: p.background.toARGB32(),
+      inkArgb: p.ink.toARGB32(),
+      mutedArgb: p.muted.toARGB32(),
+      accentArgb: p.accent.toARGB32(),
+      onAccentArgb: p.onAccent.toARGB32(),
+      lineArgb: p.line.toARGB32(),
+      edgeArgb: p.glassEdge.toARGB32(),
+      cornerRadius: radius,
+      frostedOpacity: p.frostedOpacity,
+      isSolid: p.backdrop == BackgroundMode.solid,
+      fontFamily: family,
+    );
+  }
+
+  void _syncDetachedEditorsTheme() {
+    if (!mounted || _detachedEditors.isEmpty) return;
+    final theme = _detachedTheme();
+    for (final entry in List<MapEntry<String, DetachedIdeaDraft>>.from(
+      _detachedEditors.entries,
+    )) {
+      final draft = entry.value;
+      final pinned = _detachedEditorPinned[draft.id] ?? true;
+      unawaited(
+        _detachedBridge.openEditor(
+          id: draft.id,
+          windowTitle: draft.isEdit ? l.mainEditIdeaTitle : l.mainNewIdeaTitle,
+          title: draft.title,
+          description: draft.description,
+          category: draft.category,
+          todos: draft.todos,
+          pinned: pinned,
+          dark: theme.dark,
+          accentArgb: theme.accentArgb,
+          bgArgb: theme.bgArgb,
+          theme: theme,
+          previewMode: draft.previewMode,
+          updateThemeOnly: true,
+        ),
+      );
+    }
+  }
+
+  void _syncDetachedWindows() {
+    if (!mounted || _detachedWidgetPinned.isEmpty) return;
+    final s = WorkbenchStrings.of(context);
+    final now = DateTime.now();
+    final theme = _detachedTheme();
+    for (final entry in List<MapEntry<String, bool>>.from(
+      _detachedWidgetPinned.entries,
+    )) {
+      final id = entry.key;
+      final pinned = entry.value;
+      final relPos = _detachedWidgetRelPos[id];
+      if (id == 'timer' && _boundTimer != null) {
+        final t = _boundTimer!;
+        unawaited(
+          _detachedBridge.openOrUpdate(
+            id: 'timer',
+            kind: 'timer',
+            title: s.timerTitle,
+            primaryText: t.formattedTime,
+            secondaryText: t.linkedLabel ?? s.timerModeLabel(t.mode),
+            badgeText: s.timerTodayStats(
+              t.completedSessionsToday,
+              t.focusMinutesToday,
+            ),
+            progress: t.progress,
+            running: t.running,
+            pinned: pinned,
+            dark: theme.dark,
+            accentArgb: theme.accentArgb,
+            bgArgb: theme.bgArgb,
+            theme: theme,
+            relX: relPos?.dx.round(),
+            relY: relPos?.dy.round(),
+          ),
+        );
+      } else if (id == 'countdown' && _boundCountdown != null) {
+        final item = _boundCountdown!.primaryForFooter(now);
+        unawaited(
+          _detachedBridge.openOrUpdate(
+            id: 'countdown',
+            kind: 'countdown',
+            title: s.countdownTitle,
+            primaryText: item == null
+                ? s.countdownEmpty
+                : s.countdownDaysBadge(item.daysFrom(now)),
+            secondaryText: item?.title ?? '',
+            badgeText: item?.targetDateKey ?? '',
+            progress: 0.0,
+            running: false,
+            pinned: pinned,
+            dark: theme.dark,
+            accentArgb: theme.accentArgb,
+            bgArgb: theme.bgArgb,
+            theme: theme,
+            relX: relPos?.dx.round(),
+            relY: relPos?.dy.round(),
+          ),
+        );
+      } else if (id == 'schedule' && _boundSchedule != null) {
+        final todayItems = _boundSchedule!.entriesForDate(now);
+        final first = todayItems.isEmpty ? null : todayItems.first;
+        unawaited(
+          _detachedBridge.openOrUpdate(
+            id: 'schedule',
+            kind: 'schedule',
+            title: s.scheduleTitle,
+            primaryText: first?.title ?? s.scheduleEmptyDay,
+            secondaryText: first == null
+                ? ''
+                : (first.isAllDay ? s.scheduleAllDay : first.timeText),
+            badgeText: s.scheduleTodayPending(
+              _boundSchedule!.pendingCountForDate(now),
+            ),
+            progress: 0.0,
+            running: false,
+            pinned: pinned,
+            dark: theme.dark,
+            accentArgb: theme.accentArgb,
+            bgArgb: theme.bgArgb,
+            theme: theme,
+            relX: relPos?.dx.round(),
+            relY: relPos?.dy.round(),
+          ),
+        );
+      } else if (id == 'automation' && _boundAutomation != null) {
+        final enabled = _boundAutomation!.rules.where((r) => r.enabled).toList();
+        final latestLog = _boundAutomation!.logs.isEmpty
+            ? null
+            : _boundAutomation!.logs.first;
+        unawaited(
+          _detachedBridge.openOrUpdate(
+            id: 'automation',
+            kind: 'automation',
+            title: s.automationTitle,
+            primaryText: s.automationEnabledBadge(_boundAutomation!.enabledCount),
+            secondaryText: latestLog?.summary ??
+                (enabled.isNotEmpty ? enabled.first.name : ''),
+            badgeText: enabled.isNotEmpty ? enabled.first.name : '',
+            progress: 0.0,
+            running: false,
+            pinned: pinned,
+            dark: theme.dark,
+            accentArgb: theme.accentArgb,
+            bgArgb: theme.bgArgb,
+            theme: theme,
+            relX: relPos?.dx.round(),
+            relY: relPos?.dy.round(),
+          ),
+        );
+      }
+    }
+  }
+
+  void _openNativeDetachedEditor(DetachedIdeaDraft draft, {Offset? relPos}) {
+    if (!_detachedBridge.supportedPlatform) return;
+    _detachedEditors[draft.id] = draft;
+    _detachedEditorPinned[draft.id] = _detachedEditorPinned[draft.id] ?? true;
+    final theme = _detachedTheme();
+    unawaited(
+      _detachedBridge.openEditor(
+        id: draft.id,
+        windowTitle: draft.isEdit ? l.mainEditIdeaTitle : l.mainNewIdeaTitle,
+        title: draft.title,
+        description: draft.description,
+        category: draft.category,
+        todos: draft.todos,
+        pinned: _detachedEditorPinned[draft.id] ?? true,
+        dark: theme.dark,
+        accentArgb: theme.accentArgb,
+        bgArgb: theme.bgArgb,
+        theme: theme,
+        previewMode: draft.previewMode,
+        relX: relPos?.dx.round(),
+        relY: relPos?.dy.round(),
+      ),
+    );
+  }
+
+  void _handleDetachedEditorAction(
+    String id,
+    String action,
+    DetachedEditorPayload payload,
+  ) {
+    if (!mounted) return;
+    final draft = _detachedEditors[id];
+    if (action == 'close') {
+      _detachedEditors.remove(id);
+      _detachedEditorPinned.remove(id);
+      unawaited(_detachedBridge.close(id));
+      return;
+    }
+    if (draft == null) return;
+    final updated = draft.copyWith(
+      title: payload.title,
+      description: payload.description,
+      category: payload.category,
+      todos: payload.todos,
+    );
+    if (action == 'togglePin') {
+      final nextPin = !(_detachedEditorPinned[id] ?? true);
+      _detachedEditorPinned[id] = nextPin;
+      _detachedEditors[id] = updated;
+      final theme = _detachedTheme();
+      unawaited(
+        _detachedBridge.openEditor(
+          id: id,
+          windowTitle: updated.isEdit
+              ? l.mainEditIdeaTitle
+              : l.mainNewIdeaTitle,
+          title: updated.title,
+          description: updated.description,
+          category: updated.category,
+          todos: updated.todos,
+          pinned: nextPin,
+          dark: theme.dark,
+          accentArgb: theme.accentArgb,
+          bgArgb: theme.bgArgb,
+          theme: theme,
+          previewMode: updated.previewMode,
+        ),
+      );
+      return;
+    }
+    if (action == 'dock') {
+      _detachedEditors.remove(id);
+      _detachedEditorPinned.remove(id);
+      unawaited(_detachedBridge.close(id));
+      if (updated.isEdit && updated.initialIdea != null) {
+        unawaited(
+          openIdea(
+            updated.initialIdea!,
+            initialAction: 'edit',
+            initialDraft: updated,
+          ),
+        );
+      } else {
+        unawaited(createIdea(initialDraft: updated));
+      }
+      return;
+    }
+    if (action == 'save') {
+      _detachedEditors.remove(id);
+      _detachedEditorPinned.remove(id);
+      unawaited(_detachedBridge.close(id));
+      unawaited(_saveDetachedDraft(updated));
+    }
+  }
+
+  Future<void> _saveDetachedDraft(DetachedIdeaDraft draft) async {
+    final backend = widget.workbench;
+    final baseline = draft.initialIdea;
+    final cleanTitle = draft.title.trim().isEmpty
+        ? l.mainNewIdeaTitle
+        : draft.title.trim();
+    final cleanDesc = draft.description.trim().isEmpty
+        ? '从一个小小的念头开始。'
+        : draft.description.trim();
+    final todoList = draft.todos
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toSet()
+        .toList();
+    final idea = Idea(
+      cleanTitle,
+      cleanDesc,
+      draft.category,
+      baseline?.icon ?? Icons.auto_awesome_outlined,
+      baseline?.color ?? const Color(0xFF9D87D4),
+      attachments: List.of(baseline?.attachments ?? const []),
+      stage: draft.stage,
+      hypothesis: draft.hypothesis,
+      conclusion: draft.conclusion,
+      id: draft.id,
+      versioned: baseline?.versioned,
+      contentOwner: baseline?.contentOwner,
+      contentRevision: baseline?.contentRevision,
+      favorite: baseline?.favorite ?? draft.initialFavorite,
+      time: baseline?.time ?? '刚刚',
+      todos: todoList,
+      completed: (baseline?.completed ?? <String>{}).intersection(
+        todoList.toSet(),
+      ),
+    );
+    if (backend == null) {
+      setState(() {
+        final idx = ideas.indexWhere((item) => item.id == idea.id);
+        if (idx >= 0) {
+          ideas[idx] = idea;
+        } else {
+          ideas.insert(0, idea);
+        }
+        filter = GeneralFilter.all;
+        query = '';
+        search.clear();
+      });
+      persist();
+    } else {
+      try {
+        final retained = backend is WorkbenchEditorDraftRuntime
+            ? (backend as WorkbenchEditorDraftRuntime).retainedEditorDraft(
+                idea.id,
+              )
+            : null;
+        if (retained != null) {
+          final saved = await pendingUiWrites.track(
+            retained.editor.save(
+              idea,
+              EditorFields(
+                title: cleanTitle,
+                description: cleanDesc,
+                hypothesis: draft.hypothesis,
+                conclusion: draft.conclusion,
+                todos: draft.todos,
+              ),
+            ),
+          );
+          if (mounted && identical(widget.workbench, backend)) {
+            _acceptEditorResult(saved, backend);
+          }
+        } else if (baseline?.versioned != null &&
+            backend is WorkbenchVersionedEditorSupport &&
+            backend is WorkbenchMixedContent) {
+          WorkbenchEditorSession? editor;
+          try {
+            final session = await (backend as WorkbenchVersionedEditorSupport)
+                .openVersionedEditor(
+                  idea.id,
+                  expectedRevision: idea.contentRevision,
+                );
+            editor = VersionedWorkbenchEditorAdapter(
+              session,
+              baseline!.versioned!,
+              (backend as WorkbenchMixedContent).workspaceRecord,
+              isCurrent: () => mounted && identical(widget.workbench, backend),
+              reopen: (confirmed) =>
+                  _openConfirmedVersionedEditor(backend, confirmed),
+            );
+            final saved = await pendingUiWrites.track(
+              editor.save(
+                idea,
+                EditorFields(
+                  title: cleanTitle,
+                  description: cleanDesc,
+                  hypothesis: draft.hypothesis,
+                  conclusion: draft.conclusion,
+                  todos: draft.todos,
+                ),
+              ),
+            );
+            if (mounted && identical(widget.workbench, backend)) {
+              _acceptEditorResult(saved, backend);
+            }
+          } finally {
+            await editor?.close().catchError((_) {});
+          }
+        } else {
+          WorkbenchEditorSession? editor;
+          try {
+            editor = await _openEditor(idea.id, !draft.isEdit);
+            if (editor != null) {
+              final saved = await pendingUiWrites.track(
+                editor.save(
+                  idea,
+                  EditorFields(
+                    title: cleanTitle,
+                    description: cleanDesc,
+                    hypothesis: draft.hypothesis,
+                    conclusion: draft.conclusion,
+                    todos: draft.todos,
+                  ),
+                ),
+              );
+              if (mounted && identical(widget.workbench, backend)) {
+                _acceptEditorResult(saved, backend);
+              }
+            } else {
+              await pluginChange(
+                draft.isEdit ? PluginAction.edit : PluginAction.create,
+                idea,
+              );
+            }
+          } finally {
+            await editor?.close().catchError((_) {});
+          }
+        }
+      } catch (_) {
+        if (!mounted) return;
+        _footerReminders.post(
+          FooterAlert(
+            id: 'detached-save-err-${DateTime.now().microsecondsSinceEpoch}',
+            badge: l.mainSaveNotSubmitted,
+            message: cleanTitle,
+            linkedCardId: idea.id,
+            createdAt: DateTime.now(),
+          ),
+        );
+        return;
+      }
+    }
+    if (!mounted) return;
+    _footerReminders.post(
+      FooterAlert(
+        id: 'detached-save-${DateTime.now().microsecondsSinceEpoch}',
+        badge: l.mainSaveIdea,
+        message: cleanTitle,
+        linkedCardId: idea.id,
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  Widget _buildDetachedNoticeCard(
+    String id,
+    String title,
+    IconData icon,
+  ) {
+    final s = WorkbenchStrings.of(context);
+    return Glass(
+      componentId: id,
+      p: p,
+      radius: 20,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: p.accent),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                s.widgetDetachedBanner(title),
+                style: TextStyle(fontSize: 11, color: p.ink),
+              ),
+            ),
+            TextButton(
+              onPressed: () => _handleDetachedAction(id, 'dock'),
+              child: Text(
+                s.widgetDockTooltip,
+                style: const TextStyle(fontSize: 11),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingWidgetContent(String id) => switch (id) {
+    'timer' => timerWidget(embedded: true),
+    'schedule' => scheduleWidget(embedded: true),
+    'countdown' => countdownWidget(embedded: true),
+    _ => automationWidget(embedded: true),
+  };
+
+  Widget timerWidget({bool embedded = false}) {
+    final timer = TimerScope.of(context);
+    if (timer == null) return const SizedBox.shrink();
+    final s = WorkbenchStrings.of(context);
+    if (!embedded && _detachedWidgetPinned.containsKey('timer')) {
+      return _buildDetachedNoticeCard('timer', s.timerTitle, Icons.timer_outlined);
+    }
+    final card = ListenableBuilder(
+      listenable: timer,
+      builder: (context, _) => WorkbenchTimerCard(
+        palette: p,
+        controller: timer,
+        cards: _scheduleCardOptions(),
+        embedded: embedded,
+        onFloat: embedded ? null : () => _openFloatingWidget('timer'),
+        onDetach: embedded || !_detachedBridge.supportedPlatform
+            ? null
+            : () => _detachNativeWidget('timer'),
+      ),
+    );
+    return embedded ? card : componentInteractions('timer', card);
+  }
+
+  Widget countdownWidget({bool embedded = false}) {
+    final prefs = CountdownScope.of(context);
+    if (prefs == null) return const SizedBox.shrink();
+    final s = WorkbenchStrings.of(context);
+    if (!embedded && _detachedWidgetPinned.containsKey('countdown')) {
+      return _buildDetachedNoticeCard(
+        'countdown',
+        s.countdownTitle,
+        Icons.hourglass_bottom_rounded,
+      );
+    }
+    final card = ListenableBuilder(
+      listenable: prefs,
+      builder: (context, _) => WorkbenchCountdownCard(
+        palette: p,
+        preferences: prefs,
+        cards: _scheduleCardOptions(),
+        embedded: embedded,
+        onCreate: () => _createOrEditCountdown(),
+        onEdit: (item) => _createOrEditCountdown(item: item),
+        onOpenCard: _openCardById,
+        onFloat: embedded ? null : () => _openFloatingWidget('countdown'),
+        onDetach: embedded || !_detachedBridge.supportedPlatform
+            ? null
+            : () => _detachNativeWidget('countdown'),
+      ),
+    );
+    return embedded ? card : componentInteractions('countdown', card);
+  }
+
+  Widget automationWidget({bool embedded = false}) {
+    final prefs = AutomationScope.of(context);
+    if (prefs == null) return const SizedBox.shrink();
+    final s = WorkbenchStrings.of(context);
+    if (!embedded && _detachedWidgetPinned.containsKey('automation')) {
+      return _buildDetachedNoticeCard(
+        'automation',
+        s.automationTitle,
+        Icons.bolt_rounded,
+      );
+    }
+    final card = ListenableBuilder(
+      listenable: prefs,
+      builder: (context, _) => WorkbenchAutomationCard(
+        palette: p,
+        preferences: prefs,
+        embedded: embedded,
+        onCreateRule: _createAutomationRule,
+        onRunRuleNow: (rule) =>
+            prefs.runRuleNow(rule, runtime: _automationRuntime()),
+        onFloat: embedded ? null : () => _openFloatingWidget('automation'),
+        onDetach: embedded || !_detachedBridge.supportedPlatform
+            ? null
+            : () => _detachNativeWidget('automation'),
+      ),
+    );
+    return embedded ? card : componentInteractions('automation', card);
+  }
+
+  Widget scheduleWidget({bool embedded = false}) {
+    final prefs = SchedulePreferencesScope.of(context);
+    if (prefs == null) return const SizedBox.shrink();
+    final s = WorkbenchStrings.of(context);
+    if (!embedded && _detachedWidgetPinned.containsKey('schedule')) {
+      return _buildDetachedNoticeCard(
+        'schedule',
+        s.scheduleTitle,
+        Icons.calendar_month_rounded,
+      );
+    }
+    final card = ListenableBuilder(
+      listenable: prefs,
+      builder: (context, _) => WorkbenchScheduleCard(
+        palette: p,
+        preferences: prefs,
+        cards: _scheduleCardOptions(),
+        selectedDate: _selectedScheduleDate,
+        embedded: embedded,
+        onSelectDate: (date) =>
+            setState(() => _selectedScheduleDate = ScheduleEntry.dateOnly(date)),
+        onOpenCard: _openCardById,
+        onCreateEntry: () => _createOrEditSchedule(date: _selectedScheduleDate),
+        onEditEntry: (entry) => _createOrEditSchedule(entry: entry),
+        onFloat: embedded ? null : () => _openFloatingWidget('schedule'),
+        onDetach: embedded || !_detachedBridge.supportedPlatform
+            ? null
+            : () => _detachNativeWidget('schedule'),
+      ),
+    );
+    return embedded ? card : componentInteractions('schedule', card);
   }
 
   Widget quickCapture() =>
@@ -2632,7 +3825,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                 Text(
                   s.quickCaptureTitle,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     color: p.ink,
                   ),
@@ -2644,7 +3837,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     textAlign: TextAlign.right,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 9, color: p.muted),
+                    style: TextStyle(fontSize: 10.5, color: p.muted),
                   ),
                 ),
               ],
@@ -2925,6 +4118,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     'search': l.mainComponentSearch,
     'hero': l.mainComponentHero,
     'quick-capture': l.mainComponentQuickCapture,
+    'timer': WorkbenchStrings.of(context).timerTitle,
+    'schedule': WorkbenchStrings.of(context).scheduleTitle,
+    'countdown': WorkbenchStrings.of(context).countdownTitle,
+    'automation': WorkbenchStrings.of(context).automationTitle,
     'appearance': l.mainAppearance,
     'plugin-settings': l.mainPluginSettings,
     if (widget.workbench is ExternalPluginControl) ...{
@@ -3011,6 +4208,25 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             onSelected: () => openIdea(idea),
           ),
           ...extraCardActions(idea),
+          ComponentMenuAction(
+            label: WorkbenchStrings.of(context).scheduleActionLinkCard,
+            icon: Icons.event_available_outlined,
+            onSelected: () => _createOrEditSchedule(
+              date: _selectedScheduleDate,
+              linkedCardId: idea.id,
+              suggestedTitle: displayTitle(idea),
+            ),
+          ),
+          ComponentMenuAction(
+            label: WorkbenchStrings.of(context).timerFocusAction,
+            icon: Icons.timer_outlined,
+            onSelected: () {
+              final timer = TimerScope.of(context);
+              timer?.bindCard(idea.id, label: displayTitle(idea));
+              timer?.start();
+              _openFloatingWidget('timer');
+            },
+          ),
           ComponentMenuAction(
             label: idea.favorite
                 ? l.mainUnfavoriteTooltip(displayTitle(idea))
@@ -4384,16 +5600,17 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     return true;
   }
 
-  Future<void> createIdea() async {
+  Future<void> createIdea({DetachedIdeaDraft? initialDraft}) async {
     final backend = widget.workbench;
-    final target = Idea.nextId();
+    final target = initialDraft?.id ?? Idea.nextId();
     WorkbenchEditorSession? editor;
     EditorDraftOwner? draftOwner;
-    final category = switch (section) {
-      WorkbenchPage.projects => '进行中',
-      WorkbenchPage.laboratory => '实验',
-      _ => '灵感',
-    };
+    final category = initialDraft?.category ??
+        switch (section) {
+          WorkbenchPage.projects => '进行中',
+          WorkbenchPage.laboratory => '实验',
+          _ => '灵感',
+        };
     try {
       editor = await _openEditor(target, true);
       draftOwner = await _retainEditorDraft(
@@ -4414,15 +5631,23 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       context: context,
       builder: (_) => NewIdeaDialog(
         targetId: target,
+        initialDraft: initialDraft,
         editor: editor,
         draftOwner: draftOwner,
         draftRuntime: backend is WorkbenchEditorDraftRuntime
             ? backend as WorkbenchEditorDraftRuntime
             : null,
         isCurrent: () => mounted && identical(widget.workbench, backend),
-        initialFavorite: section == WorkbenchPage.favorites,
+        initialFavorite:
+            initialDraft?.initialFavorite ?? section == WorkbenchPage.favorites,
         plugin: widget.workbench?.studio,
         initialCategory: category,
+        onDetachToNative: _detachedBridge.supportedPlatform
+            ? (draft, relPos) => _openNativeDetachedEditor(
+                draft,
+                relPos: relPos,
+              )
+            : null,
       ),
     );
     if (!mounted || !identical(widget.workbench, backend)) return;
@@ -4674,7 +5899,144 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> openIdea(Idea idea, {String? initialAction}) async {
+  Widget _buildCardScheduleSection(Idea idea) {
+    final prefs = SchedulePreferencesScope.of(context);
+    if (prefs == null) return const SizedBox.shrink();
+    final s = WorkbenchStrings.of(context);
+    final now = DateTime.now();
+    return ListenableBuilder(
+      listenable: prefs,
+      builder: (_, _) {
+        final items = prefs.entriesForCard(idea.id);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Icon(Icons.event_note_rounded, size: 14, color: p.accent),
+                const SizedBox(width: 6),
+                Text(
+                  s.scheduleCardSectionTitle,
+                  style: TextStyle(
+                    color: p.accent,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  key: const ValueKey('idea-detail-add-schedule'),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    splashFactory: NoSplash.splashFactory,
+                  ),
+                  onPressed: () => _createOrEditSchedule(
+                    date: _selectedScheduleDate,
+                    linkedCardId: idea.id,
+                    suggestedTitle: displayTitle(idea),
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 15),
+                  label: Text(
+                    s.scheduleCardAdd,
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            if (items.isEmpty)
+              Text(
+                s.scheduleCardEmpty,
+                style: TextStyle(fontSize: 11, color: p.muted),
+              )
+            else
+              for (final entry in items)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: p.surface.withValues(alpha: p.dark ? 0.25 : 0.45),
+                    borderRadius: p.borderRadius(10),
+                    border: Border.all(color: p.line),
+                  ),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        borderRadius: p.borderRadius(8),
+                        onTap: () => prefs.toggleCompleted(entry.id),
+                        child: Icon(
+                          entry.completed
+                              ? Icons.check_circle_rounded
+                              : Icons.radio_button_unchecked_rounded,
+                          size: 16,
+                          color: entry.completed ? p.accent : p.muted,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: entry.completed ? p.muted : p.ink,
+                                decoration: entry.completed
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                            Text(
+                              s.formatScheduleStamp(entry, now),
+                              style: TextStyle(fontSize: 10, color: p.accent),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: s.scheduleEdit,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () => _createOrEditSchedule(entry: entry),
+                        icon: Icon(
+                          Icons.edit_outlined,
+                          size: 14,
+                          color: p.muted,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: s.scheduleUnlinkTooltip,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () => prefs.update(
+                          entry.copyWith(clearLinkedCard: true),
+                        ),
+                        icon: Icon(
+                          Icons.link_off_rounded,
+                          size: 14,
+                          color: p.muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> openIdea(
+    Idea idea, {
+    String? initialAction,
+    DetachedIdeaDraft? initialDraft,
+  }) async {
     if (initialAction != null && !canChangeCard(idea)) return;
     final backend = widget.workbench;
     void rebindVersionedDialog(
@@ -4706,14 +6068,54 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         await showStudioDialog<String>(
           context: context,
           builder: (dialogContext) => StatefulBuilder(
-            builder: (_, refresh) => StudioDialog(
-              icon: idea.icon,
-              title: displayTitle(idea),
-              subtitle: l.mainIdeaDetails,
-              content: SizedBox(
-                width: 390,
-                child: SingleChildScrollView(
-                  child: Column(
+            builder: (_, refresh) {
+              final canDetachCard =
+                  _detachedBridge.supportedPlatform && canChangeCard(idea);
+              void detachCard([Offset? relPos]) {
+                final draft = DetachedIdeaDraft(
+                  id: idea.id,
+                  isEdit: true,
+                  previewMode: true,
+                  initialIdea: idea,
+                  initialFavorite: idea.favorite,
+                  title: idea.title,
+                  description: idea.description,
+                  category: idea.category,
+                  todos: idea.todos.join('\n'),
+                  stage: idea.stage,
+                  hypothesis: idea.hypothesis,
+                  conclusion: idea.conclusion,
+                );
+                Navigator.pop(dialogContext);
+                _openNativeDetachedEditor(draft, relPos: relPos);
+              }
+
+              return StudioDialog(
+                icon: idea.icon,
+                title: displayTitle(idea),
+                subtitle: l.mainIdeaDetails,
+                width: 520,
+                draggable: true,
+                resizable: true,
+                minWidth: 360,
+                maxWidth: 1000,
+                minHeight: 300,
+                maxHeight: 860,
+                headerActions: [
+                  if (canDetachCard)
+                    IconButton.filledTonal(
+                      key: const ValueKey('card-details-detach-window'),
+                      tooltip: WorkbenchStrings.of(context).editorDetachTooltip,
+                      onPressed: () => detachCard(),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                    ),
+                ],
+                onDragOutside: canDetachCard
+                    ? (offset) => detachCard(offset)
+                    : null,
+                content: SizedBox(
+                width: double.infinity,
+                child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -4907,10 +6309,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                           ),
                         ),
                       ],
+                      _buildCardScheduleSection(idea),
                     ],
                   ),
                 ),
-              ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext, 'delete'),
@@ -4930,7 +6332,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   child: Text(l.mainDone),
                 ),
               ],
-            ),
+            );
+            },
           ),
         );
     if (!mounted || !identical(widget.workbench, backend)) return;
@@ -4997,6 +6400,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         context: context,
         builder: (_) => NewIdeaDialog(
           initialIdea: idea,
+          initialDraft: initialDraft,
           editor: editor,
           draftOwner: draftOwner,
           autofocusTitle: autofocusTitle,
@@ -5005,6 +6409,12 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               : null,
           isCurrent: () => mounted && identical(widget.workbench, backend),
           plugin: widget.workbench?.studio,
+          onDetachToNative: _detachedBridge.supportedPlatform
+              ? (draft, relPos) => _openNativeDetachedEditor(
+                  draft,
+                  relPos: relPos,
+                )
+              : null,
         ),
       );
       if (!mounted || !identical(widget.workbench, backend)) return;
@@ -5137,10 +6547,63 @@ class LittleTask extends StatelessWidget {
   );
 }
 
+@immutable
+class DetachedIdeaDraft {
+  const DetachedIdeaDraft({
+    required this.id,
+    required this.isEdit,
+    this.previewMode = false,
+    this.initialIdea,
+    this.initialFavorite = false,
+    this.title = '',
+    this.description = '',
+    this.category = '灵感',
+    this.todos = '',
+    this.stage = '待整理',
+    this.hypothesis = '',
+    this.conclusion = '',
+  });
+
+  final String id;
+  final bool isEdit;
+  final bool previewMode;
+  final Idea? initialIdea;
+  final bool initialFavorite;
+  final String title;
+  final String description;
+  final String category;
+  final String todos;
+  final String stage;
+  final String hypothesis;
+  final String conclusion;
+
+  DetachedIdeaDraft copyWith({
+    String? title,
+    String? description,
+    String? category,
+    String? todos,
+    bool? previewMode,
+  }) => DetachedIdeaDraft(
+    id: id,
+    isEdit: isEdit,
+    previewMode: previewMode ?? this.previewMode,
+    initialIdea: initialIdea,
+    initialFavorite: initialFavorite,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    category: category ?? this.category,
+    todos: todos ?? this.todos,
+    stage: stage,
+    hypothesis: hypothesis,
+    conclusion: conclusion,
+  );
+}
+
 class NewIdeaDialog extends StatefulWidget {
   const NewIdeaDialog({
     super.key,
     this.initialIdea,
+    this.initialDraft,
     this.initialCategory = '灵感',
     this.readClipboard,
     this.importAttachment,
@@ -5155,11 +6618,14 @@ class NewIdeaDialog extends StatefulWidget {
     this.targetId,
     this.initialFavorite = false,
     this.isCurrent,
+    this.onDetachToNative,
   });
   final Idea? initialIdea;
+  final DetachedIdeaDraft? initialDraft;
   final String? targetId;
   final bool initialFavorite;
   final bool Function()? isCurrent;
+  final void Function(DetachedIdeaDraft draft, Offset? relPos)? onDetachToNative;
   final WorkbenchEditorSession? editor;
   final EditorDraftOwner? draftOwner;
   final WorkbenchEditorDraftRuntime? draftRuntime;
@@ -5996,6 +7462,15 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         ..clear()
         ..addAll(review.views.map((view) => view.attachment));
     }
+    if (widget.initialDraft case final detached?) {
+      title.text = detached.title;
+      description.text = detached.description;
+      category = detached.category;
+      todos.text = detached.todos;
+      stage = detached.stage;
+      hypothesis.text = detached.hypothesis;
+      conclusion.text = detached.conclusion;
+    }
     for (final controller in [
       title,
       description,
@@ -6054,8 +7529,33 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     super.dispose();
   }
 
+  void _detachToNative({Offset? relPos}) {
+    final onDetach = widget.onDetachToNative;
+    if (_readOnly || onDetach == null || saving || importing) {
+      return;
+    }
+    final draft = DetachedIdeaDraft(
+      id: _targetId,
+      isEdit: _baseline != null,
+      initialIdea: _baseline,
+      initialFavorite: _baseline?.favorite ?? widget.initialFavorite,
+      title: title.text,
+      description: description.text,
+      category: category,
+      todos: todos.text,
+      stage: stage,
+      hypothesis: hypothesis.text,
+      conclusion: conclusion.text,
+    );
+    Navigator.pop(context);
+    onDetach(draft, relPos);
+  }
+
   @override
-  Widget build(BuildContext context) => WindowsEditorShortcuts(child: PopScope(
+  Widget build(BuildContext context) {
+    final s = WorkbenchStrings.of(context);
+    final canDetach = !_readOnly && widget.onDetachToNative != null;
+    return WindowsEditorShortcuts(child: PopScope(
     canPop: !saving && !importing,
     child: Actions(
       actions: <Type, Action<Intent>>{
@@ -6069,6 +7569,24 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       child: StudioDialog(
         canClose: !saving && !importing,
         width: 820,
+        draggable: true,
+        resizable: true,
+        minWidth: 420,
+        maxWidth: 1200,
+        minHeight: 380,
+        maxHeight: 920,
+        headerActions: [
+          if (canDetach)
+            IconButton.filledTonal(
+              key: const ValueKey('idea-detach-window'),
+              tooltip: s.editorDetachTooltip,
+              onPressed: saving || importing ? null : () => _detachToNative(),
+              icon: const Icon(Icons.open_in_new_rounded, size: 17),
+            ),
+        ],
+        onDragOutside: canDetach
+            ? (offset) => _detachToNative(relPos: offset)
+            : null,
         title: _readOnly
             ? l.mainDraftJournalTitle
             : _baseline == null
@@ -6078,11 +7596,10 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         content: AbsorbPointer(
           absorbing: importing,
           child: SizedBox(
-            width: 740,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                   TextField(
                     key: const ValueKey('idea-title'),
                     controller: title,
@@ -6237,7 +7754,6 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     ),
                 ],
               ),
-            ),
           ),
         ),
         actions: [
@@ -6357,6 +7873,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       ),
     ),
   ));
+  }
 }
 
 class AmbientPainter extends CustomPainter {

@@ -118,6 +118,7 @@ bool FlutterWindow::OnCreate() {
 
   office_clipboard_ = std::make_unique<OfficeClipboard>(flutter_controller_->engine()->messenger());
   system_fonts_ = std::make_unique<SystemFonts>(flutter_controller_->engine()->messenger());
+  detached_widgets_ = std::make_unique<DetachedWidgets>(GetHandle(), flutter_controller_->engine()->messenger());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
@@ -133,6 +134,7 @@ bool FlutterWindow::OnCreate() {
 
 void FlutterWindow::OnDestroy() {
   canvas_backdrop_.Reset();
+  detached_widgets_ = nullptr;
   system_fonts_ = nullptr;
   office_clipboard_ = nullptr;
   shape_channel_ = nullptr;

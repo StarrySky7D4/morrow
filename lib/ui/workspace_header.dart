@@ -139,8 +139,8 @@ class WorkbenchBentoHero extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 9,
-                                letterSpacing: 1.5,
+                                fontSize: 10,
+                                letterSpacing: 1.4,
                                 fontWeight: FontWeight.w600,
                                 color: p.accent,
                               ),
@@ -165,7 +165,7 @@ class WorkbenchBentoHero extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12.5,
                           height: 1.65,
                           color: p.muted,
                         ),
@@ -200,7 +200,7 @@ class WorkbenchBentoHero extends StatelessWidget {
                                     Text(
                                       stat.$2,
                                       style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 11,
                                         color: p.muted,
                                       ),
                                     ),
@@ -208,7 +208,7 @@ class WorkbenchBentoHero extends StatelessWidget {
                                     Text(
                                       '${stat.$3}',
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w700,
                                         color: p.ink,
                                       ),
